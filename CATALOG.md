@@ -4,7 +4,49 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **499 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **500 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3288, "GovSchema Standard Research"): Norway's
+> Taxes vertical opens, bringing Norway to 5 of 6 verticals** (Business
+> Formation, DMV, Visa, and National ID were already modelled; Passport
+> remains Norway's sole confirmed dead end, re-screened fresh this cycle —
+> see the Known Gaps section below), via
+> `no/skatteetaten/skattemelding-for-forhandsfastsetting` — Skatteetaten's
+> (the Norwegian Tax Administration) "Skattemelding for forhåndsfastsetting
+> og for privatpersoner som ikke har mottatt forhåndsutfylt skattemelding"
+> (tax return for advance assessment and for private persons who have not
+> received a pre-filled return). This **supersedes** this catalog's own
+> prior GOV-2507 dead-end finding for NO Taxes (see the Known Gaps section
+> below): that finding correctly ruled out Norway's *ordinary* pre-filled
+> return (BankID/ID-porten-gated, no PDF equivalent) and RF-1281 (marked
+> "replaced from income year 2023" with no successor found at the time),
+> but did not find this distinct, still-current paper fallback — a genuine
+> new source, not a re-read of the same one. Independently re-fetched twice
+> this session with a plain HTTP GET (no login/CAPTCHA/WAF gate): HTTP 200,
+> 733,378 bytes both times, identical sha256
+> `f21f20dc81095119e0d83981d0c7e85a068ad8b09aa61c3431aff48210c38bdc`. A flat,
+> non-AcroForm print-and-fill specimen (0 `/Widget` annotations across all
+> 3 pages, confirmed via `pdfjs-dist`) rendered to PNG via `node-canvas` to
+> read its exact table structure. Models 115 fields: the taxpayer identity
+> block, the tax-year/submission-reason selection, a foreign-worker
+> sub-section (gated via `visibleWhen`, with a genuine `requiredWhen`
+> dependency for the sea/continental-shelf day count), nine bounded
+> (up to 3 rows each) repeating tables covering wages, pension, other
+> work-related deductions, bank accounts, financial holdings, real
+> property, other assets, and other income, plus a single non-repeating
+> business-income block, a submitter block, and a signature date. No
+> `documents[]` — the form requests no attachments. 2 valid conformance
+> fixtures (0 errors each) plus 6 mutation-control fixtures (each raising
+> exactly 1 error, including a `requiredWhen` violation) are committed
+> under `conformance/no/skatteetaten/skattemelding-for-forhandsfastsetting/1.0.0/`.
+> Both validators pass at 500/500; `verify-sources.mjs` reports all 3 cited
+> URLs clear. This same research cycle also re-checked a second candidate,
+> Slovakia's national-visa PDF, and found it to be a field-for-field
+> duplicate of the EU harmonized Schengen visa questionnaire already
+> modelled multiple times in this registry — not authored; see the Known
+> Gaps section's new "SK Visa" dead-end entry below for the full comparison.
+> See the Taxes vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-16, GOV-3281, "GovSchema Standard Research"): Tanzania's
 > Passport vertical opens, bringing Tanzania to full 6 of 6 verticals** (the
@@ -12777,7 +12819,14 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (57/62 jurisdictions — 92%)
+### Taxes — Income Tax Return, Tax Filing (58/62 jurisdictions — 94%)
+
+> **Update (2026-07-16, GOV-3288, "GovSchema Standard Research"): Norway's
+> Taxes vertical opens, bringing Norway to 5 of 6 verticals**, via
+> `no/skatteetaten/skattemelding-for-forhandsfastsetting` — see the
+> Executive Summary update above for the full sourcing record, including
+> how this supersedes the catalog's own prior GOV-2507 dead-end finding for
+> NO Taxes with a genuinely new, distinct source.
 
 > **Update (2026-07-16, GOV-3267, "GovSchema Standard Research"): Sri
 > Lanka's Taxes vertical opens, bringing Sri Lanka to 5 of 6 verticals**
@@ -15256,7 +15305,7 @@ now closed.
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **NO** | 4 | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ |
+| **NO** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NP** | 4 | ✓ | ✗ | ✓ | ✗ | ✓ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -17056,6 +17105,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
+- **SK Visa (national D-visa)** — GOV-3288, 2026-07-16. MZV SR's own
+  document repository hosts both a "national visa" PDF
+  (`002-ziadost-o-narodne-vizum-SK.pdf`) and a "Schengen visa" PDF
+  (`001-ziadost-o-schengenske-vizum-SK.pdf`) in the same folder; live
+  `mzv.sk` sits behind a Cloudflare bot challenge, so both were fetched via
+  a Wayback Machine mirror and independently extracted with `pdfjs-dist`.
+  The two are a field-for-field match: the identical 33-item EU harmonized
+  visa-application questionnaire (same checkboxes, same VIS/Schengen
+  Borders Code Article 6 declaration text), differing only in title — the
+  "national visa" form is the Schengen Uniform Application Form relabelled,
+  not a distinct national instrument. This is the same
+  "national-visa-form-duplicates-the-EU-harmonized-Schengen-template"
+  pattern this registry has already found and declined for Czechia,
+  Portugal, and Poland (see those entries below); recorded here as a fresh
+  confirmation for Slovakia specifically, since Slovakia's Visa vertical
+  remains its sole open gap (5/6) after this cycle. Do not re-attempt
+  without a genuinely new, structurally distinct source.
 - **SI DMV — driving-licence issuance (vozniško dovoljenje)** — GOV-3248,
   2026-07-16. `e-uprava.gov.si` states the application "is filed directly
   (in person) at the administrative unit," requiring the applicant's
@@ -17444,24 +17510,30 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   no government-published specimen form; only a third-party travel-agency
   guide reconstructs the field list. Do not re-attempt without a genuinely
   new, government-published source.
-- **NO Passport** — GOV-2507, screened 2026-07-12. `politiet.no` and
-  Norwegian embassies abroad (`norway.no`) both require an in-person
-  appointment with biometric photo/fingerprint capture; no downloadable
-  application form exists. The one PDF-shaped candidate found via search
-  (`norway.no/contentassets/.../passkjema-eng..pdf`) is a Canva-made
-  graphic/design document with no `/AcroForm`, `/Widget`, or `/FT` objects
-  at the byte level — not an official form. Do not re-attempt without a
-  genuinely new source (e.g. a Nordic-style guardian-consent companion form,
-  which has closed other Nordic countries' Passport verticals in this
-  registry).
-- **NO Taxes** — GOV-2507, screened 2026-07-12. Norway's personal tax return
-  (skattemelding) is pre-filled automatically from 60M+ third-party data
-  points and submitted online/mobile only; the one plausible paper-fallback
-  form, RF-1281, is explicitly marked "replaced from income year 2023" with
-  no PDF successor found. Business/self-employed filers' RF-1030 states
-  outright that paper submissions "will be considered as not submitted" —
-  fully electronic-only, ID-porten/Altinn-gated. Do not re-attempt without a
-  genuinely new source.
+- **NO Passport** — GOV-2507, screened 2026-07-12, re-confirmed GOV-3288,
+  2026-07-16. `politiet.no` and Norwegian embassies abroad (`norway.no`)
+  both require an in-person appointment with biometric photo/fingerprint
+  capture; no downloadable application form exists. The one PDF-shaped
+  candidate found via search (`norway.no/contentassets/.../passkjema-eng..pdf`)
+  is a Canva-made graphic/design document with no `/AcroForm`, `/Widget`, or
+  `/FT` objects at the byte level — not an official form. This cycle's
+  re-check independently confirmed the booking flow's own HTML contains zero
+  `.pdf` links. Do not re-attempt without a genuinely new source (e.g. a
+  Nordic-style guardian-consent companion form, which has closed other
+  Nordic countries' Passport verticals in this registry).
+- **NO Taxes — now closed, GOV-3288, 2026-07-16.** GOV-2507's original
+  2026-07-12 finding correctly ruled out two sources — Norway's ordinary
+  pre-filled skattemelding (pre-filled automatically from 60M+ third-party
+  data points, submitted online/mobile only) and RF-1281 (explicitly marked
+  "replaced from income year 2023" with no PDF successor found at the
+  time) — but a third, distinct source existed all along and was missed:
+  Skatteetaten's own current paper fallback for forhåndsfastsetting
+  (advance-assessment) requests and for privatpersoner who have not
+  received a pre-filled return by 7 April,
+  `ikke-forhandsutfylt-skattemelding.pdf`, live and unauthenticated at the
+  time of this new check. See the Executive Summary update above — this
+  entry is retained as a record of the earlier, narrower finding, not
+  because the vertical remains open.
 - **CL Passport** — GOV-2507, screened 2026-07-12 (re-confirming GOV-1624).
   Servicio de Registro Civil e Identificación's process is ClaveÚnica
   login → appointment booking → in-person biometric capture for adults and

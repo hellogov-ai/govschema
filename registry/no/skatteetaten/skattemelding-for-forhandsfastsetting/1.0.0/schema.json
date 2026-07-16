@@ -1,0 +1,1269 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "no/skatteetaten/skattemelding-for-forhandsfastsetting",
+  "version": "1.0.0",
+  "title": "Norway Tax Return for Advance Assessment / Persons Without a Pre-Filled Return — Skattemelding for forhåndsfastsetting og for privatpersoner som ikke har mottatt forhåndsutfylt skattemelding",
+  "description": "Skatteetaten's (the Norwegian Tax Administration) paper alternative income-tax return, used by (1) a person requesting forhåndsfastsetting — an advance tax assessment ahead of the ordinary annual cycle, most commonly a foreign worker whose temporary work stay in Norway has ended, or a deceased person's estate (dødsbo) — and (2) any privatperson (private individual) who has not received Skatteetaten's ordinary pre-filled skattemelding by 7 April and is not an electronic user able to file it online. Opens Norway's Taxes vertical: the ordinary, fully pre-filled skattemelding is filed exclusively through Skatteetaten's own BankID/ID-porten-gated online service (skatteetaten.no), which has no unauthenticated field-level equivalent, so this registry follows its own established precedent of modelling the government's own published unauthenticated paper fallback instead (the same approach already used for this jurisdiction's `notification-of-move-within-norway` civic-registration form) when the primary online channel is authentication-gated. This schema models the form's own three-page applicant-facing content in full: the taxpayer identity block, the tax-year and submission-reason selection, the foreign-worker-specific sub-section, the bounded (up to 3 rows each) wages/pension/other-work-deduction/business-income/bank/financial-holdings/real-property/other-assets/other-income tables, the minimum-deduction claim, travel and commuter-accommodation deductions, the submitter block (used when someone other than the taxpayer, e.g. an heir, is filing), and the signature date. It does not model the physical wet-ink signature itself (the source PDF has no fillable AcroForm widgets anywhere — a flat print-and-fill specimen, not an interactive form) or the form's own third-page purely-informational guidance text (rules on dødsbo eligibility, kildeskatt/source-tax consequences of choosing this route, and the deadline/reservation rules for privatpersoner), since none of that is an applicant-entered field. Filing this return is a citizen action performed directly with Skatteetaten (by post to the address printed on the form, or electronically per the form's own stated preference once the taxpayer becomes an electronic user); this schema does not file the return itself, and the live source (skatteetaten.no) is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Kingdom of Norway or Skatteetaten.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NO",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Skatteetaten (the Norwegian Tax Administration)",
+    "abbreviation": "Skatteetaten",
+    "url": "https://www.skatteetaten.no"
+  },
+  "process": {
+    "type": "filing",
+    "language": "no"
+  },
+  "source": {
+    "url": "https://www.skatteetaten.no/globalassets/skjema/alltid/ikke-forhandsutfylt-skattemelding.pdf",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "\"Skattemelding for forhåndsfastsetting og for privatpersoner som ikke har mottatt forhåndsutfylt skattemelding\" — a 3-page flat (non-AcroForm) print-and-fill specimen PDF published unauthenticated by Skatteetaten."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GOV-3288 (\"GovSchema Standard Research\"). Opens Norway's Taxes vertical (5/6; Passport is Norway's sole remaining gap, re-confirmed this same cycle as a dead end — politiet.no's passport application is a 100% in-person appointment/biometric process with no downloadable form). Norway's ordinary pre-filled skattemelding is BankID/ID-porten-gated with no unauthenticated field-level equivalent; this schema instead models Skatteetaten's own published, unauthenticated paper fallback for forhåndsfastsetting requests and for privatpersoner who have not received a pre-filled return. Source re-fetched fresh this session with a plain HTTP GET (no login/CAPTCHA/WAF gate): HTTP 200, 733,378 bytes, genuine %PDF header; sha256 independently re-verified identical between two separate fetches. Extracted with pdfjs-dist v3.11.174 via getTextContent() (full prose) and getAnnotations() per page (0 Widget annotations across all 3 pages — confirmed flat/non-interactive), then rendered to PNG at 2x scale via node-canvas to visually confirm each table's exact column layout and bounded row count (3 visible rows for every repeating table). See VERIFICATION.md for the full extraction record and disclosed judgment calls."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxpayerFullName",
+      "label": "Navn",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The taxpayer's full name.",
+      "sourceRef": "Section \"Den skattepliktige\" — \"Navn\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "taxpayerNationalId",
+      "label": "Fødselsnummer/D-nummer",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The taxpayer's 11-digit Norwegian fødselsnummer (national identity number) or D-nummer (temporary identification number issued to people without a fødselsnummer, e.g. many first-time foreign workers).",
+      "sourceRef": "Section \"Den skattepliktige\" — \"Fødselsnummer/D-nummer\"",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "taxpayerAddress",
+      "label": "Adresse",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The taxpayer's current mailing address.",
+      "sourceRef": "Section \"Den skattepliktige\" — \"Adresse\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "taxpayerEmail",
+      "label": "Epost",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The taxpayer's email address.",
+      "sourceRef": "Section \"Den skattepliktige\" — \"Epost\"",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "taxpayerPhone",
+      "label": "Telefon",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The taxpayer's telephone number.",
+      "sourceRef": "Section \"Den skattepliktige\" — \"Telefon\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "taxYear",
+      "label": "Årstall",
+      "type": "integer",
+      "required": true,
+      "description": "The income year this return (skattemelding) is being filed for.",
+      "sourceRef": "Section \"Skattemeldingen gjelder for\" — \"Årstall\"",
+      "validation": {
+        "minimum": 2000,
+        "maximum": 2100
+      }
+    },
+    {
+      "name": "submissionReason",
+      "label": "Skattemeldingen sendes inn for",
+      "type": "enum",
+      "required": true,
+      "description": "Which of the form's three stated submission scenarios applies: a deceased person's estate (Dødsbo), a foreign worker with a temporary work stay in Norway (Utenlandsk arbeidstaker), or another reason not otherwise listed (Annet).",
+      "sourceRef": "Section \"Skattemeldingen gjelder for\" — \"Skattemeldingen sendes inn for\"",
+      "validation": {
+        "enum": [
+          "Dødsbo",
+          "Utenlandsk arbeidstaker",
+          "Annet"
+        ]
+      }
+    },
+    {
+      "name": "requiresAdvanceAssessment",
+      "label": "Krever forhåndsfastsetting",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer is requesting forhåndsfastsetting (an advance/early tax assessment before the ordinary annual cycle), rather than filing this as an ordinary substitute for a pre-filled return.",
+      "sourceRef": "Section \"Skattemeldingen gjelder for\" — \"Krever forhåndsfastsetting\""
+    },
+    {
+      "name": "foreignWorkerAddressAbroad",
+      "label": "Adresse i utlandet",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The foreign worker's home address abroad. Per the form's own guidance (page 3), this section and the fields below are relevant only when Utenlandsk arbeidstaker was selected above and forhåndsfastsetting is being requested for a temporary work stay in Norway that has ended.",
+      "sourceRef": "Section \"Om utenlandsk arbeidstaker\" — \"Adresse i utlandet\"",
+      "validation": {
+        "maxLength": 300
+      },
+      "visibleWhen": {
+        "field": "submissionReason",
+        "equals": "Utenlandsk arbeidstaker"
+      }
+    },
+    {
+      "name": "foreignWorkerNorwayMunicipality",
+      "label": "Kommune man har oppholdt seg i Norge",
+      "type": "string",
+      "required": false,
+      "description": "The Norwegian municipality (kommune) where the foreign worker stayed during the work period being reported.",
+      "sourceRef": "Section \"Om utenlandsk arbeidstaker\" — \"Kommune man har oppholdt seg i Norge\"",
+      "validation": {
+        "maxLength": 200
+      },
+      "visibleWhen": {
+        "field": "submissionReason",
+        "equals": "Utenlandsk arbeidstaker"
+      }
+    },
+    {
+      "name": "foreignWorkerDaysInNorway",
+      "label": "Antall dager i Norge",
+      "type": "integer",
+      "required": false,
+      "description": "The number of days the foreign worker stayed in Norway during the period being reported.",
+      "sourceRef": "Section \"Om utenlandsk arbeidstaker\" — \"Antall dager i Norge\"",
+      "validation": {
+        "minimum": 0,
+        "maximum": 366
+      },
+      "visibleWhen": {
+        "field": "submissionReason",
+        "equals": "Utenlandsk arbeidstaker"
+      }
+    },
+    {
+      "name": "foreignWorkerSocialSecurityExemption",
+      "label": "Fritak for trygdeavgift",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the foreign worker is claiming exemption from trygdeavgift (Norwegian social security contribution).",
+      "sourceRef": "Section \"Om utenlandsk arbeidstaker\" — \"Fritak for trygdeavgift\"",
+      "visibleWhen": {
+        "field": "submissionReason",
+        "equals": "Utenlandsk arbeidstaker"
+      }
+    },
+    {
+      "name": "foreignWorkerStandardDeduction10Percent",
+      "label": "Krever 10% standardfradrag",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the foreign worker is claiming the 10% standard deduction available to certain foreign workers in lieu of itemized deductions.",
+      "sourceRef": "Section \"Om utenlandsk arbeidstaker\" — \"Krever 10% standardfradrag\"",
+      "visibleWhen": {
+        "field": "submissionReason",
+        "equals": "Utenlandsk arbeidstaker"
+      }
+    },
+    {
+      "name": "foreignWorkerWorkedAtSeaOrShelf",
+      "label": "Arbeidet på sjø/sokkel",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the foreign worker's work was performed at sea or on the continental shelf (offshore), which carries its own day-count reporting requirement below.",
+      "sourceRef": "Section \"Om utenlandsk arbeidstaker\" — \"Arbeidet på sjø/sokkel\"",
+      "visibleWhen": {
+        "field": "submissionReason",
+        "equals": "Utenlandsk arbeidstaker"
+      }
+    },
+    {
+      "name": "foreignWorkerDaysAtSeaOrShelf",
+      "label": "Antall dager sjø/sokkel",
+      "type": "integer",
+      "required": false,
+      "description": "The number of days the foreign worker worked at sea or on the continental shelf, required whenever the box above is answered Ja.",
+      "sourceRef": "Section \"Om utenlandsk arbeidstaker\" — \"Antall dager sjø/sokkel\"",
+      "validation": {
+        "minimum": 0,
+        "maximum": 366
+      },
+      "visibleWhen": {
+        "field": "submissionReason",
+        "equals": "Utenlandsk arbeidstaker"
+      },
+      "requiredWhen": {
+        "field": "foreignWorkerWorkedAtSeaOrShelf",
+        "equals": true
+      }
+    },
+    {
+      "name": "wage1Employer",
+      "label": "Arbeidsgiver",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Lønn mv\" (wages etc.) table: the employer's name.",
+      "sourceRef": "Section \"Lønn mv\" — row 1, \"Arbeidsgiver\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "wage1Period",
+      "label": "Periode (fra/til)",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Lønn mv\" table: the employment period this wage income covers, as free text (from/to dates as printed on the form).",
+      "sourceRef": "Section \"Lønn mv\" — row 1, \"Periode (fra/til)\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "wage1Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 1 of up to 3 in the \"Lønn mv\" table: the wage amount in NOK for this employer/period.",
+      "sourceRef": "Section \"Lønn mv\" — row 1, \"Beløp\""
+    },
+    {
+      "name": "wage2Employer",
+      "label": "Arbeidsgiver",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Lønn mv\" (wages etc.) table: the employer's name.",
+      "sourceRef": "Section \"Lønn mv\" — row 2, \"Arbeidsgiver\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "wage2Period",
+      "label": "Periode (fra/til)",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Lønn mv\" table: the employment period this wage income covers, as free text (from/to dates as printed on the form).",
+      "sourceRef": "Section \"Lønn mv\" — row 2, \"Periode (fra/til)\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "wage2Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 2 of up to 3 in the \"Lønn mv\" table: the wage amount in NOK for this employer/period.",
+      "sourceRef": "Section \"Lønn mv\" — row 2, \"Beløp\""
+    },
+    {
+      "name": "wage3Employer",
+      "label": "Arbeidsgiver",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Lønn mv\" (wages etc.) table: the employer's name.",
+      "sourceRef": "Section \"Lønn mv\" — row 3, \"Arbeidsgiver\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "wage3Period",
+      "label": "Periode (fra/til)",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Lønn mv\" table: the employment period this wage income covers, as free text (from/to dates as printed on the form).",
+      "sourceRef": "Section \"Lønn mv\" — row 3, \"Periode (fra/til)\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "wage3Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 3 of up to 3 in the \"Lønn mv\" table: the wage amount in NOK for this employer/period.",
+      "sourceRef": "Section \"Lønn mv\" — row 3, \"Beløp\""
+    },
+    {
+      "name": "pension1Payer",
+      "label": "Utbetaler",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Pensjon\" table: the name of the payer of this pension.",
+      "sourceRef": "Section \"Pensjon\" — row 1, \"Utbetaler\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "pension1Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 1 of up to 3 in the \"Pensjon\" table: the pension amount in NOK.",
+      "sourceRef": "Section \"Pensjon\" — row 1, \"Beløp\""
+    },
+    {
+      "name": "pension1Type",
+      "label": "Pensjonstype",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Pensjon\" table: the type of pension (e.g. retirement, disability).",
+      "sourceRef": "Section \"Pensjon\" — row 1, \"Pensjonstype\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "pension1Grade",
+      "label": "Pensjonsgrad",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Pensjon\" table: the pension grade/percentage (e.g. a partial-disability pension rate).",
+      "sourceRef": "Section \"Pensjon\" — row 1, \"Pensjonsgrad\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "pension1Period",
+      "label": "Tidsrom",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Pensjon\" table: the period this pension payment covers, as free text.",
+      "sourceRef": "Section \"Pensjon\" — row 1, \"Tidsrom\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "pension2Payer",
+      "label": "Utbetaler",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Pensjon\" table: the name of the payer of this pension.",
+      "sourceRef": "Section \"Pensjon\" — row 2, \"Utbetaler\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "pension2Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 2 of up to 3 in the \"Pensjon\" table: the pension amount in NOK.",
+      "sourceRef": "Section \"Pensjon\" — row 2, \"Beløp\""
+    },
+    {
+      "name": "pension2Type",
+      "label": "Pensjonstype",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Pensjon\" table: the type of pension (e.g. retirement, disability).",
+      "sourceRef": "Section \"Pensjon\" — row 2, \"Pensjonstype\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "pension2Grade",
+      "label": "Pensjonsgrad",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Pensjon\" table: the pension grade/percentage (e.g. a partial-disability pension rate).",
+      "sourceRef": "Section \"Pensjon\" — row 2, \"Pensjonsgrad\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "pension2Period",
+      "label": "Tidsrom",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Pensjon\" table: the period this pension payment covers, as free text.",
+      "sourceRef": "Section \"Pensjon\" — row 2, \"Tidsrom\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "pension3Payer",
+      "label": "Utbetaler",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Pensjon\" table: the name of the payer of this pension.",
+      "sourceRef": "Section \"Pensjon\" — row 3, \"Utbetaler\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "pension3Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 3 of up to 3 in the \"Pensjon\" table: the pension amount in NOK.",
+      "sourceRef": "Section \"Pensjon\" — row 3, \"Beløp\""
+    },
+    {
+      "name": "pension3Type",
+      "label": "Pensjonstype",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Pensjon\" table: the type of pension (e.g. retirement, disability).",
+      "sourceRef": "Section \"Pensjon\" — row 3, \"Pensjonstype\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "pension3Grade",
+      "label": "Pensjonsgrad",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Pensjon\" table: the pension grade/percentage (e.g. a partial-disability pension rate).",
+      "sourceRef": "Section \"Pensjon\" — row 3, \"Pensjonsgrad\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "pension3Period",
+      "label": "Tidsrom",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Pensjon\" table: the period this pension payment covers, as free text.",
+      "sourceRef": "Section \"Pensjon\" — row 3, \"Tidsrom\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "claimsMinimumDeduction",
+      "label": "Krever minstefradrag",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the taxpayer is claiming minstefradrag (the standard minimum deduction against employment/pension income). The form notes the deduction amount itself is calculated automatically, so only the yes/no claim is an applicant-entered field.",
+      "sourceRef": "Section \"Minstefradrag\" — \"Krever minstefradrag\""
+    },
+    {
+      "name": "travelExpenses",
+      "label": "Reiseutgifter (beløp)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Deductible travel expenses (commuting costs) in NOK.",
+      "sourceRef": "Unlabeled section below \"Minstefradrag\" — \"Reiseutgifter (beløp)\""
+    },
+    {
+      "name": "commuterAccommodationExpenses",
+      "label": "Merkostnader ved pendleropphold (beløp)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Additional deductible living costs incurred while staying away from home as a commuter (pendler), in NOK.",
+      "sourceRef": "Unlabeled section below \"Minstefradrag\" — \"Merkostnader ved pendleropphold (beløp)\""
+    },
+    {
+      "name": "otherWorkDeduction1Description",
+      "label": "Beskrivelse",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Andre fradrag knyttet til arbeid/øvrige fradrag\" (other work-related/other deductions) table: a free-text description of the deduction claimed.",
+      "sourceRef": "Section \"Andre fradrag knyttet til arbeid/øvrige fradrag\" — row 1, \"Beskrivelse\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "otherWorkDeduction1Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 1 of up to 3 in the \"Andre fradrag knyttet til arbeid/øvrige fradrag\" table: the deduction amount in NOK.",
+      "sourceRef": "Section \"Andre fradrag knyttet til arbeid/øvrige fradrag\" — row 1, \"Beløp\""
+    },
+    {
+      "name": "otherWorkDeduction2Description",
+      "label": "Beskrivelse",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Andre fradrag knyttet til arbeid/øvrige fradrag\" (other work-related/other deductions) table: a free-text description of the deduction claimed.",
+      "sourceRef": "Section \"Andre fradrag knyttet til arbeid/øvrige fradrag\" — row 2, \"Beskrivelse\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "otherWorkDeduction2Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 2 of up to 3 in the \"Andre fradrag knyttet til arbeid/øvrige fradrag\" table: the deduction amount in NOK.",
+      "sourceRef": "Section \"Andre fradrag knyttet til arbeid/øvrige fradrag\" — row 2, \"Beløp\""
+    },
+    {
+      "name": "otherWorkDeduction3Description",
+      "label": "Beskrivelse",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Andre fradrag knyttet til arbeid/øvrige fradrag\" (other work-related/other deductions) table: a free-text description of the deduction claimed.",
+      "sourceRef": "Section \"Andre fradrag knyttet til arbeid/øvrige fradrag\" — row 3, \"Beskrivelse\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "otherWorkDeduction3Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 3 of up to 3 in the \"Andre fradrag knyttet til arbeid/øvrige fradrag\" table: the deduction amount in NOK.",
+      "sourceRef": "Section \"Andre fradrag knyttet til arbeid/øvrige fradrag\" — row 3, \"Beløp\""
+    },
+    {
+      "name": "businessType",
+      "label": "Næringstype",
+      "type": "string",
+      "required": false,
+      "description": "The type of self-employment/business activity generating the income reported below.",
+      "sourceRef": "Section \"Næringsinntekt\" — \"Næringstype\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "businessIncome",
+      "label": "Inntekter",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Gross business/self-employment income in NOK.",
+      "sourceRef": "Section \"Næringsinntekt\" — \"Inntekter\""
+    },
+    {
+      "name": "businessCosts",
+      "label": "Kostnader",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Business/self-employment costs in NOK.",
+      "sourceRef": "Section \"Næringsinntekt\" — \"Kostnader\""
+    },
+    {
+      "name": "businessNetIncome",
+      "label": "Næringsinntekt (inntekt - kostnad)",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Net business/self-employment income in NOK (income minus costs), as the form's own label states.",
+      "sourceRef": "Section \"Næringsinntekt\" — \"Næringsinntekt (inntekt - kostnad)\""
+    },
+    {
+      "name": "bank1Name",
+      "label": "Bankens navn",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Bank\" table: the name of the bank.",
+      "sourceRef": "Section \"Bank\" — row 1, \"Bankens navn\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "bank1DepositsOrDebt",
+      "label": "Innskudd/gjeld",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 1 of up to 3 in the \"Bank\" table: the account balance in NOK, as a deposit (asset) or debt (liability).",
+      "sourceRef": "Section \"Bank\" — row 1, \"Innskudd/gjeld\""
+    },
+    {
+      "name": "bank1InterestIncomeOrExpense",
+      "label": "Renteinntekter/rentekostnader",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 1 of up to 3 in the \"Bank\" table: interest income or interest expense in NOK for this account.",
+      "sourceRef": "Section \"Bank\" — row 1, \"Renteinntekter/rentekostnader\""
+    },
+    {
+      "name": "bank2Name",
+      "label": "Bankens navn",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Bank\" table: the name of the bank.",
+      "sourceRef": "Section \"Bank\" — row 2, \"Bankens navn\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "bank2DepositsOrDebt",
+      "label": "Innskudd/gjeld",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 2 of up to 3 in the \"Bank\" table: the account balance in NOK, as a deposit (asset) or debt (liability).",
+      "sourceRef": "Section \"Bank\" — row 2, \"Innskudd/gjeld\""
+    },
+    {
+      "name": "bank2InterestIncomeOrExpense",
+      "label": "Renteinntekter/rentekostnader",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 2 of up to 3 in the \"Bank\" table: interest income or interest expense in NOK for this account.",
+      "sourceRef": "Section \"Bank\" — row 2, \"Renteinntekter/rentekostnader\""
+    },
+    {
+      "name": "bank3Name",
+      "label": "Bankens navn",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Bank\" table: the name of the bank.",
+      "sourceRef": "Section \"Bank\" — row 3, \"Bankens navn\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "bank3DepositsOrDebt",
+      "label": "Innskudd/gjeld",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 3 of up to 3 in the \"Bank\" table: the account balance in NOK, as a deposit (asset) or debt (liability).",
+      "sourceRef": "Section \"Bank\" — row 3, \"Innskudd/gjeld\""
+    },
+    {
+      "name": "bank3InterestIncomeOrExpense",
+      "label": "Renteinntekter/rentekostnader",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 3 of up to 3 in the \"Bank\" table: interest income or interest expense in NOK for this account.",
+      "sourceRef": "Section \"Bank\" — row 3, \"Renteinntekter/rentekostnader\""
+    },
+    {
+      "name": "financial1Description",
+      "label": "Beskrivelse av hva (aksjer, fond etc)",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Finans\" table: a free-text description of the financial holding (e.g. shares, fund units).",
+      "sourceRef": "Section \"Finans\" — row 1, \"Beskrivelse av hva (aksjer, fond etc)\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "financial1ValueAtYearEnd",
+      "label": "Verdi ved utgangen av året",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 1 of up to 3 in the \"Finans\" table: the holding's value in NOK at year end.",
+      "sourceRef": "Section \"Finans\" — row 1, \"Verdi ved utgangen av året\""
+    },
+    {
+      "name": "financial1GainDuringYear",
+      "label": "Gevinst gjennom året",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 1 of up to 3 in the \"Finans\" table: realized gain in NOK during the year.",
+      "sourceRef": "Section \"Finans\" — row 1, \"Gevinst gjennom året\""
+    },
+    {
+      "name": "financial1LossDuringYear",
+      "label": "Tap gjennom året",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 1 of up to 3 in the \"Finans\" table: realized loss in NOK during the year.",
+      "sourceRef": "Section \"Finans\" — row 1, \"Tap gjennom året\""
+    },
+    {
+      "name": "financial1DividendDuringYear",
+      "label": "Utbytte gjennom året",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 1 of up to 3 in the \"Finans\" table: dividend income in NOK received during the year.",
+      "sourceRef": "Section \"Finans\" — row 1, \"Utbytte gjennom året\""
+    },
+    {
+      "name": "financial2Description",
+      "label": "Beskrivelse av hva (aksjer, fond etc)",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Finans\" table: a free-text description of the financial holding (e.g. shares, fund units).",
+      "sourceRef": "Section \"Finans\" — row 2, \"Beskrivelse av hva (aksjer, fond etc)\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "financial2ValueAtYearEnd",
+      "label": "Verdi ved utgangen av året",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 2 of up to 3 in the \"Finans\" table: the holding's value in NOK at year end.",
+      "sourceRef": "Section \"Finans\" — row 2, \"Verdi ved utgangen av året\""
+    },
+    {
+      "name": "financial2GainDuringYear",
+      "label": "Gevinst gjennom året",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 2 of up to 3 in the \"Finans\" table: realized gain in NOK during the year.",
+      "sourceRef": "Section \"Finans\" — row 2, \"Gevinst gjennom året\""
+    },
+    {
+      "name": "financial2LossDuringYear",
+      "label": "Tap gjennom året",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 2 of up to 3 in the \"Finans\" table: realized loss in NOK during the year.",
+      "sourceRef": "Section \"Finans\" — row 2, \"Tap gjennom året\""
+    },
+    {
+      "name": "financial2DividendDuringYear",
+      "label": "Utbytte gjennom året",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 2 of up to 3 in the \"Finans\" table: dividend income in NOK received during the year.",
+      "sourceRef": "Section \"Finans\" — row 2, \"Utbytte gjennom året\""
+    },
+    {
+      "name": "financial3Description",
+      "label": "Beskrivelse av hva (aksjer, fond etc)",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Finans\" table: a free-text description of the financial holding (e.g. shares, fund units).",
+      "sourceRef": "Section \"Finans\" — row 3, \"Beskrivelse av hva (aksjer, fond etc)\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "financial3ValueAtYearEnd",
+      "label": "Verdi ved utgangen av året",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 3 of up to 3 in the \"Finans\" table: the holding's value in NOK at year end.",
+      "sourceRef": "Section \"Finans\" — row 3, \"Verdi ved utgangen av året\""
+    },
+    {
+      "name": "financial3GainDuringYear",
+      "label": "Gevinst gjennom året",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 3 of up to 3 in the \"Finans\" table: realized gain in NOK during the year.",
+      "sourceRef": "Section \"Finans\" — row 3, \"Gevinst gjennom året\""
+    },
+    {
+      "name": "financial3LossDuringYear",
+      "label": "Tap gjennom året",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 3 of up to 3 in the \"Finans\" table: realized loss in NOK during the year.",
+      "sourceRef": "Section \"Finans\" — row 3, \"Tap gjennom året\""
+    },
+    {
+      "name": "financial3DividendDuringYear",
+      "label": "Utbytte gjennom året",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 3 of up to 3 in the \"Finans\" table: dividend income in NOK received during the year.",
+      "sourceRef": "Section \"Finans\" — row 3, \"Utbytte gjennom året\""
+    },
+    {
+      "name": "property1AddressInfo",
+      "label": "Adresseopplysninger",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Row 1 of up to 3 in the \"Eiendom\" (real property) table: the property's address.",
+      "sourceRef": "Section \"Eiendom\" — row 1, \"Adresseopplysninger\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "property1KNr",
+      "label": "K.nr.",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Eiendom\" table: the property's kommunenummer (municipality number), part of the Norwegian matrikkel (cadastre) identifier.",
+      "sourceRef": "Section \"Eiendom\" — row 1, \"K.nr.\"",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "property1GNr",
+      "label": "G.nr.",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Eiendom\" table: the property's gårdsnummer (farm/holding number), part of the matrikkel identifier.",
+      "sourceRef": "Section \"Eiendom\" — row 1, \"G.nr.\"",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "property1BNr",
+      "label": "B.nr.",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Eiendom\" table: the property's bruksnummer (usage number), part of the matrikkel identifier.",
+      "sourceRef": "Section \"Eiendom\" — row 1, \"B.nr.\"",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "property1SNrFNr",
+      "label": "S.nr. / F.nr.",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Eiendom\" table: the property's seksjonsnummer (section number, for a sectioned condominium unit) or festenummer (leasehold number), whichever applies.",
+      "sourceRef": "Section \"Eiendom\" — row 1, \"S.nr. / F.nr.\"",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "property1Type",
+      "label": "Type eiendom",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Eiendom\" table: the type of property (e.g. primary residence, secondary residence, holiday home, rental).",
+      "sourceRef": "Section \"Eiendom\" — row 1, \"Type eiendom\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "property1WealthValueShare",
+      "label": "Formuesverdi på andel",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 1 of up to 3 in the \"Eiendom\" table: the taxpayer's share of the property's formuesverdi (assessed wealth-tax value) in NOK.",
+      "sourceRef": "Section \"Eiendom\" — row 1, \"Formuesverdi på andel\""
+    },
+    {
+      "name": "property2AddressInfo",
+      "label": "Adresseopplysninger",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Row 2 of up to 3 in the \"Eiendom\" (real property) table: the property's address.",
+      "sourceRef": "Section \"Eiendom\" — row 2, \"Adresseopplysninger\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "property2KNr",
+      "label": "K.nr.",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Eiendom\" table: the property's kommunenummer (municipality number), part of the Norwegian matrikkel (cadastre) identifier.",
+      "sourceRef": "Section \"Eiendom\" — row 2, \"K.nr.\"",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "property2GNr",
+      "label": "G.nr.",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Eiendom\" table: the property's gårdsnummer (farm/holding number), part of the matrikkel identifier.",
+      "sourceRef": "Section \"Eiendom\" — row 2, \"G.nr.\"",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "property2BNr",
+      "label": "B.nr.",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Eiendom\" table: the property's bruksnummer (usage number), part of the matrikkel identifier.",
+      "sourceRef": "Section \"Eiendom\" — row 2, \"B.nr.\"",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "property2SNrFNr",
+      "label": "S.nr. / F.nr.",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Eiendom\" table: the property's seksjonsnummer (section number, for a sectioned condominium unit) or festenummer (leasehold number), whichever applies.",
+      "sourceRef": "Section \"Eiendom\" — row 2, \"S.nr. / F.nr.\"",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "property2Type",
+      "label": "Type eiendom",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Eiendom\" table: the type of property (e.g. primary residence, secondary residence, holiday home, rental).",
+      "sourceRef": "Section \"Eiendom\" — row 2, \"Type eiendom\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "property2WealthValueShare",
+      "label": "Formuesverdi på andel",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 2 of up to 3 in the \"Eiendom\" table: the taxpayer's share of the property's formuesverdi (assessed wealth-tax value) in NOK.",
+      "sourceRef": "Section \"Eiendom\" — row 2, \"Formuesverdi på andel\""
+    },
+    {
+      "name": "property3AddressInfo",
+      "label": "Adresseopplysninger",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Row 3 of up to 3 in the \"Eiendom\" (real property) table: the property's address.",
+      "sourceRef": "Section \"Eiendom\" — row 3, \"Adresseopplysninger\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "property3KNr",
+      "label": "K.nr.",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Eiendom\" table: the property's kommunenummer (municipality number), part of the Norwegian matrikkel (cadastre) identifier.",
+      "sourceRef": "Section \"Eiendom\" — row 3, \"K.nr.\"",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "property3GNr",
+      "label": "G.nr.",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Eiendom\" table: the property's gårdsnummer (farm/holding number), part of the matrikkel identifier.",
+      "sourceRef": "Section \"Eiendom\" — row 3, \"G.nr.\"",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "property3BNr",
+      "label": "B.nr.",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Eiendom\" table: the property's bruksnummer (usage number), part of the matrikkel identifier.",
+      "sourceRef": "Section \"Eiendom\" — row 3, \"B.nr.\"",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "property3SNrFNr",
+      "label": "S.nr. / F.nr.",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Eiendom\" table: the property's seksjonsnummer (section number, for a sectioned condominium unit) or festenummer (leasehold number), whichever applies.",
+      "sourceRef": "Section \"Eiendom\" — row 3, \"S.nr. / F.nr.\"",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "property3Type",
+      "label": "Type eiendom",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Eiendom\" table: the type of property (e.g. primary residence, secondary residence, holiday home, rental).",
+      "sourceRef": "Section \"Eiendom\" — row 3, \"Type eiendom\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "property3WealthValueShare",
+      "label": "Formuesverdi på andel",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 3 of up to 3 in the \"Eiendom\" table: the taxpayer's share of the property's formuesverdi (assessed wealth-tax value) in NOK.",
+      "sourceRef": "Section \"Eiendom\" — row 3, \"Formuesverdi på andel\""
+    },
+    {
+      "name": "otherAssets1Description",
+      "label": "Beskrivelse",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Annen formue\" (other assets/wealth) table: a free-text description of the asset.",
+      "sourceRef": "Section \"Annen formue\" — row 1, \"Beskrivelse\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "otherAssets1Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 1 of up to 3 in the \"Annen formue\" table: the asset's value in NOK.",
+      "sourceRef": "Section \"Annen formue\" — row 1, \"Beløp\""
+    },
+    {
+      "name": "otherAssets2Description",
+      "label": "Beskrivelse",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Annen formue\" (other assets/wealth) table: a free-text description of the asset.",
+      "sourceRef": "Section \"Annen formue\" — row 2, \"Beskrivelse\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "otherAssets2Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 2 of up to 3 in the \"Annen formue\" table: the asset's value in NOK.",
+      "sourceRef": "Section \"Annen formue\" — row 2, \"Beløp\""
+    },
+    {
+      "name": "otherAssets3Description",
+      "label": "Beskrivelse",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Annen formue\" (other assets/wealth) table: a free-text description of the asset.",
+      "sourceRef": "Section \"Annen formue\" — row 3, \"Beskrivelse\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "otherAssets3Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 3 of up to 3 in the \"Annen formue\" table: the asset's value in NOK.",
+      "sourceRef": "Section \"Annen formue\" — row 3, \"Beløp\""
+    },
+    {
+      "name": "otherIncome1Description",
+      "label": "Beskrivelse",
+      "type": "string",
+      "required": false,
+      "description": "Row 1 of up to 3 in the \"Andre inntekter\" (other income) table: a free-text description of the income.",
+      "sourceRef": "Section \"Andre inntekter\" — row 1, \"Beskrivelse\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "otherIncome1Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 1 of up to 3 in the \"Andre inntekter\" table: the income amount in NOK.",
+      "sourceRef": "Section \"Andre inntekter\" — row 1, \"Beløp\""
+    },
+    {
+      "name": "otherIncome2Description",
+      "label": "Beskrivelse",
+      "type": "string",
+      "required": false,
+      "description": "Row 2 of up to 3 in the \"Andre inntekter\" (other income) table: a free-text description of the income.",
+      "sourceRef": "Section \"Andre inntekter\" — row 2, \"Beskrivelse\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "otherIncome2Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 2 of up to 3 in the \"Andre inntekter\" table: the income amount in NOK.",
+      "sourceRef": "Section \"Andre inntekter\" — row 2, \"Beløp\""
+    },
+    {
+      "name": "otherIncome3Description",
+      "label": "Beskrivelse",
+      "type": "string",
+      "required": false,
+      "description": "Row 3 of up to 3 in the \"Andre inntekter\" (other income) table: a free-text description of the income.",
+      "sourceRef": "Section \"Andre inntekter\" — row 3, \"Beskrivelse\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "otherIncome3Amount",
+      "label": "Beløp",
+      "type": "number",
+      "required": false,
+      "classification": "financial",
+      "description": "Row 3 of up to 3 in the \"Andre inntekter\" table: the income amount in NOK.",
+      "sourceRef": "Section \"Andre inntekter\" — row 3, \"Beløp\""
+    },
+    {
+      "name": "submitterFullName",
+      "label": "Navn",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The full name of the person submitting the return, if different from the taxpayer (e.g. an heir filing on behalf of a deceased person's estate, or a representative).",
+      "sourceRef": "Section \"Innsendt av\" — \"Navn\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "submitterNationalId",
+      "label": "Fødselsnummer/D-nummer",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The submitter's 11-digit Norwegian fødselsnummer or D-nummer.",
+      "sourceRef": "Section \"Innsendt av\" — \"Fødselsnummer/D-nummer\"",
+      "validation": {
+        "pattern": "^[0-9]{11}$"
+      }
+    },
+    {
+      "name": "submitterAddress",
+      "label": "Adresse",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The submitter's mailing address.",
+      "sourceRef": "Section \"Innsendt av\" — \"Adresse\"",
+      "validation": {
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "submitterEmail",
+      "label": "Epost",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The submitter's email address.",
+      "sourceRef": "Section \"Innsendt av\" — \"Epost\"",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "submitterPhone",
+      "label": "Telefon",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The submitter's telephone number.",
+      "sourceRef": "Section \"Innsendt av\" — \"Telefon\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "signatureDate",
+      "label": "Dato",
+      "type": "date",
+      "required": false,
+      "description": "The date the form is signed. The form's own signature line (\"Signatur\") is a wet-ink signature with no corresponding fillable field, so only the date is modelled, matching this registry's established precedent for flat, non-interactive specimen forms.",
+      "sourceRef": "Section \"Signatur\" — \"Dato\""
+    }
+  ]
+}
