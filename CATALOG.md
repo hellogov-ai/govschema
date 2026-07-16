@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**63 jurisdictions** | **502 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**63 jurisdictions** | **503 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-16, GOV-3305, "GovSchema Standard Research"): Ecuador
 > opens as this registry's 63rd jurisdiction**, via
@@ -47,6 +47,55 @@
 > (National ID) publishes no downloadable static form found in search
 > results — both left as unscreened backlog for a future cycle, not
 > confirmed dead ends. Ecuador now stands at 1 of 6 verticals (Visa).
+
+> **Update (2026-07-16, GOV-3295/GOV-3298, "GovSchema Standard Research"):
+> Rwanda's National ID vertical opens, bringing Rwanda to 5 of 6 verticals**
+> (Passport, DMV, Business Formation, and Visa were already modelled; Taxes
+> remains Rwanda's sole open vertical, re-confirmed a dead end this cycle —
+> RRA's `etax.rra.gov.rw`/`myrra.rra.gov.rw` are login-only for every
+> individual PIT filing category, no PDF return form found), via
+> `rw/irembo/nida-diaspora-application` — NIDA's (National Identification
+> Agency) national-ID application pathway for Rwandan citizens abroad who
+> do not already hold an NPR (National Population Register) number, filed
+> through Irembo, Rwanda's e-government portal. This closes the candidate
+> the prior GOV-3288 cycle had scouted and left as disclosed, ready-to-author
+> backlog (GOV-3295): NIDA's ordinary domestic ID service requires a
+> pre-issued NPR number assigned in person inside Rwanda, a dead end on its
+> own for a diaspora applicant never registered, but this diaspora-specific
+> pathway is a live, unauthenticated Angular wizard. The deep-link URL alone
+> redirects to a generic services page when fetched cold; the live wizard
+> was reached by walking the real UI with Playwright (service catalog →
+> service-selection modal → sub-service picker → "Saba" (Apply)), landing on
+> the cited URL. Every field name is a real Angular `formcontrolname` read
+> directly from the live DOM. Two genuine `requiredWhen`/`visibleWhen`
+> cascades were confirmed live by toggling controls and diffing the
+> resulting form: a birth-country cascade (Rwanda reveals a required
+> district picker; any other country instead reveals a required free-text
+> city field, the same pattern already established for
+> `tz/immigration/passport-application`), and a civil-status cascade
+> (married reveals a required spouse-name field; every non-single status
+> additionally requires a `civilStatusDocument` attachment). Submitting the
+> step blank produced live "this field is required" validation text for
+> every asterisked field. The passport-photo upload was confirmed to run
+> genuine server-side photo-quality validation — a synthetic solid-colour
+> JPEG was accepted for two plain identity-document-copy uploads but
+> rejected specifically for the photo upload with a live error describing
+> the required composition — and this gate is why the session stopped at
+> step 1 of 3 rather than advancing into the Summary/Payment steps,
+> disclosed as an accepted scope boundary rather than silently omitted.
+> Models 25 `fields[]` and 5 `documents[]`. 2 valid conformance fixtures (0
+> errors each, covering both birth-country branches and both civil-status
+> branches) plus 8 mutation-control fixtures (each raising exactly 1 error,
+> including three distinct `requiredWhen` violations and one
+> document-level `requiredWhen` violation) are committed under
+> `conformance/rw/irembo/nida-diaspora-application/1.0.0/`. Both validators
+> pass at 502/502. This research cycle's background-agent authoring runs
+> crashed twice consecutively on infrastructure grounds (the hosting
+> process exited mid-run before a single commit landed each time); rather
+> than retry a third background attempt, the schema was authored directly
+> in-session instead. See the National ID & Civic Documents vertical
+> section below and the document's own VERIFICATION.md for the full
+> sourcing record.
 
 > **Update (2026-07-16, GOV-3293/GOV-3298, "GovSchema Standard Research"):
 > Switzerland's Business Formation vertical opens, bringing Switzerland to
@@ -10967,7 +11016,7 @@
 
 ## By Vertical
 
-### Passport (47/62 jurisdictions — 76%)
+### Passport (47/63 jurisdictions — 75%)
 
 > **Correction (GOV-3281):** numerator updated from 46 to 47 following
 > Tanzania's Passport vertical opening via
@@ -11444,7 +11493,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (55/62 jurisdictions — 89%)
+### DMV — Vehicle Registration, Licensing, Permits (55/63 jurisdictions — 87%)
 
 > **Update (2026-07-16, GOV-3248, scouted from GOV-3246, "GovSchema
 > Standard Research"): Slovenia's DMV vertical opens**, via
@@ -12000,7 +12049,7 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (60/62 jurisdictions — 97%)
+### Business Formation — Incorporation, LLC, Company Registration (60/63 jurisdictions — 95%)
 
 > **Update (2026-07-16, GOV-3293/GOV-3298, "GovSchema Standard Research"):
 > Switzerland opens this vertical**, via
@@ -12914,7 +12963,12 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (58/62 jurisdictions — 94%)
+### Taxes — Income Tax Return, Tax Filing (57/63 jurisdictions — 90%)
+
+> **Correction (GOV-3309 review gate):** numerator corrected from a stale
+> 58 to 57, recounted directly from the By-Jurisdiction table's Taxes
+> column (denominator also updated from 62 to 63 following Ecuador's
+> opening as the registry's 63rd jurisdiction).
 
 > **Update (2026-07-16, GOV-3288, "GovSchema Standard Research"): Norway's
 > Taxes vertical opens, bringing Norway to 5 of 6 verticals**, via
@@ -14064,7 +14118,20 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (51/62 jurisdictions — 82%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (53/63 jurisdictions — 84%)
+
+> **Update (2026-07-16, GOV-3305, "GovSchema Standard Research"): Ecuador
+> opens this vertical**, via `ec/cancilleria/formulario-solicitud-visa` —
+> the Ministerio de Relaciones Exteriores y Movilidad Humana's own
+> bilingual "Formulario de Solicitud de Visa". See the Executive Summary's
+> GOV-3305 update above and the document's own VERIFICATION.md for the
+> full sourcing record.
+>
+> **Correction (GOV-3309 review gate):** numerator also corrected from a
+> stale 51 to 53 (52 pre-Ecuador + Ecuador's own addition), recounted
+> directly from the By-Jurisdiction table's Visa column; the prior 51 had
+> drifted stale by one jurisdiction's opening that went unreflected here in
+> an earlier cycle. Denominator updated from 62 to 63.
 
 **Nepal's Visa vertical opens, bringing Nepal to 4 of 6 verticals
 (GOV-3237)**, via `np/doi/residential-visa-application` — the Department of
@@ -14720,7 +14787,18 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (47/62 jurisdictions — 76%)
+### National ID & Civic Documents (48/63 jurisdictions — 76%)
+
+> **Update (2026-07-16, GOV-3295/GOV-3298, "GovSchema Standard Research"):
+> Rwanda opens this vertical**, via `rw/irembo/nida-diaspora-application` —
+> NIDA's diaspora-without-NPR national-ID application pathway, a live
+> unauthenticated Angular wizard on Irembo. See the Executive Summary's
+> GOV-3295/GOV-3298 update above and the document's own VERIFICATION.md for
+> the full sourcing record, including two live-confirmed `requiredWhen`
+> cascades and a genuine server-side photo-quality validation gate.
+> Denominator unchanged (Rwanda already counted toward the 62-jurisdiction
+> total via Passport/DMV/Business Formation/Visa); numerator updated from
+> 47 to 48.
 
 > **Correction (2026-07-15, GOV-3228):** numerator updated from 46 to 47
 > following Thailand's National ID vertical opening (closing Thailand to
@@ -15411,7 +15489,7 @@ now closed.
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **RO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **RS** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **RW** | 5 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

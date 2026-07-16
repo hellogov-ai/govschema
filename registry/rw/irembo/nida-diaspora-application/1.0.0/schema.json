@@ -1,0 +1,454 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "rw/irembo/nida-diaspora-application",
+  "version": "1.0.0",
+  "title": "Rwanda National ID Application for Diaspora Rwandans Without an NPR Number — Gusaba Indangamuntu ku Banyarwanda baba mu Mahanga Badafite Umubare wa NPR",
+  "description": "The National Identification Agency's (NIDA) national-ID application pathway for Rwandan citizens living abroad who do not already hold an NPR (National Population Register) number, filed through Irembo — Rwanda's e-government service portal. NIDA's ordinary domestic ID application requires a pre-issued NPR number (assigned in person inside Rwanda), which is a dead end on its own for a diaspora applicant who has never been registered; this diaspora-specific pathway is the genuine unauthenticated online alternative. Reached via Irembo's public service catalog (Irembo homepage → Irangamimerere → \"Gusaba Indangamuntu\" → choosing the \"Gusaba indangamuntu ku banyarwanda baba mu mahanga badafite umubare wa NPR\" option from the service's own sub-service picker), the service is a live Angular single-page application with no login required to view or fill the first of its three steps (Dosiye isaba / Incamake / Kwishyura — Application details / Summary / Payment). This schema models the first step, \"Dosiye isaba\" (application details), in full: the applicant's personal details, a birth-country-gated cascade (a Rwandan district picker when the birth country is Rwanda, or a free-text city when it is any other country), passport details gated on whether the applicant holds one, a civil-status-gated spouse-details cascade, parents' details, contact and residence details, and the step's own document checklist (itself gated by civil status). It does not model the second (Incamake/Summary, a read-only review of already-entered data with no new fields) or third (Kwishyura/Payment) steps — GovSchema describes and verifies government processes; it does not submit or pay for them, and no real application was advanced past the first step's document-upload validation in producing this schema. Filing this application is a citizen action performed directly with NIDA through Irembo; this schema does not file the application itself, and the live source (irembo.gov.rw) is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Rwanda, NIDA, or Irembo.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "RW",
+    "level": "national"
+  },
+  "authority": {
+    "name": "National Identification Agency (NIDA), via Irembo (Rwanda's e-government service portal)",
+    "abbreviation": "NIDA",
+    "url": "https://irembo.gov.rw"
+  },
+  "process": {
+    "type": "application",
+    "language": "rw"
+  },
+  "source": {
+    "url": "https://irembo.gov.rw/user/citizen/service/nida/nid_diaspora_without_npr_revamp",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "Irembo's live \"Gusaba indangamuntu ku banyarwanda baba mu mahanga badafite umubare wa NPR\" Angular single-page-application wizard, step 1 of 3 (\"Dosiye isaba\")."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GOV-3295 (\"GovSchema Standard Research\", follow-up to GOV-3288's scouting pass). Opens Rwanda's National ID vertical (5/6; Taxes remains Rwanda's sole open vertical, confirmed a dead end this same research pass — RRA's etax.rra.gov.rw/myrra.rra.gov.rw are login-only for every individual PIT filing category, no PDF return form found). The direct deep-link URL alone redirects to Irembo's generic all-services page (session/referrer-dependent); the live wizard was reached by walking the real UI with Playwright: homepage service catalog → clicking the \"Gusaba Indangamuntu\" service card (an Angular (click) handler, not a plain anchor href) → a service-selection modal exposing an ng-select sub-service picker with three options → selecting \"Gusaba indangamuntu ku banyarwanda baba mu mahanga badafite umubare wa NPR\" → a service-preview panel (processing time 30 minutes, fee RWF 500, 3 required documents) → clicking \"Saba\" (Apply), which lands on the exact URL cited above. Every field name below is a real Angular `formcontrolname` read directly from the live DOM (not inferred from labels alone). Two genuine `requiredWhen` cascades were confirmed live: (1) selecting Rwanda as birth country replaces the free-text city-of-birth field with a required Rwandan district (`Akarere`) picker, while selecting any other country instead shows a required free-text city-of-birth field — the same birth-country-gated cascade pattern already established in this registry's `tz/immigration/passport-application`; (2) selecting a married civil status reveals a required spouse-name field (and an optional spouse-nationality field) not present for any other civil-status value, and independently, every non-single civil status (married, divorced, widower, widow) reveals a required `civilStatusDocument` upload absent for the single/`Ingaragu` value — confirmed by toggling the civil-status selector through all five of its values and diffing the live document checklist each time. The passport-details cascade (`passportNumber`/`passportDateOfIssue`/`passportExpiryDate`/`passportCountryOfIssue`) was confirmed the same way by toggling `havePassportFormControl` between Yego/Oya. Submitting the step with every field empty produced live `mat-error` \"Uyu mwanya ni ngombwa.\" (this field is required) validation text for each of the twelve asterisked fields, independently confirming their required status. The passport-photo upload was confirmed to run genuine server-side face/photo-quality validation (not just file-type/extension checking): a synthetic solid-color JPEG generated with the `sharp` npm package was accepted for the two plain identity-document-copy uploads but rejected specifically for the photo upload with a live Kinyarwanda error explaining the required photo composition (white background, face centered, eyes open and forward-facing) — this genuine gate is why the session was not advanced past step 1 into the Incamake/Kwishyura steps in producing this schema (fabricating a passing photo was out of scope). `civilStatusFormControl`'s five options (Arubatse/Ingaragu/Uwatandukanye n'uwo bashakanye/Umupfakazi(Gabo)/Umupfakazi(Gore)) were read directly from the live dropdown and are modelled as a closed `enum`; `professionFormControl` and the various `locationCountryFormControl` instances are drawn from much larger external reference lists (occupation and country pickers) and are modelled as free-text `string` per this registry's established convention for such large external-list-backed selectors (see e.g. `tz/immigration/passport-application`'s `birthCountry`/`visitCountry`). See VERIFICATION.md for the full field-by-field mapping and disclosed scope boundaries."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "application_details",
+      "title": "Dosiye isaba",
+      "fields": [
+        "applicantSurname",
+        "applicantOtherNames",
+        "dateOfBirth",
+        "birthCountry",
+        "birthDistrict",
+        "birthCity",
+        "gender",
+        "occupation",
+        "heightCm",
+        "hasPassport",
+        "passportNumber",
+        "passportDateOfIssue",
+        "passportExpiryDate",
+        "passportCountryOfIssue",
+        "civilStatus",
+        "spouseNationality",
+        "spouseName",
+        "fatherNationality",
+        "fatherNames",
+        "motherNationality",
+        "motherNames",
+        "phoneNumber",
+        "otherNationality",
+        "countryOfResidence",
+        "cityOfResidence"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "applicantSurname",
+      "label": "Izina",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's surname/family name.",
+      "sourceRef": "step 1 (Dosiye isaba), formControl `surnameFormControl` — live validation: \"Uyu mwanya ni ngombwa.\" (this field is required) when blank",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "applicantOtherNames",
+      "label": "Andi mazina",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's other/given name(s).",
+      "sourceRef": "step 1, formControl `namesFormControl` (Validators.required, live-confirmed)",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Itariki y'amavuko",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's date of birth.",
+      "sourceRef": "step 1, formControl `birthDateFormControl` (Validators.required, live-confirmed)",
+      "validation": {
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      }
+    },
+    {
+      "name": "birthCountry",
+      "label": "Igihugu wavukiyemo",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's country of birth, selected from the live portal's own external country-reference list (confirmed values include RWANDA and UGANDA; not reproduced in full — see VERIFICATION.md). Selecting Rwanda activates the `birthDistrict` cascade below; selecting any other country instead activates the free-text `birthCity`.",
+      "sourceRef": "step 1, formControl `locationCountryFormControl` (1st instance, Validators.required, live-confirmed)"
+    },
+    {
+      "name": "birthDistrict",
+      "label": "Akarere",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "birthCountry",
+        "equals": "RWANDA"
+      },
+      "description": "The Rwandan district (Akarere) of the applicant's birthplace, selected from a live district picker that replaces the free-text city field only when `birthCountry` is Rwanda — confirmed live by toggling the birth-country selector between Rwanda and Uganda and diffing the resulting form controls.",
+      "sourceRef": "step 1, formControl `locationDistrictFormControl` (visible/required only when `locationCountryFormControl` #1 is Rwanda, live-confirmed)"
+    },
+    {
+      "name": "birthCity",
+      "label": "Umujyi w'amavuko",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "birthCountry",
+        "notEquals": "RWANDA"
+      },
+      "description": "The city of the applicant's birthplace, shown and required only when `birthCountry` is any country other than Rwanda (in which case `birthDistrict` above does not apply).",
+      "sourceRef": "step 1, free-text field replacing `locationDistrictFormControl` when the birth country is not Rwanda (live-confirmed with Uganda selected)"
+    },
+    {
+      "name": "gender",
+      "label": "Igitsina",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's gender.",
+      "sourceRef": "step 1, formControl `genderFormControl`, radio options \"Gabo\" (male) / \"Gore\" (female)",
+      "validation": {
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ]
+      }
+    },
+    {
+      "name": "occupation",
+      "label": "Umwuga",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's occupation, selected from the live portal's own large external occupation-reference list (confirmed to include entries such as \"Umukozi wa banki\" (bank employee) and dozens of other occupation-specific entries when searched; not reproduced in full — see VERIFICATION.md).",
+      "sourceRef": "step 1, formControl `professionFormControl` (Validators.required, live-confirmed)"
+    },
+    {
+      "name": "heightCm",
+      "label": "Uburebure(cm)",
+      "type": "integer",
+      "required": true,
+      "description": "The applicant's height in centimetres.",
+      "sourceRef": "step 1, formControl `heightFormControl` (Validators.required, live-confirmed)",
+      "validation": {
+        "minimum": 30,
+        "maximum": 250
+      }
+    },
+    {
+      "name": "hasPassport",
+      "label": "Ufite pasiporo?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the applicant holds a passport. Selecting \"Yego\" (yes) reveals the four required `passport*` fields below; selecting \"Oya\" (no) hides them.",
+      "sourceRef": "step 1, formControl `havePassportFormControl`, radio options \"Yego\"/\"Oya\" (live-confirmed to gate the passport-detail fields)"
+    },
+    {
+      "name": "passportNumber",
+      "label": "Nomero ya pasiporo",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasPassport",
+        "equals": true
+      },
+      "description": "The applicant's passport number.",
+      "sourceRef": "step 1, formControl `passportNumberFormControl` (visible/required only when `hasPassport` is true, live-confirmed)",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "passportDateOfIssue",
+      "label": "Itariki yatangiriweho",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasPassport",
+        "equals": true
+      },
+      "description": "The passport's date of issue.",
+      "sourceRef": "step 1, formControl `dateOfIssueFormControl` (visible/required only when `hasPassport` is true, live-confirmed)",
+      "validation": {
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      }
+    },
+    {
+      "name": "passportExpiryDate",
+      "label": "Itariki uruhushya ruzarangirirwaho",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasPassport",
+        "equals": true
+      },
+      "description": "The passport's expiry date.",
+      "sourceRef": "step 1, formControl `expiryDateFormControl` (visible/required only when `hasPassport` is true, live-confirmed)",
+      "validation": {
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      }
+    },
+    {
+      "name": "passportCountryOfIssue",
+      "label": "Aho yatangiwe",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasPassport",
+        "equals": true
+      },
+      "description": "The country that issued the applicant's passport, from the same external country-reference list as `birthCountry`.",
+      "sourceRef": "step 1, formControl `locationCountryFormControl` (2nd instance, visible/required only when `hasPassport` is true, live-confirmed)"
+    },
+    {
+      "name": "civilStatus",
+      "label": "Irangamimerere",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's civil/marital status. Selecting \"Arubatse\" (married) reveals the required `spouseName` field below; every value other than \"Ingaragu\" (single) additionally requires the `civilStatusDocument` attachment (see `documents[]` below) — both confirmed live by toggling this selector through all five values and diffing the resulting form.",
+      "sourceRef": "step 1, formControl `civilStatusFormControl`, options read directly from the live dropdown",
+      "validation": {
+        "enum": [
+          "MARRIED",
+          "SINGLE",
+          "DIVORCED",
+          "WIDOWER",
+          "WIDOW"
+        ]
+      }
+    },
+    {
+      "name": "spouseNationality",
+      "label": "Ubwenegihugu bw'uwo mwashakanye",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "field": "civilStatus",
+        "equals": "MARRIED"
+      },
+      "description": "The applicant's spouse's nationality, from the same external country-reference list as `birthCountry`. Shown only when `civilStatus` is married; unlike `spouseName`, this field carried no asterisk on the live form and is not required even when shown.",
+      "sourceRef": "step 1, formControl `locationCountryFormControl` (visible only when `civilStatus` is married, live-confirmed)"
+    },
+    {
+      "name": "spouseName",
+      "label": "Amazina y'uwo mwashakanye",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "civilStatus",
+        "equals": "MARRIED"
+      },
+      "classification": "pii",
+      "description": "The applicant's spouse's full name.",
+      "sourceRef": "step 1, formControl visible/required only when `civilStatus` is married (live-confirmed)",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "fatherNationality",
+      "label": "Ubwenegihugu bw' Data",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's father's nationality, from the same external country-reference list as `birthCountry`. Optional — no asterisk on the live form.",
+      "sourceRef": "step 1, formControl `locationCountryFormControl` (3rd instance)"
+    },
+    {
+      "name": "fatherNames",
+      "label": "Amazina ya so",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's father's full name. Optional.",
+      "sourceRef": "step 1, formControl `fatherNamesFormControl`",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "motherNationality",
+      "label": "Ubwenegihugu bw' Mama",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's mother's nationality, from the same external country-reference list as `birthCountry`. Optional.",
+      "sourceRef": "step 1, formControl `locationCountryFormControl` (4th instance)"
+    },
+    {
+      "name": "motherNames",
+      "label": "Amazina ya nyoko",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's mother's full name. Optional.",
+      "sourceRef": "step 1, formControl `motherNamesFormControl`",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Nomero ya telefone yo guhamagara",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's contact phone number, entered via an international phone-number widget defaulting to Rwanda's +250 country code (the applicant, being diaspora-resident, may select a different country code).",
+      "sourceRef": "step 1, formControl `intlPhoneNumberFormControl` (Validators.required, live-confirmed)",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "otherNationality",
+      "label": "Ubundi bwenegihugu",
+      "type": "string",
+      "required": false,
+      "description": "Any additional nationality the applicant holds, from the same external country-reference list as `birthCountry`. Optional.",
+      "sourceRef": "step 1, formControl `locationCountryFormControl` (5th instance)"
+    },
+    {
+      "name": "countryOfResidence",
+      "label": "Igihugu Ubamo",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's current country of residence, from the same external country-reference list as `birthCountry`.",
+      "sourceRef": "step 1, formControl `locationCountryFormControl` (6th instance, Validators.required, live-confirmed)"
+    },
+    {
+      "name": "cityOfResidence",
+      "label": "Umujyi utuyemo",
+      "type": "string",
+      "required": true,
+      "description": "The city where the applicant currently resides.",
+      "sourceRef": "step 1, formControl `cityOfResidenceFormControl` (Validators.required, live-confirmed)",
+      "validation": {
+        "maxLength": 100
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantPhoto",
+      "label": "Ifoto ya pasiporo",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf",
+          "image/jpeg",
+          "image/png"
+        ]
+      },
+      "sourceRef": "step 1 \"Imigereka\" checklist item 1. Server-side validated for genuine photo quality (white background, centered face, open forward-facing eyes) — a synthetic solid-color JPEG was live-rejected here with the error \"Mwihangane, ifoto ya pasipoti mwashyizemo ntago yuzuje ubuziranenge.\" (sorry, the passport photo you submitted does not meet the quality standard), confirmed this session."
+    },
+    {
+      "id": "identityOrTravelDocumentCopy",
+      "label": "Kopi y'icyangombwa",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf",
+          "image/jpeg",
+          "image/png"
+        ]
+      },
+      "sourceRef": "step 1 \"Imigereka\" checklist item 2. Per the checklist's own guidance, ideally an expired Rwandan national ID or a current/expired Rwandan travel document (passport or temporary travel permit) issued by a competent authority; documents issued in Rwanda such as an RSSB card, birth certificate, or old baptism card are also accepted."
+    },
+    {
+      "id": "residenceCountryIdCopy",
+      "label": "Kopi y'inyandiko y'indangamuntu yatanzwe n'igihugu utuyemo",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf",
+          "image/jpeg",
+          "image/png"
+        ]
+      },
+      "sourceRef": "step 1 \"Imigereka\" checklist item 3 — a copy of the ID document issued by the applicant's country of residence. Per the checklist's own guidance, if the applicant lacks a Rwandan identity document, they must instead attach a copy of their foreign birth certificate (naming their Rwandan parent(s)) plus a copy of that parent's ID."
+    },
+    {
+      "id": "civilStatusDocument",
+      "label": "Civil Status document",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "civilStatus",
+        "notEquals": "SINGLE"
+      },
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf",
+          "image/jpeg",
+          "image/png"
+        ]
+      },
+      "sourceRef": "step 1 \"Imigereka\" checklist — this 4th checklist item appears only when `civilStatus` is anything other than single (Ingaragu); live-confirmed by toggling the civil-status selector through all five values (Arubatse/Ingaragu/Uwatandukanye n'uwo bashakanye/Umupfakazi(Gabo)/Umupfakazi(Gore)) and diffing the resulting checklist each time."
+    },
+    {
+      "id": "additionalAttachments",
+      "label": "Imigereka y'inyongera",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "constraints": {
+        "mediaTypes": [
+          "application/pdf",
+          "image/jpeg",
+          "image/png"
+        ]
+      },
+      "sourceRef": "step 1 \"Imigereka\" checklist, final item, explicitly marked optional (\"ni amahitamo y'usaba kuyitanga\")."
+    }
+  ]
+}
