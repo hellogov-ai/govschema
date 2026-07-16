@@ -1,0 +1,618 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "tz/immigration/passport-application",
+  "version": "1.0.0",
+  "title": "Tanzania — Ordinary Passport Application (Idara ya Uhamiaji e-Immigration Portal)",
+  "description": "The Immigration Department's (Idara ya Uhamiaji) online \"Ombi la Pasipoti\" (Passport Application) wizard, served unauthenticated at eservices.immigration.go.tz, for a new (first-time) ordinary passport application by an adult applicant present in mainland Tanzania. Opens Tanzania's Passport vertical, the country's sixth and last modelled vertical (following Business Formation via BRELA Form 14a, National ID via NIDA Form 2A, DMV via TRA Form MV10, Taxes via TRA ITX201.01-E, and Visa via the Washington, D.C. embassy's fillable Visa Application Form) — Tanzania now stands at 6 of 6. This is a live multi-step HTML wizard, not a downloadable PDF/AcroForm: the Immigration Department's own public forms-download page lists no ordinary passport application PDF, and the process is exclusively completed through this e-Immigration portal (see VERIFICATION.md). Models the wizard's six data-collection steps — application setup (type/contact/location), personal information (identity, national ID, photo, date and place of birth), contact and residential address, parents' information, travel purpose, and two emergency/witness contacts — plus its required-attachments checklist. Out of scope: the wizard's own subsequent Declaration (\"Tamko Rasmi\"), Payment (\"Malipo\"), and Complete (\"Kamilika\") steps, which were not walked this cycle to avoid completing a real payment transaction or an unnecessary additional live submission on a production government system (see VERIFICATION.md for what was and was not independently confirmed); the Renewal/electronic-passport, Lost, and Damaged application-type pathways, which the wizard's own first field offers but whose downstream steps were not independently walked (only the New/first-time pathway was); and the wizard's \"Nje ya Nchi (UBALOZINI)\" (abroad/at an embassy) location option, whose downstream steps likely differ from the in-Tanzania pathway modelled here. GovSchema is an independent, non-profit standards body; this document describes the request only, does not submit anything to the Government of Tanzania on an applicant's behalf, and does not imply endorsement by the United Republic of Tanzania or its Immigration Department.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "TZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Immigration Department",
+    "abbreviation": "Immigration",
+    "url": "https://eservices.immigration.go.tz"
+  },
+  "process": {
+    "type": "application",
+    "language": "sw"
+  },
+  "source": {
+    "url": "https://eservices.immigration.go.tz/online/web/passport/apply",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "e-Immigration Portal, \"Ombi la Pasipoti\" (Passport Application) wizard — live server-rendered Yii2 HTML forms, steps apply -> application -> step_one -> step_two -> step_three -> step_four -> step_five -> step_six (Attachments)."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GOV-3281 (\"GovSchema Standard Research\" cycle). Closes Tanzania's Passport vertical, the sole gap left open and explicitly disclosed as unscreened by the prior GOV-3216 cycle (see CATALOG.md's Executive Summary update for that cycle, 'leaving only Passport open for Tanzania'); Tanzania now stands at 6 of 6 verticals. Domestic forms-library screening first confirmed a genuine gap, not a fetch failure: `https://www.immigration.go.tz/index.php/application-and-declaration-forms` lists Citizenship/Naturalization, Visa, Residence Permit, Dependent Pass, and Business Pass PDFs, but no ordinary passport application PDF; Tanzanian consular/embassy sites (checked per this registry's own established consular-form precedent, e.g. this same jurisdiction's own Visa schema) explicitly state passports are lodged at Immigration HQ, a Regional/District Immigration Office, or via this same e-Immigration portal, not issued or form-distributed at missions abroad — two adjacent AcroForm PDFs found on the Washington, D.C. embassy site (`Passport_Change_of_Name_Endorsement.pdf`, `Passport_Child_Endorsement.pdf`) are post-issuance amendment forms, not the ordinary application, and are disclosed as a narrower backlog candidate for a future companion schema rather than modelled here.\n\n**Live wizard walked directly with a real headless-browser session** (Playwright, Chromium, a realistic desktop Chrome User-Agent; `LD_LIBRARY_PATH` pointed at this environment's `/paperclip/chrome-sysroot` libs per this registry's established recipe), since the portal renders every field server-side per step and gates each step behind the previous step's own successful POST — a static fetch cannot see steps beyond the first. `https://eservices.immigration.go.tz/online/web/passport/apply` (step 0, HTTP 200, plain HTML, no login wall) presents a 4-field form (`PassportBasicDetails[ApplicationTypeID/MobileNo/Priority/TerritoryID]`) protected only by an invisible reCAPTCHA v3 (`grecaptcha.execute(..., {action:'apply'})`, auto-resolved client-side with no visible challenge, token silently posted in a hidden field) — no CAPTCHA-solving was attempted or needed. Submitting step 0 with placeholder data (New/Ombi Jipya application type, a placeholder Tanzanian mobile number, in-Tanzania/Mainland location) generates a real `Reference ID` in the Immigration Department's live system as a side effect of the wizard's own design (the portal's guidance page explicitly tells applicants to save this ID to resume later) — this is disclosed rather than concealed: a genuine, if minor, side effect of directly verifying a live government multi-step wizard rather than a downloadable static form, consistent with the same trade-off this registry has already made for `br/tse/requerimento-alistamento-eleitoral` and `si/e-uprava/vloga-za-registracijo-vozila`'s own live-wizard walks. Placeholder/fabricated data only was used throughout (no real applicant PII); the wizard was walked only as far as the Attachments step (see below) and never reached the Payment step, so no real payment was made and no application was actually completed or submitted for processing.\n\n**Steps 1-5, each independently walked and its real server-rendered field set captured from the live HTML** (element `id`/`name` attributes, `<label>` text, `<select>` option lists, and `aria-required`/`required`-class markers, all read directly from `page.content()` after each step's own successful POST advanced the wizard): step_one (`PassportPersonalAndCitizenship[...]`, 'Taarifa Binafsi'/'Utambulisho'/'Tarehe na Mahali pa Kuzaliwa' — name, gender (radio), marital status, occupation, national ID, Zanzibar ID, a genuine mandatory photo upload confirmed only via a live server-side validation error ('Please upload a file.') since the initial markup carries no `required` class on this field, date of birth (day/month/year `<select>` triplets), and a birth-country-gated address cascade); step_two (`PassportContactAndResidentialAddress[...]`, 'Mawasiliano'/'Anuani ya Makazi' — postal address, a second contact mobile number, email, and a Tanzania-region/district/village residential-address cascade); step_three (`PassportParentsInformation[...]`, 'Habari za Wazazis' — full name, date of birth, and birth country for both father and mother, each with its own conditional admin-address cascade mirroring the applicant's own); step_four (`PassportTravelAndGuardian[...]`, 'Habari za Safari' — a single travel-purpose `<select>` with 11 options and a destination-country `<select>`); step_five (`PassportEmergencyAndWitness[...]`, 'Wakati wa Dharura' — two full emergency-contact blocks, each with name/occupation/postal-box/phone/town/street/house-number/relationship). Each step's `SaveNext` submit button was clicked with the wizard's real client-side and server-side validation both engaged (not bypassed), so every field's requiredness below is grounded in an actual observed validation outcome, not inferred from markup alone. A placeholder foreign birth country (Kenya, internal reference-list ID 116) was deliberately chosen for the applicant/father/mother in this cycle's walk-through to avoid triggering Tanzania's own nested Region->District->Ward AJAX cascade for every one of the three separate birth-place blocks in a single session; the **applicant's own** cascade was independently confirmed live, since selecting Tanzania (ID 220) for `BirthCountryID` before submission produced real server-side error messages naming each newly-required field in turn ('Eneo is required.', 'Mkoa is required.', 'Wilaya is required.', 'Kata/Shehia is required.', 'Mtaa/Kijiji is required.') — confirming all five of `birthAdminTerritory`/`birthAdminRegion`/`birthAdminDistrict`/`birthAdminWard`/`birthVillageOrAddressDetail` become required specifically when `birthCountry` is Tanzania, modelled below via `requiredWhen`. The parallel father/mother birth-place-detail fields (`FatherBirthVillage`/`MotherBirthVillage`) were independently confirmed to become **read-only** (not editable, hence not fillable) once a foreign birth country is selected for that parent, but this cycle did not select Tanzania for either parent to independently confirm whether the same five-field required cascade applies there too — disclosed as an unconfirmed, most-likely-true assumption rather than asserted as confirmed fact; `fatherBirthPlaceDetail`/`motherBirthPlaceDetail` are modelled optional pending that future confirmation.\n\n**Photo upload mechanics.** The applicant-photo field (`PassportPersonalAndCitizenship[Photo]`, a Krajee `kartik/file` widget) rejected a hand-built minimal PNG renamed to `.jpg` with the live server-side error 'The file \"mock_photo.jpg\" is not an image.' — the server inspects real image content, not just the file extension. A genuine small JPEG (encoded via the `sharp` library already present in this environment) was accepted. This registry's SG ICA passport-application precedent (`sg/ica/passport-application`) is followed for modelling this as a `fields[]` entry of `type: file` (it is embedded inline in the step_one form alongside scalar fields, unlike the step_six attachments below, which are each a dedicated separate upload endpoint) rather than a `documents[]` entry.\n\n**Step six ('Viambatanisho'/Attachments) reached and its required-document checklist read directly from the live page, but not completed.** The page names exactly three mandatory attachments for this application's own computed requirement set (each linked to a distinct upload endpoint, `/online/web/passport/attachment?DocTypeID=N&OperationType=Insert`): DocTypeID 2, \"Cheti/Kiapo cha Kuzaliwa cha Mzazi wa Mwombaji\" (applicant's parent's birth certificate/affidavit); DocTypeID 1, \"Cheti/Kiapo cha Kuzaliwa Mwombaji\" (applicant's own birth certificate/affidavit); DocTypeID 5, \"Kitambulisho cha Kazi na Barua ya Ombi la Pasipoti toka Kwa Mwajiri (Kwa Walioajiriwa) au Barua ya Utambulisho toka Serikali ya Mtaa/Afisa Mtendaji wa Kata\" (employer-issued work ID plus passport-application letter for the employed, or a ward/local-government-officer identification letter otherwise). Each upload endpoint's own form (fetched by opening its modal) confirmed a single `PassportSupportingDocs[document]` file input alongside hidden `ApplicationID`/`DocID`/`DocTypeID` fields — a simple one-file-per-document-type mechanism, modelled as three `documents[]` entries. The page additionally lists 14 further documents that 'may be required' at final submission (e.g. marriage certificate, naturalization certificate, return air ticket, employer consent, parent/guardian consent, grandparent's birth certificate) — a disclosed, non-exhaustive supplementary list per the portal's own prose, not modelled as additional required `documents[]` entries since the three above are the only ones the portal itself currently marks mandatory for this scenario. The wizard's `SaveNext` button on this step is disabled until all three uploads succeed; this cycle did not complete a real multi-part AJAX file upload through the button's own Bootstrap modal (attempted once, the modal's own close/dismiss interaction did not cleanly release for a second attempt in the same session) and therefore never advanced past this step to see 'Tamko Rasmi' (Declaration), 'Malipo' (Payment), or 'Kamilika' (Complete) — each disclosed above as out of scope for this version rather than silently omitted.\n\nField-type simplifications, each following this registry's established house style: `gender` (Mume/Mke), `travelPurpose` (11 named options), `applicationType` (4 named options, though only the New/Ombi-Jipya pathway's downstream steps were independently walked) are modelled as `enum` with real Swahili option labels translated in each field's own `description`; `birthCountry`/`fatherBirthCountry`/`motherBirthCountry`/`visitCountry` are backed by the live portal's own ~250-entry external country-reference list (confirmed values include Tanzania=220, Kenya=116, Uganda=232) and modelled as open `string` fields per this registry's established external-code-table convention (see e.g. `br/tse/requerimento-alistamento-eleitoral`'s `occupation`/`maritalStatus` fields); day/month/year `<select>` triplets for every date of birth are collapsed to a single GovSchema `date` field each.\n\nConformance run: 2 valid mock scenarios (a mainland-resident applicant born in Tanzania exercising the full birth-place administrative cascade; a Kenya-born naturalised-citizen-shaped applicant taking the simpler foreign-birth-country path) plus 6 mutation-control fixtures (a missing statically-required field; a missing conditionally-required `birthAdminRegion` when `birthCountry` is Tanzania; a missing conditionally-required `birthVillageOrAddressDetail`; an invalid `dateOfBirth` format; an invalid `emailAddress` pattern; a missing required document) committed under `conformance/tz/immigration/passport-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own `fields[]`/`documents[]`, discarded after use, not committed) ran all 8: both valid scenarios at 0 errors, all 6 mutation-control fixtures at exactly 1 error each, and confirmed every `requiredWhen` field reference resolves (0 dangling references). Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs` (ajv 2020-12 against spec/v0.3), individually and as part of the full registry run. `node tools/verify-sources.mjs` clean on this document's changed files. `npm run build-index` re-run in `tools/govschema-client/` to regenerate `registry-index.json`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationType",
+      "label": "Aina ya Ombi",
+      "type": "enum",
+      "required": true,
+      "description": "The type of passport request. Only the NEW (Ombi Jipya / new/first-time application) pathway's downstream steps were independently walked and are modelled by this schema's remaining fields; the other three values are real options on the live form but their own downstream steps were not verified this cycle (see VERIFICATION.md).",
+      "sourceRef": "apply step, formControl `PassportBasicDetails[ApplicationTypeID]` (Validators.required)",
+      "validation": { "enum": ["NEW", "FULL_EPASSPORT_REPLACEMENT", "LOST", "DAMAGED"] }
+    },
+    {
+      "name": "mobileNumber",
+      "label": "Namba ya Simu",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's mobile phone number, entered on the initial application-setup screen (distinct from the second contact mobile number collected later in the wizard). The live form validates it via an international phone-number widget defaulting to the Tanzania (+255) country code.",
+      "sourceRef": "apply step, formControl `PassportBasicDetails[MobileNo]` (Validators.required, isValidNumber)"
+    },
+    {
+      "name": "applicantLocation",
+      "label": "Eneo Alipo Mwombaji",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the applicant is applying from within Tanzania or from abroad via a Tanzanian embassy/consulate. Only the in-Tanzania pathway's downstream steps were independently walked this cycle.",
+      "sourceRef": "apply step, formControl `PassportBasicDetails[Priority]` (Validators.required)",
+      "validation": { "enum": ["IN_TANZANIA", "ABROAD_EMBASSY"] }
+    },
+    {
+      "name": "processingTerritory",
+      "label": "Mahali/Ofisi ambapo Ombi litashughulikiwa",
+      "type": "enum",
+      "required": true,
+      "description": "The territory whose Immigration office will process the application.",
+      "sourceRef": "apply step, formControl `PassportBasicDetails[TerritoryID]` (Validators.required)",
+      "validation": { "enum": ["MAINLAND", "ZANZIBAR"] }
+    },
+    {
+      "name": "firstName",
+      "label": "Jina la Kwanza",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's first name.",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[FirstName]` (Validators.required)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "middleName",
+      "label": "Jina la Kati",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's middle name, if any.",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[MiddleName]`",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "familyName",
+      "label": "Jina la Ukoo",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's family name/surname.",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[FamilyName]` (Validators.required)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "gender",
+      "label": "Jinsi",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's gender (Mume = Male, Mke = Female — the live form's own two radio-button options).",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[GenderID]` (Validators.required, radio)",
+      "validation": { "enum": ["MALE", "FEMALE"] }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Habari ya Ndoa",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's marital status.",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[MaritalStatusID]` (Validators.required)",
+      "validation": { "enum": ["SINGLE", "MARRIED", "DIVORCED", "WIDOWED"] }
+    },
+    {
+      "name": "occupation",
+      "label": "Kazi",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's occupation.",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[Occupation]`",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "nationalId",
+      "label": "Namba ya Uraia",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's National Identification Number (NIN), for applicants who hold one.",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[NationalID]`",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "zanzibarId",
+      "label": "Kitambulisho cha Mzanzibari Mkaazi",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's Zanzibar Resident Identity Card number, for Zanzibar residents.",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[ZanzibarID]`",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "photo",
+      "label": "Picha ya Muombaji",
+      "type": "file",
+      "required": true,
+      "description": "The applicant's recent photograph. The live form's own guidelines page specifies a light-blue background. Not marked required by the initial page markup, but confirmed genuinely mandatory via a live server-side validation error ('Please upload a file.') when omitted; the server also validates the uploaded file is a real image, not merely a correctly-named one (see VERIFICATION.md).",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[Photo]`; requiredness confirmed via live server-side validation, not the initial markup"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Tarehe ya Kuzaliwa",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's date of birth, collected on the live form as three separate day/mwezi/mwaka (day/month/year) select menus, collapsed here to a single date field.",
+      "sourceRef": "step_one, formControls `PassportPersonalAndCitizenship[day]`/`[month]`/`[year]` (each Validators.required)",
+      "validation": { "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+    },
+    {
+      "name": "birthCountry",
+      "label": "Nchi",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's country of birth, selected from the live portal's own ~250-entry external country-reference list (confirmed values include TANZANIA and KENYA; not reproduced in full — see VERIFICATION.md). Selecting Tanzania activates a mandatory administrative-address cascade (`birthAdminTerritory` through `birthVillageOrAddressDetail` below); any other country instead requires only a single free-text `birthVillageOrAddressDetail`.",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[BirthCountryID]` (Validators.required)"
+    },
+    {
+      "name": "birthAdminTerritory",
+      "label": "Eneo",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "birthCountry", "equals": "TANZANIA" },
+      "description": "The Tanzanian territory (Mainland or Zanzibar) of the applicant's birthplace. Required only when `birthCountry` is Tanzania; confirmed live via the server's own 'Eneo is required.' validation message when this field is left blank with Tanzania selected.",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[BirthTerritoryID]`, populated by an AJAX call to `/online/web/references/getpassportterritory`",
+      "validation": { "enum": ["MAINLAND", "ZANZIBAR"] }
+    },
+    {
+      "name": "birthAdminRegion",
+      "label": "Mkoa",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "birthCountry", "equals": "TANZANIA" },
+      "description": "The Tanzanian region of the applicant's birthplace, dependent on `birthAdminTerritory`. Required only when `birthCountry` is Tanzania; confirmed live via the server's own 'Mkoa is required.' validation message.",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[BirthRegionID]`, populated by an AJAX call to `/online/web/references/getpassportregions`"
+    },
+    {
+      "name": "birthAdminDistrict",
+      "label": "Wilaya",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "birthCountry", "equals": "TANZANIA" },
+      "description": "The Tanzanian district of the applicant's birthplace, dependent on `birthAdminRegion`. Required only when `birthCountry` is Tanzania; confirmed live via the server's own 'Wilaya is required.' validation message.",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[BirthDistrictID]`, populated by an AJAX call to `/online/web/references/getpassportdistrict`"
+    },
+    {
+      "name": "birthAdminWard",
+      "label": "Kata/Shehia",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "birthCountry", "equals": "TANZANIA" },
+      "description": "The Tanzanian ward (Kata) or, in Zanzibar, Shehia of the applicant's birthplace, dependent on `birthAdminDistrict`. Required only when `birthCountry` is Tanzania; confirmed live via the server's own 'Kata/Shehia is required.' validation message.",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[BirthWardID]`, populated by an AJAX call to `/online/web/references/getpassportward`"
+    },
+    {
+      "name": "birthVillageOrAddressDetail",
+      "label": "Mtaa/Kijiji (Tanzania) or Anwani Kamili ya Ulipozaliwa (foreign)",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's specific birthplace detail: a village/street (Mtaa/Kijiji) when `birthCountry` is Tanzania, or a full free-text birthplace address ('Anwani Kamili ya Ulipozaliwa') when born abroad. The live form re-labels this same field depending on `birthCountry` but requires it in both cases — confirmed live via the server's own 'Tafadhali Jaza Anwani Kamili ya Ulipozaliwa' validation message when tested with a foreign birth country.",
+      "sourceRef": "step_one, formControl `PassportPersonalAndCitizenship[BirthVillage]`"
+    },
+    {
+      "name": "postalAddress",
+      "label": "Sanduku la Posta",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's postal box address.",
+      "sourceRef": "step_two, formControl `PassportContactAndResidentialAddress[PostalAddress]`",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "contactPhoneNumber",
+      "label": "Simu ya Mkononi",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's contact mobile phone number for this step, distinct from `mobileNumber` collected in the initial application-setup screen.",
+      "sourceRef": "step_two, formControl `PassportContactAndResidentialAddress[PhoneNumber]` (Validators.required, isValidNumber)"
+    },
+    {
+      "name": "emailAddress",
+      "label": "Barua pepe",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's email address.",
+      "sourceRef": "step_two, formControl `PassportContactAndResidentialAddress[Email]`",
+      "validation": { "pattern": "^[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+$" }
+    },
+    {
+      "name": "residenceRegion",
+      "label": "Mkoa",
+      "type": "string",
+      "required": true,
+      "description": "The Tanzanian region of the applicant's current residential address, selected from the live form's own fixed 30-region list.",
+      "sourceRef": "step_two, formControl `PassportContactAndResidentialAddress[ResidenceRegionID]` (Validators.required)"
+    },
+    {
+      "name": "residenceDistrict",
+      "label": "Wilaya",
+      "type": "string",
+      "required": true,
+      "description": "The district of the applicant's current residential address, dependent on `residenceRegion` (populated by the same reference AJAX endpoint used for the birth-place cascade above).",
+      "sourceRef": "step_two, formControl `PassportContactAndResidentialAddress[ResidenceDistrictID]` (Validators.required)"
+    },
+    {
+      "name": "residenceVillage",
+      "label": "Mtaa/Kijiji",
+      "type": "string",
+      "required": true,
+      "description": "The village/street of the applicant's current residential address.",
+      "sourceRef": "step_two, formControl `PassportContactAndResidentialAddress[ResidenceVillage]` (Validators.required)"
+    },
+    {
+      "name": "houseNumber",
+      "label": "Nyumba Na.",
+      "type": "string",
+      "required": false,
+      "description": "The house number of the applicant's current residential address.",
+      "sourceRef": "step_two, formControl `PassportContactAndResidentialAddress[HouseNumber]`"
+    },
+    {
+      "name": "fatherFullName",
+      "label": "Jina Kamili (Baba)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's father's full name.",
+      "sourceRef": "step_three, formControl `PassportParentsInformation[FatherName]` (Validators.required)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "fatherDateOfBirth",
+      "label": "Tarehe ya Kuzaliwa (Baba)",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's father's date of birth, collected as three separate day/month/year selects, collapsed here to a single date field.",
+      "sourceRef": "step_three, formControls `PassportParentsInformation[Fatherday]`/`[Fathermonth]`/`[Fatheryear]` (each Validators.required)",
+      "validation": { "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+    },
+    {
+      "name": "fatherBirthCountry",
+      "label": "Nchi (Baba)",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's father's country of birth, from the same external country-reference list as `birthCountry`.",
+      "sourceRef": "step_three, formControl `PassportParentsInformation[FatherBirthCountryID]`"
+    },
+    {
+      "name": "fatherBirthPlaceDetail",
+      "label": "Mtaa/Kijiji au Anwani (Baba)",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's father's specific birthplace detail, mirroring the applicant's own `birthVillageOrAddressDetail`. Confirmed live to become read-only (and so not fillable) once a foreign `fatherBirthCountry` is selected; whether this field (and a parallel Region/District/Ward cascade) becomes required when `fatherBirthCountry` is Tanzania, as it does for the applicant, was not independently confirmed this cycle — modelled optional pending that confirmation (see VERIFICATION.md).",
+      "sourceRef": "step_three, formControl `PassportParentsInformation[FatherBirthVillage]`"
+    },
+    {
+      "name": "motherFullName",
+      "label": "Jina Kamili (Mama)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's mother's full name.",
+      "sourceRef": "step_three, formControl `PassportParentsInformation[MotherName]` (Validators.required)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "motherDateOfBirth",
+      "label": "Tarehe ya Kuzaliwa (Mama)",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's mother's date of birth, collected as three separate day/month/year selects, collapsed here to a single date field.",
+      "sourceRef": "step_three, formControls `PassportParentsInformation[Motherday]`/`[Mothermonth]`/`[Motheryear]` (each Validators.required)",
+      "validation": { "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+    },
+    {
+      "name": "motherBirthCountry",
+      "label": "Nchi (Mama)",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's mother's country of birth, from the same external country-reference list as `birthCountry`.",
+      "sourceRef": "step_three, formControl `PassportParentsInformation[MotherBirthCountryID]`"
+    },
+    {
+      "name": "motherBirthPlaceDetail",
+      "label": "Mtaa/Kijiji au Anwani (Mama)",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's mother's specific birthplace detail, mirroring `fatherBirthPlaceDetail` above — see that field's own description for the same disclosed, unconfirmed conditional requiredness.",
+      "sourceRef": "step_three, formControl `PassportParentsInformation[MotherBirthVillage]`"
+    },
+    {
+      "name": "travelPurpose",
+      "label": "Dhumuni la Safari",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's stated purpose for travel/holding a passport.",
+      "sourceRef": "step_four, formControl `PassportTravelAndGuardian[TravelPurposeID]` (Validators.required)",
+      "validation": { "enum": ["TOURISM", "WORK", "MEDICAL", "STUDY", "SEAFARER", "INVITATION", "RELIGIOUS", "SPORTS", "BUSINESS", "MARRIAGE", "BEREAVEMENT"] }
+    },
+    {
+      "name": "visitCountry",
+      "label": "Nchi unayokwenda",
+      "type": "string",
+      "required": true,
+      "description": "The country the applicant intends to visit, from the same external country-reference list as `birthCountry`.",
+      "sourceRef": "step_four, formControl `PassportTravelAndGuardian[VisitCountryID]` (Validators.required)"
+    },
+    {
+      "name": "firstContactFullName",
+      "label": "Jina Kamili (Mtu wa Kwanza)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of the first emergency contact.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[FirstContactName]` (Validators.required)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "firstContactOccupation",
+      "label": "Kazi (Mtu wa Kwanza)",
+      "type": "string",
+      "required": true,
+      "description": "Occupation of the first emergency contact.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[FirstContactWorkID]` (Validators.required)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "firstContactPostalBox",
+      "label": "Sanduku la Posta (Mtu wa Kwanza)",
+      "type": "string",
+      "required": false,
+      "description": "Postal box address of the first emergency contact.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[FirstContactBox]`",
+      "validation": { "maxLength": 400 }
+    },
+    {
+      "name": "firstContactPhoneNumber",
+      "label": "Simu ya Mkononi (Mtu wa Kwanza)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Mobile phone number of the first emergency contact.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[FirstContactPhoneNo]` (Validators.required, isValidNumber)"
+    },
+    {
+      "name": "firstContactTown",
+      "label": "Mji (Mtu wa Kwanza)",
+      "type": "string",
+      "required": true,
+      "description": "Town of the first emergency contact's address.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[FirstContactTown]` (Validators.required)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "firstContactStreet",
+      "label": "Mtaa (Mtu wa Kwanza)",
+      "type": "string",
+      "required": true,
+      "description": "Street of the first emergency contact's address.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[FirstContactStreet]` (Validators.required)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "firstContactHouseNumber",
+      "label": "Nyumba Na. (Mtu wa Kwanza)",
+      "type": "string",
+      "required": false,
+      "description": "House number of the first emergency contact's address.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[FirstContactHouseNumber]`",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "firstContactRelationship",
+      "label": "Uhusiano (Mtu wa Kwanza)",
+      "type": "string",
+      "required": true,
+      "description": "The first emergency contact's relationship to the applicant.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[FirstContactRelationship]` (Validators.required)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "secondContactFullName",
+      "label": "Jina Kamili (Mtu wa Pili)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of the second emergency contact.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[SecondContactName]` (Validators.required)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "secondContactOccupation",
+      "label": "Kazi (Mtu wa Pili)",
+      "type": "string",
+      "required": true,
+      "description": "Occupation of the second emergency contact.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[SecondContactWorkID]` (Validators.required)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "secondContactPostalBox",
+      "label": "Sanduku la Posta (Mtu wa Pili)",
+      "type": "string",
+      "required": false,
+      "description": "Postal box address of the second emergency contact.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[SecondContactBox]`",
+      "validation": { "maxLength": 400 }
+    },
+    {
+      "name": "secondContactPhoneNumber",
+      "label": "Simu ya Mkononi (Mtu wa Pili)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Mobile phone number of the second emergency contact.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[SecondContactPhoneNo]` (Validators.required, isValidNumber)"
+    },
+    {
+      "name": "secondContactTown",
+      "label": "Mji (Mtu wa Pili)",
+      "type": "string",
+      "required": true,
+      "description": "Town of the second emergency contact's address.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[SecondContactTown]` (Validators.required)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "secondContactStreet",
+      "label": "Mtaa (Mtu wa Pili)",
+      "type": "string",
+      "required": true,
+      "description": "Street of the second emergency contact's address.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[SecondContactStreet]` (Validators.required)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "secondContactHouseNumber",
+      "label": "Nyumba Na. (Mtu wa Pili)",
+      "type": "string",
+      "required": false,
+      "description": "House number of the second emergency contact's address.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[SecondContactHouseNo]`",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "secondContactRelationship",
+      "label": "Uhusiano (Mtu wa Pili)",
+      "type": "string",
+      "required": true,
+      "description": "The second emergency contact's relationship to the applicant.",
+      "sourceRef": "step_five, formControl `PassportEmergencyAndWitness[SecondContactRelationship]` (Validators.required)",
+      "validation": { "maxLength": 50 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantBirthCertificateOrAffidavit",
+      "label": "Cheti/Kiapo cha Kuzaliwa Mwombaji",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] },
+      "sourceRef": "step_six (Viambatanisho), upload endpoint `/online/web/passport/attachment?DocTypeID=1&OperationType=Insert`"
+    },
+    {
+      "id": "parentBirthCertificateOrAffidavit",
+      "label": "Cheti/Kiapo cha Kuzaliwa cha Mzazi wa Mwombaji",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "responsible-party",
+      "constraints": { "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] },
+      "sourceRef": "step_six (Viambatanisho), upload endpoint `/online/web/passport/attachment?DocTypeID=2&OperationType=Insert`"
+    },
+    {
+      "id": "employmentIdOrWardIntroductionLetter",
+      "label": "Kitambulisho cha Kazi na Barua ya Ombi la Pasipoti toka Kwa Mwajiri (Kwa Walioajiriwa) au Barua ya Utambulisho toka Serikali ya Mtaa/Afisa Mtendaji wa Kata",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": { "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] },
+      "sourceRef": "step_six (Viambatanisho), upload endpoint `/online/web/passport/attachment?DocTypeID=5&OperationType=Insert`. For an employed applicant: employer-issued work ID plus a passport-application letter from the employer. For an unemployed applicant: an identification letter from the local government/ward executive officer (Afisa Mtendaji wa Kata)."
+    }
+  ],
+  "steps": [
+    {
+      "id": "application_setup",
+      "title": "Taarifa za Msingi",
+      "fields": ["applicationType", "mobileNumber", "applicantLocation", "processingTerritory"],
+      "next": "personal_information"
+    },
+    {
+      "id": "personal_information",
+      "title": "Taarifa Binafsi",
+      "fields": [
+        "firstName", "middleName", "familyName", "gender", "maritalStatus", "occupation",
+        "nationalId", "zanzibarId", "photo", "dateOfBirth", "birthCountry",
+        "birthAdminTerritory", "birthAdminRegion", "birthAdminDistrict", "birthAdminWard",
+        "birthVillageOrAddressDetail"
+      ],
+      "next": "contact_and_residential_address"
+    },
+    {
+      "id": "contact_and_residential_address",
+      "title": "Anuani ya Makazi",
+      "fields": [
+        "postalAddress", "contactPhoneNumber", "emailAddress", "residenceRegion",
+        "residenceDistrict", "residenceVillage", "houseNumber"
+      ],
+      "next": "parents_information"
+    },
+    {
+      "id": "parents_information",
+      "title": "Habari za Wazazi",
+      "fields": [
+        "fatherFullName", "fatherDateOfBirth", "fatherBirthCountry", "fatherBirthPlaceDetail",
+        "motherFullName", "motherDateOfBirth", "motherBirthCountry", "motherBirthPlaceDetail"
+      ],
+      "next": "travel_information"
+    },
+    {
+      "id": "travel_information",
+      "title": "Habari za Safari",
+      "fields": ["travelPurpose", "visitCountry"],
+      "next": "emergency_contacts"
+    },
+    {
+      "id": "emergency_contacts",
+      "title": "Wakati wa Dharura",
+      "fields": [
+        "firstContactFullName", "firstContactOccupation", "firstContactPostalBox",
+        "firstContactPhoneNumber", "firstContactTown", "firstContactStreet",
+        "firstContactHouseNumber", "firstContactRelationship",
+        "secondContactFullName", "secondContactOccupation", "secondContactPostalBox",
+        "secondContactPhoneNumber", "secondContactTown", "secondContactStreet",
+        "secondContactHouseNumber", "secondContactRelationship"
+      ],
+      "next": "attachments"
+    },
+    {
+      "id": "attachments",
+      "title": "Viambatanisho"
+    }
+  ]
+}
