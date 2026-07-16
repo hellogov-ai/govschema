@@ -25,7 +25,7 @@
 > under international agreement) — none of which appear in the Schengen Annex I
 > form at all. The source's official-use-only decision section (decision, validity
 > dates, allowed days of stay) is excluded, consistent with this registry's
-> convention of excluding office-only sections. Models 35 `fields[]` across
+> convention of excluding office-only sections. Models 40 `fields[]` across
 > applicant identification, travel documents, residence, employment, intended stay
 > dates, visa purpose selection, and conditional family/employer/organization
 > blocks. 3 conformance fixtures (2 valid, 1 mutation-control) committed under
@@ -58,6 +58,21 @@
 > pass both validators; all 3 conformance fixtures re-checked against an ad
 > hoc ajv schema built from this document's own `fields[]` (0 errors on both
 > valid fixtures, exactly 1 on the mutation-control fixture).
+>
+> **Further correction (review gate GOV-3252):** independent re-extraction of
+> the source PDF found two remaining fidelity gaps past the crash-recovery fix
+> above. `maritalStatus`'s enum split the source's single combined
+> vdovec/vdova (widow(er)) checkbox into two values and omitted the form's
+> sixth option, drugo (other) — fixed to
+> `["samski","poročen","živi ločeno","razvezan","vdovec/vdova","drugo"]` plus
+> a companion `maritalStatusOtherDescription` field. Field 18 (family member,
+> in case of family reunification) has four components on the source form,
+> not the one modelled — a family-relationship checkbox group and an
+> address/e-mail/phone/fax block were entirely unmodelled; added
+> `familyRelationship`, `familyMemberAddress`, `familyMemberEmailAddress`, and
+> `familyMemberPhoneAndFax`. Field count is 40 (22 required, 18 optional), not
+> the 35 (22 required, 13 optional) after the crash-recovery fix. Both
+> validators still pass 494/494.
 
 > **Update (2026-07-15, GOV-3237, scouted from GOV-3235, "GovSchema
 > Standard Research"): Nepal's Visa vertical opens, bringing Nepal to 4 of

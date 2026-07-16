@@ -16,6 +16,40 @@ exists in the registry (opened as the 53rd jurisdiction via Business Formation,
 GOV-2910, and expanded through Passport/GOV-2927, National ID/GOV-2928, and
 Taxes/GOV-2929); this document opens Slovenia's **Visa vertical (2 of 6)**.
 
+## Review-gate corrections (GOV-3252)
+
+Beyond the meta-schema and fabricated-hash fixes already documented below
+(applied pre-merge, in the same cycle, after the authoring run crashed), the
+review gate's own independent re-extraction of the source PDF found two
+further fidelity gaps and fixed both in place:
+
+- **`maritalStatus` enum.** The source form's field 9 has six checkboxes, not
+  the five modelled: samski/single, poročen/married, živi ločeno/separated,
+  razvezan/divorced, a single combined **vdovec/vdova** (widow(er)) checkbox,
+  and **drugo (navedite)** (other, please specify). The prior enum
+  (`["samski","poročen","živi ločeno","razvezan","vdovec","vdova"]`) split
+  vdovec/vdova into two separate values and omitted "drugo" entirely. Fixed to
+  `["samski","poročen","živi ločeno","razvezan","vdovec/vdova","drugo"]` and
+  added a companion `maritalStatusOtherDescription` field (`requiredWhen`
+  `maritalStatus` equals `drugo`), mirroring the `purposeOtherDescription`
+  pattern in `gr/mfa/application-for-schengen-visa`.
+- **Missing field 18 subfields.** Independent pdfjs-dist re-extraction of
+  page 2 showed field 18 (family member, in case of family reunification) has
+  four components on the source form, not one: surname/first name (already
+  modelled as `familyMemberName`), a **family-relationship checkbox group**
+  (zakonec/spouse, otrok/child, vnuk/vnukinja/grandchild, vzdrževani
+  prednik/dependent ascendant, ostalo/other — entirely unmodelled), an
+  address-and-email line, and a telephone-and-telefax line (also unmodelled).
+  Added `familyRelationship` (enum), `familyMemberAddress`,
+  `familyMemberEmailAddress`, and `familyMemberPhoneAndFax`.
+
+Net effect: 40 `fields[]` entries (22 required, 18 optional), up from 35 (22
+required, 13 optional). Both validators still pass 494/494 after these
+additions, and the two valid conformance fixtures were extended with the new
+family-member fields where applicable (`valid-family-reunification.json`); the
+invalid fixture's premise (omitting the required `purposeOfVisa`) is
+unaffected by either fix.
+
 ## Why this candidate
 
 The Ministrstvo za zunanje in evropske zadeve (MZEZ, Ministry of Foreign and
@@ -105,7 +139,7 @@ pathway. No registry duplication risk exists.
 
 ## Field inventory (Phase 2)
 
-All 35 `fields[]` entries in the schema (covering applicant identification,
+All 40 `fields[]` entries in the schema (covering applicant identification,
 travel document, residence, employment, intended stay dates, visa purpose, and
 signature) are accounted for and sourced from the form text:
 
@@ -120,7 +154,8 @@ signature) are accounted for and sourced from the form text:
 | 7. Sedanje državljanstvo / Current nationality | `currentNationality` | Required |
 | 7. Državljanstvo ob rojstvu / Nationality at birth | `nationalityAtBirth` | Optional |
 | 8. Spol / Sex | `sex` | Required enum: moški/ženski |
-| 9. Zakonski stan / Marital status | `maritalStatus` | Required enum: samski/poročen/živi ločeno/razvezan/vdovec/vdova |
+| 9. Zakonski stan / Marital status | `maritalStatus` | Required enum: samski/poročen/živi ločeno/razvezan/vdovec-vdova/drugo |
+| 9. Zakonski stan: drugo (navedite) | `maritalStatusOtherDescription` | Optional, `requiredWhen` maritalStatus=drugo |
 | 10. Guardian data (minors) | `guardianInformation` | Optional opaque object (surname/givenName/address/nationality carried in `description`, not as a nested schema — GovSchema v0.3's `field` definition has no `properties` keyword) |
 | 11. Vrsta potne listine / Travel document type | `travelDocumentType` | Required |
 | 11. Številka potne listine / Number | `travelDocumentNumber` | Required |
@@ -141,6 +176,10 @@ signature) are accounted for and sourced from the form text:
 | 16. Razlog za vizum / Visa purpose | `purposeOfVisa` | Required `enum` (single-select among the form's 10 lettered purpose checkboxes a-j) |
 | 16. Opis razlogov / Purpose description | `purposeDescription` | Optional |
 | 18. Družinski član / Family member | `familyMemberName` | Optional (for family reunification) |
+| 18. Sorodstveno razmerje / Family relationship | `familyRelationship` | Optional enum, family reunification only |
+| 18. Naslov in e-pošta / Address & e-mail (address) | `familyMemberAddress` | Optional, family reunification only |
+| 18. Naslov in e-pošta / Address & e-mail (e-mail) | `familyMemberEmailAddress` | Optional, family reunification only |
+| 18. Telefon in faks / Telephone and telefax | `familyMemberPhoneAndFax` | Optional, family reunification only |
 | 19. Naziv podjetja/organizacije / Company | `companyOrganisationName` | Optional |
 | 19. Telefon in faks / Company phone/fax | `companyPhoneAndFax` | Optional |
 | 19. Kontaktna oseba / Contact person | `contactPersonDetails` | Optional opaque object (surname/givenName/address/phone/fax/email carried in `description`) |
@@ -204,8 +243,9 @@ signature) are accounted for and sourced from the form text:
 Three conformance fixtures are included:
 
 1. **`valid-family-reunification.json`:** A complete valid application for family
-   reunification (purpose a). Includes all required fields, a family member name,
-   and represents a common use case.
+   reunification (purpose a). Includes all required fields plus the full set of
+   family-member fields added in the review gate (name, relationship, address,
+   e-mail, phone/fax), and represents a common use case.
 
 2. **`valid-student-employment.json`:** A complete valid application for student
    employment under international agreement (purpose j). No family member or
@@ -224,7 +264,8 @@ Three conformance fixtures are included:
 - **Source authenticity:** Government of Slovenia official consular-affairs form,
   published on gov.si.
 - **Field extraction:** All 21 numbered applicant-submission fields extracted
-  and modelled faithfully.
+  and modelled faithfully, including the field 9 (marital status) and field 18
+  (family member) gaps found and fixed during the review gate.
 - **Anti-duplication:** Confirmed distinct from EU Schengen Annex I short-stay
   form via 10 unique Slovenia-specific purpose categories.
 - **Bilingual:** Correctly documented as bilingual (SI/EN).
@@ -240,8 +281,8 @@ Three conformance fixtures are included:
 
 ## Commit metadata
 
-- **Issue:** GOV-3249 (Slovenia Visa vertical authoring)
-- **Branch:** `gov-3249-si-visa-application`
+- **Issue:** GOV-3249 (Slovenia Visa vertical authoring), review gate GOV-3252
+- **Branch:** `gov-3249-si-visa-pr`
 - **Cycle:** GovSchema Standard Research (weekly)
 - **Related issues:** GOV-3246 (Slovenia research plan, GOV-3248/GOV-3249 delegation),
   GOV-2910 (Business Formation, Slovenia 1st jurisdiction), GOV-2927 (Passport,
@@ -250,6 +291,6 @@ Three conformance fixtures are included:
 
 ---
 
-**Next steps:** Schema validation against both ajv and govschema-conformance
-validators, fixture validation, CATALOG.md update (separate PR), and registry
-merge via review-gate process.
+**Next steps:** none — both validators pass, all 3 conformance fixtures are
+consistent with the corrected schema, and CATALOG.md / registry-index.json are
+verified below. Ready for merge.
