@@ -1,0 +1,173 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "mn/atunt/vehicle-plate-number-reservation",
+  "version": "1.0.0",
+  "title": "Mongolia Vehicle State Plate-Number Reservation",
+  "description": "Reserve a specific state vehicle registration plate number (улсын дугаар) through the Auto Transport National Center's (Автотээврийн үндэсний төв, ATÜNT) live online plate-ordering system. The applicant first browses a province's currently available plate numbers (grouped by the weekday on which the plate must be collected), selects one, then binds the reservation to themselves (as an individual, an organization, or a foreign citizen) and to a specific vehicle via the last five characters of its frame/chassis number. This schema models the reservation form's field surface only, not the browse/search UI used to locate a plate (a live availability grid, not applicant-submitted data) or the Cloudflare Turnstile human-verification challenge gating the submit button. GovSchema is independent and is not affiliated with, endorsed by, or operated by Mongolia or the Auto Transport National Center.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MN",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Автотээврийн үндэсний төв (Auto Transport National Center)",
+    "abbreviation": "ATÜNT",
+    "url": "https://transdep.mn/"
+  },
+  "process": {
+    "type": "request",
+    "language": "mn"
+  },
+  "source": {
+    "url": "https://burtgel.transdep.mn/",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "ATÜNT online plate-ordering system (\"Дугаар захиалах цонх\" / Number Ordering Window), live web application, no printed form or document number published"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GovSchema Standard Research cycle GOV-3403. Closes Mongolia's DMV vertical (5 of 6; Visa/Business Formation/Passport/Taxes were opened across the four immediately preceding cycles, GOV-3375/GOV-3382/GOV-3389/GOV-3396), which had left this exact candidate un-authored three cycles running as 'live but more complex than previously summarized, needs a live/Playwright walk.' This cycle did that walk. Fetched burtgel.transdep.mn directly via a real Playwright/Chromium session (a plain curl/static fetch cannot see this SPA's field structure), a real desktop Chrome User-Agent, no login/account required at any point. The landing page's own live availability grid ('БОЛОМЖИТ ДУГААРУУД', Available Numbers) is organized by two live-only axes that this schema deliberately models as applicant-facing selection fields rather than free text, since an agent must choose them to find a plate to reserve: `province` (a button list captioned, verbatim, 'СЕРYYД' -- literally 'Series', not 'Aimags/Provinces' -- but whose 22 button labels are Mongolia's 21 aimags plus the capital, Ulaanbaatar; each province currently has one active 3-letter plate series, confirmed by observing every plate number under the Ulaanbaatar selection share the same 'УРА' prefix) and `pickupWeekday` (five column headers, Даваа/Мягмар/Лхагва/Пүрэв/Баасан -- Monday through Friday only, no weekend columns). Clicking one specific available plate-number button (e.g. 'УРА3721') opens the 'ДУГААР ЗАХИАЛАХ ЦОНХ' (Number Ordering Window) modal, whose full field set was extracted directly from the live DOM (not paraphrased from a screenshot): a `registeroption` radio group (person/company/foreign) toggles three mutually-exclusive, always-present-but-CSS-hidden field groups confirmed via three separate live states (`display:none` toggling on `#personFields`/`#personDigits` vs `#companyDigits` vs `#foreignFields`, captured and diffed across all three) -- Хувь хүн (person): a 2-Cyrillic-letter select pair (`select-reg-1`/`select-reg-2`, ids 'first'/'second', 35 options each, drawn from the standard Mongolian Cyrillic alphabet, each excluding whatever the other currently holds) plus 8 digit selects (`r1`-`r8`), together the standard 10-character Mongolian citizen registration number; Байгууллага (company): 7 digit selects only (`cr1`-`cr7`), matching Mongolia's 7-digit legal-entity state registration number, with no letter component; Гадаадын иргэн (foreign citizen): a single unconstrained free-text input (`name=\"foreign\"`, no maxlength/pattern attribute in the DOM). A fifth field, always visible regardless of category, is 'Арлын дугаарын сүүлийн 5 орон' (last 5 characters of the frame/chassis number): five alphanumeric selects (`a1`-`a5`, digits 0-9 plus A-Z, 36 options each), binding the reservation to a specific vehicle. Notably, the form collects no name/phone/email field at all -- the citizen/company registration number is evidently used server-side to resolve identity, so this schema does not invent one. A red warning banner ('Please note that if the registration number and the side/frame number are entered incorrectly, the state plate will not be issued') and a link to a separate, out-of-scope traffic-fine lookup tool (torguuli.police.gov.mn) both precede the field set and are disclosed, not modelled. The submission gate is a Cloudflare Turnstile widget ('Баталгаажуулалт', Verification) that renders the moment the modal opens (not merely at 'final submit' as a prior cycle's summary characterized it -- an observed correction) and keeps the modal's own submit button (`#orderSubmitBtn`) disabled until solved; this schema does not model the CAPTCHA as a field and no attempt was made to solve it, submit the form, or reserve a real plate number. One live server-side rate-limit dialog ('Хэт олон оролдлого илгээгдсэн байна', too many attempts) was encountered and dismissed via its own close button after an early scripted page-load; it is a transient throttling notice, not a form field, and cleared on a fresh session. No live plate reservation was made and no etax/eMongolia-style account was created or required to map every visible field in all three registrant-category branches."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "province",
+      "label": "Аймаг, Нийслэл",
+      "type": "enum",
+      "required": true,
+      "description": "The province (aimag) or the capital, Ulaanbaatar, whose currently available plate-number inventory the applicant is browsing and reserving from. Each province currently issues from one active 3-letter plate series.",
+      "sourceRef": "Landing page 'СЕРYYД' (literally 'Series') button list, left panel",
+      "validation": {
+        "enum": [
+          "Улаанбаатар",
+          "Архангай",
+          "Баян-Өлгий",
+          "Баянхонгор",
+          "Булган",
+          "Говь-Алтай",
+          "Говьсүмбэр",
+          "Дархан-Уул",
+          "Дорноговь",
+          "Дорнод",
+          "Дундговь",
+          "Завхан",
+          "Орхон",
+          "Сэлэнгэ",
+          "Сүхбаатар",
+          "Төв",
+          "Увс",
+          "Ховд",
+          "Хэнтий",
+          "Хөвсгөл",
+          "Өвөрхангай",
+          "Өмнөговь"
+        ]
+      }
+    },
+    {
+      "name": "pickupWeekday",
+      "label": "Хүлээн авах өдөр",
+      "type": "enum",
+      "required": true,
+      "description": "The weekday on which the reserved plate must be collected/finalized, determined by which column of the availability grid the applicant's chosen plate number appears under.",
+      "sourceRef": "'БОЛОМЖИТ ДУГААРУУД' (Available Numbers) grid, five weekday column headers",
+      "validation": {
+        "enum": ["Даваа", "Мягмар", "Лхагва", "Пүрэв", "Баасан"]
+      }
+    },
+    {
+      "name": "plateSeriesAndNumber",
+      "label": "Захиалах улсын дугаар",
+      "type": "string",
+      "required": true,
+      "description": "The specific state plate number being reserved, chosen by clicking one available button in the province's availability grid (not typed free text). The 3-letter prefix is the province's currently active plate series (rotates over time as series are exhausted); the 4 digits are the specific number picked.",
+      "sourceRef": "Reservation modal, read-only display button `#orderNumberLbl` (e.g. 'УРА3721'), populated from the clicked availability-grid button",
+      "validation": {
+        "pattern": "^[А-ЯЁӨҮ]{3}[0-9]{4}$"
+      }
+    },
+    {
+      "name": "registrantCategory",
+      "label": "Хувь хүн / Байгууллага / Гадаадын иргэн",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the plate is being reserved by an individual, an organization (legal entity), or a foreign citizen. Determines which of the three registration-number field groups below applies.",
+      "sourceRef": "Reservation modal radio group `name=\"registeroption\"` (values: person, company, foreign)",
+      "validation": {
+        "enum": ["person", "company", "foreign"]
+      }
+    },
+    {
+      "name": "citizenRegistrationNumber",
+      "label": "Регистрийн дугаар",
+      "type": "string",
+      "required": false,
+      "description": "The individual applicant's Mongolian citizen registration number: 2 Cyrillic letters followed by 8 digits. Required only when registrantCategory is person.",
+      "sourceRef": "Reservation modal `#personFields`/`#personDigits` — two letter selects (`select-reg-1`/`select-reg-2`) plus 8 digit selects (`r1`-`r8`)",
+      "validation": {
+        "pattern": "^[А-ЯЁӨҮ]{2}[0-9]{8}$"
+      },
+      "requiredWhen": {
+        "field": "registrantCategory",
+        "equals": "person"
+      }
+    },
+    {
+      "name": "organizationRegistrationNumber",
+      "label": "Регистрийн дугаар",
+      "type": "string",
+      "required": false,
+      "description": "The organization's 7-digit Mongolian state legal-entity registration number. Required only when registrantCategory is company.",
+      "sourceRef": "Reservation modal `#companyDigits` — 7 digit selects (`cr1`-`cr7`)",
+      "validation": {
+        "pattern": "^[0-9]{7}$"
+      },
+      "requiredWhen": {
+        "field": "registrantCategory",
+        "equals": "company"
+      }
+    },
+    {
+      "name": "foreignCitizenIdentityNumber",
+      "label": "Регистрийн дугаар",
+      "type": "string",
+      "required": false,
+      "description": "The foreign-citizen applicant's identity/passport number. Required only when registrantCategory is foreign. The source form imposes no visible format constraint (a plain free-text box, no maxlength/pattern attribute), so this schema does not invent one beyond a minimum length.",
+      "sourceRef": "Reservation modal `#foreignFields` — free-text input `name=\"foreign\"`",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "registrantCategory",
+        "equals": "foreign"
+      }
+    },
+    {
+      "name": "vehicleFrameNumberLast5",
+      "label": "Арлын дугаарын сүүлийн 5 орон",
+      "type": "string",
+      "required": true,
+      "description": "The last 5 characters (digits and/or Latin letters) of the vehicle's own frame/chassis number, binding this plate reservation to a specific vehicle. Required for every registrant category.",
+      "sourceRef": "Reservation modal `#cabinFields` — five alphanumeric selects (`a1`-`a5`)",
+      "validation": {
+        "pattern": "^[0-9A-Z]{5}$"
+      }
+    }
+  ]
+}
