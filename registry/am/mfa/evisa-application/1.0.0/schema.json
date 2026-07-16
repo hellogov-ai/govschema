@@ -1,0 +1,405 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "am/mfa/evisa-application",
+  "version": "1.0.0",
+  "title": "Armenia Electronic Visa (e-Visa) Application",
+  "description": "The Ministry of Foreign Affairs of the Republic of Armenia's Electronic Visa (e-Visa) application, served unauthenticated by the AngularJS single-page application at evisa.mfa.am. The live wizard has three logical stages: (1) a CAPTCHA-gated eligibility pre-check (screening country, document type, purpose, email, and, for the COP17 event pathway only, an accreditation number) which, on success, emails the applicant a one-time continuation link rather than advancing further in-browser; (2) the actual application itself, reached via that emailed link at `/request-details/:token` and continuing through `/purpose-and-duration` and `/data-confirmation` — none of which are themselves gated by a CAPTCHA; and (3) payment, handled by a redirect to the separate e-payments.am domain (out of scope). This schema models stage (2) in full: the passport/personal-details step (passport number; sex; passport issue date and either an expiry date or a lifelong-validity flag; first/last/middle name; date of birth, or, if unknown, a birth year alone; birth country; birth place; a criminal/offence declaration; occupation; current residence address/phone and Armenia-local address/phone; and free-text additional information), the purpose-and-duration step (purpose of visit, a short/long duration choice, and the intended arrival date), and the data-confirmation step's terms-and-conditions attestation. Every field name, `required`/`ng-required` attribute, and validation pattern is sourced directly from the live application's own bundled JavaScript (`scripts/evisa.min.js`), whose embedded AngularJS `$templateCache` entries hold the literal, uncompiled HTML markup the app renders for these steps — not something inferred or reverse-engineered from compiled output. The `sex`, `purpose`, and `duration` enumerations are likewise sourced from that same bundle's own static `evisa.enums` JavaScript objects, not guessed. This schema does NOT model: the CAPTCHA-gated eligibility pre-check's own fields (a distinct screening form, not the visa application itself — this session confirmed the CAPTCHA is enforced server-side, not merely client-side theater, via a deliberately-invalid direct POST to `/e-api/check-eligibility/is-eligible`); the three file-upload fields (`facialPhoto`, `attachments`, `supportedDocuments`), whose exact required/optional combination is determined by a per-nationality/per-document-type server rule this session had no way to exercise without solving that CAPTCHA and receiving a real applicant's email token; and a leftover, unused HTML template (`views/request-details_bak.html`, plus an apparently-unrelated `views/apply-for-visa.html` fragment) present in the same JS bundle but not wired to any Angular route in this app — both excluded as disclosed, observed dead code, not modelled. No application was actually submitted and no fee was paid in producing this schema. Filing this application is a traveller action performed directly with the Ministry of Foreign Affairs of the Republic of Armenia through evisa.mfa.am; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by Armenia or its Ministry of Foreign Affairs.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "AM",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of Foreign Affairs of the Republic of Armenia",
+    "abbreviation": "MFA",
+    "url": "https://evisa.mfa.am"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://evisa.mfa.am",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "The live e-Visa Angular single-page application's own bundled `scripts/evisa.min.js`, whose embedded `$templateCache` entries for `views/request-details.html`, `views/purpose-and-duration.html`, and `views/data-confirmation.html` contain the actual, uncompiled HTML markup (`name`, `ng-model`, `required`, `ng-required`, `ng-pattern`, `minlength`/`maxlength` attributes) Angular renders for those steps, plus the same bundle's own static `evisa.enums`/`api` JavaScript objects and the live `/e-api/get/...` JSON lookup endpoints those templates bind to."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GOV-3343 (\"GovSchema Standard Research\"), opening Armenia as the registry's 66th jurisdiction. Fetched `https://evisa.mfa.am` and `https://evisa.mfa.am/scripts/evisa.min.js` twice each this session with a plain `curl` and a standard desktop Chrome User-Agent string: HTTP 200/`text/html`/3,806 bytes and HTTP 200/`application/javascript`/255,040 bytes respectively, both byte-identical (sha256 `16f992a6540f88b1d7a12f5e0558f6bb562401fd2912870940c60d4707136547` for the root page, `72090dbb63366d6ac686e4280d3c9459a862a4901cb4ac1ceff28edc22566d8a` for the JS bundle) across both fetches — unlike some ASP.NET sources in this registry (see `ge/mfa/evisa-application`'s own VERIFICATION.md), this source carries no per-request anti-forgery token, so the raw whole-file hash is directly reproducible. Models 24 `fields[]` across three steps and 0 `documents[]` (the file-upload scope boundary described above). 2 valid conformance fixtures (0 errors each) plus 6 mutation-control fixtures (each raising exactly 1 error, including two distinct `requiredWhen` cascade violations, an enum violation, and a pattern violation) are committed under `conformance/am/mfa/evisa-application/1.0.0/`. Both validators pass. See VERIFICATION.md for the full sourcing record, including the confirmed live enumerations and the server-side CAPTCHA-enforcement test."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "passport_and_personal_details",
+      "title": "Passport & Personal Details",
+      "fields": [
+        "passportNr",
+        "sex",
+        "issuedOn",
+        "lifelong",
+        "expiresOn",
+        "firstName",
+        "lastName",
+        "middleName",
+        "onlyYear",
+        "birthDate",
+        "birthYear",
+        "birthCountry",
+        "birthPlace",
+        "offenceOrCrime",
+        "occupation",
+        "currentResidenceAddress",
+        "currentPhone",
+        "localResidenceAddress",
+        "localPhone",
+        "additionalInfo"
+      ],
+      "next": "purpose_and_duration"
+    },
+    {
+      "id": "purpose_and_duration",
+      "title": "Purpose & Duration of Visit",
+      "fields": [
+        "purpose",
+        "duration",
+        "arrivalDate"
+      ],
+      "next": "confirmation"
+    },
+    {
+      "id": "confirmation",
+      "title": "Data Confirmation & Terms",
+      "fields": [
+        "termsAndConditions"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "passportNr",
+      "label": "Passport Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's passport/travel document number.",
+      "sourceRef": "views/request-details.html $templateCache entry (scripts/evisa.min.js), `<input type=\"text\" name=\"passportNr\" ng-model=\"data.passportNr\" minlength=\"3\" maxlength=\"100\" ng-pattern=\"/^([0-9A-Z ]){3,100}$/\" required />`",
+      "validation": {
+        "minLength": 3,
+        "maxLength": 100,
+        "pattern": "^[0-9A-Z ]{3,100}$"
+      }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's sex. The live `<md-radio-group name=\"sex\">` carries no `required`/`ng-required` attribute at all (confirmed directly in the markup, not merely a stale attribute as this registry's `ge/mfa/evisa-application` schema found for a different field) — modelled as optional on that basis. The two option values are not a guess: they are read directly from the bundle's own `evisa.enums.SEX` object (`SEX.MALE()` returns the literal string `\"MALE\"`, `SEX.FEMALE()` returns `\"FEMALE\"`), which the `male`/`female` entries pushed onto the template's `genders` array bind to.",
+      "sourceRef": "scripts/evisa.min.js, `var SEX=function(){...return SEX.MALE=function(){return\"MALE\"},SEX.FEMALE=function(){return\"FEMALE\"}...}()`; `male={name:\"male\",value:evisa.enums.SEX.MALE()}`",
+      "validation": {
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ]
+      }
+    },
+    {
+      "name": "issuedOn",
+      "label": "Passport Issue Date",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant's passport was issued, entered in the site's own DD/MM/YYYY format (confirmed via the bundle's own `appConfig.dateFormat:\"dd/MM/yyyy\"`/`momentDateFormat:\"DD/MM/YYYY\"` constants).",
+      "sourceRef": "views/request-details.html $templateCache entry, `<md-datepicker name=\"issuedOn\" ng-model=\"data.issuedOn\" ... required ...>`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    },
+    {
+      "name": "lifelong",
+      "label": "Passport has no expiry (lifelong validity)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant's passport is of unlimited/lifelong validity. When true, the passport expiry date is not required (see `expiresOn`).",
+      "sourceRef": "views/request-details.html $templateCache entry, `<md-checkbox name=\"lifelong\" ng-model=\"data.lifelong\" ...>`"
+    },
+    {
+      "name": "expiresOn",
+      "label": "Passport Expiry Date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "lifelong",
+        "equals": false
+      },
+      "description": "The date the applicant's passport expires, required unless `lifelong` is checked. Entered in the site's own DD/MM/YYYY format.",
+      "sourceRef": "views/request-details.html $templateCache entry, `<md-datepicker name=\"expiresOn\" ng-model=\"data.expiresOn\" ng-disabled=\"data.lifelong\" ng-required=\"!data.lifelong\" ...>`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    },
+    {
+      "name": "firstName",
+      "label": "First Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's first name, matching their passport. The live model constrains it to uppercase Latin letters (with optional apostrophes/hyphens/spaces between letter groups).",
+      "sourceRef": "views/request-details.html $templateCache entry, `<input type=\"text\" name=\"firstName\" ng-model=\"data.firstName\" ng-pattern=\"/^[A-Z]+((\\'|-|\\\\s)*[A-Z]*)*$/\" minlength=\"1\" maxlength=\"40\" capitalize required />`",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 40,
+        "pattern": "^[A-Z]+(('|-|\\s)*[A-Z]*)*$"
+      }
+    },
+    {
+      "name": "lastName",
+      "label": "Last Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's last name, matching their passport. The live template's own field carries no `required` attribute at all, and the submit handler's controller code (`RequestDetailsController.prototype.process`) explicitly checks `if (null==data.lastName || 0==data.lastName.length)` and, when true, shows a confirmation dialog warning the applicant they are proceeding \"without lastname\" rather than blocking submission — confirming this is a genuinely optional field with a UX nudge, not a functionally-required one. Same uppercase-Latin character constraint as `firstName` when present.",
+      "sourceRef": "views/request-details.html $templateCache entry, `<input type=\"text\" name=\"lastName\" ng-model=\"data.lastName\" ng-pattern=\"/^[A-Z]+((\\'|-|\\\\s)*[A-Z]*)*$/\" minlength=\"1\" maxlength=\"40\" capitalize />` (no `required`); `RequestDetailsController.prototype.process`'s `withoutLastnameTitle`/`withoutLastnameContent` confirmation dialog",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 40,
+        "pattern": "^[A-Z]+(('|-|\\s)*[A-Z]*)*$"
+      }
+    },
+    {
+      "name": "middleName",
+      "label": "Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's middle name/patronymic, if any. Same uppercase-Latin character constraint as `firstName` when present.",
+      "sourceRef": "views/request-details.html $templateCache entry, `<input type=\"text\" name=\"middleName\" ng-model=\"data.middleName\" ng-pattern=\"/^[A-Z]+((\\'|-|\\\\s)*[A-Z]*)*$/\" minlength=\"1\" maxlength=\"40\" capitalize />` (no `required`)",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 40,
+        "pattern": "^[A-Z]+(('|-|\\s)*[A-Z]*)*$"
+      }
+    },
+    {
+      "name": "onlyYear",
+      "label": "I only know my birth year",
+      "type": "boolean",
+      "required": false,
+      "description": "Checked when the applicant does not know their exact date of birth and can only supply a birth year (see `birthDate`/`birthYear`).",
+      "sourceRef": "views/request-details.html $templateCache entry, `<md-checkbox name=\"onlyYear\" ng-model=\"data.onlyYear\" ...>`"
+    },
+    {
+      "name": "birthDate",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "onlyYear",
+        "equals": false
+      },
+      "classification": "pii",
+      "description": "The applicant's full date of birth, required unless `onlyYear` is checked (in which case `birthYear` alone is collected instead). Entered in the site's own DD/MM/YYYY format.",
+      "sourceRef": "views/request-details.html $templateCache entry, `<md-datepicker name=\"birthDate\" ng-show=\"!data.onlyYear\" ng-model=\"data.birthDate\" ng-required=\"!data.onlyYear\" ...>`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    },
+    {
+      "name": "birthYear",
+      "label": "Birth Year",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "onlyYear",
+        "equals": true
+      },
+      "classification": "pii",
+      "description": "The applicant's birth year alone, collected when the exact date of birth is unknown (`onlyYear` checked). The live `<md-select>` populates its own option list client-side with a rolling 120-year window ending at the current year (confirmed directly in the bundle: `for(i=now.getFullYear();i>now.getFullYear()-120;i--) pastYears.push(i)`) rather than a fixed enum, so no hard minimum/maximum is asserted here to avoid this schema going stale as the window rolls forward each year.",
+      "sourceRef": "views/request-details.html $templateCache entry, `<md-select name=\"birthYear\" ng-model=\"data.birthYear\" ng-required=\"data.onlyYear\" ...><md-option ng-repeat=\"year in pastYears\" ng-value=\"year\">`"
+    },
+    {
+      "name": "birthCountry",
+      "label": "Country of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's country of birth, selected from the live `<md-select>`'s own option list, each option's underlying value being that country's numeric `id` (not its name) from the confirmed-live `/e-api/get/birth-countries` JSON endpoint (257 entries as of this session, e.g. `{\"id\":1,\"iata\":\"AF\",\"icao\":\"AFG\",\"name\":\"AFGHANISTAN\",...}` through `{\"id\":199,...,\"name\":\"ZIMBABWE\",...}`; not reproduced in full here — see VERIFICATION.md). Modelled as free-text string carrying that numeric ID rather than as a 257-value enum, matching this registry's own precedent for large country lists (see `ge/mfa/evisa-application`'s `citizenship` field).",
+      "sourceRef": "views/request-details.html $templateCache entry, `<md-select ng-model=\"data.birthCountry\" name=\"birthCountry\" required><md-option ng-repeat=\"country in countries\" ... value=\"{{country.id}}\">`; live `GET https://evisa.mfa.am/e-api/get/birth-countries` (requires a same-origin `Referer`/`Origin` header, confirmed this session)"
+    },
+    {
+      "name": "birthPlace",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's city/place of birth, free text.",
+      "sourceRef": "views/request-details.html $templateCache entry, `<input type=\"text\" name=\"birthPlace\" ng-model=\"data.birthPlace\" minlength=\"2\" maxlength=\"40\" ng-pattern=\"latinSymbolsRegExp\" required />`",
+      "validation": {
+        "minLength": 2,
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "offenceOrCrime",
+      "label": "Have you ever been convicted of an offence or crime?",
+      "type": "enum",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's declaration of any prior criminal offence/conviction. The live `<md-radio-group name=\"offenceOrCrime\">` carries no `required`/`ng-required` attribute, so this is modelled as optional. Values are the two radio buttons' own literal `value` attributes (`\"1\"` bound to the `common.yes` translation key, `\"0\"` bound to `common.no`), not converted to a JSON boolean, since that is what the live markup itself submits.",
+      "sourceRef": "views/request-details.html $templateCache entry, `<md-radio-group name=\"offenceOrCrime\" ng-model=\"data.offenceOrCrime\"><md-radio-button value=\"1\">{{'common.yes'|translate}}</md-radio-button><md-radio-button value=\"0\">{{'common.no'|translate}}</md-radio-button></md-radio-group>` (no `required`)",
+      "validation": {
+        "enum": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's occupation, free text.",
+      "sourceRef": "views/request-details.html $templateCache entry, `<input type=\"text\" name=\"occupation\" ng-model=\"data.occupation\" minlength=\"2\" maxlength=\"40\" ng-pattern=\"latinSymbolsRegExp\" required />`",
+      "validation": {
+        "minLength": 2,
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "currentResidenceAddress",
+      "label": "Current Residence Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's current (home-country) residence address, free text.",
+      "sourceRef": "views/request-details.html $templateCache entry, `<input type=\"text\" name=\"currentResidenceAddress\" ng-model=\"data.currentResidenceAddress\" minlength=\"2\" maxlength=\"40\" ng-pattern=\"latinSymbolsRegExp\" required />`",
+      "validation": {
+        "minLength": 2,
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "currentPhone",
+      "label": "Current Phone Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's current (home-country) phone number.",
+      "sourceRef": "views/request-details.html $templateCache entry, `<input type=\"text\" name=\"currentPhone\" ng-model=\"data.currentPhone\" ng-pattern=\"/^[\\\\+\\\\d+-\\\\s\\\\(\\\\)]+$/\" minlength=\"2\" maxlength=\"40\" required />`",
+      "validation": {
+        "minLength": 2,
+        "maxLength": 40,
+        "pattern": "^[\\+\\d+-\\s\\(\\)]+$"
+      }
+    },
+    {
+      "name": "localResidenceAddress",
+      "label": "Address in Armenia",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The address where the applicant will stay while in Armenia (e.g. a hotel or host address), free text. Note: an older, no-longer-routed copy of this template embedded elsewhere in the same JS bundle (`views/request-details_bak.html`) uses different field names for this concept (`permanentResidenceAddress`/`permanentPhone`) — a disclosed, observed leftover from an earlier version of the form, not part of the live app (see VERIFICATION.md).",
+      "sourceRef": "views/request-details.html $templateCache entry, `<input type=\"text\" name=\"localResidenceAddress\" ng-model=\"data.localResidenceAddress\" minlength=\"2\" maxlength=\"40\" ng-pattern=\"latinSymbolsRegExp\" required />`",
+      "validation": {
+        "minLength": 2,
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "localPhone",
+      "label": "Phone Number in Armenia",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "A local (Armenia-reachable) phone number for the applicant during their stay.",
+      "sourceRef": "views/request-details.html $templateCache entry, `<input type=\"text\" name=\"localPhone\" ng-model=\"data.localPhone\" ng-pattern=\"/^[\\\\+\\\\d+-\\\\s\\\\(\\\\)]+$/\" minlength=\"2\" maxlength=\"40\" required />`",
+      "validation": {
+        "minLength": 2,
+        "maxLength": 40,
+        "pattern": "^[\\+\\d+-\\s\\(\\)]+$"
+      }
+    },
+    {
+      "name": "additionalInfo",
+      "label": "Additional Information",
+      "type": "string",
+      "required": false,
+      "description": "Optional free-text field for any additional information the applicant wishes to provide.",
+      "sourceRef": "views/request-details.html $templateCache entry, `<textarea name=\"additionalInfo\" ng-model=\"data.additionalInfo\" md-maxlength=\"250\" ng-pattern=\"latinSymbolsRegExp\"></textarea>` (no `required`)",
+      "validation": {
+        "maxLength": 250
+      }
+    },
+    {
+      "name": "purpose",
+      "label": "Purpose of Visit",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's purpose of visit for this application (distinct from the same-named field on the earlier, CAPTCHA-gated eligibility pre-check, which uses the same enumeration for a preliminary screening question, not this schema's own data). Values are read directly from the bundle's own `VisaTypePurposes` static object; this controller's own `scope.purposes=evisa.enums.VisaTypePurposes.GET_PURPOSES()` assignment does not filter out `EVENTS_COP17` the way the eligibility-form controller's assignment conditionally does, so all 9 values are included. Independently corroborated live via `GET https://evisa.mfa.am/e-api/get/visaTypes`, whose returned visa-type catalog carries a `purpose` field using these same 9 literal values.",
+      "sourceRef": "views/purpose-and-duration.html $templateCache entry, `<md-select ng-model=\"data.purpose\" name=\"purpose\" ... required><md-option ng-repeat=\"purpose in purposes\" ng-value=\"purpose\">`; scripts/evisa.min.js `var VisaTypePurposes=function(){...VisaTypePurposes.GET_PURPOSES=function(){return[this.TOURISM_RELATIVES(),this.BUSINESS_NEGOTIATIONS(),this.SPORT_CULTURAL(),this.TECHNIC_OTHER(),this.MEDICAL_TREATMENT(),this.FAMILY_REUNION(),this.STUDY_EDUCATION(),this.AIRCRAFT_CREW(),this.EVENTS_COP17()]}}()`",
+      "validation": {
+        "enum": [
+          "TOURISM_RELATIVES",
+          "BUSINESS_NEGOTIATIONS",
+          "SPORT_CULTURAL",
+          "TECHNIC_OTHER",
+          "MEDICAL_TREATMENT",
+          "FAMILY_REUNION",
+          "STUDY_EDUCATION",
+          "AIRCRAFT_CREW",
+          "EVENTS_COP17"
+        ]
+      }
+    },
+    {
+      "name": "duration",
+      "label": "Duration of Stay",
+      "type": "enum",
+      "required": false,
+      "description": "The applicant's chosen visa duration category. The live `<md-radio-group name=\"duration\">` carries no `required`/`ng-required` attribute, so this is modelled as optional. The two values are the literal `value` properties of the `shortDuration`/`longDuration` objects the controller constructs (`{name:\"purposeDurationForm.shortTerm\",value:\"SHORT\"}` / `{name:\"purposeDurationForm.longTerm\",value:\"LONG\"}`), independently corroborated by the live `/e-api/get/visaTypes` catalog, whose entries each carry a `duration` field of exactly `SHORT` or `LONG`.",
+      "sourceRef": "views/purpose-and-duration.html $templateCache entry, `<md-radio-group name=\"duration\" ng-model=\"data.duration\"><md-radio-button ng-repeat=\"duration in durations\" ng-value=\"duration.value\">` (no `required`); `PurposeAndDurationController.prototype.init`'s `self.shortDuration`/`self.longDuration` assignment",
+      "validation": {
+        "enum": [
+          "SHORT",
+          "LONG"
+        ]
+      }
+    },
+    {
+      "name": "arrivalDate",
+      "label": "Intended Arrival Date",
+      "type": "date",
+      "required": true,
+      "description": "The applicant's intended date of arrival in Armenia, entered in the site's own DD/MM/YYYY format.",
+      "sourceRef": "views/purpose-and-duration.html $templateCache entry, `<md-datepicker name=\"arrivalDate\" ng-model=\"data.arrivalDate\" required md-min-date=\"minArrivalDate || today\" md-max-date=\"maxArrivalDate\" ...>`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    },
+    {
+      "name": "termsAndConditions",
+      "label": "I have read and agree to the Terms & Conditions",
+      "type": "boolean",
+      "required": true,
+      "description": "The applicant's attestation that they have read and agree to the e-Visa system's Terms & Conditions (linked from the same page as a PDF, `/assets/resource/TermsAndConditions.pdf`).",
+      "sourceRef": "views/data-confirmation.html $templateCache entry, `<md-checkbox name=\"terms\" ng-model=\"data.termsAndConditions\" ... required></md-checkbox>`"
+    }
+  ]
+}
