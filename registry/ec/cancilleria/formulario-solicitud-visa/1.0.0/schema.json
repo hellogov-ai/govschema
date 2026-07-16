@@ -1,0 +1,339 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ec/cancilleria/formulario-solicitud-visa",
+  "version": "1.0.0",
+  "title": "Ecuador Visa Application (Formulario de Solicitud de Visa)",
+  "description": "Apply for an Ecuadorian visa (temporary residence, permanent residence, temporary visitor, or diplomatic) through the Ministerio de Relaciones Exteriores y Movilidad Humana (Cancillería) and its consular network worldwide, using the Ministry's own bilingual (Spanish/English) \"Formulario de Solicitud de Visa\". Opens Ecuador as this registry's 63rd jurisdiction, via the Visa vertical (1 of 6). The form is a genuine 45-widget single-page AcroForm PDF hosted directly by the Ministry, requiring no `cancilleria.gob.ec` login, CAPTCHA, or appointment to view or download; it is completed, printed, signed by hand, and submitted with supporting original documents to the applicant's corresponding consulate or, domestically, to the Ministry's own visa office, which remains the authoritative decision-maker. This schema models all 33 mapped applicant-facing fields (29 text/date fields plus 4 checkbox groups collapsed into enums); the printed wet-ink signature line and the entire \"Para Uso Oficial\"/\"For official use only\" block (arancel, valor, fecha de autorización, observaciones) are both excluded and disclosed rather than guessed at (see VERIFICATION.md).",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "EC",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministerio de Relaciones Exteriores y Movilidad Humana",
+    "abbreviation": "Cancillería",
+    "url": "https://www.cancilleria.gob.ec/"
+  },
+  "process": {
+    "type": "application",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://web.archive.org/web/20260128125727/https://www.cancilleria.gob.ec/wp-content/uploads/2025/01/formulario_solicitud_visa0165183001736872889-1.pdf",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "Formulario de Solicitud de Visa / Visa Application Form"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GovSchema Standard Research cycle GOV-3305. Opens Ecuador as this registry's 63rd jurisdiction. Fetched directly from the Ministry's own www.cancilleria.gob.ec upload path (HTTP 200, application/pdf, 213,407 bytes, sha256:79707ebe96b7e28893e66e0c0780f279da3facbfd855ef5231cc0ee38e33fbf0), found via a targeted web search for the Ministry's current visa-form PDF rather than the login-gated consular e-visa wizard. The direct Ministry URL's own TLS certificate chain is missing an intermediate certificate (curl/Node fetch: 'unable to get local issuer certificate') — a server misconfiguration, not evidence of staleness; this is disclosed here rather than worked around silently, and `source.url` instead points at a byte-identical (sha256-confirmed) archive.org snapshot from 2026-01-28 so this document's own recorded source resolves over standard TLS for future re-verification. pdfjs-dist's `getFieldObjects()` confirms a genuine 45-widget AcroForm on page 1 (29 `Tx` text fields, 16 `Btn` checkboxes in four independent groups), with 0 widgets on any other page (single-page form). Widget-to-label correlation used a combination of `getTextContent()` position (x/y coordinate) matching and a direct `pdfjs-dist` + `node-canvas` page render at 2.2x scale (rendered PNG visually confirmed every row, since several widgets carry only generic sequential names — Texto1..Texto30 skipping Texto28, Casilla de verificación1..16 — with no self-documenting `alternativeText`, and two caption rows use a reversed/per-glyph text-extraction order that a position-only heuristic could not disambiguate on its own, most visibly the Estado Civil/Sexo checkbox grid). See VERIFICATION.md for the full widget inventory, every disclosed judgment call, and the mock conformance test run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "visaCategory",
+      "label": "Residencia Temporal / Residencia Permanente / Visitante Temporal / Diplomático",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Four independent AcroForm checkboxes printed as a 2x2 grid at the top of the form (Residencia Temporal, Residencia Permanente, Visitante Temporal, Diplomático). The source imposes no structural exclusivity of its own (each is a separate Btn widget), but the four options are mutually exclusive by their own meaning (a single application cannot be both a residence and a visitor/diplomatic request); modelled as a single enum per this registry's convention for this pattern.",
+      "sourceRef": "Header grid, row 1-2 (widgets Casilla de verificación1-4)",
+      "validation": { "enum": ["RESIDENCIA_TEMPORAL", "RESIDENCIA_PERMANENTE", "VISITANTE_TEMPORAL", "DIPLOMATICO"] }
+    },
+    {
+      "name": "requestType",
+      "label": "Solicitud / Certificado-Visa / Renovación / Transferencia / Cancelación",
+      "type": "enum",
+      "required": true,
+      "description": "Five independent AcroForm checkboxes printed in a single row directly beneath the visaCategory grid, naming the kind of request this submission represents (new application, certificate, renewal, transfer, or cancellation of an existing visa). Modelled as an enum for the same mutual-exclusivity reasoning as visaCategory.",
+      "sourceRef": "Header grid, row 3 (widgets Casilla de verificación5-9)",
+      "validation": { "enum": ["SOLICITUD", "CERTIFICADO_VISA", "RENOVACION", "TRANSFERENCIA", "CANCELACION"] }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Número de Pasaporte / Passport number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Número de Pasaporte\" (widget Texto1)",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "passportCountryOfIssue",
+      "label": "País Donde se Emitió Pasaporte / Country place where passport was issued",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"País Donde se Emitió Pasaporte\" (widget Texto2)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "passportIssueDate",
+      "label": "Fecha de Emisión / Date of issue",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Fecha de Emisión\" (widget Texto3)"
+    },
+    {
+      "name": "passportExpiryDate",
+      "label": "Fecha de Expiración / Date of expiry",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Fecha de Expiración\" (widget Texto4)"
+    },
+    {
+      "name": "apellidos",
+      "label": "Apellidos / Surnames",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "A single combined-surnames field (the source prints one blank line, not separate paternal/maternal surname boxes as some other Latin American schemas in this registry model).",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Apellidos\" (widget Texto13)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "nombres",
+      "label": "Nombres / Given names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Nombres\" (widget Texto14)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "lugarNacimiento",
+      "label": "Lugar de Nacimiento / Place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Lugar de Nacimiento\" (widget Texto5)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "fechaNacimiento",
+      "label": "Fecha de Nacimiento / Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Fecha de Nacimiento\" (widget Texto6)"
+    },
+    {
+      "name": "nacionalidad",
+      "label": "Nacionalidad / Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Nacionalidad\" (widget Texto7)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "ocupacion",
+      "label": "Ocupación / Occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Ocupación\" (widget Texto8)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "estadoCivil",
+      "label": "Estado Civil / Marital status",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Five independent checkboxes (Soltero, Casado, Viudo, Divorciado, Unión de Hecho) laid out across a two-row, near-three-column grid rather than a simple list. Correlating each widget to its own label required a direct page render (rect-position matching alone was ambiguous between adjacent labels on the same row) — see VERIFICATION.md.",
+      "sourceRef": "ESTADO CIVIL grid (widgets Casilla de verificación10-14)",
+      "validation": { "enum": ["SOLTERO", "CASADO", "VIUDO", "DIVORCIADO", "UNION_DE_HECHO"] }
+    },
+    {
+      "name": "sexo",
+      "label": "Sexo / Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "SEXO grid (widgets Casilla de verificación15-16)",
+      "validation": { "enum": ["FEMENINO", "MASCULINO"] }
+    },
+    {
+      "name": "direccionEcuador",
+      "label": "Dirección Ecuador / Address (Ecuador)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Dirección Ecuador\" (widget Texto10)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "ciudad",
+      "label": "Ciudad / City",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Ciudad\" (widget Texto11)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "provincia",
+      "label": "Provincia / Province",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Provincia\" (widget Texto12)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "correoElectronico",
+      "label": "Correo Electrónico Principal / Personal e-mail",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Correo Electrónico Principal\" (widget Texto15)",
+      "validation": { "maxLength": 254, "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" }
+    },
+    {
+      "name": "telefonoMovil",
+      "label": "Número Teléfono Móvil / Mobile number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Número Teléfono Móvil\" (widget Texto16)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "telefonoDomicilio",
+      "label": "Número Teléfono Domicilio / Home phone number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Not required: the form prints no asterisk or other required/optional marker system anywhere, and a home landline is not universal alongside a mobile number already captured in telefonoMovil.",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Número Teléfono Domicilio\" (widget Texto17)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "entidadAuspiciante",
+      "label": "Entidad Auspiciante / Sponsoring organisation",
+      "type": "string",
+      "required": false,
+      "description": "Not required: this field applies to residence/work-sponsored applications, not every visaCategory (e.g. a Visitante Temporal tourist typically has no sponsoring organisation), and the form provides no requiredWhen-style visibility instruction of its own to gate this on.",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Entidad Auspiciante\" (widget Texto18)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "nombreResponsableEntidad",
+      "label": "Nombre del Responsable en la Entidad Auspiciante / Name of legal representative",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Not required, for the same reason as entidadAuspiciante, which this field is paired with.",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Nombre del Responsable en la Entidad Auspiciante\" (widget Texto19)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "categoriaVisa",
+      "label": "Categoría de Visa que Desea Aplicar / Category of visa you wish to apply",
+      "type": "string",
+      "required": true,
+      "description": "Free-text line where the applicant names the specific visa sub-category/legal basis being requested (e.g. a specific residency-visa clause), distinct from the broad visaCategory checkbox grid above.",
+      "sourceRef": "DATOS DEL SOLICITANTE, \"Categoría de Visa que Desea Aplicar\" (widget Texto20)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "documentoEntregado1",
+      "label": "Documentos Entregados 1.- / Appropriate documents attached to this application",
+      "type": "string",
+      "required": false,
+      "description": "First of nine identically-structured blank numbered lines (1.- through 9.-) where the applicant self-lists whichever supporting documents are physically attached; the source prints no fixed checklist of named documents, so a fixed-label documents[] entry would misrepresent the source. Not required: an applicant may attach fewer than nine items.",
+      "sourceRef": "DOCUMENTOS ENTREGADOS, item 1.- (widget Texto29)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "documentoEntregado2",
+      "label": "Documentos Entregados 2.-",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DOCUMENTOS ENTREGADOS, item 2.- (widget Texto9)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "documentoEntregado3",
+      "label": "Documentos Entregados 3.-",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DOCUMENTOS ENTREGADOS, item 3.- (widget Texto21)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "documentoEntregado4",
+      "label": "Documentos Entregados 4.-",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DOCUMENTOS ENTREGADOS, item 4.- (widget Texto22)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "documentoEntregado5",
+      "label": "Documentos Entregados 5.-",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DOCUMENTOS ENTREGADOS, item 5.- (widget Texto23)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "documentoEntregado6",
+      "label": "Documentos Entregados 6.-",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DOCUMENTOS ENTREGADOS, item 6.- (widget Texto24)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "documentoEntregado7",
+      "label": "Documentos Entregados 7.-",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DOCUMENTOS ENTREGADOS, item 7.- (widget Texto25)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "documentoEntregado8",
+      "label": "Documentos Entregados 8.-",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DOCUMENTOS ENTREGADOS, item 8.- (widget Texto26)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "documentoEntregado9",
+      "label": "Documentos Entregados 9.-",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DOCUMENTOS ENTREGADOS, item 9.- (widget Texto27)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "resumenPeticion",
+      "label": "En Texto Resuma su Petición de Visa / Summarize text of your visa application",
+      "type": "string",
+      "required": true,
+      "description": "A large free-text box where the applicant states the substance of their visa request in their own words.",
+      "sourceRef": "PETICIÓN DE VISA, \"En Texto Resuma su Petición de Visa\" (widget Texto30)",
+      "validation": { "maxLength": 1000 }
+    }
+  ]
+}

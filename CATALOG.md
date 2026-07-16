@@ -4,7 +4,49 @@
 
 ## Executive Summary
 
-**62 jurisdictions** | **501 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**63 jurisdictions** | **502 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3305, "GovSchema Standard Research"): Ecuador
+> opens as this registry's 63rd jurisdiction**, via
+> `ec/cancilleria/formulario-solicitud-visa` — the Ministerio de Relaciones
+> Exteriores y Movilidad Humana's own bilingual (Spanish/English) "Formulario
+> de Solicitud de Visa", opening Ecuador's Visa vertical (1 of 6). This cycle
+> re-confirmed nearly every other open jurisdiction/vertical gap in the
+> registry as an already-screened dead end (Japan DMV/Passport, Uruguay
+> Taxes/Passport/National ID, Pakistan Passport/Visa/National ID, Peru
+> Passport/National ID, Chile Passport/Visa/National ID, Spain Passport/Visa,
+> Sri Lanka Business Formation, North Macedonia/Slovakia/Netherlands/Poland
+> Visa, Malaysia Taxes, Jordan DMV/Business Formation/National ID — see each
+> jurisdiction's own prior entry below), so this cycle opened a brand-new
+> jurisdiction instead of re-scouting an exhausted gap. Found via a targeted
+> web search for Ecuador's own government visa/immigration portals rather
+> than the login-gated consular e-visa wizard: a genuine, current (dated
+> January 2025 in its own upload path), 45-widget single-page AcroForm PDF
+> hosted directly by the Ministry (`cancilleria.gob.ec`), requiring no login,
+> CAPTCHA, or appointment to view or download. Independently fetched (HTTP
+> 200, `application/pdf`, 213,407 bytes,
+> sha256:79707ebe96b7e28893e66e0c0780f279da3facbfd855ef5231cc0ee38e33fbf0);
+> the direct Ministry URL's own TLS certificate chain is missing an
+> intermediate certificate (a server misconfiguration, not evidence of
+> staleness), so `source.url` instead cites a byte-identical archive.org
+> snapshot for reliable future re-verification — see the document's own
+> VERIFICATION.md for the full disclosure. `pdfjs-dist`'s `getFieldObjects()`
+> confirms all 45 widgets (29 `Tx` text fields, 16 `Btn` checkboxes in four
+> independent groups); widget-to-label correlation required a direct
+> `pdfjs-dist` + `node-canvas` page render (not just coordinate matching) to
+> resolve two ambiguous groups — the passport-number row and the Estado
+> Civil/Sexo checkbox grid. Modelled into 33 `fields[]` (four checkbox
+> groups collapsed into enums: `visaCategory`, `requestType`, `estadoCivil`,
+> `sexo`); the printed wet-ink signature line and the entire "Para Uso
+> Oficial" (For official use only) block are excluded as agency/physical-only,
+> not data-entry fields. 2 valid conformance fixtures (0 errors each) plus 3
+> mutation-control fixtures (each raising exactly 1 error) are committed
+> under `conformance/ec/cancilleria/formulario-solicitud-visa/1.0.0/`.
+> Ecuador's SRI (tax authority, Business Formation/Taxes candidate) did not
+> respond to a direct connection attempt this cycle and its Registro Civil
+> (National ID) publishes no downloadable static form found in search
+> results — both left as unscreened backlog for a future cycle, not
+> confirmed dead ends. Ecuador now stands at 1 of 6 verticals (Visa).
 
 > **Update (2026-07-16, GOV-3293/GOV-3298, "GovSchema Standard Research"):
 > Switzerland's Business Formation vertical opens, bringing Switzerland to
@@ -15332,6 +15374,7 @@ now closed.
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DK** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **EC** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
