@@ -4,7 +4,47 @@
 
 ## Executive Summary
 
-**68 jurisdictions** | **513 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**68 jurisdictions** | **514 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3382, "GovSchema Standard Research"): Mongolia's
+> Business Formation vertical opens (2/6)**, via
+> `mn/gasr/state-registration-limited-liability-company` — the General
+> Authority for State Registration's (Улсын бүртгэлийн ерөнхий газар) own
+> Form UB-03 ("ХУУЛИЙН ЭТГЭЭДИЙН УЛСЫН БҮРТГЭЛД БҮРТГҮҮЛЭХ ӨРГӨДӨЛ", Application
+> for State Registration of a Legal Entity), fetched directly and
+> unauthenticated as a genuine OOXML `.docx` from `burtgel.gov.mn`. Building
+> out Mongolia's next vertical was preferred over opening a 69th brand-new
+> jurisdiction, following this registry's established practice. Form UB-03
+> is a single multi-purpose physical form gating five transaction types by
+> checkbox; this schema models the new-entity-registration branch (§5) plus
+> the common identifying header (§1-4) and the common applicant-capacity/
+> identity block (§10), leaving the change-registration, reorganization,
+> dissolution, and seal-control branches disclosed as out of scope. The
+> founders table is modelled as a bounded repeating group of up to 5
+> founders (`founder1`-`founder5`, `requiredWhen founderCount
+> greaterThanOrEqual N`), matching the source table's own 5 pre-printed rows
+> and its own continuation-sheet note for a 6th founder onward. The
+> Authority's own official checklist infographic for new LLC registration
+> confirms Form UB-03 is filed together with a second, distinct physical
+> form, Form UB-12 (Application for Registration of Beneficial Owner(s)
+> Information, fetched directly in its official English translation as a
+> genuine text-layer PDF) plus five further supporting documents; all six
+> are modelled as `documents[]` rather than expanding Form UB-12's own
+> multi-table beneficial-owner disclosure fields into this schema — a
+> distinct, more complex form left as a disclosed candidate for a future
+> schema. Models 40 `fields[]` and 7 `documents[]`. This cycle also
+> re-screened Mongolia's remaining three open verticals and reconfirmed each
+> a dead end or too weak: Taxes (`itax.mta.mn`, unreachable this cycle),
+> DMV (`police.gov.mn/p/3759`, narrative-only, no downloadable form), and
+> Passport (`e-mongolia.mn`, portal-login-plus-in-person-biometric-gated).
+> 2 valid conformance fixtures (0 errors each — a single-founder minimal
+> case and a three-founder case exercising the bounded-repeating-group
+> logic) plus 10 mutation-control fixtures (each raising exactly 1 error)
+> are committed under
+> `conformance/mn/gasr/state-registration-limited-liability-company/1.0.0/`.
+> Both validators pass at 514/514. See the Business Formation vertical
+> section below and the document's own VERIFICATION.md for the full
+> sourcing record.
 
 > **Update (2026-07-16, GOV-3375, "GovSchema Standard Research"): Mongolia
 > opens as this registry's 68th jurisdiction**, via `mn/mfa/evisa-application` —
@@ -12494,7 +12534,17 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (61/68 jurisdictions — 90%)
+### Business Formation — Incorporation, LLC, Company Registration (62/68 jurisdictions — 91%)
+
+> **Update (2026-07-16, GOV-3382, "GovSchema Standard Research"): Mongolia
+> opens this vertical (2 of 6 overall)**, via
+> `mn/gasr/state-registration-limited-liability-company` — the General
+> Authority for State Registration's own Form UB-03, the state registration
+> application for legal entities, fetched directly and unauthenticated as a
+> genuine OOXML `.docx`. See the Executive Summary's GOV-3382 update above
+> and the document's own VERIFICATION.md for the full sourcing record.
+> Denominator unchanged (Mongolia already counted toward the 68-jurisdiction
+> total via its Visa vertical); numerator updated from 61 to 62.
 
 > **Update (2026-07-16, GOV-3328, "GovSchema Standard Research"): Ecuador
 > opens this vertical (2 of 6 overall)**, via
@@ -15999,7 +16049,7 @@ now closed.
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **MN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
+| **MN** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
 | **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -17802,9 +17852,33 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     form" finding for this vertical — that prior screening did not locate
     this municipal-form publishing pattern. Delegated as a child issue
     rather than authored in this same PR.
+32. **MN Business Formation opens (2/6), authored (GOV-3382, 2026-07-16).**
+    Mongolia's General Authority for State Registration (Улсын бүртгэлийн
+    ерөнхий газар, GASR) publishes its Legal Entity State Registration
+    template library directly and unauthenticated at
+    `burtgel.gov.mn/service/images/les/...`; Form UB-03 (the state
+    registration application) was authored as
+    `mn/gasr/state-registration-limited-liability-company` — see the
+    Executive Summary update above and the document's own VERIFICATION.md
+    for the full sourcing record, including the disclosed Form UB-12
+    beneficial-owner companion-schema candidate left for a future cycle.
+    Mongolia's remaining Taxes, DMV, and Passport verticals were
+    re-screened this cycle and remain dead ends/too weak — see the
+    "Confirmed dead ends" section below.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
+- **MN Taxes (itax.mta.mn)** — GOV-3382, 2026-07-16 (re-screen of a
+  GOV-3375 finding). Unreachable this cycle too — connection timeout on
+  both `https://` and `http://` from this environment, consistent with the
+  prior cycle's finding of a likely login-gated/unstable service.
+- **MN DMV (police.gov.mn/p/3759)** — GOV-3382, 2026-07-16 (re-screen).
+  Confirmed still narrative-only, a "How to obtain a driver's license"
+  informational page with no downloadable application form and no
+  field-level wizard.
+- **MN Passport (e-mongolia.mn)** — GOV-3382, 2026-07-16 (re-screen).
+  Confirmed to still require the e-Mongolia portal, whose own service
+  catalogue sits behind account login plus in-person biometric capture.
 - **SK Visa (national D-visa)** — GOV-3288, 2026-07-16. MZV SR's own
   document repository hosts both a "national visa" PDF
   (`002-ziadost-o-narodne-vizum-SK.pdf`) and a "Schengen visa" PDF
