@@ -1,0 +1,4089 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "kh/gdt/monthly-tax-declaration",
+  "version": "1.0.0",
+  "title": "Cambodia Monthly Tax Declaration (Form P101)",
+  "description": "File a monthly tax payment declaration with Cambodia's General Department of Taxation (GDT) via Form P101 (ទ្រមង់បង់ប្រាក់ពន្ធ P101, \"ប្រកាសប្រចាំខែ\", Form Version V4), the recurring self-assessment filing taxpayers use each month to declare and pay whichever of 40 published Cambodian tax types (patent tax, salary tax, fringe-benefit tax, prepayment/annual tax on income, minimum tax, 15%/6%/4% withholding taxes, non-resident withholding taxes, rental withholding taxes, VAT, specific taxes on certain goods/services, public lighting tax, tax on means of transportation, accommodation tax, slaughter tax, advertisement taxes, registration taxes, and related service fees/penalties) applied to it that period. This schema models the form's header (reporting month/year, tax office, company identity, and TIN), its 40-row tax-type table — each row gated by the row's own selection checkbox, with Tax Amount/Account No/Additional Tax/Interest/Additional Account/Total Amount fields required only when that row is selected — and the closing grand-total row. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Kingdom of Cambodia or the General Department of Taxation.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "KH",
+    "level": "national"
+  },
+  "authority": {
+    "name": "General Department of Taxation of Cambodia",
+    "abbreviation": "GDT",
+    "url": "https://www.tax.gov.kh/"
+  },
+  "process": {
+    "type": "filing",
+    "language": "km"
+  },
+  "source": {
+    "url": "https://www.tax.gov.kh/u6rhf7ogbi6/gdtstream/febbe0a4-f555-4377-8de2-b81aeb60a9f2",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "Form P101 — Monthly Tax Payment Declaration (Form Version: V4)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GovSchema Standard Research cycle GOV-3419, opening Cambodia's Taxes vertical (2/6). This issue's own source URL (the gdtstream UUID 6d75d313-fd60-4268-a53a-09b9b5172f0e carried over from the GOV-3410 scouting pass) was re-verified against the live https://www.tax.gov.kh/en/document-form listing before authoring and found to resolve to a DIFFERENT, unrelated document — 'Application Form For The Updating Information For e-Tax System' (a single-page e-Tax profile-update form), not Form P101. The correct Form P101 download link was re-derived from the listing page's own entry #6, '<span>Form Tax Payment- Form P101- Update 19/06/2025</span>' (matched via its adjacent schema.org ld+json block, same disambiguation technique as the sibling schema), at https://www.tax.gov.kh/u6rhf7ogbi6/gdtstream/febbe0a4-f555-4377-8de2-b81aeb60a9f2 (HTTP 200, plain unauthenticated curl). File identity: genuine AcroForm PDF (%PDF-1.5 header), 1,521,844 bytes, sha256:e06c1decd83ca97baf0c1bfca87c1d448372c9baa9834f180d6cfbbdbb7eb4fc — this does NOT match the sha256 cited in GOV-3419's own description (which was the wrong document's hash, inherited from the same mismatch). Extracted with pdfjs-dist@3 (installed standalone in a scratch directory, not a repository dependency): getAnnotations() found 294 real Widget annotations (matching this issue's ~294 estimate) on a single page, plus 1 non-data 'Reset Your form' push-button excluded from fields[] as a UI control, not applicant input. Widget-to-label correlation used the same position-matching technique as the sibling KH schema (getTextContent() glyph x/y merged with widget rects), keying each of the table's 40 tax-type rows off its own selection-checkbox y-range to its six adjacent text-entry widgets (Tax Amount/Account No/Additional Tax/Interest/Additional Account/Total Amount, left-to-right by x) — verified programmatically: every one of the 252 unique text-field names and 41 unique button-field names (40 row checkboxes plus one two-state radio, Check Box33) was assigned to exactly one row or header field, with no leftover or double-assignment. Unlike the sibling Form 101-P2, this table's 40 tax-type row labels are Khmer-only in the source — no parallel English column exists here (confirmed by searching the full extracted text layer for expected English tax-name substrings, all absent). This schema's English field labels/descriptions for the 40 tax types are therefore this registry's own translation, informed by standard Cambodian tax-law English terminology used in the Law on Taxation and GDT publications (e.g. Patent Tax, Withholding Tax, VAT, Minimum Tax, Accommodation Tax, Public Lighting Tax, Slaughter Tax) — disclosed as authored translation, not a verbatim source caption. Two of the 40 labels carry lower translation confidence, disclosed rather than silently asserted: 'ពន្ធបន្ថែមចំពោះការរាំងស្ទះ' (modelled as additionalTaxOnObstruction — Khmer 'ការរាំងស្ទះ' ordinarily means 'obstruction/blockage', plausibly referring to a public-road/traffic obstruction tax, but the source gives no further gloss) and 'ចំណូលពីការលក់ឯកសារបោះពុម្ព' (modelled as incomeFromSaleOfPrintedDocuments, a literal reading). The source PDF's own AcroForm field metadata (maxLen/comb flags, not rendered visually) shows the Tax Identification Number split into a 4-character comb field (Text6) and an 11-character comb field (Text7); this schema models taxIdentificationNumber as a single field with pattern ^[A-Za-z0-9]{4}[0-9]{11}$ reflecting that source-confirmed two-part structure. GSP-0009 ('Composite & repeating values — structured object + array') remains in Proposed status, not yet accepted into spec v0.3 — consistent with this registry's established practice for un-adopted repeating-group support, the 40-row table is flattened into 280 explicitly named fields (7 per row: {slug}Selected/TaxAmount/AccountNo/AdditionalTax/Interest/AdditionalAccountNo/TotalAmount) rather than modelled as an array, each amount/account field gated requiredWhen its own row's Selected boolean is true. The source's own closing 'Total'/'Signature and name' footer row has a widget for the grand total (Text200, modelled as grandTotalAmountKhr) but no widget at all for the signature/name cell — the physical signature is pen-only on this form and is disclosed as a genuine gap, not modelled as a fabricated field. Fields carry no visible optionality markers anywhere in the source's extracted text (no asterisks, no '(if any)' parentheticals were found); header identity fields (company name, TIN, declaration date, reporting month/year, reporting office) are therefore modelled required, following this registry's convention of treating unmarked fields as required, except documentNumber (an unlabelled reference-number box of unclear purpose, modelled optional) and taxBranchName (requiredWhen reportingOfficeType is tax_branch, since the source's own layout only calls for it under that branch). No submission was made and no live tax.gov.kh account was created or required to author this schema."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "reportingMonth",
+      "label": "Month",
+      "type": "integer",
+      "required": true,
+      "description": "Calendar month this monthly tax declaration covers.",
+      "sourceRef": "Header, widget MM",
+      "validation": {
+        "minimum": 1,
+        "maximum": 12
+      }
+    },
+    {
+      "name": "reportingYear",
+      "label": "Year",
+      "type": "integer",
+      "required": true,
+      "description": "Calendar year this monthly tax declaration covers.",
+      "sourceRef": "Header, widget YYYY",
+      "validation": {
+        "minimum": 2000,
+        "maximum": 2100
+      }
+    },
+    {
+      "name": "documentNumber",
+      "label": "No",
+      "type": "string",
+      "required": false,
+      "description": "Reference/document number for this declaration, when assigned.",
+      "sourceRef": "Header, widget TextNumber",
+      "validation": {
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "Date this declaration is filed.",
+      "sourceRef": "Header, widgets Text1/Text2/Text3 (DD/MM/YYYY)"
+    },
+    {
+      "name": "reportingOfficeType",
+      "label": "Tax Office",
+      "type": "enum",
+      "required": true,
+      "description": "Which General Department of Taxation office this filer reports to.",
+      "sourceRef": "Header — checkbox options \"Department of Large Taxpayer\" / \"Tax Branch\" (shared widget Check Box33, export values Yes/No respectively)",
+      "validation": {
+        "enum": [
+          "large_taxpayer_department",
+          "tax_branch"
+        ]
+      }
+    },
+    {
+      "name": "taxBranchName",
+      "label": "Tax Branch",
+      "type": "string",
+      "required": false,
+      "description": "Name of the specific tax branch this filer reports to. Required only when reportingOfficeType is tax_branch.",
+      "sourceRef": "Header, widget \"Tax branch\"",
+      "validation": {
+        "maxLength": 200
+      },
+      "requiredWhen": {
+        "field": "reportingOfficeType",
+        "equals": "tax_branch"
+      }
+    },
+    {
+      "name": "companyName",
+      "label": "Name of company",
+      "type": "string",
+      "required": true,
+      "description": "The filing company's registered name.",
+      "sourceRef": "Header, widget Text4",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "companyNameLatin",
+      "label": "Name of company in Latin",
+      "type": "string",
+      "required": true,
+      "description": "The filing company's registered name transliterated into Latin script.",
+      "sourceRef": "Header, widget Text5",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    {
+      "name": "taxIdentificationNumber",
+      "label": "Tax Identification Number (TIN)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The filing company's Tax Identification Number, in the source's own two-box format: a 4-character prefix followed by an 11-digit number.",
+      "sourceRef": "Header, widgets Text6 (4-char, comb)/Text7 (11-digit, comb)",
+      "validation": {
+        "pattern": "^[A-Za-z0-9]{4}[0-9]{11}$",
+        "maxLength": 15
+      }
+    },
+    {
+      "name": "patentTaxSelected",
+      "label": "Patent Tax",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Patent Tax (ពន្ធប៉តង់) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 1, widget Check Box1"
+    },
+    {
+      "name": "patentTaxTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Patent Tax (ពន្ធប៉តង់). Required only when patentTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 1, widget Text8",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "patentTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "patentTaxAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Patent Tax (ពន្ធប៉តង់). The government revenue account code this tax type is paid into. Required only when patentTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 1, widget Text9",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "patentTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "patentTaxAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Patent Tax (ពន្ធប៉តង់). Any additional/penalty tax amount for this tax type. Required only when patentTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 1, widget Text10",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "patentTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "patentTaxInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Patent Tax (ពន្ធប៉តង់). Interest amount owed for this tax type. Required only when patentTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 1, widget Text11",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "patentTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "patentTaxAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Patent Tax (ពន្ធប៉តង់). The government revenue account code the Additional Tax amount is paid into. Required only when patentTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 1, widget Text12",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "patentTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "patentTaxTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Patent Tax (ពន្ធប៉តង់). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when patentTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 1, widget Text13",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "patentTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyArticlesRegistrationTaxSelected",
+      "label": "Registration Tax on Company Articles of Association",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Registration Tax on Company Articles of Association (ពន្ធប្រថាប់ត្រាលើលក្ខន្តិកៈក្រុមហ៊ុន) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 2, widget Check Box2"
+    },
+    {
+      "name": "companyArticlesRegistrationTaxTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Registration Tax on Company Articles of Association (ពន្ធប្រថាប់ត្រាលើលក្ខន្តិកៈក្រុមហ៊ុន). Required only when companyArticlesRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 2, widget Text14",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "companyArticlesRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyArticlesRegistrationTaxAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Registration Tax on Company Articles of Association (ពន្ធប្រថាប់ត្រាលើលក្ខន្តិកៈក្រុមហ៊ុន). The government revenue account code this tax type is paid into. Required only when companyArticlesRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 2, widget Text15",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "companyArticlesRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyArticlesRegistrationTaxAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Registration Tax on Company Articles of Association (ពន្ធប្រថាប់ត្រាលើលក្ខន្តិកៈក្រុមហ៊ុន). Any additional/penalty tax amount for this tax type. Required only when companyArticlesRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 2, widget Text16",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "companyArticlesRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyArticlesRegistrationTaxInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Registration Tax on Company Articles of Association (ពន្ធប្រថាប់ត្រាលើលក្ខន្តិកៈក្រុមហ៊ុន). Interest amount owed for this tax type. Required only when companyArticlesRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 2, widget Text17",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "companyArticlesRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyArticlesRegistrationTaxAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Registration Tax on Company Articles of Association (ពន្ធប្រថាប់ត្រាលើលក្ខន្តិកៈក្រុមហ៊ុន). The government revenue account code the Additional Tax amount is paid into. Required only when companyArticlesRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 2, widget Text18",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "companyArticlesRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyArticlesRegistrationTaxTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Registration Tax on Company Articles of Association (ពន្ធប្រថាប់ត្រាលើលក្ខន្តិកៈក្រុមហ៊ុន). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when companyArticlesRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 2, widget Text19",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "companyArticlesRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyClosureRegistrationTaxSelected",
+      "label": "Registration Tax on Company Closure",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Registration Tax on Company Closure (ពន្ធប្រថាប់ត្រាបិទក្រុមហ៊ុន) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 3, widget Check Box3"
+    },
+    {
+      "name": "companyClosureRegistrationTaxTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Registration Tax on Company Closure (ពន្ធប្រថាប់ត្រាបិទក្រុមហ៊ុន). Required only when companyClosureRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 3, widget Text20",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "companyClosureRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyClosureRegistrationTaxAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Registration Tax on Company Closure (ពន្ធប្រថាប់ត្រាបិទក្រុមហ៊ុន). The government revenue account code this tax type is paid into. Required only when companyClosureRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 3, widget Text21",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "companyClosureRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyClosureRegistrationTaxAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Registration Tax on Company Closure (ពន្ធប្រថាប់ត្រាបិទក្រុមហ៊ុន). Any additional/penalty tax amount for this tax type. Required only when companyClosureRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 3, widget Text22",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "companyClosureRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyClosureRegistrationTaxInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Registration Tax on Company Closure (ពន្ធប្រថាប់ត្រាបិទក្រុមហ៊ុន). Interest amount owed for this tax type. Required only when companyClosureRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 3, widget Text23",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "companyClosureRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyClosureRegistrationTaxAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Registration Tax on Company Closure (ពន្ធប្រថាប់ត្រាបិទក្រុមហ៊ុន). The government revenue account code the Additional Tax amount is paid into. Required only when companyClosureRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 3, widget Text24",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "companyClosureRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyClosureRegistrationTaxTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Registration Tax on Company Closure (ពន្ធប្រថាប់ត្រាបិទក្រុមហ៊ុន). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when companyClosureRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 3, widget Text25",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "companyClosureRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyMergerRegistrationTaxSelected",
+      "label": "Registration Tax on Company Merger (Dissolution by Amalgamation)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Registration Tax on Company Merger (Dissolution by Amalgamation) (ពន្ធប្រថាប់ត្រាលើការរំលាយក្រុមហ៊ុនបញ្ចូលគ្នា) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 4, widget Check Box4"
+    },
+    {
+      "name": "companyMergerRegistrationTaxTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Registration Tax on Company Merger (Dissolution by Amalgamation) (ពន្ធប្រថាប់ត្រាលើការរំលាយក្រុមហ៊ុនបញ្ចូលគ្នា). Required only when companyMergerRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 4, widget Text26",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "companyMergerRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyMergerRegistrationTaxAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Registration Tax on Company Merger (Dissolution by Amalgamation) (ពន្ធប្រថាប់ត្រាលើការរំលាយក្រុមហ៊ុនបញ្ចូលគ្នា). The government revenue account code this tax type is paid into. Required only when companyMergerRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 4, widget Text27",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "companyMergerRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyMergerRegistrationTaxAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Registration Tax on Company Merger (Dissolution by Amalgamation) (ពន្ធប្រថាប់ត្រាលើការរំលាយក្រុមហ៊ុនបញ្ចូលគ្នា). Any additional/penalty tax amount for this tax type. Required only when companyMergerRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 4, widget Text28",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "companyMergerRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyMergerRegistrationTaxInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Registration Tax on Company Merger (Dissolution by Amalgamation) (ពន្ធប្រថាប់ត្រាលើការរំលាយក្រុមហ៊ុនបញ្ចូលគ្នា). Interest amount owed for this tax type. Required only when companyMergerRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 4, widget Text29",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "companyMergerRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyMergerRegistrationTaxAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Registration Tax on Company Merger (Dissolution by Amalgamation) (ពន្ធប្រថាប់ត្រាលើការរំលាយក្រុមហ៊ុនបញ្ចូលគ្នា). The government revenue account code the Additional Tax amount is paid into. Required only when companyMergerRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 4, widget Text30",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "companyMergerRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "companyMergerRegistrationTaxTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Registration Tax on Company Merger (Dissolution by Amalgamation) (ពន្ធប្រថាប់ត្រាលើការរំលាយក្រុមហ៊ុនបញ្ចូលគ្នា). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when companyMergerRegistrationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 4, widget Text31",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "companyMergerRegistrationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "shareTransferRegistrationTaxRate01Selected",
+      "label": "Registration Tax on Share Transfer, Rate 0.1%",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Registration Tax on Share Transfer, Rate 0.1% (ពន្ធប្រថាប់ត្រាផ្ទេរភាគហ៊ុនអត្រា ០.១%) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 5, widget Check Box5"
+    },
+    {
+      "name": "shareTransferRegistrationTaxRate01TaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Registration Tax on Share Transfer, Rate 0.1% (ពន្ធប្រថាប់ត្រាផ្ទេរភាគហ៊ុនអត្រា ០.១%). Required only when shareTransferRegistrationTaxRate01Selected is true.",
+      "sourceRef": "Tax declaration table, row 5, widget Text32",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "shareTransferRegistrationTaxRate01Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "shareTransferRegistrationTaxRate01AccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Registration Tax on Share Transfer, Rate 0.1% (ពន្ធប្រថាប់ត្រាផ្ទេរភាគហ៊ុនអត្រា ០.១%). The government revenue account code this tax type is paid into. Required only when shareTransferRegistrationTaxRate01Selected is true.",
+      "sourceRef": "Tax declaration table, row 5, widget Text33",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "shareTransferRegistrationTaxRate01Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "shareTransferRegistrationTaxRate01AdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Registration Tax on Share Transfer, Rate 0.1% (ពន្ធប្រថាប់ត្រាផ្ទេរភាគហ៊ុនអត្រា ០.១%). Any additional/penalty tax amount for this tax type. Required only when shareTransferRegistrationTaxRate01Selected is true.",
+      "sourceRef": "Tax declaration table, row 5, widget Text34",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "shareTransferRegistrationTaxRate01Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "shareTransferRegistrationTaxRate01Interest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Registration Tax on Share Transfer, Rate 0.1% (ពន្ធប្រថាប់ត្រាផ្ទេរភាគហ៊ុនអត្រា ០.១%). Interest amount owed for this tax type. Required only when shareTransferRegistrationTaxRate01Selected is true.",
+      "sourceRef": "Tax declaration table, row 5, widget Text35",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "shareTransferRegistrationTaxRate01Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "shareTransferRegistrationTaxRate01AdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Registration Tax on Share Transfer, Rate 0.1% (ពន្ធប្រថាប់ត្រាផ្ទេរភាគហ៊ុនអត្រា ០.១%). The government revenue account code the Additional Tax amount is paid into. Required only when shareTransferRegistrationTaxRate01Selected is true.",
+      "sourceRef": "Tax declaration table, row 5, widget Text36",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "shareTransferRegistrationTaxRate01Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "shareTransferRegistrationTaxRate01TotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Registration Tax on Share Transfer, Rate 0.1% (ពន្ធប្រថាប់ត្រាផ្ទេរភាគហ៊ុនអត្រា ០.១%). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when shareTransferRegistrationTaxRate01Selected is true.",
+      "sourceRef": "Tax declaration table, row 5, widget Text37",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "shareTransferRegistrationTaxRate01Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "shareTransferRegistrationTaxRate4Selected",
+      "label": "Registration Tax on Share Transfer, Rate 4%",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Registration Tax on Share Transfer, Rate 4% (ពន្ធប្រថាប់ត្រាផ្ទេរភាគហ៊ុនអត្រា ៤%) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 6, widget Check Box6"
+    },
+    {
+      "name": "shareTransferRegistrationTaxRate4TaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Registration Tax on Share Transfer, Rate 4% (ពន្ធប្រថាប់ត្រាផ្ទេរភាគហ៊ុនអត្រា ៤%). Required only when shareTransferRegistrationTaxRate4Selected is true.",
+      "sourceRef": "Tax declaration table, row 6, widget Text38",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "shareTransferRegistrationTaxRate4Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "shareTransferRegistrationTaxRate4AccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Registration Tax on Share Transfer, Rate 4% (ពន្ធប្រថាប់ត្រាផ្ទេរភាគហ៊ុនអត្រា ៤%). The government revenue account code this tax type is paid into. Required only when shareTransferRegistrationTaxRate4Selected is true.",
+      "sourceRef": "Tax declaration table, row 6, widget Text39",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "shareTransferRegistrationTaxRate4Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "shareTransferRegistrationTaxRate4AdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Registration Tax on Share Transfer, Rate 4% (ពន្ធប្រថាប់ត្រាផ្ទេរភាគហ៊ុនអត្រា ៤%). Any additional/penalty tax amount for this tax type. Required only when shareTransferRegistrationTaxRate4Selected is true.",
+      "sourceRef": "Tax declaration table, row 6, widget Text40",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "shareTransferRegistrationTaxRate4Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "shareTransferRegistrationTaxRate4Interest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Registration Tax on Share Transfer, Rate 4% (ពន្ធប្រថាប់ត្រាផ្ទេរភាគហ៊ុនអត្រា ៤%). Interest amount owed for this tax type. Required only when shareTransferRegistrationTaxRate4Selected is true.",
+      "sourceRef": "Tax declaration table, row 6, widget Text41",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "shareTransferRegistrationTaxRate4Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "shareTransferRegistrationTaxRate4AdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Registration Tax on Share Transfer, Rate 4% (ពន្ធប្រថាប់ត្រាផ្ទេរភាគហ៊ុនអត្រា ៤%). The government revenue account code the Additional Tax amount is paid into. Required only when shareTransferRegistrationTaxRate4Selected is true.",
+      "sourceRef": "Tax declaration table, row 6, widget Text42",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "shareTransferRegistrationTaxRate4Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "shareTransferRegistrationTaxRate4TotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Registration Tax on Share Transfer, Rate 4% (ពន្ធប្រថាប់ត្រាផ្ទេរភាគហ៊ុនអត្រា ៤%). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when shareTransferRegistrationTaxRate4Selected is true.",
+      "sourceRef": "Tax declaration table, row 6, widget Text43",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "shareTransferRegistrationTaxRate4Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "publicProcurementRegistrationTaxRate01Selected",
+      "label": "Registration Tax on Public Procurement, Rate 0.1%",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Registration Tax on Public Procurement, Rate 0.1% (ពន្ធប្រថាប់ត្រាលើលទ្ធកម្មសាធារណៈអត្រា០.១%) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 7, widget Check Box7"
+    },
+    {
+      "name": "publicProcurementRegistrationTaxRate01TaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Registration Tax on Public Procurement, Rate 0.1% (ពន្ធប្រថាប់ត្រាលើលទ្ធកម្មសាធារណៈអត្រា០.១%). Required only when publicProcurementRegistrationTaxRate01Selected is true.",
+      "sourceRef": "Tax declaration table, row 7, widget Text44",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "publicProcurementRegistrationTaxRate01Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "publicProcurementRegistrationTaxRate01AccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Registration Tax on Public Procurement, Rate 0.1% (ពន្ធប្រថាប់ត្រាលើលទ្ធកម្មសាធារណៈអត្រា០.១%). The government revenue account code this tax type is paid into. Required only when publicProcurementRegistrationTaxRate01Selected is true.",
+      "sourceRef": "Tax declaration table, row 7, widget Text45",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "publicProcurementRegistrationTaxRate01Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "publicProcurementRegistrationTaxRate01AdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Registration Tax on Public Procurement, Rate 0.1% (ពន្ធប្រថាប់ត្រាលើលទ្ធកម្មសាធារណៈអត្រា០.១%). Any additional/penalty tax amount for this tax type. Required only when publicProcurementRegistrationTaxRate01Selected is true.",
+      "sourceRef": "Tax declaration table, row 7, widget Text46",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "publicProcurementRegistrationTaxRate01Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "publicProcurementRegistrationTaxRate01Interest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Registration Tax on Public Procurement, Rate 0.1% (ពន្ធប្រថាប់ត្រាលើលទ្ធកម្មសាធារណៈអត្រា០.១%). Interest amount owed for this tax type. Required only when publicProcurementRegistrationTaxRate01Selected is true.",
+      "sourceRef": "Tax declaration table, row 7, widget Text47",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "publicProcurementRegistrationTaxRate01Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "publicProcurementRegistrationTaxRate01AdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Registration Tax on Public Procurement, Rate 0.1% (ពន្ធប្រថាប់ត្រាលើលទ្ធកម្មសាធារណៈអត្រា០.១%). The government revenue account code the Additional Tax amount is paid into. Required only when publicProcurementRegistrationTaxRate01Selected is true.",
+      "sourceRef": "Tax declaration table, row 7, widget Text48",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "publicProcurementRegistrationTaxRate01Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "publicProcurementRegistrationTaxRate01TotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Registration Tax on Public Procurement, Rate 0.1% (ពន្ធប្រថាប់ត្រាលើលទ្ធកម្មសាធារណៈអត្រា០.១%). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when publicProcurementRegistrationTaxRate01Selected is true.",
+      "sourceRef": "Tax declaration table, row 7, widget Text49",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "publicProcurementRegistrationTaxRate01Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "penaltyAndInterestSelected",
+      "label": "Penalty and Interest",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Penalty and Interest (ប្រាក់ពិន័យ និងការប្រាក់) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 8, widget Check Box8"
+    },
+    {
+      "name": "penaltyAndInterestTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Penalty and Interest (ប្រាក់ពិន័យ និងការប្រាក់). Required only when penaltyAndInterestSelected is true.",
+      "sourceRef": "Tax declaration table, row 8, widget Text50",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "penaltyAndInterestSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "penaltyAndInterestAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Penalty and Interest (ប្រាក់ពិន័យ និងការប្រាក់). The government revenue account code this tax type is paid into. Required only when penaltyAndInterestSelected is true.",
+      "sourceRef": "Tax declaration table, row 8, widget Text51",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "penaltyAndInterestSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "penaltyAndInterestAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Penalty and Interest (ប្រាក់ពិន័យ និងការប្រាក់). Any additional/penalty tax amount for this tax type. Required only when penaltyAndInterestSelected is true.",
+      "sourceRef": "Tax declaration table, row 8, widget Text52",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "penaltyAndInterestSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "penaltyAndInterestInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Penalty and Interest (ប្រាក់ពិន័យ និងការប្រាក់). Interest amount owed for this tax type. Required only when penaltyAndInterestSelected is true.",
+      "sourceRef": "Tax declaration table, row 8, widget Text53",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "penaltyAndInterestSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "penaltyAndInterestAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Penalty and Interest (ប្រាក់ពិន័យ និងការប្រាក់). The government revenue account code the Additional Tax amount is paid into. Required only when penaltyAndInterestSelected is true.",
+      "sourceRef": "Tax declaration table, row 8, widget Text54",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "penaltyAndInterestSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "penaltyAndInterestTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Penalty and Interest (ប្រាក់ពិន័យ និងការប្រាក់). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when penaltyAndInterestSelected is true.",
+      "sourceRef": "Tax declaration table, row 8, widget Text55",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "penaltyAndInterestSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "registrationOrUpdateServiceFeeSelected",
+      "label": "Registration or Update Service Fee",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Registration or Update Service Fee (ថ្លៃសេវាចុះបញ្ជី ឬធ្វើបច្ចុប្បន្នភាព) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 9, widget Check Box9"
+    },
+    {
+      "name": "registrationOrUpdateServiceFeeTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Registration or Update Service Fee (ថ្លៃសេវាចុះបញ្ជី ឬធ្វើបច្ចុប្បន្នភាព). Required only when registrationOrUpdateServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 9, widget Text56",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "registrationOrUpdateServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "registrationOrUpdateServiceFeeAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Registration or Update Service Fee (ថ្លៃសេវាចុះបញ្ជី ឬធ្វើបច្ចុប្បន្នភាព). The government revenue account code this tax type is paid into. Required only when registrationOrUpdateServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 9, widget Text57",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "registrationOrUpdateServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "registrationOrUpdateServiceFeeAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Registration or Update Service Fee (ថ្លៃសេវាចុះបញ្ជី ឬធ្វើបច្ចុប្បន្នភាព). Any additional/penalty tax amount for this tax type. Required only when registrationOrUpdateServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 9, widget Text58",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "registrationOrUpdateServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "registrationOrUpdateServiceFeeInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Registration or Update Service Fee (ថ្លៃសេវាចុះបញ្ជី ឬធ្វើបច្ចុប្បន្នភាព). Interest amount owed for this tax type. Required only when registrationOrUpdateServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 9, widget Text59",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "registrationOrUpdateServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "registrationOrUpdateServiceFeeAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Registration or Update Service Fee (ថ្លៃសេវាចុះបញ្ជី ឬធ្វើបច្ចុប្បន្នភាព). The government revenue account code the Additional Tax amount is paid into. Required only when registrationOrUpdateServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 9, widget Text60",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "registrationOrUpdateServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "registrationOrUpdateServiceFeeTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Registration or Update Service Fee (ថ្លៃសេវាចុះបញ្ជី ឬធ្វើបច្ចុប្បន្នភាព). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when registrationOrUpdateServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 9, widget Text61",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "registrationOrUpdateServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "registrationTaxServiceFeeSelected",
+      "label": "Registration Tax Service Fee",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Registration Tax Service Fee (ថ្លៃសេវាពន្ធប្រថាប់ត្រា) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 10, widget Check Box10"
+    },
+    {
+      "name": "registrationTaxServiceFeeTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Registration Tax Service Fee (ថ្លៃសេវាពន្ធប្រថាប់ត្រា). Required only when registrationTaxServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 10, widget Text62",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "registrationTaxServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "registrationTaxServiceFeeAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Registration Tax Service Fee (ថ្លៃសេវាពន្ធប្រថាប់ត្រា). The government revenue account code this tax type is paid into. Required only when registrationTaxServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 10, widget Text63",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "registrationTaxServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "registrationTaxServiceFeeAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Registration Tax Service Fee (ថ្លៃសេវាពន្ធប្រថាប់ត្រា). Any additional/penalty tax amount for this tax type. Required only when registrationTaxServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 10, widget Text64",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "registrationTaxServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "registrationTaxServiceFeeInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Registration Tax Service Fee (ថ្លៃសេវាពន្ធប្រថាប់ត្រា). Interest amount owed for this tax type. Required only when registrationTaxServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 10, widget Text65",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "registrationTaxServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "registrationTaxServiceFeeAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Registration Tax Service Fee (ថ្លៃសេវាពន្ធប្រថាប់ត្រា). The government revenue account code the Additional Tax amount is paid into. Required only when registrationTaxServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 10, widget Text66",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "registrationTaxServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "registrationTaxServiceFeeTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Registration Tax Service Fee (ថ្លៃសេវាពន្ធប្រថាប់ត្រា). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when registrationTaxServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 10, widget Text67",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "registrationTaxServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnSalarySelected",
+      "label": "Tax on Salary",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Tax on Salary (ពន្ធលើប្រាក់បៀវត្សរ៍) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 11, widget Check Box11"
+    },
+    {
+      "name": "taxOnSalaryTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Tax on Salary (ពន្ធលើប្រាក់បៀវត្សរ៍). Required only when taxOnSalarySelected is true.",
+      "sourceRef": "Tax declaration table, row 11, widget Text68",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxOnSalarySelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnSalaryAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Tax on Salary (ពន្ធលើប្រាក់បៀវត្សរ៍). The government revenue account code this tax type is paid into. Required only when taxOnSalarySelected is true.",
+      "sourceRef": "Tax declaration table, row 11, widget Text69",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "taxOnSalarySelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnSalaryAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Tax on Salary (ពន្ធលើប្រាក់បៀវត្សរ៍). Any additional/penalty tax amount for this tax type. Required only when taxOnSalarySelected is true.",
+      "sourceRef": "Tax declaration table, row 11, widget Text70",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxOnSalarySelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnSalaryInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Tax on Salary (ពន្ធលើប្រាក់បៀវត្សរ៍). Interest amount owed for this tax type. Required only when taxOnSalarySelected is true.",
+      "sourceRef": "Tax declaration table, row 11, widget Text71",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxOnSalarySelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnSalaryAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Tax on Salary (ពន្ធលើប្រាក់បៀវត្សរ៍). The government revenue account code the Additional Tax amount is paid into. Required only when taxOnSalarySelected is true.",
+      "sourceRef": "Tax declaration table, row 11, widget Text72",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "taxOnSalarySelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnSalaryTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Tax on Salary (ពន្ធលើប្រាក់បៀវត្សរ៍). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when taxOnSalarySelected is true.",
+      "sourceRef": "Tax declaration table, row 11, widget Text73",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxOnSalarySelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnFringeBenefitsSelected",
+      "label": "Tax on Fringe Benefits",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Tax on Fringe Benefits (ពន្ធលើអត្ថប្រយោជន៍បន្ថែម) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 12, widget Check Box12"
+    },
+    {
+      "name": "taxOnFringeBenefitsTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Tax on Fringe Benefits (ពន្ធលើអត្ថប្រយោជន៍បន្ថែម). Required only when taxOnFringeBenefitsSelected is true.",
+      "sourceRef": "Tax declaration table, row 12, widget Text74",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxOnFringeBenefitsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnFringeBenefitsAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Tax on Fringe Benefits (ពន្ធលើអត្ថប្រយោជន៍បន្ថែម). The government revenue account code this tax type is paid into. Required only when taxOnFringeBenefitsSelected is true.",
+      "sourceRef": "Tax declaration table, row 12, widget Text75",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "taxOnFringeBenefitsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnFringeBenefitsAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Tax on Fringe Benefits (ពន្ធលើអត្ថប្រយោជន៍បន្ថែម). Any additional/penalty tax amount for this tax type. Required only when taxOnFringeBenefitsSelected is true.",
+      "sourceRef": "Tax declaration table, row 12, widget Text76",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxOnFringeBenefitsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnFringeBenefitsInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Tax on Fringe Benefits (ពន្ធលើអត្ថប្រយោជន៍បន្ថែម). Interest amount owed for this tax type. Required only when taxOnFringeBenefitsSelected is true.",
+      "sourceRef": "Tax declaration table, row 12, widget Text77",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxOnFringeBenefitsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnFringeBenefitsAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Tax on Fringe Benefits (ពន្ធលើអត្ថប្រយោជន៍បន្ថែម). The government revenue account code the Additional Tax amount is paid into. Required only when taxOnFringeBenefitsSelected is true.",
+      "sourceRef": "Tax declaration table, row 12, widget Text78",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "taxOnFringeBenefitsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnFringeBenefitsTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Tax on Fringe Benefits (ពន្ធលើអត្ថប្រយោជន៍បន្ថែម). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when taxOnFringeBenefitsSelected is true.",
+      "sourceRef": "Tax declaration table, row 12, widget Text79",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxOnFringeBenefitsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "prepaymentOfTaxOnIncomeSelected",
+      "label": "Prepayment of Tax on Income",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Prepayment of Tax on Income (ប្រាក់រំដោះពន្ធលើប្រាក់ចំណូល) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 13, widget Check Box13"
+    },
+    {
+      "name": "prepaymentOfTaxOnIncomeTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Prepayment of Tax on Income (ប្រាក់រំដោះពន្ធលើប្រាក់ចំណូល). Required only when prepaymentOfTaxOnIncomeSelected is true.",
+      "sourceRef": "Tax declaration table, row 13, widget Text80",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "prepaymentOfTaxOnIncomeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "prepaymentOfTaxOnIncomeAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Prepayment of Tax on Income (ប្រាក់រំដោះពន្ធលើប្រាក់ចំណូល). The government revenue account code this tax type is paid into. Required only when prepaymentOfTaxOnIncomeSelected is true.",
+      "sourceRef": "Tax declaration table, row 13, widget Text81",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "prepaymentOfTaxOnIncomeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "prepaymentOfTaxOnIncomeAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Prepayment of Tax on Income (ប្រាក់រំដោះពន្ធលើប្រាក់ចំណូល). Any additional/penalty tax amount for this tax type. Required only when prepaymentOfTaxOnIncomeSelected is true.",
+      "sourceRef": "Tax declaration table, row 13, widget Text82",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "prepaymentOfTaxOnIncomeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "prepaymentOfTaxOnIncomeInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Prepayment of Tax on Income (ប្រាក់រំដោះពន្ធលើប្រាក់ចំណូល). Interest amount owed for this tax type. Required only when prepaymentOfTaxOnIncomeSelected is true.",
+      "sourceRef": "Tax declaration table, row 13, widget Text83",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "prepaymentOfTaxOnIncomeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "prepaymentOfTaxOnIncomeAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Prepayment of Tax on Income (ប្រាក់រំដោះពន្ធលើប្រាក់ចំណូល). The government revenue account code the Additional Tax amount is paid into. Required only when prepaymentOfTaxOnIncomeSelected is true.",
+      "sourceRef": "Tax declaration table, row 13, widget Text84",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "prepaymentOfTaxOnIncomeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "prepaymentOfTaxOnIncomeTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Prepayment of Tax on Income (ប្រាក់រំដោះពន្ធលើប្រាក់ចំណូល). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when prepaymentOfTaxOnIncomeSelected is true.",
+      "sourceRef": "Tax declaration table, row 13, widget Text85",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "prepaymentOfTaxOnIncomeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "annualTaxOnIncomeSelected",
+      "label": "Annual Tax on Income",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Annual Tax on Income (ពន្ធលើប្រាក់ចំណូលប្រចាំឆ្នាំ) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 14, widget Check Box14"
+    },
+    {
+      "name": "annualTaxOnIncomeTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Annual Tax on Income (ពន្ធលើប្រាក់ចំណូលប្រចាំឆ្នាំ). Required only when annualTaxOnIncomeSelected is true.",
+      "sourceRef": "Tax declaration table, row 14, widget Text86",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "annualTaxOnIncomeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "annualTaxOnIncomeAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Annual Tax on Income (ពន្ធលើប្រាក់ចំណូលប្រចាំឆ្នាំ). The government revenue account code this tax type is paid into. Required only when annualTaxOnIncomeSelected is true.",
+      "sourceRef": "Tax declaration table, row 14, widget Text87",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "annualTaxOnIncomeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "annualTaxOnIncomeAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Annual Tax on Income (ពន្ធលើប្រាក់ចំណូលប្រចាំឆ្នាំ). Any additional/penalty tax amount for this tax type. Required only when annualTaxOnIncomeSelected is true.",
+      "sourceRef": "Tax declaration table, row 14, widget Text88",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "annualTaxOnIncomeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "annualTaxOnIncomeInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Annual Tax on Income (ពន្ធលើប្រាក់ចំណូលប្រចាំឆ្នាំ). Interest amount owed for this tax type. Required only when annualTaxOnIncomeSelected is true.",
+      "sourceRef": "Tax declaration table, row 14, widget Text89",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "annualTaxOnIncomeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "annualTaxOnIncomeAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Annual Tax on Income (ពន្ធលើប្រាក់ចំណូលប្រចាំឆ្នាំ). The government revenue account code the Additional Tax amount is paid into. Required only when annualTaxOnIncomeSelected is true.",
+      "sourceRef": "Tax declaration table, row 14, widget Text90",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "annualTaxOnIncomeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "annualTaxOnIncomeTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Annual Tax on Income (ពន្ធលើប្រាក់ចំណូលប្រចាំឆ្នាំ). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when annualTaxOnIncomeSelected is true.",
+      "sourceRef": "Tax declaration table, row 14, widget Text91",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "annualTaxOnIncomeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "prepaymentOfTaxOnDividendDistributionSelected",
+      "label": "Prepayment of Tax on Dividend Distribution",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Prepayment of Tax on Dividend Distribution (ពន្ធបង់មុនលើការបែងចែកភាគលាភ) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 15, widget Check Box15"
+    },
+    {
+      "name": "prepaymentOfTaxOnDividendDistributionTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Prepayment of Tax on Dividend Distribution (ពន្ធបង់មុនលើការបែងចែកភាគលាភ). Required only when prepaymentOfTaxOnDividendDistributionSelected is true.",
+      "sourceRef": "Tax declaration table, row 15, widget Text92",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "prepaymentOfTaxOnDividendDistributionSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "prepaymentOfTaxOnDividendDistributionAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Prepayment of Tax on Dividend Distribution (ពន្ធបង់មុនលើការបែងចែកភាគលាភ). The government revenue account code this tax type is paid into. Required only when prepaymentOfTaxOnDividendDistributionSelected is true.",
+      "sourceRef": "Tax declaration table, row 15, widget Text93",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "prepaymentOfTaxOnDividendDistributionSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "prepaymentOfTaxOnDividendDistributionAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Prepayment of Tax on Dividend Distribution (ពន្ធបង់មុនលើការបែងចែកភាគលាភ). Any additional/penalty tax amount for this tax type. Required only when prepaymentOfTaxOnDividendDistributionSelected is true.",
+      "sourceRef": "Tax declaration table, row 15, widget Text94",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "prepaymentOfTaxOnDividendDistributionSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "prepaymentOfTaxOnDividendDistributionInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Prepayment of Tax on Dividend Distribution (ពន្ធបង់មុនលើការបែងចែកភាគលាភ). Interest amount owed for this tax type. Required only when prepaymentOfTaxOnDividendDistributionSelected is true.",
+      "sourceRef": "Tax declaration table, row 15, widget Text95",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "prepaymentOfTaxOnDividendDistributionSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "prepaymentOfTaxOnDividendDistributionAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Prepayment of Tax on Dividend Distribution (ពន្ធបង់មុនលើការបែងចែកភាគលាភ). The government revenue account code the Additional Tax amount is paid into. Required only when prepaymentOfTaxOnDividendDistributionSelected is true.",
+      "sourceRef": "Tax declaration table, row 15, widget Text96",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "prepaymentOfTaxOnDividendDistributionSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "prepaymentOfTaxOnDividendDistributionTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Prepayment of Tax on Dividend Distribution (ពន្ធបង់មុនលើការបែងចែកភាគលាភ). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when prepaymentOfTaxOnDividendDistributionSelected is true.",
+      "sourceRef": "Tax declaration table, row 15, widget Text97",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "prepaymentOfTaxOnDividendDistributionSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "minimumTaxSelected",
+      "label": "Minimum Tax",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Minimum Tax (ពន្ធអប្បបរមា) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 16, widget Check Box16"
+    },
+    {
+      "name": "minimumTaxTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Minimum Tax (ពន្ធអប្បបរមា). Required only when minimumTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 16, widget Text98",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "minimumTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "minimumTaxAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Minimum Tax (ពន្ធអប្បបរមា). The government revenue account code this tax type is paid into. Required only when minimumTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 16, widget Text99",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "minimumTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "minimumTaxAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Minimum Tax (ពន្ធអប្បបរមា). Any additional/penalty tax amount for this tax type. Required only when minimumTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 16, widget Text100",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "minimumTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "minimumTaxInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Minimum Tax (ពន្ធអប្បបរមា). Interest amount owed for this tax type. Required only when minimumTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 16, widget Text101",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "minimumTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "minimumTaxAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Minimum Tax (ពន្ធអប្បបរមា). The government revenue account code the Additional Tax amount is paid into. Required only when minimumTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 16, widget Text102",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "minimumTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "minimumTaxTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Minimum Tax (ពន្ធអប្បបរមា). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when minimumTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 16, widget Text103",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "minimumTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnServices15Selected",
+      "label": "Withholding Tax on Services, 15%",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Withholding Tax on Services, 15% (ពន្ធកាត់ទុកលើសេវាកម្ម ១៥%) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 17, widget Check Box17"
+    },
+    {
+      "name": "withholdingTaxOnServices15TaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Withholding Tax on Services, 15% (ពន្ធកាត់ទុកលើសេវាកម្ម ១៥%). Required only when withholdingTaxOnServices15Selected is true.",
+      "sourceRef": "Tax declaration table, row 17, widget Text104",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnServices15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnServices15AccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Withholding Tax on Services, 15% (ពន្ធកាត់ទុកលើសេវាកម្ម ១៥%). The government revenue account code this tax type is paid into. Required only when withholdingTaxOnServices15Selected is true.",
+      "sourceRef": "Tax declaration table, row 17, widget Text105",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnServices15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnServices15AdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Withholding Tax on Services, 15% (ពន្ធកាត់ទុកលើសេវាកម្ម ១៥%). Any additional/penalty tax amount for this tax type. Required only when withholdingTaxOnServices15Selected is true.",
+      "sourceRef": "Tax declaration table, row 17, widget Text106",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnServices15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnServices15Interest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Withholding Tax on Services, 15% (ពន្ធកាត់ទុកលើសេវាកម្ម ១៥%). Interest amount owed for this tax type. Required only when withholdingTaxOnServices15Selected is true.",
+      "sourceRef": "Tax declaration table, row 17, widget Text107",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnServices15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnServices15AdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Withholding Tax on Services, 15% (ពន្ធកាត់ទុកលើសេវាកម្ម ១៥%). The government revenue account code the Additional Tax amount is paid into. Required only when withholdingTaxOnServices15Selected is true.",
+      "sourceRef": "Tax declaration table, row 17, widget Text108",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnServices15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnServices15TotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Withholding Tax on Services, 15% (ពន្ធកាត់ទុកលើសេវាកម្ម ១៥%). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when withholdingTaxOnServices15Selected is true.",
+      "sourceRef": "Tax declaration table, row 17, widget Text109",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnServices15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRoyalties15Selected",
+      "label": "Withholding Tax on Royalties, 15%",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Withholding Tax on Royalties, 15% (ពន្ធកាត់ទុកលើសួយសារ ១៥%) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 18, widget Check Box18"
+    },
+    {
+      "name": "withholdingTaxOnRoyalties15TaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Withholding Tax on Royalties, 15% (ពន្ធកាត់ទុកលើសួយសារ ១៥%). Required only when withholdingTaxOnRoyalties15Selected is true.",
+      "sourceRef": "Tax declaration table, row 18, widget Text110",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRoyalties15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRoyalties15AccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Withholding Tax on Royalties, 15% (ពន្ធកាត់ទុកលើសួយសារ ១៥%). The government revenue account code this tax type is paid into. Required only when withholdingTaxOnRoyalties15Selected is true.",
+      "sourceRef": "Tax declaration table, row 18, widget Text111",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRoyalties15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRoyalties15AdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Withholding Tax on Royalties, 15% (ពន្ធកាត់ទុកលើសួយសារ ១៥%). Any additional/penalty tax amount for this tax type. Required only when withholdingTaxOnRoyalties15Selected is true.",
+      "sourceRef": "Tax declaration table, row 18, widget Text112",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRoyalties15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRoyalties15Interest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Withholding Tax on Royalties, 15% (ពន្ធកាត់ទុកលើសួយសារ ១៥%). Interest amount owed for this tax type. Required only when withholdingTaxOnRoyalties15Selected is true.",
+      "sourceRef": "Tax declaration table, row 18, widget Text113",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRoyalties15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRoyalties15AdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Withholding Tax on Royalties, 15% (ពន្ធកាត់ទុកលើសួយសារ ១៥%). The government revenue account code the Additional Tax amount is paid into. Required only when withholdingTaxOnRoyalties15Selected is true.",
+      "sourceRef": "Tax declaration table, row 18, widget Text114",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRoyalties15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRoyalties15TotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Withholding Tax on Royalties, 15% (ពន្ធកាត់ទុកលើសួយសារ ១៥%). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when withholdingTaxOnRoyalties15Selected is true.",
+      "sourceRef": "Tax declaration table, row 18, widget Text115",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRoyalties15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest15Selected",
+      "label": "Withholding Tax on Interest, 15%",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Withholding Tax on Interest, 15% (ពន្ធកាត់ទុកលើការប្រាក់ ១៥%) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 19, widget Check Box19"
+    },
+    {
+      "name": "withholdingTaxOnInterest15TaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Withholding Tax on Interest, 15% (ពន្ធកាត់ទុកលើការប្រាក់ ១៥%). Required only when withholdingTaxOnInterest15Selected is true.",
+      "sourceRef": "Tax declaration table, row 19, widget Text116",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest15AccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Withholding Tax on Interest, 15% (ពន្ធកាត់ទុកលើការប្រាក់ ១៥%). The government revenue account code this tax type is paid into. Required only when withholdingTaxOnInterest15Selected is true.",
+      "sourceRef": "Tax declaration table, row 19, widget Text117",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest15AdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Withholding Tax on Interest, 15% (ពន្ធកាត់ទុកលើការប្រាក់ ១៥%). Any additional/penalty tax amount for this tax type. Required only when withholdingTaxOnInterest15Selected is true.",
+      "sourceRef": "Tax declaration table, row 19, widget Text118",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest15Interest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Withholding Tax on Interest, 15% (ពន្ធកាត់ទុកលើការប្រាក់ ១៥%). Interest amount owed for this tax type. Required only when withholdingTaxOnInterest15Selected is true.",
+      "sourceRef": "Tax declaration table, row 19, widget Text119",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest15AdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Withholding Tax on Interest, 15% (ពន្ធកាត់ទុកលើការប្រាក់ ១៥%). The government revenue account code the Additional Tax amount is paid into. Required only when withholdingTaxOnInterest15Selected is true.",
+      "sourceRef": "Tax declaration table, row 19, widget Text120",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest15TotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Withholding Tax on Interest, 15% (ពន្ធកាត់ទុកលើការប្រាក់ ១៥%). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when withholdingTaxOnInterest15Selected is true.",
+      "sourceRef": "Tax declaration table, row 19, widget Text121",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest15Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest6Selected",
+      "label": "Withholding Tax on Interest, 6%",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Withholding Tax on Interest, 6% (ពន្ធកាត់ទុកលើការប្រាក់ ៦%) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 20, widget Check Box20"
+    },
+    {
+      "name": "withholdingTaxOnInterest6TaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Withholding Tax on Interest, 6% (ពន្ធកាត់ទុកលើការប្រាក់ ៦%). Required only when withholdingTaxOnInterest6Selected is true.",
+      "sourceRef": "Tax declaration table, row 20, widget Text122",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest6Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest6AccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Withholding Tax on Interest, 6% (ពន្ធកាត់ទុកលើការប្រាក់ ៦%). The government revenue account code this tax type is paid into. Required only when withholdingTaxOnInterest6Selected is true.",
+      "sourceRef": "Tax declaration table, row 20, widget Text123",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest6Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest6AdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Withholding Tax on Interest, 6% (ពន្ធកាត់ទុកលើការប្រាក់ ៦%). Any additional/penalty tax amount for this tax type. Required only when withholdingTaxOnInterest6Selected is true.",
+      "sourceRef": "Tax declaration table, row 20, widget Text124",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest6Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest6Interest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Withholding Tax on Interest, 6% (ពន្ធកាត់ទុកលើការប្រាក់ ៦%). Interest amount owed for this tax type. Required only when withholdingTaxOnInterest6Selected is true.",
+      "sourceRef": "Tax declaration table, row 20, widget Text125",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest6Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest6AdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Withholding Tax on Interest, 6% (ពន្ធកាត់ទុកលើការប្រាក់ ៦%). The government revenue account code the Additional Tax amount is paid into. Required only when withholdingTaxOnInterest6Selected is true.",
+      "sourceRef": "Tax declaration table, row 20, widget Text126",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest6Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest6TotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Withholding Tax on Interest, 6% (ពន្ធកាត់ទុកលើការប្រាក់ ៦%). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when withholdingTaxOnInterest6Selected is true.",
+      "sourceRef": "Tax declaration table, row 20, widget Text127",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest6Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest4Selected",
+      "label": "Withholding Tax on Interest, 4%",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Withholding Tax on Interest, 4% (ពន្ធកាត់ទុកលើការប្រាក់ ៤%) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 21, widget Check Box21"
+    },
+    {
+      "name": "withholdingTaxOnInterest4TaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Withholding Tax on Interest, 4% (ពន្ធកាត់ទុកលើការប្រាក់ ៤%). Required only when withholdingTaxOnInterest4Selected is true.",
+      "sourceRef": "Tax declaration table, row 21, widget Text128",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest4Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest4AccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Withholding Tax on Interest, 4% (ពន្ធកាត់ទុកលើការប្រាក់ ៤%). The government revenue account code this tax type is paid into. Required only when withholdingTaxOnInterest4Selected is true.",
+      "sourceRef": "Tax declaration table, row 21, widget Text129",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest4Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest4AdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Withholding Tax on Interest, 4% (ពន្ធកាត់ទុកលើការប្រាក់ ៤%). Any additional/penalty tax amount for this tax type. Required only when withholdingTaxOnInterest4Selected is true.",
+      "sourceRef": "Tax declaration table, row 21, widget Text130",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest4Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest4Interest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Withholding Tax on Interest, 4% (ពន្ធកាត់ទុកលើការប្រាក់ ៤%). Interest amount owed for this tax type. Required only when withholdingTaxOnInterest4Selected is true.",
+      "sourceRef": "Tax declaration table, row 21, widget Text131",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest4Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest4AdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Withholding Tax on Interest, 4% (ពន្ធកាត់ទុកលើការប្រាក់ ៤%). The government revenue account code the Additional Tax amount is paid into. Required only when withholdingTaxOnInterest4Selected is true.",
+      "sourceRef": "Tax declaration table, row 21, widget Text132",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest4Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnInterest4TotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Withholding Tax on Interest, 4% (ពន្ធកាត់ទុកលើការប្រាក់ ៤%). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when withholdingTaxOnInterest4Selected is true.",
+      "sourceRef": "Tax declaration table, row 21, widget Text133",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnInterest4Selected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentIncomeTaxSelected",
+      "label": "Withholding Tax on Non-Resident (Income Tax)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Withholding Tax on Non-Resident (Income Tax) (ពន្ធកាត់ទុកលើអនិវាសនជន (ពន្ធលើប្រាក់ចំណូល)) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 22, widget Check Box22"
+    },
+    {
+      "name": "withholdingTaxOnNonResidentIncomeTaxTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Withholding Tax on Non-Resident (Income Tax) (ពន្ធកាត់ទុកលើអនិវាសនជន (ពន្ធលើប្រាក់ចំណូល)). Required only when withholdingTaxOnNonResidentIncomeTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 22, widget Text134",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentIncomeTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentIncomeTaxAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Withholding Tax on Non-Resident (Income Tax) (ពន្ធកាត់ទុកលើអនិវាសនជន (ពន្ធលើប្រាក់ចំណូល)). The government revenue account code this tax type is paid into. Required only when withholdingTaxOnNonResidentIncomeTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 22, widget Text135",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentIncomeTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentIncomeTaxAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Withholding Tax on Non-Resident (Income Tax) (ពន្ធកាត់ទុកលើអនិវាសនជន (ពន្ធលើប្រាក់ចំណូល)). Any additional/penalty tax amount for this tax type. Required only when withholdingTaxOnNonResidentIncomeTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 22, widget Text136",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentIncomeTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentIncomeTaxInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Withholding Tax on Non-Resident (Income Tax) (ពន្ធកាត់ទុកលើអនិវាសនជន (ពន្ធលើប្រាក់ចំណូល)). Interest amount owed for this tax type. Required only when withholdingTaxOnNonResidentIncomeTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 22, widget Text137",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentIncomeTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentIncomeTaxAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Withholding Tax on Non-Resident (Income Tax) (ពន្ធកាត់ទុកលើអនិវាសនជន (ពន្ធលើប្រាក់ចំណូល)). The government revenue account code the Additional Tax amount is paid into. Required only when withholdingTaxOnNonResidentIncomeTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 22, widget Text138",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentIncomeTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentIncomeTaxTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Withholding Tax on Non-Resident (Income Tax) (ពន្ធកាត់ទុកលើអនិវាសនជន (ពន្ធលើប្រាក់ចំណូល)). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when withholdingTaxOnNonResidentIncomeTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 22, widget Text139",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentIncomeTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentInterestSelected",
+      "label": "Withholding Tax on Non-Resident (Interest)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Withholding Tax on Non-Resident (Interest) (ពន្ធកាត់ទុកលើអនិវាសនជន (ការប្រាក់)) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 23, widget Check Box23"
+    },
+    {
+      "name": "withholdingTaxOnNonResidentInterestTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Withholding Tax on Non-Resident (Interest) (ពន្ធកាត់ទុកលើអនិវាសនជន (ការប្រាក់)). Required only when withholdingTaxOnNonResidentInterestSelected is true.",
+      "sourceRef": "Tax declaration table, row 23, widget Text140",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentInterestSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentInterestAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Withholding Tax on Non-Resident (Interest) (ពន្ធកាត់ទុកលើអនិវាសនជន (ការប្រាក់)). The government revenue account code this tax type is paid into. Required only when withholdingTaxOnNonResidentInterestSelected is true.",
+      "sourceRef": "Tax declaration table, row 23, widget Text141",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentInterestSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentInterestAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Withholding Tax on Non-Resident (Interest) (ពន្ធកាត់ទុកលើអនិវាសនជន (ការប្រាក់)). Any additional/penalty tax amount for this tax type. Required only when withholdingTaxOnNonResidentInterestSelected is true.",
+      "sourceRef": "Tax declaration table, row 23, widget Text142",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentInterestSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentInterestInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Withholding Tax on Non-Resident (Interest) (ពន្ធកាត់ទុកលើអនិវាសនជន (ការប្រាក់)). Interest amount owed for this tax type. Required only when withholdingTaxOnNonResidentInterestSelected is true.",
+      "sourceRef": "Tax declaration table, row 23, widget Text143",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentInterestSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentInterestAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Withholding Tax on Non-Resident (Interest) (ពន្ធកាត់ទុកលើអនិវាសនជន (ការប្រាក់)). The government revenue account code the Additional Tax amount is paid into. Required only when withholdingTaxOnNonResidentInterestSelected is true.",
+      "sourceRef": "Tax declaration table, row 23, widget Text144",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentInterestSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentInterestTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Withholding Tax on Non-Resident (Interest) (ពន្ធកាត់ទុកលើអនិវាសនជន (ការប្រាក់)). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when withholdingTaxOnNonResidentInterestSelected is true.",
+      "sourceRef": "Tax declaration table, row 23, widget Text145",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentInterestSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentRoyaltyRentalFeeSelected",
+      "label": "Withholding Tax on Non-Resident (Royalty/Rental Fee)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Withholding Tax on Non-Resident (Royalty/Rental Fee) (ពន្ធកាត់ទុកលើអនិវាសនជន (សួយសារថ្លៃឈ្នួល)) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 24, widget Check Box24"
+    },
+    {
+      "name": "withholdingTaxOnNonResidentRoyaltyRentalFeeTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Withholding Tax on Non-Resident (Royalty/Rental Fee) (ពន្ធកាត់ទុកលើអនិវាសនជន (សួយសារថ្លៃឈ្នួល)). Required only when withholdingTaxOnNonResidentRoyaltyRentalFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 24, widget Text146",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentRoyaltyRentalFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentRoyaltyRentalFeeAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Withholding Tax on Non-Resident (Royalty/Rental Fee) (ពន្ធកាត់ទុកលើអនិវាសនជន (សួយសារថ្លៃឈ្នួល)). The government revenue account code this tax type is paid into. Required only when withholdingTaxOnNonResidentRoyaltyRentalFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 24, widget Text147",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentRoyaltyRentalFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentRoyaltyRentalFeeAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Withholding Tax on Non-Resident (Royalty/Rental Fee) (ពន្ធកាត់ទុកលើអនិវាសនជន (សួយសារថ្លៃឈ្នួល)). Any additional/penalty tax amount for this tax type. Required only when withholdingTaxOnNonResidentRoyaltyRentalFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 24, widget Text148",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentRoyaltyRentalFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentRoyaltyRentalFeeInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Withholding Tax on Non-Resident (Royalty/Rental Fee) (ពន្ធកាត់ទុកលើអនិវាសនជន (សួយសារថ្លៃឈ្នួល)). Interest amount owed for this tax type. Required only when withholdingTaxOnNonResidentRoyaltyRentalFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 24, widget Text149",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentRoyaltyRentalFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentRoyaltyRentalFeeAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Withholding Tax on Non-Resident (Royalty/Rental Fee) (ពន្ធកាត់ទុកលើអនិវាសនជន (សួយសារថ្លៃឈ្នួល)). The government revenue account code the Additional Tax amount is paid into. Required only when withholdingTaxOnNonResidentRoyaltyRentalFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 24, widget Text150",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentRoyaltyRentalFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentRoyaltyRentalFeeTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Withholding Tax on Non-Resident (Royalty/Rental Fee) (ពន្ធកាត់ទុកលើអនិវាសនជន (សួយសារថ្លៃឈ្នួល)). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when withholdingTaxOnNonResidentRoyaltyRentalFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 24, widget Text151",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentRoyaltyRentalFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentTechnicalManagementServicesSelected",
+      "label": "Withholding Tax on Non-Resident (Technical Management Services)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Withholding Tax on Non-Resident (Technical Management Services) (ពន្ធកាត់ទុកលើអនិវាសនជន (សេវាគ្រប់គ្រងបច្ចេកទេស)) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 25, widget Check Box25"
+    },
+    {
+      "name": "withholdingTaxOnNonResidentTechnicalManagementServicesTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Withholding Tax on Non-Resident (Technical Management Services) (ពន្ធកាត់ទុកលើអនិវាសនជន (សេវាគ្រប់គ្រងបច្ចេកទេស)). Required only when withholdingTaxOnNonResidentTechnicalManagementServicesSelected is true.",
+      "sourceRef": "Tax declaration table, row 25, widget Text152",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentTechnicalManagementServicesSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentTechnicalManagementServicesAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Withholding Tax on Non-Resident (Technical Management Services) (ពន្ធកាត់ទុកលើអនិវាសនជន (សេវាគ្រប់គ្រងបច្ចេកទេស)). The government revenue account code this tax type is paid into. Required only when withholdingTaxOnNonResidentTechnicalManagementServicesSelected is true.",
+      "sourceRef": "Tax declaration table, row 25, widget Text153",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentTechnicalManagementServicesSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentTechnicalManagementServicesAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Withholding Tax on Non-Resident (Technical Management Services) (ពន្ធកាត់ទុកលើអនិវាសនជន (សេវាគ្រប់គ្រងបច្ចេកទេស)). Any additional/penalty tax amount for this tax type. Required only when withholdingTaxOnNonResidentTechnicalManagementServicesSelected is true.",
+      "sourceRef": "Tax declaration table, row 25, widget Text154",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentTechnicalManagementServicesSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentTechnicalManagementServicesInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Withholding Tax on Non-Resident (Technical Management Services) (ពន្ធកាត់ទុកលើអនិវាសនជន (សេវាគ្រប់គ្រងបច្ចេកទេស)). Interest amount owed for this tax type. Required only when withholdingTaxOnNonResidentTechnicalManagementServicesSelected is true.",
+      "sourceRef": "Tax declaration table, row 25, widget Text155",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentTechnicalManagementServicesSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentTechnicalManagementServicesAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Withholding Tax on Non-Resident (Technical Management Services) (ពន្ធកាត់ទុកលើអនិវាសនជន (សេវាគ្រប់គ្រងបច្ចេកទេស)). The government revenue account code the Additional Tax amount is paid into. Required only when withholdingTaxOnNonResidentTechnicalManagementServicesSelected is true.",
+      "sourceRef": "Tax declaration table, row 25, widget Text156",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentTechnicalManagementServicesSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentTechnicalManagementServicesTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Withholding Tax on Non-Resident (Technical Management Services) (ពន្ធកាត់ទុកលើអនិវាសនជន (សេវាគ្រប់គ្រងបច្ចេកទេស)). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when withholdingTaxOnNonResidentTechnicalManagementServicesSelected is true.",
+      "sourceRef": "Tax declaration table, row 25, widget Text157",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentTechnicalManagementServicesSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentDividendsSelected",
+      "label": "Withholding Tax on Non-Resident (Dividends)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Withholding Tax on Non-Resident (Dividends) (ពន្ធកាត់ទុកលើអនិវាសនជន (ភាគលាភ)) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 26, widget Check Box26"
+    },
+    {
+      "name": "withholdingTaxOnNonResidentDividendsTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Withholding Tax on Non-Resident (Dividends) (ពន្ធកាត់ទុកលើអនិវាសនជន (ភាគលាភ)). Required only when withholdingTaxOnNonResidentDividendsSelected is true.",
+      "sourceRef": "Tax declaration table, row 26, widget Text158",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentDividendsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentDividendsAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Withholding Tax on Non-Resident (Dividends) (ពន្ធកាត់ទុកលើអនិវាសនជន (ភាគលាភ)). The government revenue account code this tax type is paid into. Required only when withholdingTaxOnNonResidentDividendsSelected is true.",
+      "sourceRef": "Tax declaration table, row 26, widget Text159",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentDividendsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentDividendsAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Withholding Tax on Non-Resident (Dividends) (ពន្ធកាត់ទុកលើអនិវាសនជន (ភាគលាភ)). Any additional/penalty tax amount for this tax type. Required only when withholdingTaxOnNonResidentDividendsSelected is true.",
+      "sourceRef": "Tax declaration table, row 26, widget Text160",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentDividendsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentDividendsInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Withholding Tax on Non-Resident (Dividends) (ពន្ធកាត់ទុកលើអនិវាសនជន (ភាគលាភ)). Interest amount owed for this tax type. Required only when withholdingTaxOnNonResidentDividendsSelected is true.",
+      "sourceRef": "Tax declaration table, row 26, widget Text161",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentDividendsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentDividendsAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Withholding Tax on Non-Resident (Dividends) (ពន្ធកាត់ទុកលើអនិវាសនជន (ភាគលាភ)). The government revenue account code the Additional Tax amount is paid into. Required only when withholdingTaxOnNonResidentDividendsSelected is true.",
+      "sourceRef": "Tax declaration table, row 26, widget Text162",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentDividendsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnNonResidentDividendsTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Withholding Tax on Non-Resident (Dividends) (ពន្ធកាត់ទុកលើអនិវាសនជន (ភាគលាភ)). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when withholdingTaxOnNonResidentDividendsSelected is true.",
+      "sourceRef": "Tax declaration table, row 26, widget Text163",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnNonResidentDividendsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRentalIndividualSelected",
+      "label": "Withholding Tax on Rental (Physical Person)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Withholding Tax on Rental (Physical Person) (ពន្ធកាត់ទុកលើថ្លៃឈ្នួល (រូបវន្តបុគ្គល)) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 27, widget Check Box27"
+    },
+    {
+      "name": "withholdingTaxOnRentalIndividualTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Withholding Tax on Rental (Physical Person) (ពន្ធកាត់ទុកលើថ្លៃឈ្នួល (រូបវន្តបុគ្គល)). Required only when withholdingTaxOnRentalIndividualSelected is true.",
+      "sourceRef": "Tax declaration table, row 27, widget Text164",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRentalIndividualSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRentalIndividualAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Withholding Tax on Rental (Physical Person) (ពន្ធកាត់ទុកលើថ្លៃឈ្នួល (រូបវន្តបុគ្គល)). The government revenue account code this tax type is paid into. Required only when withholdingTaxOnRentalIndividualSelected is true.",
+      "sourceRef": "Tax declaration table, row 27, widget Text165",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRentalIndividualSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRentalIndividualAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Withholding Tax on Rental (Physical Person) (ពន្ធកាត់ទុកលើថ្លៃឈ្នួល (រូបវន្តបុគ្គល)). Any additional/penalty tax amount for this tax type. Required only when withholdingTaxOnRentalIndividualSelected is true.",
+      "sourceRef": "Tax declaration table, row 27, widget Text166",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRentalIndividualSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRentalIndividualInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Withholding Tax on Rental (Physical Person) (ពន្ធកាត់ទុកលើថ្លៃឈ្នួល (រូបវន្តបុគ្គល)). Interest amount owed for this tax type. Required only when withholdingTaxOnRentalIndividualSelected is true.",
+      "sourceRef": "Tax declaration table, row 27, widget Text167",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRentalIndividualSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRentalIndividualAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Withholding Tax on Rental (Physical Person) (ពន្ធកាត់ទុកលើថ្លៃឈ្នួល (រូបវន្តបុគ្គល)). The government revenue account code the Additional Tax amount is paid into. Required only when withholdingTaxOnRentalIndividualSelected is true.",
+      "sourceRef": "Tax declaration table, row 27, widget Text168",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRentalIndividualSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRentalIndividualTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Withholding Tax on Rental (Physical Person) (ពន្ធកាត់ទុកលើថ្លៃឈ្នួល (រូបវន្តបុគ្គល)). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when withholdingTaxOnRentalIndividualSelected is true.",
+      "sourceRef": "Tax declaration table, row 27, widget Text169",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRentalIndividualSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRentalLegalEntitySelected",
+      "label": "Withholding Tax on Rental (Legal Entity)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Withholding Tax on Rental (Legal Entity) (ពន្ធកាត់ទុកលើថ្លៃឈ្នួល (នីតិបុគ្គល)) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 28, widget Check Box28"
+    },
+    {
+      "name": "withholdingTaxOnRentalLegalEntityTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Withholding Tax on Rental (Legal Entity) (ពន្ធកាត់ទុកលើថ្លៃឈ្នួល (នីតិបុគ្គល)). Required only when withholdingTaxOnRentalLegalEntitySelected is true.",
+      "sourceRef": "Tax declaration table, row 28, widget Text170",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRentalLegalEntitySelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRentalLegalEntityAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Withholding Tax on Rental (Legal Entity) (ពន្ធកាត់ទុកលើថ្លៃឈ្នួល (នីតិបុគ្គល)). The government revenue account code this tax type is paid into. Required only when withholdingTaxOnRentalLegalEntitySelected is true.",
+      "sourceRef": "Tax declaration table, row 28, widget Text171",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRentalLegalEntitySelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRentalLegalEntityAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Withholding Tax on Rental (Legal Entity) (ពន្ធកាត់ទុកលើថ្លៃឈ្នួល (នីតិបុគ្គល)). Any additional/penalty tax amount for this tax type. Required only when withholdingTaxOnRentalLegalEntitySelected is true.",
+      "sourceRef": "Tax declaration table, row 28, widget Text172",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRentalLegalEntitySelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRentalLegalEntityInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Withholding Tax on Rental (Legal Entity) (ពន្ធកាត់ទុកលើថ្លៃឈ្នួល (នីតិបុគ្គល)). Interest amount owed for this tax type. Required only when withholdingTaxOnRentalLegalEntitySelected is true.",
+      "sourceRef": "Tax declaration table, row 28, widget Text173",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRentalLegalEntitySelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRentalLegalEntityAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Withholding Tax on Rental (Legal Entity) (ពន្ធកាត់ទុកលើថ្លៃឈ្នួល (នីតិបុគ្គល)). The government revenue account code the Additional Tax amount is paid into. Required only when withholdingTaxOnRentalLegalEntitySelected is true.",
+      "sourceRef": "Tax declaration table, row 28, widget Text174",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRentalLegalEntitySelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "withholdingTaxOnRentalLegalEntityTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Withholding Tax on Rental (Legal Entity) (ពន្ធកាត់ទុកលើថ្លៃឈ្នួល (នីតិបុគ្គល)). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when withholdingTaxOnRentalLegalEntitySelected is true.",
+      "sourceRef": "Tax declaration table, row 28, widget Text175",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "withholdingTaxOnRentalLegalEntitySelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "valueAddedTaxSelected",
+      "label": "Value Added Tax (VAT)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Value Added Tax (VAT) (អាករលើតម្លៃបន្ថែម) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 29, widget Check Box29"
+    },
+    {
+      "name": "valueAddedTaxTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Value Added Tax (VAT) (អាករលើតម្លៃបន្ថែម). Required only when valueAddedTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 29, widget Text176",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "valueAddedTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "valueAddedTaxAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Value Added Tax (VAT) (អាករលើតម្លៃបន្ថែម). The government revenue account code this tax type is paid into. Required only when valueAddedTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 29, widget Text177",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "valueAddedTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "valueAddedTaxAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Value Added Tax (VAT) (អាករលើតម្លៃបន្ថែម). Any additional/penalty tax amount for this tax type. Required only when valueAddedTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 29, widget Text178",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "valueAddedTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "valueAddedTaxInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Value Added Tax (VAT) (អាករលើតម្លៃបន្ថែម). Interest amount owed for this tax type. Required only when valueAddedTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 29, widget Text179",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "valueAddedTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "valueAddedTaxAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Value Added Tax (VAT) (អាករលើតម្លៃបន្ថែម). The government revenue account code the Additional Tax amount is paid into. Required only when valueAddedTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 29, widget Text180",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "valueAddedTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "valueAddedTaxTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Value Added Tax (VAT) (អាករលើតម្លៃបន្ថែម). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when valueAddedTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 29, widget Text181",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "valueAddedTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "specificTaxOnCertainGoodsSelected",
+      "label": "Specific Tax on Certain Goods",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Specific Tax on Certain Goods (អាករពិសេសលើទំនិញមួយចំនួន) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 30, widget Check Box30"
+    },
+    {
+      "name": "specificTaxOnCertainGoodsTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Specific Tax on Certain Goods (អាករពិសេសលើទំនិញមួយចំនួន). Required only when specificTaxOnCertainGoodsSelected is true.",
+      "sourceRef": "Tax declaration table, row 30, widget Text182",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "specificTaxOnCertainGoodsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "specificTaxOnCertainGoodsAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Specific Tax on Certain Goods (អាករពិសេសលើទំនិញមួយចំនួន). The government revenue account code this tax type is paid into. Required only when specificTaxOnCertainGoodsSelected is true.",
+      "sourceRef": "Tax declaration table, row 30, widget Text183",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "specificTaxOnCertainGoodsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "specificTaxOnCertainGoodsAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Specific Tax on Certain Goods (អាករពិសេសលើទំនិញមួយចំនួន). Any additional/penalty tax amount for this tax type. Required only when specificTaxOnCertainGoodsSelected is true.",
+      "sourceRef": "Tax declaration table, row 30, widget Text184",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "specificTaxOnCertainGoodsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "specificTaxOnCertainGoodsInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Specific Tax on Certain Goods (អាករពិសេសលើទំនិញមួយចំនួន). Interest amount owed for this tax type. Required only when specificTaxOnCertainGoodsSelected is true.",
+      "sourceRef": "Tax declaration table, row 30, widget Text185",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "specificTaxOnCertainGoodsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "specificTaxOnCertainGoodsAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Specific Tax on Certain Goods (អាករពិសេសលើទំនិញមួយចំនួន). The government revenue account code the Additional Tax amount is paid into. Required only when specificTaxOnCertainGoodsSelected is true.",
+      "sourceRef": "Tax declaration table, row 30, widget Text186",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "specificTaxOnCertainGoodsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "specificTaxOnCertainGoodsTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Specific Tax on Certain Goods (អាករពិសេសលើទំនិញមួយចំនួន). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when specificTaxOnCertainGoodsSelected is true.",
+      "sourceRef": "Tax declaration table, row 30, widget Text187",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "specificTaxOnCertainGoodsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "specificTaxOnCertainServicesSelected",
+      "label": "Specific Tax on Certain Services",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Specific Tax on Certain Services (អាករពិសេសលើសេវាមួយចំនួន) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 31, widget Check Box31"
+    },
+    {
+      "name": "specificTaxOnCertainServicesTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Specific Tax on Certain Services (អាករពិសេសលើសេវាមួយចំនួន). Required only when specificTaxOnCertainServicesSelected is true.",
+      "sourceRef": "Tax declaration table, row 31, widget Text188",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "specificTaxOnCertainServicesSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "specificTaxOnCertainServicesAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Specific Tax on Certain Services (អាករពិសេសលើសេវាមួយចំនួន). The government revenue account code this tax type is paid into. Required only when specificTaxOnCertainServicesSelected is true.",
+      "sourceRef": "Tax declaration table, row 31, widget Text189",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "specificTaxOnCertainServicesSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "specificTaxOnCertainServicesAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Specific Tax on Certain Services (អាករពិសេសលើសេវាមួយចំនួន). Any additional/penalty tax amount for this tax type. Required only when specificTaxOnCertainServicesSelected is true.",
+      "sourceRef": "Tax declaration table, row 31, widget Text190",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "specificTaxOnCertainServicesSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "specificTaxOnCertainServicesInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Specific Tax on Certain Services (អាករពិសេសលើសេវាមួយចំនួន). Interest amount owed for this tax type. Required only when specificTaxOnCertainServicesSelected is true.",
+      "sourceRef": "Tax declaration table, row 31, widget Text191",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "specificTaxOnCertainServicesSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "specificTaxOnCertainServicesAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Specific Tax on Certain Services (អាករពិសេសលើសេវាមួយចំនួន). The government revenue account code the Additional Tax amount is paid into. Required only when specificTaxOnCertainServicesSelected is true.",
+      "sourceRef": "Tax declaration table, row 31, widget Text192",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "specificTaxOnCertainServicesSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "specificTaxOnCertainServicesTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Specific Tax on Certain Services (អាករពិសេសលើសេវាមួយចំនួន). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when specificTaxOnCertainServicesSelected is true.",
+      "sourceRef": "Tax declaration table, row 31, widget Text193",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "specificTaxOnCertainServicesSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "additionalTaxOnObstructionSelected",
+      "label": "Additional Tax on Obstruction",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Additional Tax on Obstruction (ពន្ធបន្ថែមចំពោះការរាំងស្ទះ) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 32, widget Check Box32"
+    },
+    {
+      "name": "additionalTaxOnObstructionTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Additional Tax on Obstruction (ពន្ធបន្ថែមចំពោះការរាំងស្ទះ). Required only when additionalTaxOnObstructionSelected is true.",
+      "sourceRef": "Tax declaration table, row 32, widget Text194",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "additionalTaxOnObstructionSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "additionalTaxOnObstructionAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Additional Tax on Obstruction (ពន្ធបន្ថែមចំពោះការរាំងស្ទះ). The government revenue account code this tax type is paid into. Required only when additionalTaxOnObstructionSelected is true.",
+      "sourceRef": "Tax declaration table, row 32, widget Text195",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "additionalTaxOnObstructionSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "additionalTaxOnObstructionAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Additional Tax on Obstruction (ពន្ធបន្ថែមចំពោះការរាំងស្ទះ). Any additional/penalty tax amount for this tax type. Required only when additionalTaxOnObstructionSelected is true.",
+      "sourceRef": "Tax declaration table, row 32, widget Text196",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "additionalTaxOnObstructionSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "additionalTaxOnObstructionInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Additional Tax on Obstruction (ពន្ធបន្ថែមចំពោះការរាំងស្ទះ). Interest amount owed for this tax type. Required only when additionalTaxOnObstructionSelected is true.",
+      "sourceRef": "Tax declaration table, row 32, widget Text197",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "additionalTaxOnObstructionSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "additionalTaxOnObstructionAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Additional Tax on Obstruction (ពន្ធបន្ថែមចំពោះការរាំងស្ទះ). The government revenue account code the Additional Tax amount is paid into. Required only when additionalTaxOnObstructionSelected is true.",
+      "sourceRef": "Tax declaration table, row 32, widget Text198",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "additionalTaxOnObstructionSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "additionalTaxOnObstructionTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Additional Tax on Obstruction (ពន្ធបន្ថែមចំពោះការរាំងស្ទះ). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when additionalTaxOnObstructionSelected is true.",
+      "sourceRef": "Tax declaration table, row 32, widget Text199",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "additionalTaxOnObstructionSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "incomeFromSaleOfPrintedDocumentsSelected",
+      "label": "Income from Sale of Printed Documents",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Income from Sale of Printed Documents (ចំណូលពីការលក់ឯកសារបោះពុម្ព) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 33, widget Check Box35"
+    },
+    {
+      "name": "incomeFromSaleOfPrintedDocumentsTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Income from Sale of Printed Documents (ចំណូលពីការលក់ឯកសារបោះពុម្ព). Required only when incomeFromSaleOfPrintedDocumentsSelected is true.",
+      "sourceRef": "Tax declaration table, row 33, widget Text201",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "incomeFromSaleOfPrintedDocumentsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "incomeFromSaleOfPrintedDocumentsAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Income from Sale of Printed Documents (ចំណូលពីការលក់ឯកសារបោះពុម្ព). The government revenue account code this tax type is paid into. Required only when incomeFromSaleOfPrintedDocumentsSelected is true.",
+      "sourceRef": "Tax declaration table, row 33, widget Text202",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "incomeFromSaleOfPrintedDocumentsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "incomeFromSaleOfPrintedDocumentsAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Income from Sale of Printed Documents (ចំណូលពីការលក់ឯកសារបោះពុម្ព). Any additional/penalty tax amount for this tax type. Required only when incomeFromSaleOfPrintedDocumentsSelected is true.",
+      "sourceRef": "Tax declaration table, row 33, widget Text203",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "incomeFromSaleOfPrintedDocumentsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "incomeFromSaleOfPrintedDocumentsInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Income from Sale of Printed Documents (ចំណូលពីការលក់ឯកសារបោះពុម្ព). Interest amount owed for this tax type. Required only when incomeFromSaleOfPrintedDocumentsSelected is true.",
+      "sourceRef": "Tax declaration table, row 33, widget Text204",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "incomeFromSaleOfPrintedDocumentsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "incomeFromSaleOfPrintedDocumentsAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Income from Sale of Printed Documents (ចំណូលពីការលក់ឯកសារបោះពុម្ព). The government revenue account code the Additional Tax amount is paid into. Required only when incomeFromSaleOfPrintedDocumentsSelected is true.",
+      "sourceRef": "Tax declaration table, row 33, widget Text205",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "incomeFromSaleOfPrintedDocumentsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "incomeFromSaleOfPrintedDocumentsTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Income from Sale of Printed Documents (ចំណូលពីការលក់ឯកសារបោះពុម្ព). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when incomeFromSaleOfPrintedDocumentsSelected is true.",
+      "sourceRef": "Tax declaration table, row 33, widget Text206",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "incomeFromSaleOfPrintedDocumentsSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "publicLightingTaxSelected",
+      "label": "Public Lighting Tax",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Public Lighting Tax (អាករសម្រាប់បំភ្លឺសាធារណៈ) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 34, widget Check Box36"
+    },
+    {
+      "name": "publicLightingTaxTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Public Lighting Tax (អាករសម្រាប់បំភ្លឺសាធារណៈ). Required only when publicLightingTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 34, widget Text207",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "publicLightingTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "publicLightingTaxAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Public Lighting Tax (អាករសម្រាប់បំភ្លឺសាធារណៈ). The government revenue account code this tax type is paid into. Required only when publicLightingTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 34, widget Text208",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "publicLightingTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "publicLightingTaxAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Public Lighting Tax (អាករសម្រាប់បំភ្លឺសាធារណៈ). Any additional/penalty tax amount for this tax type. Required only when publicLightingTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 34, widget Text209",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "publicLightingTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "publicLightingTaxInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Public Lighting Tax (អាករសម្រាប់បំភ្លឺសាធារណៈ). Interest amount owed for this tax type. Required only when publicLightingTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 34, widget Text210",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "publicLightingTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "publicLightingTaxAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Public Lighting Tax (អាករសម្រាប់បំភ្លឺសាធារណៈ). The government revenue account code the Additional Tax amount is paid into. Required only when publicLightingTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 34, widget Text211",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "publicLightingTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "publicLightingTaxTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Public Lighting Tax (អាករសម្រាប់បំភ្លឺសាធារណៈ). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when publicLightingTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 34, widget Text212",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "publicLightingTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnMeansOfTransportationSelected",
+      "label": "Tax on Means of Transportation",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Tax on Means of Transportation (ពន្ធលើមធ្យោបាយដឹកជញ្ជូន) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 35, widget Check Box37"
+    },
+    {
+      "name": "taxOnMeansOfTransportationTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Tax on Means of Transportation (ពន្ធលើមធ្យោបាយដឹកជញ្ជូន). Required only when taxOnMeansOfTransportationSelected is true.",
+      "sourceRef": "Tax declaration table, row 35, widget Text213",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxOnMeansOfTransportationSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnMeansOfTransportationAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Tax on Means of Transportation (ពន្ធលើមធ្យោបាយដឹកជញ្ជូន). The government revenue account code this tax type is paid into. Required only when taxOnMeansOfTransportationSelected is true.",
+      "sourceRef": "Tax declaration table, row 35, widget Text214",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "taxOnMeansOfTransportationSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnMeansOfTransportationAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Tax on Means of Transportation (ពន្ធលើមធ្យោបាយដឹកជញ្ជូន). Any additional/penalty tax amount for this tax type. Required only when taxOnMeansOfTransportationSelected is true.",
+      "sourceRef": "Tax declaration table, row 35, widget Text215",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxOnMeansOfTransportationSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnMeansOfTransportationInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Tax on Means of Transportation (ពន្ធលើមធ្យោបាយដឹកជញ្ជូន). Interest amount owed for this tax type. Required only when taxOnMeansOfTransportationSelected is true.",
+      "sourceRef": "Tax declaration table, row 35, widget Text216",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxOnMeansOfTransportationSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnMeansOfTransportationAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Tax on Means of Transportation (ពន្ធលើមធ្យោបាយដឹកជញ្ជូន). The government revenue account code the Additional Tax amount is paid into. Required only when taxOnMeansOfTransportationSelected is true.",
+      "sourceRef": "Tax declaration table, row 35, widget Text217",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "taxOnMeansOfTransportationSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxOnMeansOfTransportationTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Tax on Means of Transportation (ពន្ធលើមធ្យោបាយដឹកជញ្ជូន). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when taxOnMeansOfTransportationSelected is true.",
+      "sourceRef": "Tax declaration table, row 35, widget Text218",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxOnMeansOfTransportationSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "accommodationTaxSelected",
+      "label": "Accommodation Tax",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Accommodation Tax (អាករលើការស្នាក់នៅ) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 36, widget Check Box38"
+    },
+    {
+      "name": "accommodationTaxTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Accommodation Tax (អាករលើការស្នាក់នៅ). Required only when accommodationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 36, widget Text219",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "accommodationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "accommodationTaxAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Accommodation Tax (អាករលើការស្នាក់នៅ). The government revenue account code this tax type is paid into. Required only when accommodationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 36, widget Text220",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "accommodationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "accommodationTaxAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Accommodation Tax (អាករលើការស្នាក់នៅ). Any additional/penalty tax amount for this tax type. Required only when accommodationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 36, widget Text221",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "accommodationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "accommodationTaxInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Accommodation Tax (អាករលើការស្នាក់នៅ). Interest amount owed for this tax type. Required only when accommodationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 36, widget Text222",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "accommodationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "accommodationTaxAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Accommodation Tax (អាករលើការស្នាក់នៅ). The government revenue account code the Additional Tax amount is paid into. Required only when accommodationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 36, widget Text223",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "accommodationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "accommodationTaxTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Accommodation Tax (អាករលើការស្នាក់នៅ). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when accommodationTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 36, widget Text224",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "accommodationTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "slaughterTaxSelected",
+      "label": "Slaughter Tax",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Slaughter Tax (ពន្ធសត្វឃាត់) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 37, widget Check Box39"
+    },
+    {
+      "name": "slaughterTaxTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Slaughter Tax (ពន្ធសត្វឃាត់). Required only when slaughterTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 37, widget Text225",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "slaughterTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "slaughterTaxAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Slaughter Tax (ពន្ធសត្វឃាត់). The government revenue account code this tax type is paid into. Required only when slaughterTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 37, widget Text226",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "slaughterTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "slaughterTaxAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Slaughter Tax (ពន្ធសត្វឃាត់). Any additional/penalty tax amount for this tax type. Required only when slaughterTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 37, widget Text227",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "slaughterTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "slaughterTaxInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Slaughter Tax (ពន្ធសត្វឃាត់). Interest amount owed for this tax type. Required only when slaughterTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 37, widget Text228",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "slaughterTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "slaughterTaxAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Slaughter Tax (ពន្ធសត្វឃាត់). The government revenue account code the Additional Tax amount is paid into. Required only when slaughterTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 37, widget Text229",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "slaughterTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "slaughterTaxTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Slaughter Tax (ពន្ធសត្វឃាត់). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when slaughterTaxSelected is true.",
+      "sourceRef": "Tax declaration table, row 37, widget Text230",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "slaughterTaxSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "advertisementTaxBusinessSignboardSelected",
+      "label": "Advertisement Tax - Business Signboard",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Advertisement Tax - Business Signboard (ពន្ធលើផ្ទាំងផ្សព្វផ្សាយ - សាកអាជីវកម្មដាន) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 38, widget Check Box40"
+    },
+    {
+      "name": "advertisementTaxBusinessSignboardTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Advertisement Tax - Business Signboard (ពន្ធលើផ្ទាំងផ្សព្វផ្សាយ - សាកអាជីវកម្មដាន). Required only when advertisementTaxBusinessSignboardSelected is true.",
+      "sourceRef": "Tax declaration table, row 38, widget Text231",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "advertisementTaxBusinessSignboardSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "advertisementTaxBusinessSignboardAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Advertisement Tax - Business Signboard (ពន្ធលើផ្ទាំងផ្សព្វផ្សាយ - សាកអាជីវកម្មដាន). The government revenue account code this tax type is paid into. Required only when advertisementTaxBusinessSignboardSelected is true.",
+      "sourceRef": "Tax declaration table, row 38, widget Text232",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "advertisementTaxBusinessSignboardSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "advertisementTaxBusinessSignboardAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Advertisement Tax - Business Signboard (ពន្ធលើផ្ទាំងផ្សព្វផ្សាយ - សាកអាជីវកម្មដាន). Any additional/penalty tax amount for this tax type. Required only when advertisementTaxBusinessSignboardSelected is true.",
+      "sourceRef": "Tax declaration table, row 38, widget Text233",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "advertisementTaxBusinessSignboardSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "advertisementTaxBusinessSignboardInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Advertisement Tax - Business Signboard (ពន្ធលើផ្ទាំងផ្សព្វផ្សាយ - សាកអាជីវកម្មដាន). Interest amount owed for this tax type. Required only when advertisementTaxBusinessSignboardSelected is true.",
+      "sourceRef": "Tax declaration table, row 38, widget Text234",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "advertisementTaxBusinessSignboardSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "advertisementTaxBusinessSignboardAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Advertisement Tax - Business Signboard (ពន្ធលើផ្ទាំងផ្សព្វផ្សាយ - សាកអាជីវកម្មដាន). The government revenue account code the Additional Tax amount is paid into. Required only when advertisementTaxBusinessSignboardSelected is true.",
+      "sourceRef": "Tax declaration table, row 38, widget Text235",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "advertisementTaxBusinessSignboardSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "advertisementTaxBusinessSignboardTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Advertisement Tax - Business Signboard (ពន្ធលើផ្ទាំងផ្សព្វផ្សាយ - សាកអាជីវកម្មដាន). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when advertisementTaxBusinessSignboardSelected is true.",
+      "sourceRef": "Tax declaration table, row 38, widget Text236",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "advertisementTaxBusinessSignboardSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "advertisementTaxCommercialAdvertisementSelected",
+      "label": "Advertisement Tax - Commercial Advertisement",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Advertisement Tax - Commercial Advertisement (ពន្ធលើផ្ទាំងផ្សព្វផ្សាយ - ផ្ទាំងផ្សាយពាណិជ្ជកម្ម) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 39, widget Check Box41"
+    },
+    {
+      "name": "advertisementTaxCommercialAdvertisementTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Advertisement Tax - Commercial Advertisement (ពន្ធលើផ្ទាំងផ្សព្វផ្សាយ - ផ្ទាំងផ្សាយពាណិជ្ជកម្ម). Required only when advertisementTaxCommercialAdvertisementSelected is true.",
+      "sourceRef": "Tax declaration table, row 39, widget Text237",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "advertisementTaxCommercialAdvertisementSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "advertisementTaxCommercialAdvertisementAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Advertisement Tax - Commercial Advertisement (ពន្ធលើផ្ទាំងផ្សព្វផ្សាយ - ផ្ទាំងផ្សាយពាណិជ្ជកម្ម). The government revenue account code this tax type is paid into. Required only when advertisementTaxCommercialAdvertisementSelected is true.",
+      "sourceRef": "Tax declaration table, row 39, widget Text238",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "advertisementTaxCommercialAdvertisementSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "advertisementTaxCommercialAdvertisementAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Advertisement Tax - Commercial Advertisement (ពន្ធលើផ្ទាំងផ្សព្វផ្សាយ - ផ្ទាំងផ្សាយពាណិជ្ជកម្ម). Any additional/penalty tax amount for this tax type. Required only when advertisementTaxCommercialAdvertisementSelected is true.",
+      "sourceRef": "Tax declaration table, row 39, widget Text239",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "advertisementTaxCommercialAdvertisementSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "advertisementTaxCommercialAdvertisementInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Advertisement Tax - Commercial Advertisement (ពន្ធលើផ្ទាំងផ្សព្វផ្សាយ - ផ្ទាំងផ្សាយពាណិជ្ជកម្ម). Interest amount owed for this tax type. Required only when advertisementTaxCommercialAdvertisementSelected is true.",
+      "sourceRef": "Tax declaration table, row 39, widget Text240",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "advertisementTaxCommercialAdvertisementSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "advertisementTaxCommercialAdvertisementAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Advertisement Tax - Commercial Advertisement (ពន្ធលើផ្ទាំងផ្សព្វផ្សាយ - ផ្ទាំងផ្សាយពាណិជ្ជកម្ម). The government revenue account code the Additional Tax amount is paid into. Required only when advertisementTaxCommercialAdvertisementSelected is true.",
+      "sourceRef": "Tax declaration table, row 39, widget Text241",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "advertisementTaxCommercialAdvertisementSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "advertisementTaxCommercialAdvertisementTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Advertisement Tax - Commercial Advertisement (ពន្ធលើផ្ទាំងផ្សព្វផ្សាយ - ផ្ទាំងផ្សាយពាណិជ្ជកម្ម). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when advertisementTaxCommercialAdvertisementSelected is true.",
+      "sourceRef": "Tax declaration table, row 39, widget Text242",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "advertisementTaxCommercialAdvertisementSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxAgentServiceFeeSelected",
+      "label": "Tax Agent Service Fee",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether Tax Agent Service Fee (ថ្លៃសេវាភ្នាក់ងារពន្ធដារ) applies to this monthly declaration. When true, its amount fields below must be completed.",
+      "sourceRef": "Tax declaration table, row 40, widget Check Box42"
+    },
+    {
+      "name": "taxAgentServiceFeeTaxAmount",
+      "label": "Tax Amount",
+      "type": "number",
+      "required": false,
+      "description": "Tax Amount for Tax Agent Service Fee (ថ្លៃសេវាភ្នាក់ងារពន្ធដារ). Required only when taxAgentServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 40, widget Text243",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxAgentServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxAgentServiceFeeAccountNo",
+      "label": "Account No",
+      "type": "string",
+      "required": false,
+      "description": "Account No for Tax Agent Service Fee (ថ្លៃសេវាភ្នាក់ងារពន្ធដារ). The government revenue account code this tax type is paid into. Required only when taxAgentServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 40, widget Text244",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "taxAgentServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxAgentServiceFeeAdditionalTax",
+      "label": "Additional Tax",
+      "type": "number",
+      "required": false,
+      "description": "Additional Tax for Tax Agent Service Fee (ថ្លៃសេវាភ្នាក់ងារពន្ធដារ). Any additional/penalty tax amount for this tax type. Required only when taxAgentServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 40, widget Text245",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxAgentServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxAgentServiceFeeInterest",
+      "label": "Interest",
+      "type": "number",
+      "required": false,
+      "description": "Interest for Tax Agent Service Fee (ថ្លៃសេវាភ្នាក់ងារពន្ធដារ). Interest amount owed for this tax type. Required only when taxAgentServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 40, widget Text246",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxAgentServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxAgentServiceFeeAdditionalAccountNo",
+      "label": "Additional Account",
+      "type": "string",
+      "required": false,
+      "description": "Additional Account for Tax Agent Service Fee (ថ្លៃសេវាភ្នាក់ងារពន្ធដារ). The government revenue account code the Additional Tax amount is paid into. Required only when taxAgentServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 40, widget Text247",
+      "validation": {
+        "maxLength": 30
+      },
+      "requiredWhen": {
+        "field": "taxAgentServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "taxAgentServiceFeeTotalAmount",
+      "label": "Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Total Amount for Tax Agent Service Fee (ថ្លៃសេវាភ្នាក់ងារពន្ធដារ). Sum of Tax Amount, Additional Tax, and Interest for this tax type. Required only when taxAgentServiceFeeSelected is true.",
+      "sourceRef": "Tax declaration table, row 40, widget Text248",
+      "validation": {
+        "minimum": 0
+      },
+      "requiredWhen": {
+        "field": "taxAgentServiceFeeSelected",
+        "equals": true
+      }
+    },
+    {
+      "name": "grandTotalAmountKhr",
+      "label": "Total",
+      "type": "number",
+      "required": true,
+      "description": "Grand total of the Total Amount column across every declared tax type, in Cambodian riel (KHR) — the overall amount due for this monthly declaration.",
+      "sourceRef": "Tax declaration table, closing \"Total\" row, widget Text200",
+      "validation": {
+        "minimum": 0
+      }
+    }
+  ]
+}
