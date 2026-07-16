@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**63 jurisdictions** | **504 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**64 jurisdictions** | **505 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3313, "GovSchema Standard Research"): Ethiopia
+> opens as this registry's 64th jurisdiction**, via
+> `et/ics/e-visa-application` — the Immigration And Citizenship Service
+> (ICS)'s live e-Visa wizard at `evisa.gov.et`, no account creation or
+> login required to reach or fill the application. This cycle scouted five
+> live e-visa/e-government portals for genuinely new jurisdictions in
+> parallel (the pattern that recently opened Kenya's Visa vertical and
+> Ecuador as the 63rd jurisdiction): Cambodia's `evisa.gov.kh` (a live but
+> currently-outaged WAF stub, TLS-certificate-confirmed as a genuine,
+> maintained government domain — re-check in a future cycle rather than a
+> dead end), Uzbekistan's `e-visa.gov.uz` (a real, live Angular SPA blocked
+> by a client-side rendering bug after step 1), Ethiopia (this schema), and
+> Georgia's `evisa.gov.ge` (a strong ~74-field candidate, left as a
+> disclosed, ready-to-author backlog item for a future cycle — see "Known
+> Gaps & Opportunities" below). Ethiopia's portal was live-walked with
+> Playwright + Chromium and live-filled/validated with real browser
+> interaction through 3 of its 6 steps (Visa Category, Arrival Information,
+> Personal Information); Passport Information's 6 fields were confirmed
+> present/labelled/required via direct DOM inspection (the site pre-mounts
+> every step's markup on initial page load) but not interactively
+> validated, and Review/Attachments were not reached — the Attachments
+> step's file-upload inputs are the only markup not pre-mounted, so its
+> document composition could not be confirmed, disclosed as an accepted
+> scope boundary rather than guessed at. A genuinely conditional field was
+> found and modelled live: selecting "Medical Treatment Visa" instead of
+> "Tourist Visa" reveals a required `companyReferenceNumber` field absent
+> from the Tourist Visa branch, plus a different, larger `visaValidity`
+> option set — confirmed by actually re-selecting that branch and
+> re-inspecting the DOM, not assumed. Models 30 `fields[]` (visa
+> category/type selection with the conditional company-reference field,
+> arrival/accommodation details, personal information including a
+> cross-field email-confirmation rule, and passport information) and no
+> `documents[]` (the disclosed scope boundary above). 2 valid conformance
+> fixtures (0 errors each, one exercising the Medical Treatment Visa
+> branch) plus 8 mutation-control fixtures (each raising exactly 1 error,
+> including the `companyReferenceNumber` `requiredWhen` cascade and the
+> email-confirmation cross-field rule) are committed under
+> `conformance/et/ics/e-visa-application/1.0.0/`. Both validators pass at
+> 505/505. See the Visa vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-16, GOV-3294/GOV-3298, "GovSchema Standard Research"):
 > Kenya's Visa vertical opens, bringing Kenya to 4 of 6 verticals**
@@ -11059,7 +11100,7 @@
 
 ## By Vertical
 
-### Passport (47/63 jurisdictions — 75%)
+### Passport (47/64 jurisdictions — 73%)
 
 > **Correction (GOV-3281):** numerator updated from 46 to 47 following
 > Tanzania's Passport vertical opening via
@@ -11536,7 +11577,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (55/63 jurisdictions — 87%)
+### DMV — Vehicle Registration, Licensing, Permits (55/64 jurisdictions — 86%)
 
 > **Update (2026-07-16, GOV-3248, scouted from GOV-3246, "GovSchema
 > Standard Research"): Slovenia's DMV vertical opens**, via
@@ -12092,7 +12133,7 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (60/63 jurisdictions — 95%)
+### Business Formation — Incorporation, LLC, Company Registration (60/64 jurisdictions — 94%)
 
 > **Update (2026-07-16, GOV-3293/GOV-3298, "GovSchema Standard Research"):
 > Switzerland opens this vertical**, via
@@ -13006,7 +13047,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (57/63 jurisdictions — 90%)
+### Taxes — Income Tax Return, Tax Filing (57/64 jurisdictions — 89%)
 
 > **Correction (GOV-3309 review gate):** numerator corrected from a stale
 > 58 to 57, recounted directly from the By-Jurisdiction table's Taxes
@@ -14161,7 +14202,18 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (54/63 jurisdictions — 86%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (55/64 jurisdictions — 86%)
+
+> **Update (2026-07-16, GOV-3313, "GovSchema Standard Research"): Ethiopia
+> opens as this registry's 64th jurisdiction, via this vertical**, via
+> `et/ics/e-visa-application` — the Immigration And Citizenship Service's
+> live e-Visa wizard at `evisa.gov.et`, live-walked and live-filled through
+> 3 of its 6 steps, with a genuinely conditional `companyReferenceNumber`
+> field confirmed live on the Medical Treatment Visa branch. See the
+> Executive Summary's GOV-3313 update above and the document's own
+> VERIFICATION.md for the full sourcing record and disclosed scope
+> boundary (Passport Information DOM-confirmed but not interactively
+> validated; Review and Attachments not reached).
 
 > **Update (2026-07-16, GOV-3294/GOV-3298, "GovSchema Standard Research"):
 > Kenya opens this vertical**, via `ke/immigration/eta-visa-application` —
@@ -14839,7 +14891,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (48/63 jurisdictions — 76%)
+### National ID & Civic Documents (48/64 jurisdictions — 75%)
 
 > **Update (2026-07-16, GOV-3295/GOV-3298, "GovSchema Standard Research"):
 > Rwanda opens this vertical**, via `rw/irembo/nida-diaspora-application` —
@@ -15507,6 +15559,7 @@ now closed.
 | **EC** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ES** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **ET** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -17970,6 +18023,31 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **GOV-3313 ("GovSchema Standard Research") — Georgia (the country): a
+  strong, disclosed backlog candidate, left un-authored this cycle in
+  favor of Ethiopia.** Georgia's Ministry of Foreign Affairs runs a live
+  e-visa portal at `evisa.gov.ge/GeoVisa/en/VisaApp` (the root domain and
+  some mirrors WAF-block a default headless-browser fingerprint, but
+  succeed immediately, including via plain `curl`, once a normal desktop
+  Chrome `User-Agent` string is set — confirmed this cycle). It is a
+  classic server-rendered ASP.NET MVC wizard: a single page load returns
+  the entire multi-step form's markup (client-side JS only shows/hides
+  sections), from which 74 distinct field IDs were extracted in one pass
+  across 5 named steps (Citizenship/Country, Travel Information,
+  Terms & Conditions, Personal Information, Verification) — dropdowns
+  (Citizenship, ~190 countries; DocumentType; VisaType;
+  SupportingDocumentCountry; Sex), dates (ArrivalDate, DateOfBirth,
+  ExpirationDate), text fields (names, document numbers, email,
+  representative/companion sub-group), ~11 attestation checkboxes, and 7
+  distinct file-upload fields (Photo, PassportScan, SupportingDocument,
+  TwoWayTicket, HotelReservation, BankStatement, TravelInsurance,
+  RegistryStatement). No login/account/payment gate blocks reaching or
+  reading the full field structure; the only gate found is a CAPTCHA on
+  final submission. Georgia would open as a new jurisdiction with an
+  unusually rich single-schema field set (comparable to this registry's
+  largest visa schemas) if authored in a future cycle — a genuinely new,
+  ready-to-author lead, not a re-read of a prior dead end.
 
 - **GOV-3267 ("GovSchema Standard Research") — Sri Lanka Taxes: authored
   (see the Executive Summary and Taxes vertical section above), Rwanda
