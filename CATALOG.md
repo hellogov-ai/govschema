@@ -4,7 +4,44 @@
 
 ## Executive Summary
 
-**69 jurisdictions** | **519 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**69 jurisdictions** | **520 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3419): Cambodia's Taxes vertical gains a second
+> schema, correcting the GOV-3417 dead-end finding below** — via
+> `kh/gdt/monthly-tax-declaration`, the General Department of Taxation's
+> (GDT) Form P101 ("Monthly Tax Payment Declaration", Form Version V4), the
+> recurring monthly self-assessment filing taxpayers use to declare and pay
+> whichever of 40 published Cambodian tax types applies that period.
+> GOV-3417 (below) re-fetched the exact URL GOV-3410's own scouting note had
+> carried forward, correctly found it resolves to an unrelated 23-widget
+> e-Tax profile-update form, and concluded the whole "Form P101, 294 fields"
+> candidate was a scouting-note mistake — but stopped there rather than
+> re-screening the document-form listing for a correctly-linked P101. This
+> cycle did that re-screen and found the genuine Form P101 at the listing's
+> own entry #6, a different URL entirely
+> (`sha256:e06c1decd83ca97baf0c1bfca87c1d448372c9baa9834f180d6cfbbdbb7eb4fc`,
+> 1,521,844 bytes) — a real 294-widget AcroForm (matching the original
+> GOV-3410 estimate GOV-3417 had dismissed as wrong), across a header and a
+> 40-row tax-type table. Every row's own selection checkbox was
+> position-matched to its 6 adjacent amount/account widgets, all 293
+> distinct field names assigned with no leftover. Spec v0.3 has no native
+> repeating-group support (GSP-0009 remains Proposed), so the 40-row table
+> is flattened into 280 explicitly named fields (7 per row, the 6 amount/
+> account fields `requiredWhen` the row's own selection boolean), following
+> this registry's established practice for un-adopted repeating-group
+> support. This table's 40 tax-type labels are Khmer-only in the source (no
+> parallel English column, unlike the sibling `kh/gdt/legal-form-limited-
+> company-registration` schema) — English labels are this schema's own
+> translation using standard Cambodian tax-law terminology, disclosed as
+> authored rather than sourced verbatim, with 2 labels flagged at lower
+> translation confidence. See the document's own VERIFICATION.md for the
+> full sourcing record. Both validators pass at 520/520; `verify-
+> sources.mjs`, scoped to this schema's directory, reports all cited URLs
+> clear; 11 conformance fixtures (2 valid + 9 mutation-control) committed.
+> Cambodia's Taxes vertical was already open via GOV-3417's
+> `kh/gdt/monthly-vat-return`, authored under concurrent authorship in this
+> same shared checkout — this schema is a second, independently-authored
+> Taxes filing, not a duplicate.
 
 > **Update (2026-07-16, GOV-3417, "GovSchema Standard Research"): Cambodia's
 > Taxes vertical opens, bringing Cambodia to 2 of 6 verticals**, via
@@ -17,7 +54,9 @@
 > only 23 fields on a single page, not a monthly declaration at all (a
 > prior cycle's own scouting note simply wrong, the same category of
 > mistake this catalog has caught before, e.g. GOV-2195's AFIP 460/F
-> correction). Re-screened `tax.gov.kh`'s full public document-form
+> correction; **note the GOV-3419 update above: the genuine Form P101 did
+> exist, at a different URL, and has since been authored**). Re-screened
+> `tax.gov.kh`'s full public document-form
 > library instead and found its "MONTHLY TAX RETURN FORM" category
 > contains an oversized 1,802-widget/16-page combined return (VAT, profit-
 > tax prepayment, withholding tax, and salary tax together — left
@@ -13663,6 +13702,16 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (60/69 jurisdictions — 87%)
 
+> **Update (2026-07-16, GOV-3419): Cambodia's Taxes vertical gains a second
+> schema**, via `kh/gdt/monthly-tax-declaration` — the General Department of
+> Taxation's Form P101 ("Monthly Tax Payment Declaration"). This corrects
+> the GOV-3417 update below, which had concluded the "Form P101, 294
+> fields" backlog candidate was a mislabeled dead end; the genuine form
+> existed at a different, correctly-derived URL and has now been authored.
+> See the Executive Summary update above for the full sourcing record.
+> Numerator unchanged at 60/69 (already opened by GOV-3417's VAT 200
+> schema).
+
 > **Update (2026-07-16, GOV-3417, "GovSchema Standard Research"): Cambodia's
 > Taxes vertical opens, bringing Cambodia to 2 of 6 verticals**, via
 > `kh/gdt/monthly-vat-return` — see the Executive Summary update above for
@@ -16268,7 +16317,7 @@ now closed.
 | **JO** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
-| **KH** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **KH** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
@@ -18865,7 +18914,26 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   "Application Form for the Updating Information for E-Tax System" per its
   own printed heading) — a scouting note taken at face value rather than
   re-verified. See the GOV-3417 entry above for the genuine Taxes
-  candidate that replaced it.
+  candidate that replaced it. **Further correction (GOV-3419):** the
+  underlying "Form P101, 294 fields" candidate was not actually mislabeled
+  — only GOV-3417's re-fetched URL was wrong. The genuine Form P101 existed
+  at a different URL on the same `tax.gov.kh/en/document-form` listing and
+  has since been authored; see the GOV-3419 bullet below.
+
+- **GOV-3419 — corrects the GOV-3417 finding above: the "Form P101, 294
+  fields" backlog candidate was not a dead end.** GOV-3417 had re-fetched
+  the URL carried forward from GOV-3410's own scouting note, correctly
+  found it resolves to an unrelated 23-widget e-Tax profile-update form,
+  and concluded from that alone that the whole candidate was mislabeled —
+  but stopped there rather than re-screening the document-form listing for
+  a correctly-linked P101. This cycle did that re-screen and found the
+  genuine Form P101 at the listing's own entry #6, a different URL
+  entirely: a real 294-widget AcroForm matching GOV-3410's original
+  estimate. Authored as `kh/gdt/monthly-tax-declaration` (see the
+  Executive Summary and Taxes vertical section above for the full sourcing
+  record). Cambodia's Taxes vertical was already open via GOV-3417's VAT
+  200 schema, so this is a second, independently-authored Taxes filing
+  rather than a fresh vertical opening.
 
 - **GOV-3396 ("GovSchema Standard Research") — Mongolia Taxes: authored
   (see the Executive Summary and Taxes vertical section above), opening
