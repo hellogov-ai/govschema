@@ -1,0 +1,446 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "uz/mfa/evisa-application",
+  "version": "1.0.0",
+  "title": "Uzbekistan Electronic Visa (e-Visa) Application",
+  "description": "The Ministry of Foreign Affairs of the Republic of Uzbekistan's Consular Department e-Visa application, served unauthenticated by the live Angular single-page application at e-visa.gov.uz. The live wizard has six steps (Country, Date, Personal information, Photo and passport, Activation, Payment). This schema models the first three data-collection steps in full: Country (citizenship, document type, visa entry type, purpose of visit — each populated from the site's own live `/api/v1/dic/*` dictionary endpoints, plus a real-time visa-free-eligibility check keyed on citizenship that this schema does not model, since a visa-free citizenship makes the application itself inapplicable), Date (arrival and departure date, gated by the same 1-to-30-day stay window and 90-day advance-booking window the live page's own JavaScript enforces), and Personal information (identity, an other-citizenship/previous-name change history, passport number and issue/expiry dates, and Uzbekistan-stay/contact details). It additionally models the two file-upload fields from the Photo and passport step as `documents[]`, and the applicant's email address from the Activation step (used to receive a digital activation code by email). The Payment step (a Click.uz-style merchant payment-gateway redirect for the USD 20/35/50 consular fee) is out of scope, as is the CAPTCHA-gated activation-code/payment-info retry flow — both are payment/session mechanics, not government-form data. The live site's own step-2+ navigation is blocked in this session by a reproducible client-side rendering bug (a persistent loading overlay that never clears after the Country step's selections are made, confirmed via a live Playwright session showing zero pending network requests while the overlay stays visible — a pure client-state bug, not a server dependency). This schema's fields, property names, and validation rules are instead sourced directly from the live production JavaScript bundle's own compiled Angular ViewEngine template output and TypeScript-compiled component logic (element attributes, `NgModel` binding expressions assigning into the component's own `form.application.*` object graph, and the exact date-formatting/masking functions the component runs before submission) — not inferred or guessed. No application was actually submitted and no fee was paid in producing this schema. Filing this application is a traveller action performed directly with the Ministry of Foreign Affairs of the Republic of Uzbekistan through e-visa.gov.uz; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Uzbekistan or its Ministry of Foreign Affairs.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "UZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of Foreign Affairs of the Republic of Uzbekistan, Consular Department",
+    "abbreviation": "MFA",
+    "url": "https://e-visa.gov.uz"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://e-visa.gov.uz/application",
+    "retrievedAt": "2026-07-16",
+    "documentRef": "The live e-Visa Angular single-page application's own production JavaScript bundle (`main.<hash>.bundle.js`), whose compiled ViewEngine template output (element attributes and update-render functions) and compiled component logic (NgModel binding assignments into `this.form.application.*`, date-serialization functions, input masks) describe every step-1-through-3 field; independently corroborated by the live `/api/v1/dic/countries/`, `/api/v1/dic/documents/`, `/api/v1/dic/purposes/`, and `/api/v1/dic/visa/types/` JSON dictionary endpoints (fetched live via a real browser session) and the site's own `/assets/localization/en.json` translation file."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-16",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-16",
+    "notes": "GOV-3368 (\"GovSchema Standard Research\"), opening Uzbekistan as a new jurisdiction (1/6 verticals: Visa). Uzbekistan's e-visa.gov.uz was previously scouted in the GOV-3313 cycle (which opened Ethiopia instead) and flagged as 'a real, live Angular SPA blocked by a client-side rendering bug' after step 1, left un-authored. This cycle re-confirmed that exact bug still reproduces live (a persistent `.loader-wrapper` overlay that never clears after Country-step selections, confirmed via Playwright to coincide with zero pending network requests, i.e. a pure client-side state bug, not a slow/failed API call) and worked around it by decompiling the site's own production Angular bundle directly, the same class of technique this registry has already used for other blocked live sources (`am/mfa/evisa-application`'s AngularJS `$templateCache`, `br/tse/requerimento-alistamento-eleitoral`'s Angular bundle). Unlike those precedents, this bundle is compiled with the older Angular ViewEngine renderer (not Ivy), whose compiled output embeds each component's full DOM structure as literal element/attribute-array function calls (`ɵeld`) and each NgModel binding as a literal property-assignment expression in the view's update function (e.g. `o.form.application.arrivalInfo.countryId=e`) — a stronger, more directly-traceable source than template-string extraction, since the exact JSON property path each field writes to is read directly from compiled code, not inferred from markup alone. Cross-corroborated live: fetched all four `/api/v1/dic/*` dictionary endpoints through a real Playwright/Chromium session (`executablePath` pointed at the locally cached Chromium build, `LD_LIBRARY_PATH` set for the sysroot's libraries) navigating to the actual Country step, confirming 248 countries (each carrying a `status` code — 44 require this e-visa, 82 are visa-free and make the e-visa inapplicable, 9 use a different consular channel, 1 unclassified), 1 document type (\"ORDINARY PASSPORT\"), 3 visa-entry types (Single/Double/Multiple, USD 20/35/50 — the live dictionary's own label for the third literally reads \"MULTIPLY 50$\", a source-side typo carried into this schema's description but not its enum token), and 2 purposes (Tourism, Business). Selecting a visa-free citizenship (e.g. United States, confirmed live) surfaces a live \"Visa-free entry for up to 30 days\" banner and permanently disables the Next button by design — confirmed this is the source's own eligibility gate, not the rendering bug, by then selecting a genuinely e-visa-required citizenship (India) and observing the Next button become enabled (before the separate rendering bug then blocked actual navigation). The exact `DD.MM.YYYY` wire format for all four date fields (`arrivalDate`, `departureDate`, `issuedDate`, `expiredDate`) and the passport-number field's exact 9-character alphanumeric input mask were both read directly from the bundle's own formatting functions, not assumed. Models 24 `fields[]` across three steps plus `email` from the Activation step, and 2 `documents[]` (facial photo and passport data-page scan, both confirmed live via the bundle's own `photo/upload/face`/`photo/upload/passport` endpoint calls and the site's own `PHOTOS_INFO`/`ERROR_BIG_PHOTO`/`ERROR_FACE_NOT_VALID_FORMAT` translation strings for size/format constraints). Disclosed scope boundaries: the Payment step's merchant-gateway redirect fields (`VENDOR_ID`, `MERCHANT_TRANS_ID`, `SIGN_STRING`, etc. — a Click.uz-style payment integration, not government-form data) and the CAPTCHA-gated activation/payment-retry flow are excluded; two translation-file keys (`LABEL_CONTACT_PERSON`/`LABEL_INVITING_PARTY_IN_UZBEKISTAN` and `APPLICATION_LAST_VISIT_TITLE`/`LABEL_VISITED`) exist in the site's own `en.json` but were not found bound to any element in the compiled bundle actually shipped in this build — treated as unused/legacy translation keys, not modelled, rather than guessed at. 2 valid conformance fixtures (0 errors each) plus 8 mutation-control fixtures (each raising exactly 1 error, including three distinct `requiredWhen` cascade violations, an enum violation, and a `crossFieldValidation` violation) are committed under `conformance/uz/mfa/evisa-application/1.0.0/`. Both validators pass. See VERIFICATION.md for the full sourcing record, including every cited compiled-code excerpt."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-16"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "country",
+      "title": "Country",
+      "fields": [
+        "citizenship",
+        "documentType",
+        "visaType",
+        "purposeOfVisit"
+      ],
+      "next": "date"
+    },
+    {
+      "id": "date",
+      "title": "Date",
+      "fields": [
+        "arrivalDate",
+        "departureDate"
+      ],
+      "next": "personal_information"
+    },
+    {
+      "id": "personal_information",
+      "title": "Personal Information",
+      "fields": [
+        "surname",
+        "firstName",
+        "otherNames",
+        "surnameChanged",
+        "previousSurname",
+        "nameChanged",
+        "previousName",
+        "sex",
+        "dateOfBirth",
+        "placeOfBirth",
+        "passportNumber",
+        "passportIssueDate",
+        "passportExpiryDate",
+        "permanentResidenceAddress",
+        "workInfo",
+        "phoneNumber",
+        "preliminaryResidenceInUzbekistan",
+        "hasOtherCitizenship",
+        "otherCitizenship"
+      ],
+      "next": "photo_and_passport"
+    },
+    {
+      "id": "photo_and_passport",
+      "title": "Photo and Passport",
+      "fields": [],
+      "next": "activation"
+    },
+    {
+      "id": "activation",
+      "title": "Activation",
+      "fields": [
+        "email"
+      ],
+      "next": "payment"
+    },
+    {
+      "id": "payment",
+      "title": "Payment",
+      "fields": []
+    }
+  ],
+  "fields": [
+    {
+      "name": "citizenship",
+      "label": "Citizenship",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's citizenship, selected from the live `/api/v1/dic/countries/en` dictionary (248 entries as of this session), modelled as a free-text string carrying that dictionary's numeric country ID rather than as a large enum, consistent with this registry's convention for large country pickers (see `am/mfa/evisa-application`'s `birthCountry` field). Each country entry carries a `status` code confirmed live to gate the application itself: `status 1` (44 countries, e.g. India, Algeria) genuinely requires this e-visa; `status 2` (82 countries, e.g. United States, United Kingdom, China) is visa-free for up to 30 days, and selecting one live-confirmed disables the wizard's Next button with a \"Visa-free entry\" notice rather than proceeding; `status 4` (9 countries, e.g. France, Georgia, Armenia) and `status 3` (1 country) use a different consular channel not modelled here. This schema targets the `status 1` (e-visa-required) pathway.",
+      "sourceRef": "Country step, `<select id=\"infoCitizenship\" required>` bound via `ngModelChange` to `this.form.application.arrivalInfo.countryId`; live `GET /api/v1/dic/countries/en`"
+    },
+    {
+      "name": "documentType",
+      "label": "Document Type",
+      "type": "enum",
+      "required": true,
+      "description": "The type of travel document being used. The live `/api/v1/dic/documents/en` dictionary returns exactly one entry, \"ORDINARY PASSPORT\" (id 1), as of this session — modelled as a single-value enum on that basis, not assumed to be extensible.",
+      "sourceRef": "Country step, `<select id=\"applicantDocType\" required>` bound via `ngModelChange` to `this.form.application.passportInfo.documentId`; live `GET /api/v1/dic/documents/en`",
+      "validation": {
+        "enum": [
+          "ORDINARY_PASSPORT"
+        ]
+      }
+    },
+    {
+      "name": "visaType",
+      "label": "Visa Entry Type",
+      "type": "enum",
+      "required": true,
+      "description": "The requested visa's entry type and associated consular fee, read from the live `/api/v1/dic/visa/types/en` dictionary: id 1 \"SINGLE ENTRY 20$\", id 2 \"DOUBLE ENTRY 35$\", id 3 \"MULTIPLY 50$\" (a source-side spelling, i.e. Multiple Entry, USD 50 — carried here as `MULTIPLE_ENTRY`). Fee amounts independently corroborated by the site's own `en.json` translation `TERM_CONTENT_4_1`: \"e-visa Visa application fee is USD 20.00 for single entry, USD 35.00 for double entry and USD 50.00 for multiple entry.\"",
+      "sourceRef": "Country step, `<select id=\"visaType\" required>` bound via `ngModelChange` directly to `this.form.application.visaType`; live `GET /api/v1/dic/visa/types/en`",
+      "validation": {
+        "enum": [
+          "SINGLE_ENTRY",
+          "DOUBLE_ENTRY",
+          "MULTIPLE_ENTRY"
+        ]
+      }
+    },
+    {
+      "name": "purposeOfVisit",
+      "label": "Purpose of Visit",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's purpose of visit, read from the live `/api/v1/dic/purposes/en` dictionary (id 1 \"TOURISM\", id 2 \"BUSINESS\"). The site's own `en.json` (`LABEL_PURPOSE_VISIT_MESSAGE`) notes that a non-tourism purpose requires the inviting organization to separately apply to the Ministry of Foreign Affairs — a disclosed downstream process this schema does not model.",
+      "sourceRef": "Country step, `<select id=\"applicantPurposeVisit\" required>` bound via `ngModelChange` to `this.form.application.additionalInfo.visitPurpose`; live `GET /api/v1/dic/purposes/en`",
+      "validation": {
+        "enum": [
+          "TOURISM",
+          "BUSINESS"
+        ]
+      }
+    },
+    {
+      "name": "arrivalDate",
+      "label": "Arrival Date",
+      "type": "date",
+      "required": true,
+      "description": "The applicant's planned date of arrival in Uzbekistan, entered via an `ngb-datepicker` calendar in the site's own `DD.MM.YYYY` format. The component's own date-picker configuration (`minDate`/`maxDate`) restricts selection to between today and 90 days out, corroborating the site's own `en.json` note (`TERM_CONTENT_2_8`) that \"the electronic visa is valid for entry ... within 90 days from the date of registration.\"",
+      "sourceRef": "Date step, `ngb-datepicker` bound via `(dateSelect)` to `this.selectDateFrom()`, which serializes into `this.form.application.arrivalInfo.arrivalDate=(day).(month).(year)` (compiled bundle, `n.prototype.selectDateFrom`)",
+      "validation": {
+        "pattern": "^\\d{2}\\.\\d{2}\\.\\d{4}$"
+      }
+    },
+    {
+      "name": "departureDate",
+      "label": "Departure Date",
+      "type": "date",
+      "required": true,
+      "description": "The applicant's planned date of departure from Uzbekistan, same `DD.MM.YYYY` format as `arrivalDate`. The component's own `dateToTest.markDisabled` function (compiled bundle) disables any date more than 29 days after `arrivalDate` or before `arrivalDate` itself, matching the site's own `en.json` note that \"the period of stay must not exceed 30 days\" (`APPLICATION_INFO_DATERANGE_WARNING`) — the 30-day maximum-stay ceiling itself is not separately expressible as a `crossFieldValidation` operator in this spec and is disclosed here rather than silently omitted.",
+      "sourceRef": "Date step, second `ngb-datepicker` bound via `(dateSelect)` to `this.selectDateTo()`, which serializes into `this.form.application.arrivalInfo.departureDate` (compiled bundle, `n.prototype.selectDateTo`/`dateToTest.markDisabled`)",
+      "validation": {
+        "pattern": "^\\d{2}\\.\\d{2}\\.\\d{4}$"
+      }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's surname, matching their passport. The live input carries no explicit character-pattern or length restriction beyond being required; the component uppercases every `passportInfo`/identity string field before submission (compiled bundle, a loop over `this.form.application.passportInfo` calling `.toUpperCase()`).",
+      "sourceRef": "Personal Information step, `<input id=\"applicantSurname\" required>` bound via `ngModelChange` to `this.form.application.applicantInfo.lastName`"
+    },
+    {
+      "name": "firstName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's given name(s), matching their passport.",
+      "sourceRef": "Personal Information step, `<input id=\"applicantName\" required>` bound via `ngModelChange` to `this.form.application.applicantInfo.firstName`"
+    },
+    {
+      "name": "otherNames",
+      "label": "Middle Name/Patronymic Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's middle name or patronymic, if any. The live `<input id=\"otherNames\">` carries no `required` attribute, unlike its `applicantSurname`/`applicantName` neighbours.",
+      "sourceRef": "Personal Information step, `<input id=\"otherNames\">` (no `required`) bound via `ngModelChange` to `this.form.application.applicantInfo.otherName`"
+    },
+    {
+      "name": "surnameChanged",
+      "label": "Surname Changed",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant's surname has changed from a previously used surname. When checked, reveals a required `previousSurname` field.",
+      "sourceRef": "Personal Information step, `<input id=\"applicantSurnameChanged\" type=\"checkbox\">` bound via `ngModelChange` to `this.form.application.applicantInfo.isPreviousLastName`"
+    },
+    {
+      "name": "previousSurname",
+      "label": "Previous Surname",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "surnameChanged",
+        "equals": true
+      },
+      "classification": "pii",
+      "description": "The applicant's previously used surname, required only when `surnameChanged` is checked. Confirmed live: the field's own conditional template block (`*ngIf`) only renders when `isPreviousLastName` is true, and its `<input>` there carries a `required` attribute.",
+      "sourceRef": "Personal Information step, `<input id=\"applicantPreviousSurname\" required>` (conditionally rendered) bound via `ngModelChange` to `this.form.application.applicantInfo.previousLastName`"
+    },
+    {
+      "name": "nameChanged",
+      "label": "Name Changed",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant's given name has changed from a previously used name. When checked, reveals a required `previousName` field.",
+      "sourceRef": "Personal Information step, `<input id=\"applicantNameChanged\" type=\"checkbox\">` bound via `ngModelChange` to `this.form.application.applicantInfo.isPreviousFirstName`"
+    },
+    {
+      "name": "previousName",
+      "label": "Previous Name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "nameChanged",
+        "equals": true
+      },
+      "classification": "pii",
+      "description": "The applicant's previously used given name, required only when `nameChanged` is checked, mirroring `previousSurname`'s conditional structure.",
+      "sourceRef": "Personal Information step, `<input id=\"applicantPreviousName\" required>` (conditionally rendered) bound via `ngModelChange` to `this.form.application.applicantInfo.previousFirstName`"
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's sex, a two-option radio group (`name=\"sex\"`, `#applicantMale`/`#applicantFemale`), matching the site's own `LABEL_MALE`/`LABEL_FEMALE` translation strings.",
+      "sourceRef": "Personal Information step, radio group `name=\"sex\"` (`#applicantMale`/`#applicantFemale`), each `required`",
+      "validation": {
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ]
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's date of birth, a masked text input in `DD.MM.YYYY` format (placeholder \"XX.XX.XXXX\", confirmed live via the component's own `birthDateMask` definition).",
+      "sourceRef": "Personal Information step, `<input id=\"applicantBirthday\" placeholder=\"XX.XX.XXXX\" required>` bound via `ngModelChange` to `this.form.application.applicantInfo.dateOfBirth`",
+      "validation": {
+        "pattern": "^\\d{2}\\.\\d{2}\\.\\d{4}$"
+      }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's place of birth, free text.",
+      "sourceRef": "Personal Information step, `<input id=\"applicantBirthPlace\" required>` bound via `ngModelChange` to `this.form.application.applicantInfo.placeOfBirth`"
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport Series and Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's passport series and number, a 9-character alphanumeric field entered via a masked input (confirmed live via the component's own `passportMask` definition, nine `/(\\d|[a-zA-Z])/` character slots) and uppercased before submission.",
+      "sourceRef": "Personal Information step, `<input id=\"applicantDocSeriesNumber\" required>` (masked via `passportMask`) bound via `ngModelChange` to `this.form.application.passportInfo.serialNumber`",
+      "validation": {
+        "pattern": "^[0-9A-Za-z]{9}$"
+      }
+    },
+    {
+      "name": "passportIssueDate",
+      "label": "Date of Issue",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant's passport was issued, selected via an `ngb-datepicker` calendar in `DD.MM.YYYY` format.",
+      "sourceRef": "Personal Information step, `ngb-datepicker` `name=\"dpIssueDate\" required`, whose `(dateSelect)` calls `this.passportIssueDate()`, serializing into `this.form.application.passportInfo.issuedDate` (compiled bundle)",
+      "validation": {
+        "pattern": "^\\d{2}\\.\\d{2}\\.\\d{4}$"
+      }
+    },
+    {
+      "name": "passportExpiryDate",
+      "label": "Expiration Date",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant's passport expires, same `DD.MM.YYYY` format as `passportIssueDate`.",
+      "sourceRef": "Personal Information step, `ngb-datepicker` `name=\"dpExpiredDate\" required`, whose `(dateSelect)` calls `this.passportExpiredDate()`, serializing into `this.form.application.passportInfo.expiredDate` (compiled bundle)",
+      "validation": {
+        "pattern": "^\\d{2}\\.\\d{2}\\.\\d{4}$"
+      }
+    },
+    {
+      "name": "permanentResidenceAddress",
+      "label": "Permanent Residence Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's permanent (home-country) residence address, free text.",
+      "sourceRef": "Personal Information step, `<input id=\"applicantPermanentResidence\" required>` bound via `ngModelChange` to `this.form.application.additionalInfo.permanentResidence`"
+    },
+    {
+      "name": "workInfo",
+      "label": "Place of Work (Study) and Position",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's place of work or study, and position/role there, free text.",
+      "sourceRef": "Personal Information step, `<input id=\"applicantWorkPosition\" required>` bound via `ngModelChange` to `this.form.application.additionalInfo.workInfo`"
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's phone number (mobile and/or land line). A live `keypress` handler restricts entry to digits only (`keysNumber = /^[0-9]*$/`, confirmed in the compiled bundle).",
+      "sourceRef": "Personal Information step, `<input id=\"applicantPhoneNumber\" required>` bound via `ngModelChange` to `this.form.application.additionalInfo.phoneNumber`; `keypress` handler restricted to `this.keysNumber`",
+      "validation": {
+        "pattern": "^[0-9]+$"
+      }
+    },
+    {
+      "name": "preliminaryResidenceInUzbekistan",
+      "label": "Preliminary Place of Residence in Uzbekistan",
+      "type": "string",
+      "required": true,
+      "description": "Where the applicant intends to stay while in Uzbekistan (e.g. hotel or host address), free text.",
+      "sourceRef": "Personal Information step, `<input id=\"applicantPreliminaryPlaceResidence\" required>` bound via `ngModelChange` to `this.form.application.additionalInfo.preliminaryPlaceLive`"
+    },
+    {
+      "name": "hasOtherCitizenship",
+      "label": "Citizenship of Other States",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant holds citizenship of a country other than the one selected in `citizenship`. When checked, reveals a required `otherCitizenship` field.",
+      "sourceRef": "Personal Information step, `<input id=\"applicantCitizenshipChanged\" type=\"checkbox\">` bound via `ngModelChange` to `this.form.application.additionalInfo.isOtherCitizenship`"
+    },
+    {
+      "name": "otherCitizenship",
+      "label": "Other Citizenship",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasOtherCitizenship",
+        "equals": true
+      },
+      "classification": "pii",
+      "description": "The applicant's other citizenship, required only when `hasOtherCitizenship` is checked. Selected from the same live country dictionary as `citizenship`, modelled the same way (a string carrying the dictionary's numeric country ID).",
+      "sourceRef": "Personal Information step, `<select id=\"applicantPreviousCitizenship\" required>` (conditionally rendered) bound via `ngModelChange` to `this.form.application.additionalInfo.citizenshipId`"
+    },
+    {
+      "name": "email",
+      "label": "Email Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's email address, entered on the Activation step and used to receive a digital activation code (confirmed by the site's own `en.json`: `APPLICATION_LABEL_CHECK_STATUS`, \"Enter the application code, received by e-mail\", and `SAVED_APPLICATION_DESC`, \"An email with a link to activate the receipt has been sent to your email address\"). Submission from this step is additionally gated by an image CAPTCHA (compiled bundle: `ApplicationService.prototype.getCaptcha` / `sendEmail`), not modelled as a schema field, consistent with this registry's treatment of CAPTCHA gates elsewhere (see `ge/mfa/evisa-application`).",
+      "sourceRef": "Activation step, bound via `ngModelChange` to the top-level `this.form.email` (compiled bundle, `ActivationComponent.prototype.sendEmail`)",
+      "validation": {
+        "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "facePhoto",
+      "label": "Photo",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "maxBytes": 1048576,
+        "mediaTypes": [
+          "image/jpeg"
+        ]
+      },
+      "sourceRef": "Photo and Passport step, drop-zone upload posting to `/api/v1/photo/upload/face` (compiled bundle, `n.prototype.startUpload`); size/format constraints from `en.json` (`PHOTOS_INFO`: \"photo must have a size of 35x45 mm with a resolution of 300 dpi ... should not exceed 1 Mb\"; `ERROR_BIG_PHOTO`: \"less than 1024 KB\"; `ERROR_FACE_NOT_VALID_FORMAT`: \"Image format is wrong (jpg, jpeg)\")"
+    },
+    {
+      "id": "passportScan",
+      "label": "Photo of the Passport",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "constraints": {
+        "maxBytes": 1048576,
+        "mediaTypes": [
+          "image/jpeg"
+        ]
+      },
+      "sourceRef": "Photo and Passport step, drop-zone upload posting to `/api/v1/photo/upload/passport` (compiled bundle, `n.prototype.passportStartUpload`); format constraint from `en.json` (`ERROR_PASSPORT_NOT_VALID_FORMAT`: \"Wrong format for passport image (jpg, jpeg)\")"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "departureAfterArrival",
+      "compare": {
+        "field": "departureDate",
+        "operator": "greaterThan",
+        "compareTo": "arrivalDate"
+      }
+    },
+    {
+      "id": "passportExpiryAfterIssue",
+      "compare": {
+        "field": "passportExpiryDate",
+        "operator": "greaterThan",
+        "compareTo": "passportIssueDate"
+      }
+    }
+  ]
+}

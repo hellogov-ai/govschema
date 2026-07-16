@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**66 jurisdictions** | **511 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**67 jurisdictions** | **512 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3368, "GovSchema Standard Research"): Uzbekistan
+> opens as this registry's 67th jurisdiction**, via `uz/mfa/evisa-application` —
+> the Ministry of Foreign Affairs' Consular Department live e-Visa
+> application at `e-visa.gov.uz`, no account creation or login required. A
+> prior cycle (GOV-3313) had scouted this same portal and left it
+> un-authored, describing it only as "a real, live Angular SPA blocked by a
+> client-side rendering bug" after the Country step — this cycle
+> independently re-found the candidate, reproduced that exact bug live
+> (a `.loader-wrapper` overlay that never clears after the Country step's
+> selections, confirmed via Playwright to coincide with zero pending network
+> requests, i.e. a pure client-side state bug), and worked around it by
+> decompiling the site's own production Angular bundle directly — the same
+> class of technique this registry has already used for other blocked live
+> sources (`am/mfa/evisa-application`'s AngularJS `$templateCache`,
+> `br/tse/requerimento-alistamento-eleitoral`'s Angular bundle), but on a
+> stronger source: this bundle is compiled with Angular's older ViewEngine
+> renderer, whose compiled output embeds each `NgModel` binding as a literal
+> property-assignment expression naming the exact JSON path it writes to
+> (e.g. `o.form.application.arrivalInfo.countryId=e`), not just an element
+> `id`/`name` attribute. Cross-corroborated live via the site's own
+> `/api/v1/dic/*` dictionary endpoints (248 citizenships each carrying a
+> `status` code — 44 genuinely require this e-visa, 82 are visa-free and
+> confirmed live to disable the wizard, 9 use a different channel; 1
+> document type; 3 visa-entry types at USD 20/35/50; 2 purposes) and its
+> `assets/localization/en.json` translation file. Models 24 `fields[]`
+> across three steps (Country, Date, Personal Information — identity, an
+> other-citizenship/previous-name change history, passport number and
+> issue/expiry dates in an exact `DD.MM.YYYY` wire format read directly from
+> the bundle's own date-serialization functions, and Uzbekistan-stay/contact
+> details) plus `email` from the Activation step, and 2 `documents[]`
+> (facial photo and passport data-page scan). Disclosed scope boundaries:
+> the Payment step's Click.uz-style merchant-gateway redirect fields and the
+> CAPTCHA-gated activation/payment-retry flow are excluded as payment/session
+> mechanics, not government-form data; two `en.json` translation keys
+> (`LABEL_CONTACT_PERSON`/`LABEL_INVITING_PARTY_IN_UZBEKISTAN` and
+> `APPLICATION_LAST_VISIT_TITLE`/`LABEL_VISITED`) were found unused in the
+> actually-shipped bundle and are not modelled. 2 valid conformance fixtures
+> (0 errors each) plus 8 mutation-control fixtures (each raising exactly 1
+> error, including two distinct `requiredWhen` cascades beyond the two
+> already illustrated and both `crossFieldValidation` rules) are committed
+> under `conformance/uz/mfa/evisa-application/1.0.0/`. Both validators pass
+> at 512/512. See the Visa vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-16, GOV-3358, "GovSchema Standard Research"): Spain's
 > Passport vertical opens, closing Spain to 6 of 6**, via
@@ -11365,7 +11409,7 @@
 
 ## By Vertical
 
-### Passport (48/66 jurisdictions — 73%)
+### Passport (48/67 jurisdictions — 72%)
 
 > **Correction (GOV-3358):** numerator updated from 47 to 48 following
 > Spain's Passport vertical opening via
@@ -11853,7 +11897,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (55/66 jurisdictions — 83%)
+### DMV — Vehicle Registration, Licensing, Permits (55/67 jurisdictions — 82%)
 
 > **Update (2026-07-16, GOV-3248, scouted from GOV-3246, "GovSchema
 > Standard Research"): Slovenia's DMV vertical opens**, via
@@ -12409,7 +12453,7 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (61/66 jurisdictions — 92%)
+### Business Formation — Incorporation, LLC, Company Registration (61/67 jurisdictions — 91%)
 
 > **Update (2026-07-16, GOV-3328, "GovSchema Standard Research"): Ecuador
 > opens this vertical (2 of 6 overall)**, via
@@ -13332,7 +13376,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (58/66 jurisdictions — 88%)
+### Taxes — Income Tax Return, Tax Filing (58/67 jurisdictions — 87%)
 
 > **Update (2026-07-16, GOV-3336, "GovSchema Standard Research"): Ecuador's
 > Taxes vertical opens, bringing Ecuador to 3 of 6 verticals**, via
@@ -14492,7 +14536,19 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (57/66 jurisdictions — 86%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (58/67 jurisdictions — 87%)
+
+> **Update (2026-07-16, GOV-3368, "GovSchema Standard Research"): Uzbekistan
+> opens as this registry's 67th jurisdiction, via this vertical**, via
+> `uz/mfa/evisa-application` — the Ministry of Foreign Affairs' Consular
+> Department live e-Visa application at `e-visa.gov.uz`, a candidate a
+> prior cycle (GOV-3313) had scouted and left un-authored behind a
+> reproducible client-side rendering bug, worked around this cycle via
+> direct decompilation of the site's production Angular (ViewEngine)
+> bundle. See the Executive Summary's GOV-3368 update above and the
+> document's own VERIFICATION.md for the full sourcing record and
+> disclosed scope boundary (the Payment step's merchant-gateway fields and
+> the CAPTCHA-gated activation/payment-retry flow excluded).
 
 > **Update (2026-07-16, GOV-3343, "GovSchema Standard Research"): Armenia
 > opens as this registry's 66th jurisdiction, via this vertical**, via
@@ -15201,7 +15257,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (48/66 jurisdictions — 73%)
+### National ID & Civic Documents (48/67 jurisdictions — 72%)
 
 > **Update (2026-07-16, GOV-3295/GOV-3298, "GovSchema Standard Research"):
 > Rwanda opens this vertical**, via `rw/irembo/nida-diaspora-application` —
@@ -15915,6 +15971,7 @@ now closed.
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **UZ** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **VN** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
@@ -18335,6 +18392,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **GOV-3368 ("GovSchema Standard Research") — Uzbekistan: authored,
+  opening the registry's 67th jurisdiction, reversing a prior
+  "blocked by a client-side rendering bug" finding rather than
+  re-screening from scratch.** The GOV-3313 cycle had scouted
+  `e-visa.gov.uz` and left it un-authored after finding step-2+
+  navigation blocked by a persistent client-side loading-overlay bug.
+  This cycle reproduced that exact bug live (confirmed via Playwright to
+  coincide with zero pending network requests — a pure client-state bug,
+  not a slow API) and worked around it entirely by decompiling the site's
+  own production Angular bundle, which happens to use the older
+  ViewEngine renderer whose compiled output embeds each field's exact
+  `NgModel`-bound JSON property path in plain text — see
+  `uz/mfa/evisa-application`. Uzbekistan now stands at 1 of 6 verticals
+  (Visa); DMV, Passport, Business Formation, Taxes, and National ID
+  remain open, unscreened backlog candidates for a future cycle.
 
 - **GOV-3351 ("GovSchema Standard Research") — Armenia Business Formation:
   authored (see the Executive Summary above), Armenia's DMV/Passport/Taxes/
