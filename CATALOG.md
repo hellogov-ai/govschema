@@ -1,10 +1,39 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-15** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-16** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**62 jurisdictions** | **493 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**62 jurisdictions** | **494 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-16, GOV-3249, scouted from GOV-3246, "GovSchema
+> Standard Research"): Slovenia's Visa vertical opens, bringing Slovenia to 5 of
+> 6 verticals**, via `si/mzez/vloga-za-dolgorocni-vizum` — the Ministry of
+> Foreign Affairs and European Integration's (MZEZ) "Prošnja za izdajo vizuma za
+> dolgoročno bivanje / Application for long-term Visa", Slovenia's national "D"
+> (long-stay, up to 1 year) visa issued under Article 20 of the Aliens Act
+> (ZTuj-2). Independently re-fetched fresh this cycle: HTTP 200, `application/pdf`,
+> 186,325 bytes, bilingual SI/EN, from the official `gov.si` domain. A genuine
+> 3-page non-AcroForm print form (`pdfjs-dist` confirms zero Widget annotations)
+> with a clean, fully-extractable bilingual text layer. Explicitly verified as
+> **distinct from the harmonized EU Schengen Annex I short-stay visa template**
+> (`fr/france-visas/schengen-visa-application`, already modeled once in this
+> registry) via its 10 Slovenia-specific purpose-of-visa checkboxes (family
+> reunification, staff posting at diplomatic mission, education/training, RS
+> economic interest, RS higher-education/science, sport contract, journalist
+> accreditation, religious/charity work, humanitarian grounds, student employment
+> under international agreement) — none of which appear in the Schengen Annex I
+> form at all. The source's official-use-only decision section (decision, validity
+> dates, allowed days of stay) is excluded, consistent with this registry's
+> convention of excluding office-only sections. Models 35 `fields[]` across
+> applicant identification, travel documents, residence, employment, intended stay
+> dates, visa purpose selection, and conditional family/employer/organization
+> blocks. 3 conformance fixtures (2 valid, 1 mutation-control) committed under
+> `conformance/si/mzez/vloga-za-dolgorocni-vizum/1.0.0/`. See the document's own
+> VERIFICATION.md for the full sourcing record and anti-duplication verification.
+> Numerator updated from 493 to 494; Slovenia's Visa column flips ✗→✓ in the By
+> Jurisdiction table below, leaving only DMV as Slovenia's remaining gap (in
+> parallel authoring: [GOV-3248](/GOV/issues/GOV-3248), via `si/e-uprava`).
 
 > **Update (2026-07-15, GOV-3237, scouted from GOV-3235, "GovSchema
 > Standard Research"): Nepal's Visa vertical opens, bringing Nepal to 4 of
@@ -14923,7 +14952,7 @@ now closed.
 | **RW** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **SE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **SI** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **SI** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **SK** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TZ** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
