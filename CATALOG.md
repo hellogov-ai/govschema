@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**69 jurisdictions** | **523 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**70 jurisdictions** | **524 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3447, "GovSchema Standard Research"): Egypt
+> opens as the registry's 70th jurisdiction**, via
+> `eg/eta/small-enterprise-tax-declaration` — the Egyptian Tax Authority's
+> (ETA) Form No. 25 ("Declarations"), the "Tax Declaration on Annual
+> Business Volume for Small and Micro Enterprises" every enterprise with
+> annual turnover up to EGP 10 million files under SME Development Law No.
+> 152 of 2020, computing a flat turnover-based tax in place of a full
+> profit-based return. This cycle re-scanned CATALOG.md's own backlog fresh
+> and found all four candidates the issue's own notes named (DE Steuer-ID,
+> SG NRIC loss/damage replacement + re-registration, NZ RealMe, voter
+> registration generally) already published from prior cycles; the next
+> disclosed candidate was the GOV-3410 cycle's own "inconclusive, not a hard
+> dead end" flag on Egypt's Taxes vertical, which had found unauthenticated
+> employer/payroll forms but not a standalone individual return, with an
+> explicit note to search again. This cycle's targeted search located Form
+> 25 directly, unauthenticated, from ETA's own "Small Projects Forms" page
+> (`sha256:e7ee3d918cac9e224bab3b0f85e9839c6503ef5e4770e2326f5cfbbdce657032`,
+> 2 pages). Unlike Cambodia's AcroForm PDFs, this is a static/print-layout
+> document with no fillable widgets — fields were extracted from a
+> position-sorted text layer and cross-checked against three corroborating
+> secondary sources (ETA's own e-services filing guide, the Comprehensive
+> Health Insurance Authority's solidarity-contribution guide, and ETA's own
+> forms listing), since a PDF-render attempt for pixel-level visual
+> confirmation produced a blank canvas in this sandboxed environment (a
+> disclosed tooling gap, not a claim the form lacks content). Models the
+> return's mandatory taxpayer/business/contact header, the declaration's
+> business-volume and solidarity-contribution/health-insurance opt-ins,
+> profit-distribution and capital-gains disclosure questions, the
+> business-volume-bracket reference data, the resulting tax computation net
+> of any prior-year credit, payment details, and the declarant's signature
+> block — 38 fields in total. Egypt's Business Formation, DMV, Passport,
+> and Visa verticals remain re-confirmed weak/dead per the GOV-3410 cycle;
+> National ID is open, unscreened backlog. See the document's own
+> VERIFICATION.md for the full sourcing record. Both validators pass at
+> 524/524; `verify-sources.mjs`, scoped to this schema's directory, reports
+> all 4 cited URLs clear; 14 conformance fixtures (2 valid + 12
+> mutation-control) committed, all reproduced via a from-scratch mock
+> validator.
 
 > **Update (2026-07-17, GOV-3440, "GovSchema Standard Research"): Cambodia's
 > Taxes vertical gains a fifth schema, closing out the `tax.gov.kh`
@@ -11802,7 +11841,7 @@
 
 ## By Vertical
 
-### Passport (49/69 jurisdictions — 71%)
+### Passport (49/70 jurisdictions — 70%)
 
 > **Correction (GOV-3389):** numerator updated from 48 to 49 following
 > Mongolia's Passport vertical opening via
@@ -12302,7 +12341,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (56/69 jurisdictions — 81%)
+### DMV — Vehicle Registration, Licensing, Permits (56/70 jurisdictions — 80%)
 
 > **Update (2026-07-16, GOV-3403, "GovSchema Standard Research"): Mongolia's
 > DMV vertical opens**, via `mn/atunt/vehicle-plate-number-reservation` — the
@@ -12867,7 +12906,7 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (63/69 jurisdictions — 91%)
+### Business Formation — Incorporation, LLC, Company Registration (63/70 jurisdictions — 90%)
 
 > **Update (2026-07-16, GOV-3410, "GovSchema Standard Research"): Cambodia
 > opens as the registry's 69th jurisdiction via this vertical**, via
@@ -13812,7 +13851,13 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (60/69 jurisdictions — 87%)
+### Taxes — Income Tax Return, Tax Filing (61/70 jurisdictions — 87%)
+
+> **Update (2026-07-17, GOV-3447, "GovSchema Standard Research"): Egypt
+> opens as the registry's 70th jurisdiction via Taxes**, through
+> `eg/eta/small-enterprise-tax-declaration` — see the Executive Summary
+> update above for the full sourcing record. Numerator moves from 60/69 to
+> 61/70.
 
 > **Update (2026-07-17, GOV-3440, "GovSchema Standard Research"): Cambodia's
 > Taxes vertical gains a fifth schema**, via `kh/gdt/withholding-tax-return`
@@ -15035,7 +15080,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (59/69 jurisdictions — 86%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (59/70 jurisdictions — 84%)
 
 > **Update (2026-07-16, GOV-3375, "GovSchema Standard Research"): Mongolia
 > opens as this registry's 68th jurisdiction, via this vertical**, via
@@ -15766,7 +15811,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (48/69 jurisdictions — 70%)
+### National ID & Civic Documents (48/70 jurisdictions — 69%)
 
 > **Update (2026-07-16, GOV-3295/GOV-3298, "GovSchema Standard Research"):
 > Rwanda opens this vertical**, via `rw/irembo/nida-diaspora-application` —
@@ -16434,6 +16479,7 @@ now closed.
 | **DO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EC** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **EG** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **ES** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ET** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -18355,15 +18401,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 - **EG Passport (emoves.moi.gov.eg)** — GOV-3410, 2026-07-16. Unreachable
   from this environment (connection failed entirely); secondary reporting
   confirms the portal requires account login for all of its services.
-- **EG Taxes (eta.gov.eg) — inconclusive, not a hard dead end** —
-  GOV-3410, 2026-07-16. Unauthenticated downloadable forms exist
-  (`/en/payroll-forms`), but they are employer/withholding-agent salary
-  declarations (Forms 2/3/6/7/8), not an individual's own return; the
-  actual individual/self-employed return ("Form 25") was not located as a
-  standalone downloadable specimen this cycle, and e-filing itself routes
-  through a login-gated taxpayer portal (`eservice.incometax.gov.eg`).
-  Worth a fresh, more targeted search for Form 25 in a future cycle before
-  treating Egypt as fully exhausted.
+- **EG Taxes (eta.gov.eg) — resolved, no longer a gap.** GOV-3410,
+  2026-07-16, had flagged this "inconclusive, not a hard dead end": the
+  individual/self-employed return ("Form 25") had not been located as a
+  standalone downloadable specimen, worth a fresh, more targeted search
+  before treating Egypt as fully exhausted. GOV-3447, 2026-07-17, did that
+  search and found it directly on ETA's own "Small Projects Forms" page,
+  authored as `eg/eta/small-enterprise-tax-declaration` — see the
+  Executive Summary update above. This opens Egypt as the registry's 70th
+  jurisdiction.
 - **MN Taxes (itax.mta.mn)** — GOV-3382, 2026-07-16 (re-screen of a
   GOV-3375 finding). Unreachable this cycle too — connection timeout on
   both `https://` and `http://` from this environment, consistent with the
@@ -19019,6 +19065,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **GOV-3447 ("GovSchema Standard Research") — Egypt opens as the
+  registry's 70th jurisdiction via Taxes, authored via
+  `eg/eta/small-enterprise-tax-declaration` (see the Executive Summary and
+  Taxes vertical section above).** Resolves the GOV-3410 "EG Taxes —
+  inconclusive, not a hard dead end" flag below. Egypt's remaining
+  backlog: **National ID** was not screened in either cycle and is open,
+  unscreened; **Business Formation, DMV, Passport, and Visa** remain
+  re-confirmed weak/dead per GOV-3410 (see "Confirmed dead ends" below —
+  none re-screened this cycle, so none superseded). The two dedicated
+  ETA payment forms Form 25's own footnotes reference (dividend-tax
+  payment, capital-gains payment) are open, unscreened backlog for future
+  companion schemas.
 
 - **GOV-3417 ("GovSchema Standard Research") — Cambodia's Taxes vertical
   authored via `kh/gdt/monthly-vat-return` (see the Executive Summary and
