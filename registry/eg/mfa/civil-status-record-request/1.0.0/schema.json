@@ -1,0 +1,389 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "eg/mfa/civil-status-record-request",
+  "version": "1.0.0",
+  "title": "Egyptian Civil Status Record Request Abroad (Registration / Renewal / Issuance / Addition)",
+  "description": "Request an Egyptian citizen's civil-status record action through an Egyptian consular mission abroad — registering with the Civil Status Sector's records for the first time while resident overseas, renewing an existing record, obtaining an issuance, or adding a newly-born child to the family record — per the Egyptian Consulate General, London's own \"نموذج: قيد / تجديد / إصدار / إضافة\" (\"Form: Registration / Renewal / Issuance / Addition\") intake form. This is the consular channel of Egypt's civil registration system (مصلحة الأحوال المدنية, administered by the Ministry of Interior) for citizens who cannot attend a domestic Civil Status Sector office in person. This schema models the form's request-type selection, the applicant's personal, passport, military-conscription, professional, and marital-status particulars, contact and address details in both the country of residence and Egypt, a nearest-relative contact in Egypt, free-text supplementary request details, the child-addition sub-request, and the list of attached supporting documents. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Arab Republic of Egypt, its Ministry of Foreign Affairs, or its Ministry of Interior.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "EG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Egyptian Consulate General, London (Ministry of Foreign Affairs of the Arab Republic of Egypt, on behalf of the Civil Status Sector, Ministry of Interior)",
+    "abbreviation": "MFA",
+    "url": "https://egyptconsulate.co.uk/"
+  },
+  "process": {
+    "type": "application",
+    "language": "ar"
+  },
+  "source": {
+    "url": "https://egyptconsulate.co.uk/wp-content/uploads/2021/01/Add.pdf",
+    "retrievedAt": "2026-07-17",
+    "documentRef": "نموذج: قيد / تجديد / إصدار / إضافة (\"Form: Registration / Renewal / Issuance / Addition\"), Consulate General of the Arab Republic of Egypt, London"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-17",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-17",
+    "notes": "GovSchema Standard Research cycle GOV-3462. The GOV-3447 cycle (2026-07-17) had disclosed Egypt's National ID & Civic Documents vertical as open, unscreened backlog after closing Egypt's Taxes gap. This cycle searched for Egypt's National ID card process directly (eta.gov.eg is Taxes, not applicable) and found the domestic Ministry of Interior civil-registry portal/ID-card process is account-login-gated with no downloadable specimen (consistent with the GOV-3410 cycle's finding that moi.gov.eg subdomains are WAF-blocked or account-gated), but a distinct consular channel exists: the Egyptian Consulate General in London publishes a 'Downloadable Forms' page (egyptconsulate.co.uk/downloadable-forms/) listing a form titled 'Renew – Addition Forms' linking directly to an unauthenticated PDF (sha256:7f3f3bf5302b39adfe50fb54737e7452e78d8e2285efacab3b78f9a23bb2e8d1, 78,322 bytes, re-fetched live this cycle and confirmed byte-identical) whose own printed header reads 'قنصلية جمهورية مصر العربية - لندن - نموذج: قيد/تجديد/إصدار/إضافة'. This is a genuine AcroForm PDF (49 Widget annotations: 45 text fields Text1–Text45, plus 4 checkbox fields Check Box1–Check Box4), unlike the static print-layout PDF used for eg/eta/small-enterprise-tax-declaration. Extraction method: pdfjs-dist@5 (scratch directory, not a repository dependency), both getAnnotations() for widget names/rects/types and getTextContent() with per-item x/y transform coordinates for the printed labels, since the raw content-stream order does not match the RTL visual reading order. A pdfjs-dist + node-canvas render attempt failed in this sandboxed environment on a different code path (TypeError in paintInlineImageXObject / drawImageAtIntegerCoords while painting an inline background image) than the blank-canvas render failure disclosed in the eg/eta schema's VERIFICATION.md — both are the same class of pre-existing sandboxed PDF-render tooling gap, not a claim the source form lacks content. Field semantics were instead derived by cross-referencing each widget's rect (x-midpoint, y-midpoint) against the position-sorted text layer's blank-underscore runs and printed labels/colons for the same row, then sanity-checked by summing the widget count implied by the resulting semantic field list against the PDF's actual 45 Text + 4 Check Box widget count — the two independently arrived at totals matched exactly (45 and 4), which is treated as strong corroboration of the row-to-field mapping despite the render-tooling gap. Two printed option groups on the form (the four request-type labels قيد/تجديد/إصدار/إضافة in the header, and the three military-conscription-status options أداء الخدمة/إعفاء مؤقت/إعفاء نهائي) have no corresponding AcroForm widget at all — the physical form expects these to be marked by hand (a checkmark or circling) rather than typed — and are modelled here as enum fields inferred from the printed layout, the same treatment this registry's eg/eta schema gave its own non-fillable businessVolumeBracket selector. The 'رقم الهاتف' (phone number) row prints three period-separated blank segments in its text layer but only two AcroForm widgets are actually present at that row's y-position; modelled as two optional phone-number fields (relativePhoneNumber1/2) to match the true widget count rather than the visually-implied three. The UK-address field spans two separate underscore-ruled lines/widgets in the source (a long single-line address wrapping) but is modelled as one semantic string field (addressInUk) with a generous maxLength, since both widgets record the same logical address value. Source PDF sha256:7f3f3bf5302b39adfe50fb54737e7452e78d8e2285efacab3b78f9a23bb2e8d1. No submission was made and no live account or appointment was created to author this schema; this form is submitted in person or by post to the consulate per its own instructions, not through any online portal."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-17"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "requestType",
+      "label": "Request type",
+      "type": "enum",
+      "required": true,
+      "description": "Which of the form's four request types is being made: registering a civil-status record for the first time while abroad, renewing an existing record, obtaining an issuance, or adding a family member (typically a newly-born child) to the record. The source form prints these four labels with no dedicated fillable widget — the applicant marks the applicable one by hand.",
+      "sourceRef": "Header, \"قيد:\" / \"تجديد:\" / \"إصدار:\" / \"إضافة:\"",
+      "validation": { "enum": ["registration", "renewal", "issuance", "addition"] }
+    },
+    {
+      "name": "fullNameArabic",
+      "label": "Full name (Arabic)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's full name in Arabic.",
+      "sourceRef": "\"الاسم:\"",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "fullNameEnglish",
+      "label": "Full name (English)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's full name transliterated into English.",
+      "sourceRef": "\"الاسم باللغة الانجليزية:\"",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's place of birth.",
+      "sourceRef": "\"جهة الميلاد:\"",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "description": "The applicant's date of birth. The source form's printed layout provides separate day/month blanks followed by a literal printed \"19\" prefix plus a two-digit year blank, implying a 20th-century default; modelled here as a single full four-digit-year date field rather than reproducing the printed century assumption.",
+      "sourceRef": "\"تاريخ الميلاد: / /١٩\""
+    },
+    {
+      "name": "religion",
+      "label": "Religion",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's religion, as recorded on the civil-status record.",
+      "sourceRef": "\"الديانة:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "required": true,
+      "description": "The number of the applicant's Egyptian passport.",
+      "sourceRef": "\"رقم الجواز:\"",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "passportIssuingAuthority",
+      "label": "Passport issuing authority",
+      "type": "string",
+      "required": true,
+      "description": "The authority that issued the applicant's passport.",
+      "sourceRef": "\"جهة الإصدار:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "passportIssueDate",
+      "label": "Passport issue date",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant's passport was issued.",
+      "sourceRef": "\"تاريخ الإصدار: / /\""
+    },
+    {
+      "name": "passportExpiryDate",
+      "label": "Passport expiry date",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant's passport expires. The source form prints a literal \"20\" prefix before a two-digit year blank, implying a 21st-century default; modelled here as a single full four-digit-year date field.",
+      "sourceRef": "\"تاريخ الانتهاء: / /٢٠\""
+    },
+    {
+      "name": "conscriptionStatus",
+      "label": "Military conscription status",
+      "type": "enum",
+      "required": false,
+      "description": "The applicant's standing with respect to military conscription, applicable to male applicants of conscription age. The source form prints these three options with no dedicated fillable widget — the applicant marks the applicable one by hand.",
+      "sourceRef": "\"الموقف من التجنيد: أداء الخدمـة / إعفـاء مؤقت / إعفـاء نهــائي\"",
+      "validation": { "enum": ["performing_service", "temporary_exemption", "final_exemption"] }
+    },
+    {
+      "name": "professionOnPassport",
+      "label": "Profession as recorded on passport",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's profession as printed on their passport.",
+      "sourceRef": "\"المهنة المدونة علي الجواز:\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "currentProfession",
+      "label": "Current profession",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's current profession.",
+      "sourceRef": "\"المهنـــة الحاليــة:\"",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "qualification",
+      "label": "Educational qualification",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's highest educational qualification.",
+      "sourceRef": "\"المؤهل:\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "specialization",
+      "label": "Field of specialization",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's field of specialization for the qualification given above.",
+      "sourceRef": "\"التخصص:\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "qualificationDate",
+      "label": "Qualification date",
+      "type": "date",
+      "required": false,
+      "description": "The date the applicant's educational qualification was obtained.",
+      "sourceRef": "\"تاريخ المؤهل: / /\""
+    },
+    {
+      "name": "arrivalDate",
+      "label": "Date of arrival in country of residence",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant arrived in their current country of residence.",
+      "sourceRef": "\"تاريخ الوصول: / /\""
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant's marital status.",
+      "sourceRef": "\"الحالـة الاجتماعيـــــــــــــة: أعزب/متزوج/مطلق/أرمل\"",
+      "validation": { "enum": ["single", "married", "divorced", "widowed"] }
+    },
+    {
+      "name": "spouseName",
+      "label": "Spouse's name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The name of the applicant's spouse. Applicable when maritalStatus is married.",
+      "sourceRef": "\"أسـم الزوج/الزوجــة:\"",
+      "validation": { "maxLength": 300 },
+      "requiredWhen": { "field": "maritalStatus", "equals": "married" }
+    },
+    {
+      "name": "spouseNationality",
+      "label": "Spouse's nationality",
+      "type": "string",
+      "required": false,
+      "description": "The nationality of the applicant's spouse. Applicable when maritalStatus is married.",
+      "sourceRef": "\"الجنسـيــــة:\"",
+      "validation": { "maxLength": 100 },
+      "requiredWhen": { "field": "maritalStatus", "equals": "married" }
+    },
+    {
+      "name": "addressInUk",
+      "label": "Address in country of residence",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's residential address in their country of residence, in capital letters per the form's own instruction. Despite the form's own title being specific to the London consulate, this field is modelled generically as the country-of-residence address; the source form spans this single logical address across two ruled underscore lines/widgets.",
+      "sourceRef": "\"العنوان في بريطانيا (Capital Letters):\"",
+      "validation": { "minLength": 1, "maxLength": 400 }
+    },
+    {
+      "name": "homePhone",
+      "label": "Home telephone number",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's home telephone number.",
+      "sourceRef": "\"هاتف المنزل:\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "workPhone",
+      "label": "Work telephone number",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's work telephone number.",
+      "sourceRef": "\"هاتف العمل:\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "mobilePhone",
+      "label": "Mobile phone number",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's mobile phone number.",
+      "sourceRef": "\"الهاتف المحمول:\"",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "addressInEgypt",
+      "label": "Address in Egypt",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's registered address in the Arab Republic of Egypt.",
+      "sourceRef": "\"العنوان في جمهورية مصر العربيــة:\"",
+      "validation": { "minLength": 1, "maxLength": 400 }
+    },
+    {
+      "name": "nearestRelativeNameInEgypt",
+      "label": "Nearest relative's name in Egypt",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The name of the applicant's nearest relative resident in Egypt, for contact purposes.",
+      "sourceRef": "\"اسـم أقرب الأقارب في جمهورية مصر العربيـة:\"",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "nearestRelativeAddressInEgypt",
+      "label": "Nearest relative's address in Egypt",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The address of the applicant's nearest relative resident in Egypt.",
+      "sourceRef": "\"عنوانه في جمهورية مصر العربيــة:\"",
+      "validation": { "minLength": 1, "maxLength": 400 }
+    },
+    {
+      "name": "relativePhoneNumber1",
+      "label": "Relative's phone number (1)",
+      "type": "string",
+      "required": false,
+      "description": "A telephone number for reaching the nearest relative in Egypt. The source form prints three period-separated blank segments on this row but only two are backed by an actual fillable widget; this is the first of the two.",
+      "sourceRef": "\"رقم الهاتف:\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "relativePhoneNumber2",
+      "label": "Relative's phone number (2)",
+      "type": "string",
+      "required": false,
+      "description": "A second telephone number for reaching the nearest relative in Egypt.",
+      "sourceRef": "\"رقم الهاتف:\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "additionalRequestDetail1",
+      "label": "Additional request detail (line 1)",
+      "type": "string",
+      "required": false,
+      "description": "Free-text supplementary detail supporting the applicant's request to the consul, e.g. clarifying what is being registered, renewed, or issued. Blank line 1 of 2 under the form's own declaration heading.",
+      "sourceRef": "\"أرجو التفضل بالموافقة علي:ـــ\", line 1",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "additionalRequestDetail2",
+      "label": "Additional request detail (line 2)",
+      "type": "string",
+      "required": false,
+      "description": "Free-text supplementary detail supporting the applicant's request to the consul. Blank line 2 of 2 under the form's own declaration heading.",
+      "sourceRef": "\"أرجو التفضل بالموافقة علي:ـــ\", line 2",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "childName",
+      "label": "Child's name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The name of the son or daughter being added to the applicant's family civil-status record. Required when requestType is addition.",
+      "sourceRef": "\"إضافة نجلي/كريمتي____\"",
+      "validation": { "maxLength": 200 },
+      "requiredWhen": { "field": "requestType", "equals": "addition" }
+    },
+    {
+      "name": "childDateOfBirth",
+      "label": "Child's date of birth",
+      "type": "date",
+      "required": false,
+      "description": "The date of birth of the son or daughter being added to the family civil-status record. Required when requestType is addition.",
+      "sourceRef": "\"مواليد____\"",
+      "requiredWhen": { "field": "requestType", "equals": "addition" }
+    },
+    {
+      "name": "childPlaceOfBirth",
+      "label": "Child's place of birth",
+      "type": "string",
+      "required": false,
+      "description": "The place of birth of the son or daughter being added to the family civil-status record. Required when requestType is addition.",
+      "sourceRef": "\"في____\"",
+      "validation": { "maxLength": 200 },
+      "requiredWhen": { "field": "requestType", "equals": "addition" }
+    },
+    {
+      "name": "attachedDocument1",
+      "label": "Attached document (1)",
+      "type": "string",
+      "required": false,
+      "description": "A free-text description of the first document the applicant attaches in support of this request.",
+      "sourceRef": "\"وأرفق مع طلبي المسـتندات التاليـــة:ـــ\", item 1",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "attachedDocument2",
+      "label": "Attached document (2)",
+      "type": "string",
+      "required": false,
+      "description": "A free-text description of the second document the applicant attaches in support of this request.",
+      "sourceRef": "\"وأرفق مع طلبي المسـتندات التاليـــة:ـــ\", item 2",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "attachedDocument3",
+      "label": "Attached document (3)",
+      "type": "string",
+      "required": false,
+      "description": "A free-text description of the third document the applicant attaches in support of this request.",
+      "sourceRef": "\"وأرفق مع طلبي المسـتندات التاليـــة:ـــ\", item 3",
+      "validation": { "maxLength": 200 }
+    }
+  ]
+}
