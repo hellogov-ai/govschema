@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **544 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **545 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3602, "GovSchema Standard Research"): Kazakhstan's
+> Form 220.0X companion-schedule series gains its ninth member**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-08` — Form 220.08,
+> income received in the Astana International Financial Centre (AIFC).
+> Independently re-tested `adilet.zan.kz`'s image-serving endpoint fresh
+> (images 188-193, `curl -k`) and confirmed it remains recovered following
+> the GOV-3595 cycle's own clearance of the three-cycle outage
+> (GOV-3574/3581/3588). Unlike most of this series, Form 220.08 is a flat,
+> single-page, non-repeating form: 14 line items reporting AIFC-exempt
+> income under Article 6 of the Constitutional Law "On the International
+> Financial Centre 'Astana'" (financial-services income, ancillary-services
+> income, paragraph-7-exempt income, Centre Bodies' own income, and a grand
+> total) plus the standard two-line taxpayer header — 16 fields total.
+> Independently re-fetched `https://adilet.zan.kz/rus/docs/V2500037390`,
+> located Глава 10 (Items 40-46) immediately following Form 220.07's own
+> Глава 9 with no intervening content, and confirmed the single-page
+> boundary two ways (the Rules-text chapter transition and a direct visual
+> read of image 191's own header, with image 192 already headed "форма
+> 220.09"). Disclosed, not resolved, a genuine Rules-text citation error:
+> Item 42(6) defines line 220.08.006 as the sum of lines "220.12.001 to
+> 220.12.005" — a line range belonging to a Form 220.12 that does not exist
+> anywhere in this ten-schedule Order, rather than the schedule's own
+> 220.08.001-220.08.005. Both validators pass at 545/545; 8 conformance
+> fixtures (2 valid + 6 mutation-control) committed, re-derived against a
+> from-scratch ajv mock validator built from the schema's own field
+> definitions. Forms 220.09 and 220.10 remain disclosed, open backlog for
+> future cycles. See the Taxes vertical section below and the document's
+> own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-17, GOV-3595, "GovSchema Standard Research"): Kazakhstan's
 > `adilet.zan.kz` image-endpoint outage has cleared, reopening the Form
@@ -14661,6 +14690,33 @@ v1.0.0.
 > 220.08-220.10 remain disclosed, open backlog. See the document's own
 > VERIFICATION.md for the full sourcing record.
 
+> **Update (2026-07-17, GOV-3602, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical gains a ninth schema**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-08` — the eighth
+> of the ten companion schedules disclosed as backlog since the GOV-3477
+> cycle. Independently re-confirmed the `adilet.zan.kz` image endpoint
+> remains up (images 188-193 all HTTP 200) after the GOV-3595 cycle's own
+> clearance. Form 220.08 ("Доходы, полученные в МФЦА") covers income
+> exempt from individual income tax for participants of the Astana
+> International Financial Centre (AIFC) and Centre Bodies, under Article 6
+> of the Constitutional Law "On the International Financial Centre
+> 'Astana'": a flat, non-repeating single page of 14 line items (financial-
+> services income, ancillary-services income, paragraph-7-exempt income,
+> Centre Bodies' own income, and a grand total) — 16 fields, a marked
+> contrast to this series' usual bounded/unbounded repeating-row schedules.
+> Discloses, without resolving, a genuine Rules-text citation error: Item
+> 42(6) defines the financial-services subtotal as the sum of lines
+> "220.12.001 to 220.12.005," a line range from a nonexistent Form 220.12
+> (this Order's series runs only 220.01-220.10), rather than the schedule's
+> own 220.08.001-220.08.005 — see the document's own VERIFICATION.md.
+> Numerator unchanged at 63/73 (Kazakhstan's Taxes column already flipped ✓
+> in the GOV-3477 cycle); this is a ninth schema within an already-open
+> vertical, not a new jurisdiction opening. 8 conformance fixtures (2 valid
+> + 6 mutation-control) committed, reproduced via a from-scratch ajv mock
+> validator; both validators pass at 545/545. Forms 220.09-220.10 remain
+> disclosed, open backlog. See the document's own VERIFICATION.md for the
+> full sourcing record.
+
 > **Update (2026-07-17, GOV-3558, "GovSchema Standard Research"): Kazakhstan's
 > Taxes vertical gains a sixth schema**, via
 > `kz/kgd/individual-income-tax-declaration-schedule-220-05` — the fifth of
@@ -17522,7 +17578,7 @@ now closed.
 | **KE** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KH** | 7 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **KZ** | 5 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **KZ** | 10 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **MA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
