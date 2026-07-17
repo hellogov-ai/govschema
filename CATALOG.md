@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**72 jurisdictions** | **530 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**72 jurisdictions** | **531 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3499, "GovSchema Standard Research"): Sri
+> Lanka's Business Formation vertical opens, closing Sri Lanka to 6 of 6
+> verticals**, via `lk/drc/incorporation-application` — the Department of
+> the Registrar of Companies' (DRC) online company-incorporation
+> application, filed through the eROC system. This cycle re-confirmed the
+> 4 named National ID candidates from the standing routine all remain
+> resolved, then re-scanned CATALOG.md's own Known Gaps section fresh and
+> deepened the prior cycle's (GOV-3491) own disclosed, pre-scouted LK
+> Business Formation backlog candidate rather than scouting a new
+> jurisdiction, since Sri Lanka was a single-vertical gap. Independently
+> re-verified the candidate was still live before authoring: DRC's own
+> 34-page "USER GUIDE eROC SYSTEM Incorporation (Public Interface)" PDF
+> (prepared by KPMG Sri Lanka for DRC) is served unauthenticated, no
+> login/CAPTCHA/WAF gate, from `erocapiv2.drc.gov.lk` (sha256:658e20cc709005a68571c3c025716ffed5372928ea3857e4fe04db63abb38723,
+> 2,892,246 bytes, 34 pages). There is no downloadable blank AcroForm PDF
+> of the underlying incorporation form (Form 01) — it is system-generated
+> only inside the login-gated eROC portal — so this guide's own worked-
+> example screenshots (whose field labels live only in the embedded
+> images, not the PDF's extractable text layer) are the sole field-level
+> source, transcribed via the same zoomed-image-transcription technique
+> used for `kz/kgd/individual-income-tax-declaration-schedule-220-01`
+> (GOV-3484) and `mx/ine/credencial-para-votar-application` (GOV-3491). A
+> background-agent worktree subagent crashed mid-run before committing
+> anything; rather than re-running the fetch/render step, this cycle
+> salvaged the crashed run's own scratch workspace (already-fetched PDF,
+> already-hashed, already fully rendered to 34 page images) and completed
+> the field transcription and authoring directly in-session. Scopes to
+> the guide's own worked example: a single company address, a single
+> business-objective selection, and exactly one natural-person Director,
+> Secretary, and Shareholder — the same single-founder/single-officer
+> scoping convention this registry already applies to company-formation
+> schemas (e.g. `kz/moj/state-registration-limited-liability-partnership`).
+> Models 43 fields plus 3 `documents[]` entries (the system-generated
+> incorporation application itself, plus the Director's and Secretary's
+> consent-and-certificate forms). Multiple stakeholders, corporate
+> stakeholders, and the antecedent Name Reservation procedure (which
+> produces the company name carried into this incorporation step) are
+> disclosed, not modelled. See the Business Formation vertical section
+> below and the document's own VERIFICATION.md for the full sourcing
+> record and every disclosed scoping/judgment call. Both validators pass
+> at 531/531; 10 conformance fixtures (2 valid + 8 mutation-control)
+> committed. **Sri Lanka now stands at 6 of 6 verticals** — no vertical
+> remains open for Sri Lanka.
 
 > **Update (2026-07-17, GOV-3491, "GovSchema Standard Research"): Mexico's
 > National ID & Civic Documents vertical opens, closing Mexico to 6 of 6
@@ -13070,7 +13114,39 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (64/72 jurisdictions — 89%)
+### Business Formation — Incorporation, LLC, Company Registration (65/72 jurisdictions — 90%)
+
+> **Update (2026-07-17, GOV-3499, "GovSchema Standard Research"): Sri
+> Lanka's Business Formation vertical opens, closing Sri Lanka to 6 of 6**,
+> via `lk/drc/incorporation-application` — the Department of the Registrar
+> of Companies' (DRC) online company-incorporation application, filed
+> through the eROC system. Deepened a backlog candidate the prior cycle
+> (GOV-3491) had disclosed and left un-authored: the primary incorporation
+> form (Form 01) is system-generated only inside the login-gated eROC
+> portal itself, with no downloadable blank specimen, so DRC's own 34-page
+> "USER GUIDE eROC SYSTEM Incorporation (Public Interface)" PDF — a
+> genuine, unauthenticated, screenshot-annotated walkthrough using a fully
+> worked example company — is the sole field-level source. Independently
+> re-verified live this cycle (sha256:658e20cc709005a68571c3c025716ffed5372928ea3857e4fe04db63abb38723,
+> 2,892,246 bytes, 34 pages, no login/CAPTCHA/WAF gate). Every field label
+> lives inside an embedded screenshot image, not the PDF's own extractable
+> text layer, so fields were transcribed via zoomed page renders
+> (`pdfjs-dist` + `node-canvas` at 2.5x scale) — the same technique used
+> for `kz/kgd/individual-income-tax-declaration-schedule-220-01` (GOV-3484).
+> Scopes to the guide's own worked example: a single company address, a
+> single business-objective selection, and exactly one natural-person
+> Director, Secretary, and Shareholder, matching this registry's existing
+> single-founder/single-officer scoping convention for company-formation
+> schemas. Models 43 fields plus 3 `documents[]` entries. Multiple
+> stakeholders, corporate stakeholders, and the antecedent Name Reservation
+> procedure that produces the company name carried into this incorporation
+> step are disclosed, not modelled. Both validators pass at 531/531; 10
+> conformance fixtures (2 valid + 8 mutation-control) committed. See the
+> document's own VERIFICATION.md for the full sourcing record, including a
+> note on recovering from a background-agent crash by salvaging its
+> already-fetched/rendered scratch workspace rather than re-fetching.
+> Denominator updated from 64 to 65 (Sri Lanka is not a newly opened
+> jurisdiction — it already had 5 of 6 verticals before this cycle).
 
 > **Update (2026-07-17, GOV-3459, "GovSchema Standard Research"): Kazakhstan
 > opens as the registry's 72nd jurisdiction via this vertical**, via
@@ -16779,7 +16855,7 @@ now closed.
 | **KH** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KZ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
-| **LK** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
+| **LK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **MA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
