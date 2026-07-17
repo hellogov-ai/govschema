@@ -1,0 +1,2283 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ua/dps/individual-income-tax-declaration-annex-ap",
+  "version": "1.0.0",
+  "title": "Ukraine Tax Declaration on Property Status and Income — Annex AP (Advance Payment, Retail Fuel Trade)",
+  "description": "The State Tax Service of Ukraine's (Державна податкова служба України, DPS) \"Додаток АП до податкової декларації про майновий стан і доходи\" (Annex AP to the Tax Declaration on Property Status and Income) — the calculation of personal income tax advance payments for the tax (reporting) year, filed by individual entrepreneurs (other than those on the simplified taxation system) engaged in retail sale of fuel, per Article 177.5 of the Tax Code of Ukraine. One of the ten companion schedules disclosed as open backlog when the parent declaration (ua/dps/individual-income-tax-declaration, GOV-3531) was authored. Approved within the same combined Excel template as the main declaration, by Order of the Ministry of Finance of Ukraine No. 859 of 2 October 2015, as amended by Order No. 119 of 26 February 2025 (the edition modelled here, effective for reporting periods from 1 January 2026). Published, unauthenticated, directly by the State Tax Service on tax.gov.ua as a legacy Excel (.xls) template's own dedicated 'АП' sheet. This v1.0.0 models the Annex in full: the taxpayer-identification and declaration-type/period header, Section I's twelve-month advance-payment calculation table (retail-outlet counts by liquefied-gas category, calculated advance, cessation-declaration carryover, amount payable, and amount paid, plus the section's own annual total row), and Section II's twelve-month self-identified-error-correction table (as-declared/corrected/difference for both the amount-payable and amount-paid columns, plus its own annual total row). GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Government of Ukraine or the State Tax Service of Ukraine.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "UA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Державна податкова служба України (State Tax Service of Ukraine)",
+    "abbreviation": "DPS",
+    "url": "https://tax.gov.ua"
+  },
+  "process": {
+    "type": "filing",
+    "language": "uk"
+  },
+  "source": {
+    "url": "https://tax.gov.ua/data/normativ/000/001/65107/Podatkova_deklarats_ya_pro_maynoviy_stan_dohodi_vvoditsya_v_d_yu_z_01_s_chnya_2026_roku_.xls",
+    "retrievedAt": "2026-07-17",
+    "documentRef": "Форма Додатка АП до податкової декларації про майновий стан і доходи, затверджена наказом Міністерства фінансів України від 02.10.2015 № 859 (у редакції наказу від 26.02.2025 № 119), чинна з 01.01.2026 — аркуш 'АП'"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-17",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-17",
+    "notes": "GovSchema Standard Research cycle GOV-3588, deepening Ukraine's own disclosed Taxes backlog by authoring the first of ten companion schedules to ua/dps/individual-income-tax-declaration (GOV-3531): Annex АП (advance-payment computation, retail fuel trade). Kazakhstan's adilet.zan.kz Form 220.0X image-serving endpoint was re-checked first and confirmed still down on a third independent cycle, now with a changed failure signature (genuine HTTP 404 across images 170-194 and even an unrelated document's own image, rather than the earlier cycles' 200-status maintenance placeholder); Form 220.07-220.10 remain open backlog. Re-fetched the same source workbook the parent declaration cites via the Wayback Machine (HTTP 500 on the first three attempts, a transient content-server flake per the GOV-3581 cycle's own note; a fourth attempt returned HTTP 200), confirmed byte-identical to the parent declaration's own recorded sha256 (7c67f4c421a1a8fc610f9226819d223debcb56b3fd1fc3d5f75ce0247cc7f0ac). Parsed the workbook's own 'АП' sheet (!ref A1:BD80) cell-by-cell with the xlsx npm package, cross-referencing the sheet's own !merges array to resolve exactly which column range each header label spans. Models the sheet in full: the taxpayer-identification and declaration-type/period header, Section I's twelve-month advance-payment calculation table plus its own annual-total row, and Section II's twelve-month self-identified-error-correction table plus its own annual-total row, the latter gated by declarationType==corrective per this registry's established convention for error-correction blocks. Row 46's own total confirmed (via !merges) to total columns 6-9 only, with columns 2-5 explicitly marked 'Х' (not applicable) in the source itself; row 66's own total confirmed to total all six data columns. See this document's own VERIFICATION.md for the full structural and sourcing record. No submission was made and no live cabinet.tax.gov.ua account was created or required to author this schema."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-17"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxpayerTaxNumberOrPassport",
+      "label": "Реєстраційний номер облікової картки платника податків або серія (за наявності) та номер паспорта",
+      "type": "string",
+      "required": true,
+      "description": "The taxpayer's registration number of the taxpayer account card (RNOKPP), or — for individuals who, on religious grounds, have declined a registration number and have a corresponding notation in their passport — their passport series (if any) and number instead, matching the same either/or convention as ua/dps/individual-income-tax-declaration's own taxpayerTaxNumberOrPassport field.",
+      "sourceRef": "Rows 14-17: 'Реєстраційний номер облікової картки платника податків або серія (за наявності) та номер паспорта (для фізичних осіб, які через свої релігійні переконання відмовляються від прийняття реєстраційного номера облікової картки платника податків та офіційно повідомили про це відповідний контролюючий орган і мають відмітку у паспорті)'",
+      "classification": "sensitive-pii",
+      "validation": {
+        "minLength": 1,
+        "maxLength": 50
+      }
+    },
+    {
+      "name": "declarationType",
+      "label": "Тип декларації",
+      "type": "enum",
+      "required": true,
+      "description": "original = 'Звітна' (a regular declaration for the reporting period); revised_original = 'Звітна нова' (a new original filed to supersede a previously filed original for the same period, before the filing deadline); corrective = 'Уточнююча' (an amendment to an already-accepted declaration for a past period). Matches the same three enum values as the parent declaration's own declarationType field.",
+      "sourceRef": "Row 21/24: 'Тип декларації:' — Звітна (H24) / Звітна нова (N24) / Уточнююча (U24)",
+      "validation": {
+        "enum": [
+          "original",
+          "revised_original",
+          "corrective"
+        ]
+      }
+    },
+    {
+      "name": "reportingPeriodYear",
+      "label": "Звітний (податковий) період: рік",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Row 21/24, column AM: 'Звітний (податковий) період: рік'",
+      "validation": {
+        "minimum": 1991
+      }
+    },
+    {
+      "name": "reportingPeriodMonth",
+      "label": "Звітний (податковий) період: місяць",
+      "type": "integer",
+      "required": false,
+      "description": "Per footnote 1: filled in only by individual entrepreneurs who ceased business activity during the reporting (tax) year and filed a declaration under the second paragraph of Article 177.11 (Section IV) of the Tax Code of Ukraine.",
+      "sourceRef": "Row 27, column AD: 'місяць1'",
+      "validation": {
+        "minimum": 1,
+        "maximum": 12
+      }
+    },
+    {
+      "name": "correctedPeriodYear",
+      "label": "Звітний (податковий) період, що уточнюється: рік",
+      "type": "integer",
+      "required": false,
+      "description": "The calendar year of the tax period being amended by this corrective filing.",
+      "sourceRef": "Row 21/24, column BC: 'Звітний (податковий) період, що уточнюється: рік'",
+      "requiredWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 1991
+      }
+    },
+    {
+      "name": "correctedPeriodMonth",
+      "label": "Звітний (податковий) період, що уточнюється: місяць",
+      "type": "integer",
+      "required": false,
+      "description": "Per footnote 1's own scope (see reportingPeriodMonth) — not every corrective filing has one.",
+      "sourceRef": "Row 27, column AT: 'місяць1' (period-being-corrected column)",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 1,
+        "maximum": 12
+      }
+    },
+    {
+      "name": "month1RetailOutletsLpgOnly",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — здійснюється реалізація виключно скрапленого газу",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of January, among those selling liquefied gas exclusively.",
+      "sourceRef": "Section I, row 34 (Січень), column 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month1RetailOutletsLpgMajority",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — частка реалізації скрапленого газу протягом попереднього місяця становить 50 і більше відсотків",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of January where liquefied-gas sales made up 50% or more of the previous month's turnover.",
+      "sourceRef": "Section I, row 34 (Січень), column 4",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month1RetailOutletsOther",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — інші",
+      "type": "integer",
+      "required": false,
+      "description": "Number of other retail fuel-sale outlets (not falling under the liquefied-gas categories above) as of the first day of January.",
+      "sourceRef": "Section I, row 34 (Січень), column 5",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month1AdvanceCalculated",
+      "label": "Сума розрахованого авансового внеску з податку на доходи фізичних осіб (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The calculated personal income tax advance-payment amount for January.",
+      "sourceRef": "Section I, row 34 (Січень), column 6",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month1AdvanceFromCessationDeclaration",
+      "label": "Сума авансових внесків з податку на доходи фізичних осіб, визначена в декларації, поданій за останній базовий податковий (звітний) період у зв'язку з припиненням (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 1: the advance-payment amount already determined in the declaration filed for the last basic tax (reporting) period in connection with cessation of activity — relevant only to filers using reportingPeriodMonth.",
+      "sourceRef": "Section I, row 34 (Січень), column 7",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month1AdvancePayable",
+      "label": "Сума авансового внеску з податку на доходи фізичних осіб, що підлягає нарахуванню (грн, коп.) (графа 6 - графа7)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month1AdvanceCalculated minus month1AdvanceFromCessationDeclaration.",
+      "sourceRef": "Section I, row 34 (Січень), column 8",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month1AdvancePaid",
+      "label": "В тому числі сплачена протягом звітного року (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 2: the portion of column 8 actually paid during the reporting year.",
+      "sourceRef": "Section I, row 34 (Січень), column 9",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month2RetailOutletsLpgOnly",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — здійснюється реалізація виключно скрапленого газу",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of February, among those selling liquefied gas exclusively.",
+      "sourceRef": "Section I, row 35 (Лютий), column 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month2RetailOutletsLpgMajority",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — частка реалізації скрапленого газу протягом попереднього місяця становить 50 і більше відсотків",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of February where liquefied-gas sales made up 50% or more of the previous month's turnover.",
+      "sourceRef": "Section I, row 35 (Лютий), column 4",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month2RetailOutletsOther",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — інші",
+      "type": "integer",
+      "required": false,
+      "description": "Number of other retail fuel-sale outlets (not falling under the liquefied-gas categories above) as of the first day of February.",
+      "sourceRef": "Section I, row 35 (Лютий), column 5",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month2AdvanceCalculated",
+      "label": "Сума розрахованого авансового внеску з податку на доходи фізичних осіб (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The calculated personal income tax advance-payment amount for February.",
+      "sourceRef": "Section I, row 35 (Лютий), column 6",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month2AdvanceFromCessationDeclaration",
+      "label": "Сума авансових внесків з податку на доходи фізичних осіб, визначена в декларації, поданій за останній базовий податковий (звітний) період у зв'язку з припиненням (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 1: the advance-payment amount already determined in the declaration filed for the last basic tax (reporting) period in connection with cessation of activity — relevant only to filers using reportingPeriodMonth.",
+      "sourceRef": "Section I, row 35 (Лютий), column 7",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month2AdvancePayable",
+      "label": "Сума авансового внеску з податку на доходи фізичних осіб, що підлягає нарахуванню (грн, коп.) (графа 6 - графа7)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month2AdvanceCalculated minus month2AdvanceFromCessationDeclaration.",
+      "sourceRef": "Section I, row 35 (Лютий), column 8",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month2AdvancePaid",
+      "label": "В тому числі сплачена протягом звітного року (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 2: the portion of column 8 actually paid during the reporting year.",
+      "sourceRef": "Section I, row 35 (Лютий), column 9",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month3RetailOutletsLpgOnly",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — здійснюється реалізація виключно скрапленого газу",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of March, among those selling liquefied gas exclusively.",
+      "sourceRef": "Section I, row 36 (Березень), column 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month3RetailOutletsLpgMajority",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — частка реалізації скрапленого газу протягом попереднього місяця становить 50 і більше відсотків",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of March where liquefied-gas sales made up 50% or more of the previous month's turnover.",
+      "sourceRef": "Section I, row 36 (Березень), column 4",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month3RetailOutletsOther",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — інші",
+      "type": "integer",
+      "required": false,
+      "description": "Number of other retail fuel-sale outlets (not falling under the liquefied-gas categories above) as of the first day of March.",
+      "sourceRef": "Section I, row 36 (Березень), column 5",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month3AdvanceCalculated",
+      "label": "Сума розрахованого авансового внеску з податку на доходи фізичних осіб (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The calculated personal income tax advance-payment amount for March.",
+      "sourceRef": "Section I, row 36 (Березень), column 6",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month3AdvanceFromCessationDeclaration",
+      "label": "Сума авансових внесків з податку на доходи фізичних осіб, визначена в декларації, поданій за останній базовий податковий (звітний) період у зв'язку з припиненням (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 1: the advance-payment amount already determined in the declaration filed for the last basic tax (reporting) period in connection with cessation of activity — relevant only to filers using reportingPeriodMonth.",
+      "sourceRef": "Section I, row 36 (Березень), column 7",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month3AdvancePayable",
+      "label": "Сума авансового внеску з податку на доходи фізичних осіб, що підлягає нарахуванню (грн, коп.) (графа 6 - графа7)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month3AdvanceCalculated minus month3AdvanceFromCessationDeclaration.",
+      "sourceRef": "Section I, row 36 (Березень), column 8",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month3AdvancePaid",
+      "label": "В тому числі сплачена протягом звітного року (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 2: the portion of column 8 actually paid during the reporting year.",
+      "sourceRef": "Section I, row 36 (Березень), column 9",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month4RetailOutletsLpgOnly",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — здійснюється реалізація виключно скрапленого газу",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of April, among those selling liquefied gas exclusively.",
+      "sourceRef": "Section I, row 37 (Квітень), column 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month4RetailOutletsLpgMajority",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — частка реалізації скрапленого газу протягом попереднього місяця становить 50 і більше відсотків",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of April where liquefied-gas sales made up 50% or more of the previous month's turnover.",
+      "sourceRef": "Section I, row 37 (Квітень), column 4",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month4RetailOutletsOther",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — інші",
+      "type": "integer",
+      "required": false,
+      "description": "Number of other retail fuel-sale outlets (not falling under the liquefied-gas categories above) as of the first day of April.",
+      "sourceRef": "Section I, row 37 (Квітень), column 5",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month4AdvanceCalculated",
+      "label": "Сума розрахованого авансового внеску з податку на доходи фізичних осіб (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The calculated personal income tax advance-payment amount for April.",
+      "sourceRef": "Section I, row 37 (Квітень), column 6",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month4AdvanceFromCessationDeclaration",
+      "label": "Сума авансових внесків з податку на доходи фізичних осіб, визначена в декларації, поданій за останній базовий податковий (звітний) період у зв'язку з припиненням (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 1: the advance-payment amount already determined in the declaration filed for the last basic tax (reporting) period in connection with cessation of activity — relevant only to filers using reportingPeriodMonth.",
+      "sourceRef": "Section I, row 37 (Квітень), column 7",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month4AdvancePayable",
+      "label": "Сума авансового внеску з податку на доходи фізичних осіб, що підлягає нарахуванню (грн, коп.) (графа 6 - графа7)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month4AdvanceCalculated minus month4AdvanceFromCessationDeclaration.",
+      "sourceRef": "Section I, row 37 (Квітень), column 8",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month4AdvancePaid",
+      "label": "В тому числі сплачена протягом звітного року (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 2: the portion of column 8 actually paid during the reporting year.",
+      "sourceRef": "Section I, row 37 (Квітень), column 9",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month5RetailOutletsLpgOnly",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — здійснюється реалізація виключно скрапленого газу",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of May, among those selling liquefied gas exclusively.",
+      "sourceRef": "Section I, row 38 (Травень), column 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month5RetailOutletsLpgMajority",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — частка реалізації скрапленого газу протягом попереднього місяця становить 50 і більше відсотків",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of May where liquefied-gas sales made up 50% or more of the previous month's turnover.",
+      "sourceRef": "Section I, row 38 (Травень), column 4",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month5RetailOutletsOther",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — інші",
+      "type": "integer",
+      "required": false,
+      "description": "Number of other retail fuel-sale outlets (not falling under the liquefied-gas categories above) as of the first day of May.",
+      "sourceRef": "Section I, row 38 (Травень), column 5",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month5AdvanceCalculated",
+      "label": "Сума розрахованого авансового внеску з податку на доходи фізичних осіб (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The calculated personal income tax advance-payment amount for May.",
+      "sourceRef": "Section I, row 38 (Травень), column 6",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month5AdvanceFromCessationDeclaration",
+      "label": "Сума авансових внесків з податку на доходи фізичних осіб, визначена в декларації, поданій за останній базовий податковий (звітний) період у зв'язку з припиненням (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 1: the advance-payment amount already determined in the declaration filed for the last basic tax (reporting) period in connection with cessation of activity — relevant only to filers using reportingPeriodMonth.",
+      "sourceRef": "Section I, row 38 (Травень), column 7",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month5AdvancePayable",
+      "label": "Сума авансового внеску з податку на доходи фізичних осіб, що підлягає нарахуванню (грн, коп.) (графа 6 - графа7)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month5AdvanceCalculated minus month5AdvanceFromCessationDeclaration.",
+      "sourceRef": "Section I, row 38 (Травень), column 8",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month5AdvancePaid",
+      "label": "В тому числі сплачена протягом звітного року (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 2: the portion of column 8 actually paid during the reporting year.",
+      "sourceRef": "Section I, row 38 (Травень), column 9",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month6RetailOutletsLpgOnly",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — здійснюється реалізація виключно скрапленого газу",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of June, among those selling liquefied gas exclusively.",
+      "sourceRef": "Section I, row 39 (Червень), column 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month6RetailOutletsLpgMajority",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — частка реалізації скрапленого газу протягом попереднього місяця становить 50 і більше відсотків",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of June where liquefied-gas sales made up 50% or more of the previous month's turnover.",
+      "sourceRef": "Section I, row 39 (Червень), column 4",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month6RetailOutletsOther",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — інші",
+      "type": "integer",
+      "required": false,
+      "description": "Number of other retail fuel-sale outlets (not falling under the liquefied-gas categories above) as of the first day of June.",
+      "sourceRef": "Section I, row 39 (Червень), column 5",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month6AdvanceCalculated",
+      "label": "Сума розрахованого авансового внеску з податку на доходи фізичних осіб (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The calculated personal income tax advance-payment amount for June.",
+      "sourceRef": "Section I, row 39 (Червень), column 6",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month6AdvanceFromCessationDeclaration",
+      "label": "Сума авансових внесків з податку на доходи фізичних осіб, визначена в декларації, поданій за останній базовий податковий (звітний) період у зв'язку з припиненням (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 1: the advance-payment amount already determined in the declaration filed for the last basic tax (reporting) period in connection with cessation of activity — relevant only to filers using reportingPeriodMonth.",
+      "sourceRef": "Section I, row 39 (Червень), column 7",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month6AdvancePayable",
+      "label": "Сума авансового внеску з податку на доходи фізичних осіб, що підлягає нарахуванню (грн, коп.) (графа 6 - графа7)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month6AdvanceCalculated minus month6AdvanceFromCessationDeclaration.",
+      "sourceRef": "Section I, row 39 (Червень), column 8",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month6AdvancePaid",
+      "label": "В тому числі сплачена протягом звітного року (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 2: the portion of column 8 actually paid during the reporting year.",
+      "sourceRef": "Section I, row 39 (Червень), column 9",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month7RetailOutletsLpgOnly",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — здійснюється реалізація виключно скрапленого газу",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of July, among those selling liquefied gas exclusively.",
+      "sourceRef": "Section I, row 40 (Липень), column 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month7RetailOutletsLpgMajority",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — частка реалізації скрапленого газу протягом попереднього місяця становить 50 і більше відсотків",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of July where liquefied-gas sales made up 50% or more of the previous month's turnover.",
+      "sourceRef": "Section I, row 40 (Липень), column 4",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month7RetailOutletsOther",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — інші",
+      "type": "integer",
+      "required": false,
+      "description": "Number of other retail fuel-sale outlets (not falling under the liquefied-gas categories above) as of the first day of July.",
+      "sourceRef": "Section I, row 40 (Липень), column 5",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month7AdvanceCalculated",
+      "label": "Сума розрахованого авансового внеску з податку на доходи фізичних осіб (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The calculated personal income tax advance-payment amount for July.",
+      "sourceRef": "Section I, row 40 (Липень), column 6",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month7AdvanceFromCessationDeclaration",
+      "label": "Сума авансових внесків з податку на доходи фізичних осіб, визначена в декларації, поданій за останній базовий податковий (звітний) період у зв'язку з припиненням (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 1: the advance-payment amount already determined in the declaration filed for the last basic tax (reporting) period in connection with cessation of activity — relevant only to filers using reportingPeriodMonth.",
+      "sourceRef": "Section I, row 40 (Липень), column 7",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month7AdvancePayable",
+      "label": "Сума авансового внеску з податку на доходи фізичних осіб, що підлягає нарахуванню (грн, коп.) (графа 6 - графа7)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month7AdvanceCalculated minus month7AdvanceFromCessationDeclaration.",
+      "sourceRef": "Section I, row 40 (Липень), column 8",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month7AdvancePaid",
+      "label": "В тому числі сплачена протягом звітного року (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 2: the portion of column 8 actually paid during the reporting year.",
+      "sourceRef": "Section I, row 40 (Липень), column 9",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month8RetailOutletsLpgOnly",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — здійснюється реалізація виключно скрапленого газу",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of August, among those selling liquefied gas exclusively.",
+      "sourceRef": "Section I, row 41 (Серпень), column 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month8RetailOutletsLpgMajority",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — частка реалізації скрапленого газу протягом попереднього місяця становить 50 і більше відсотків",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of August where liquefied-gas sales made up 50% or more of the previous month's turnover.",
+      "sourceRef": "Section I, row 41 (Серпень), column 4",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month8RetailOutletsOther",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — інші",
+      "type": "integer",
+      "required": false,
+      "description": "Number of other retail fuel-sale outlets (not falling under the liquefied-gas categories above) as of the first day of August.",
+      "sourceRef": "Section I, row 41 (Серпень), column 5",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month8AdvanceCalculated",
+      "label": "Сума розрахованого авансового внеску з податку на доходи фізичних осіб (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The calculated personal income tax advance-payment amount for August.",
+      "sourceRef": "Section I, row 41 (Серпень), column 6",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month8AdvanceFromCessationDeclaration",
+      "label": "Сума авансових внесків з податку на доходи фізичних осіб, визначена в декларації, поданій за останній базовий податковий (звітний) період у зв'язку з припиненням (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 1: the advance-payment amount already determined in the declaration filed for the last basic tax (reporting) period in connection with cessation of activity — relevant only to filers using reportingPeriodMonth.",
+      "sourceRef": "Section I, row 41 (Серпень), column 7",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month8AdvancePayable",
+      "label": "Сума авансового внеску з податку на доходи фізичних осіб, що підлягає нарахуванню (грн, коп.) (графа 6 - графа7)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month8AdvanceCalculated minus month8AdvanceFromCessationDeclaration.",
+      "sourceRef": "Section I, row 41 (Серпень), column 8",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month8AdvancePaid",
+      "label": "В тому числі сплачена протягом звітного року (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 2: the portion of column 8 actually paid during the reporting year.",
+      "sourceRef": "Section I, row 41 (Серпень), column 9",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month9RetailOutletsLpgOnly",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — здійснюється реалізація виключно скрапленого газу",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of September, among those selling liquefied gas exclusively.",
+      "sourceRef": "Section I, row 42 (Вересень), column 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month9RetailOutletsLpgMajority",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — частка реалізації скрапленого газу протягом попереднього місяця становить 50 і більше відсотків",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of September where liquefied-gas sales made up 50% or more of the previous month's turnover.",
+      "sourceRef": "Section I, row 42 (Вересень), column 4",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month9RetailOutletsOther",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — інші",
+      "type": "integer",
+      "required": false,
+      "description": "Number of other retail fuel-sale outlets (not falling under the liquefied-gas categories above) as of the first day of September.",
+      "sourceRef": "Section I, row 42 (Вересень), column 5",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month9AdvanceCalculated",
+      "label": "Сума розрахованого авансового внеску з податку на доходи фізичних осіб (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The calculated personal income tax advance-payment amount for September.",
+      "sourceRef": "Section I, row 42 (Вересень), column 6",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month9AdvanceFromCessationDeclaration",
+      "label": "Сума авансових внесків з податку на доходи фізичних осіб, визначена в декларації, поданій за останній базовий податковий (звітний) період у зв'язку з припиненням (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 1: the advance-payment amount already determined in the declaration filed for the last basic tax (reporting) period in connection with cessation of activity — relevant only to filers using reportingPeriodMonth.",
+      "sourceRef": "Section I, row 42 (Вересень), column 7",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month9AdvancePayable",
+      "label": "Сума авансового внеску з податку на доходи фізичних осіб, що підлягає нарахуванню (грн, коп.) (графа 6 - графа7)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month9AdvanceCalculated minus month9AdvanceFromCessationDeclaration.",
+      "sourceRef": "Section I, row 42 (Вересень), column 8",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month9AdvancePaid",
+      "label": "В тому числі сплачена протягом звітного року (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 2: the portion of column 8 actually paid during the reporting year.",
+      "sourceRef": "Section I, row 42 (Вересень), column 9",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month10RetailOutletsLpgOnly",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — здійснюється реалізація виключно скрапленого газу",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of October, among those selling liquefied gas exclusively.",
+      "sourceRef": "Section I, row 43 (Жовтень), column 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month10RetailOutletsLpgMajority",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — частка реалізації скрапленого газу протягом попереднього місяця становить 50 і більше відсотків",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of October where liquefied-gas sales made up 50% or more of the previous month's turnover.",
+      "sourceRef": "Section I, row 43 (Жовтень), column 4",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month10RetailOutletsOther",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — інші",
+      "type": "integer",
+      "required": false,
+      "description": "Number of other retail fuel-sale outlets (not falling under the liquefied-gas categories above) as of the first day of October.",
+      "sourceRef": "Section I, row 43 (Жовтень), column 5",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month10AdvanceCalculated",
+      "label": "Сума розрахованого авансового внеску з податку на доходи фізичних осіб (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The calculated personal income tax advance-payment amount for October.",
+      "sourceRef": "Section I, row 43 (Жовтень), column 6",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month10AdvanceFromCessationDeclaration",
+      "label": "Сума авансових внесків з податку на доходи фізичних осіб, визначена в декларації, поданій за останній базовий податковий (звітний) період у зв'язку з припиненням (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 1: the advance-payment amount already determined in the declaration filed for the last basic tax (reporting) period in connection with cessation of activity — relevant only to filers using reportingPeriodMonth.",
+      "sourceRef": "Section I, row 43 (Жовтень), column 7",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month10AdvancePayable",
+      "label": "Сума авансового внеску з податку на доходи фізичних осіб, що підлягає нарахуванню (грн, коп.) (графа 6 - графа7)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month10AdvanceCalculated minus month10AdvanceFromCessationDeclaration.",
+      "sourceRef": "Section I, row 43 (Жовтень), column 8",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month10AdvancePaid",
+      "label": "В тому числі сплачена протягом звітного року (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 2: the portion of column 8 actually paid during the reporting year.",
+      "sourceRef": "Section I, row 43 (Жовтень), column 9",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month11RetailOutletsLpgOnly",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — здійснюється реалізація виключно скрапленого газу",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of November, among those selling liquefied gas exclusively.",
+      "sourceRef": "Section I, row 44 (Листопад), column 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month11RetailOutletsLpgMajority",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — частка реалізації скрапленого газу протягом попереднього місяця становить 50 і більше відсотків",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of November where liquefied-gas sales made up 50% or more of the previous month's turnover.",
+      "sourceRef": "Section I, row 44 (Листопад), column 4",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month11RetailOutletsOther",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — інші",
+      "type": "integer",
+      "required": false,
+      "description": "Number of other retail fuel-sale outlets (not falling under the liquefied-gas categories above) as of the first day of November.",
+      "sourceRef": "Section I, row 44 (Листопад), column 5",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month11AdvanceCalculated",
+      "label": "Сума розрахованого авансового внеску з податку на доходи фізичних осіб (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The calculated personal income tax advance-payment amount for November.",
+      "sourceRef": "Section I, row 44 (Листопад), column 6",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month11AdvanceFromCessationDeclaration",
+      "label": "Сума авансових внесків з податку на доходи фізичних осіб, визначена в декларації, поданій за останній базовий податковий (звітний) період у зв'язку з припиненням (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 1: the advance-payment amount already determined in the declaration filed for the last basic tax (reporting) period in connection with cessation of activity — relevant only to filers using reportingPeriodMonth.",
+      "sourceRef": "Section I, row 44 (Листопад), column 7",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month11AdvancePayable",
+      "label": "Сума авансового внеску з податку на доходи фізичних осіб, що підлягає нарахуванню (грн, коп.) (графа 6 - графа7)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month11AdvanceCalculated minus month11AdvanceFromCessationDeclaration.",
+      "sourceRef": "Section I, row 44 (Листопад), column 8",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month11AdvancePaid",
+      "label": "В тому числі сплачена протягом звітного року (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 2: the portion of column 8 actually paid during the reporting year.",
+      "sourceRef": "Section I, row 44 (Листопад), column 9",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month12RetailOutletsLpgOnly",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — здійснюється реалізація виключно скрапленого газу",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of December, among those selling liquefied gas exclusively.",
+      "sourceRef": "Section I, row 45 (Грудень), column 3",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month12RetailOutletsLpgMajority",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — частка реалізації скрапленого газу протягом попереднього місяця становить 50 і більше відсотків",
+      "type": "integer",
+      "required": false,
+      "description": "Number of retail fuel-sale outlets as of the first day of December where liquefied-gas sales made up 50% or more of the previous month's turnover.",
+      "sourceRef": "Section I, row 45 (Грудень), column 4",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month12RetailOutletsOther",
+      "label": "Кількість місць роздрібної торгівлі пальним станом на перше число місяця — інші",
+      "type": "integer",
+      "required": false,
+      "description": "Number of other retail fuel-sale outlets (not falling under the liquefied-gas categories above) as of the first day of December.",
+      "sourceRef": "Section I, row 45 (Грудень), column 5",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month12AdvanceCalculated",
+      "label": "Сума розрахованого авансового внеску з податку на доходи фізичних осіб (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The calculated personal income tax advance-payment amount for December.",
+      "sourceRef": "Section I, row 45 (Грудень), column 6",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month12AdvanceFromCessationDeclaration",
+      "label": "Сума авансових внесків з податку на доходи фізичних осіб, визначена в декларації, поданій за останній базовий податковий (звітний) період у зв'язку з припиненням (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 1: the advance-payment amount already determined in the declaration filed for the last basic tax (reporting) period in connection with cessation of activity — relevant only to filers using reportingPeriodMonth.",
+      "sourceRef": "Section I, row 45 (Грудень), column 7",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month12AdvancePayable",
+      "label": "Сума авансового внеску з податку на доходи фізичних осіб, що підлягає нарахуванню (грн, коп.) (графа 6 - графа7)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month12AdvanceCalculated minus month12AdvanceFromCessationDeclaration.",
+      "sourceRef": "Section I, row 45 (Грудень), column 8",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month12AdvancePaid",
+      "label": "В тому числі сплачена протягом звітного року (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 2: the portion of column 8 actually paid during the reporting year.",
+      "sourceRef": "Section I, row 45 (Грудень), column 9",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalAdvanceCalculated",
+      "label": "Сума розрахованого авансового внеску з податку на доходи фізичних осіб (грн, коп.) — УСЬОГО",
+      "type": "number",
+      "required": false,
+      "description": "The annual total of the twelve month*AdvanceCalculated figures.",
+      "sourceRef": "Section I, row 46 ('УСЬОГО2'), column 6",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalAdvanceFromCessationDeclaration",
+      "label": "Сума авансових внесків... у зв'язку з припиненням (грн, коп.) — УСЬОГО",
+      "type": "number",
+      "required": false,
+      "description": "The annual total of the twelve month*AdvanceFromCessationDeclaration figures.",
+      "sourceRef": "Section I, row 46 ('УСЬОГО2'), column 7",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalAdvancePayable",
+      "label": "Сума авансового внеску... що підлягає нарахуванню (грн, коп.) — УСЬОГО",
+      "type": "number",
+      "required": false,
+      "description": "The annual total of the twelve month*AdvancePayable figures.",
+      "sourceRef": "Section I, row 46 ('УСЬОГО2'), column 8",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalAdvancePaid",
+      "label": "В тому числі сплачена протягом звітного року (грн, коп.) — УСЬОГО",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 2: this total is carried to line 1.3 of Section III of Annex Ф2 (kh/gdt not modelled — Ukraine's own Ф2 schedule, ua/dps individual-income-tax-declaration's own disclosed backlog), in an amount not exceeding the personal income tax liability.",
+      "sourceRef": "Section I, row 46 ('УСЬОГО2'), column 9",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month1ErrorPayableAsDeclared",
+      "label": "Сума авансового внеску... визначена за даними звітного періоду, в якому виявлена помилка, зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount payable for January as originally declared, before this correction.",
+      "sourceRef": "Section II, row 54 (Січень), column 3",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month1ErrorPayableCorrected",
+      "label": "Сума авансового внеску... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount payable for January.",
+      "sourceRef": "Section II, row 54 (Січень), column 4",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month1ErrorPayableDifference",
+      "label": "Сума авансового внеску... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 5 = month1ErrorPayableCorrected minus month1ErrorPayableAsDeclared.",
+      "sourceRef": "Section II, row 54 (Січень), column 5",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month1ErrorPaidAsDeclared",
+      "label": "В тому числі сплачена... зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount paid for January as originally declared, before this correction.",
+      "sourceRef": "Section II, row 54 (Січень), column 6",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month1ErrorPaidCorrected",
+      "label": "В тому числі сплачена... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount paid for January.",
+      "sourceRef": "Section II, row 54 (Січень), column 7",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month1ErrorPaidDifference",
+      "label": "В тому числі сплачена... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month1ErrorPaidCorrected minus month1ErrorPaidAsDeclared.",
+      "sourceRef": "Section II, row 54 (Січень), column 8",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month2ErrorPayableAsDeclared",
+      "label": "Сума авансового внеску... визначена за даними звітного періоду, в якому виявлена помилка, зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount payable for February as originally declared, before this correction.",
+      "sourceRef": "Section II, row 55 (Лютий), column 3",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month2ErrorPayableCorrected",
+      "label": "Сума авансового внеску... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount payable for February.",
+      "sourceRef": "Section II, row 55 (Лютий), column 4",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month2ErrorPayableDifference",
+      "label": "Сума авансового внеску... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 5 = month2ErrorPayableCorrected minus month2ErrorPayableAsDeclared.",
+      "sourceRef": "Section II, row 55 (Лютий), column 5",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month2ErrorPaidAsDeclared",
+      "label": "В тому числі сплачена... зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount paid for February as originally declared, before this correction.",
+      "sourceRef": "Section II, row 55 (Лютий), column 6",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month2ErrorPaidCorrected",
+      "label": "В тому числі сплачена... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount paid for February.",
+      "sourceRef": "Section II, row 55 (Лютий), column 7",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month2ErrorPaidDifference",
+      "label": "В тому числі сплачена... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month2ErrorPaidCorrected minus month2ErrorPaidAsDeclared.",
+      "sourceRef": "Section II, row 55 (Лютий), column 8",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month3ErrorPayableAsDeclared",
+      "label": "Сума авансового внеску... визначена за даними звітного періоду, в якому виявлена помилка, зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount payable for March as originally declared, before this correction.",
+      "sourceRef": "Section II, row 56 (Березень), column 3",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month3ErrorPayableCorrected",
+      "label": "Сума авансового внеску... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount payable for March.",
+      "sourceRef": "Section II, row 56 (Березень), column 4",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month3ErrorPayableDifference",
+      "label": "Сума авансового внеску... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 5 = month3ErrorPayableCorrected minus month3ErrorPayableAsDeclared.",
+      "sourceRef": "Section II, row 56 (Березень), column 5",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month3ErrorPaidAsDeclared",
+      "label": "В тому числі сплачена... зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount paid for March as originally declared, before this correction.",
+      "sourceRef": "Section II, row 56 (Березень), column 6",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month3ErrorPaidCorrected",
+      "label": "В тому числі сплачена... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount paid for March.",
+      "sourceRef": "Section II, row 56 (Березень), column 7",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month3ErrorPaidDifference",
+      "label": "В тому числі сплачена... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month3ErrorPaidCorrected minus month3ErrorPaidAsDeclared.",
+      "sourceRef": "Section II, row 56 (Березень), column 8",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month4ErrorPayableAsDeclared",
+      "label": "Сума авансового внеску... визначена за даними звітного періоду, в якому виявлена помилка, зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount payable for April as originally declared, before this correction.",
+      "sourceRef": "Section II, row 57 (Квітень), column 3",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month4ErrorPayableCorrected",
+      "label": "Сума авансового внеску... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount payable for April.",
+      "sourceRef": "Section II, row 57 (Квітень), column 4",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month4ErrorPayableDifference",
+      "label": "Сума авансового внеску... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 5 = month4ErrorPayableCorrected minus month4ErrorPayableAsDeclared.",
+      "sourceRef": "Section II, row 57 (Квітень), column 5",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month4ErrorPaidAsDeclared",
+      "label": "В тому числі сплачена... зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount paid for April as originally declared, before this correction.",
+      "sourceRef": "Section II, row 57 (Квітень), column 6",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month4ErrorPaidCorrected",
+      "label": "В тому числі сплачена... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount paid for April.",
+      "sourceRef": "Section II, row 57 (Квітень), column 7",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month4ErrorPaidDifference",
+      "label": "В тому числі сплачена... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month4ErrorPaidCorrected minus month4ErrorPaidAsDeclared.",
+      "sourceRef": "Section II, row 57 (Квітень), column 8",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month5ErrorPayableAsDeclared",
+      "label": "Сума авансового внеску... визначена за даними звітного періоду, в якому виявлена помилка, зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount payable for May as originally declared, before this correction.",
+      "sourceRef": "Section II, row 58 (Травень), column 3",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month5ErrorPayableCorrected",
+      "label": "Сума авансового внеску... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount payable for May.",
+      "sourceRef": "Section II, row 58 (Травень), column 4",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month5ErrorPayableDifference",
+      "label": "Сума авансового внеску... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 5 = month5ErrorPayableCorrected minus month5ErrorPayableAsDeclared.",
+      "sourceRef": "Section II, row 58 (Травень), column 5",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month5ErrorPaidAsDeclared",
+      "label": "В тому числі сплачена... зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount paid for May as originally declared, before this correction.",
+      "sourceRef": "Section II, row 58 (Травень), column 6",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month5ErrorPaidCorrected",
+      "label": "В тому числі сплачена... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount paid for May.",
+      "sourceRef": "Section II, row 58 (Травень), column 7",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month5ErrorPaidDifference",
+      "label": "В тому числі сплачена... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month5ErrorPaidCorrected minus month5ErrorPaidAsDeclared.",
+      "sourceRef": "Section II, row 58 (Травень), column 8",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month6ErrorPayableAsDeclared",
+      "label": "Сума авансового внеску... визначена за даними звітного періоду, в якому виявлена помилка, зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount payable for June as originally declared, before this correction.",
+      "sourceRef": "Section II, row 59 (Червень), column 3",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month6ErrorPayableCorrected",
+      "label": "Сума авансового внеску... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount payable for June.",
+      "sourceRef": "Section II, row 59 (Червень), column 4",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month6ErrorPayableDifference",
+      "label": "Сума авансового внеску... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 5 = month6ErrorPayableCorrected minus month6ErrorPayableAsDeclared.",
+      "sourceRef": "Section II, row 59 (Червень), column 5",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month6ErrorPaidAsDeclared",
+      "label": "В тому числі сплачена... зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount paid for June as originally declared, before this correction.",
+      "sourceRef": "Section II, row 59 (Червень), column 6",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month6ErrorPaidCorrected",
+      "label": "В тому числі сплачена... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount paid for June.",
+      "sourceRef": "Section II, row 59 (Червень), column 7",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month6ErrorPaidDifference",
+      "label": "В тому числі сплачена... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month6ErrorPaidCorrected minus month6ErrorPaidAsDeclared.",
+      "sourceRef": "Section II, row 59 (Червень), column 8",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month7ErrorPayableAsDeclared",
+      "label": "Сума авансового внеску... визначена за даними звітного періоду, в якому виявлена помилка, зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount payable for July as originally declared, before this correction.",
+      "sourceRef": "Section II, row 60 (Липень), column 3",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month7ErrorPayableCorrected",
+      "label": "Сума авансового внеску... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount payable for July.",
+      "sourceRef": "Section II, row 60 (Липень), column 4",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month7ErrorPayableDifference",
+      "label": "Сума авансового внеску... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 5 = month7ErrorPayableCorrected minus month7ErrorPayableAsDeclared.",
+      "sourceRef": "Section II, row 60 (Липень), column 5",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month7ErrorPaidAsDeclared",
+      "label": "В тому числі сплачена... зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount paid for July as originally declared, before this correction.",
+      "sourceRef": "Section II, row 60 (Липень), column 6",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month7ErrorPaidCorrected",
+      "label": "В тому числі сплачена... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount paid for July.",
+      "sourceRef": "Section II, row 60 (Липень), column 7",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month7ErrorPaidDifference",
+      "label": "В тому числі сплачена... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month7ErrorPaidCorrected minus month7ErrorPaidAsDeclared.",
+      "sourceRef": "Section II, row 60 (Липень), column 8",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month8ErrorPayableAsDeclared",
+      "label": "Сума авансового внеску... визначена за даними звітного періоду, в якому виявлена помилка, зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount payable for August as originally declared, before this correction.",
+      "sourceRef": "Section II, row 61 (Серпень), column 3",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month8ErrorPayableCorrected",
+      "label": "Сума авансового внеску... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount payable for August.",
+      "sourceRef": "Section II, row 61 (Серпень), column 4",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month8ErrorPayableDifference",
+      "label": "Сума авансового внеску... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 5 = month8ErrorPayableCorrected minus month8ErrorPayableAsDeclared.",
+      "sourceRef": "Section II, row 61 (Серпень), column 5",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month8ErrorPaidAsDeclared",
+      "label": "В тому числі сплачена... зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount paid for August as originally declared, before this correction.",
+      "sourceRef": "Section II, row 61 (Серпень), column 6",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month8ErrorPaidCorrected",
+      "label": "В тому числі сплачена... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount paid for August.",
+      "sourceRef": "Section II, row 61 (Серпень), column 7",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month8ErrorPaidDifference",
+      "label": "В тому числі сплачена... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month8ErrorPaidCorrected minus month8ErrorPaidAsDeclared.",
+      "sourceRef": "Section II, row 61 (Серпень), column 8",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month9ErrorPayableAsDeclared",
+      "label": "Сума авансового внеску... визначена за даними звітного періоду, в якому виявлена помилка, зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount payable for September as originally declared, before this correction.",
+      "sourceRef": "Section II, row 62 (Вересень), column 3",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month9ErrorPayableCorrected",
+      "label": "Сума авансового внеску... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount payable for September.",
+      "sourceRef": "Section II, row 62 (Вересень), column 4",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month9ErrorPayableDifference",
+      "label": "Сума авансового внеску... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 5 = month9ErrorPayableCorrected minus month9ErrorPayableAsDeclared.",
+      "sourceRef": "Section II, row 62 (Вересень), column 5",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month9ErrorPaidAsDeclared",
+      "label": "В тому числі сплачена... зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount paid for September as originally declared, before this correction.",
+      "sourceRef": "Section II, row 62 (Вересень), column 6",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month9ErrorPaidCorrected",
+      "label": "В тому числі сплачена... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount paid for September.",
+      "sourceRef": "Section II, row 62 (Вересень), column 7",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month9ErrorPaidDifference",
+      "label": "В тому числі сплачена... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month9ErrorPaidCorrected minus month9ErrorPaidAsDeclared.",
+      "sourceRef": "Section II, row 62 (Вересень), column 8",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month10ErrorPayableAsDeclared",
+      "label": "Сума авансового внеску... визначена за даними звітного періоду, в якому виявлена помилка, зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount payable for October as originally declared, before this correction.",
+      "sourceRef": "Section II, row 63 (Жовтень), column 3",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month10ErrorPayableCorrected",
+      "label": "Сума авансового внеску... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount payable for October.",
+      "sourceRef": "Section II, row 63 (Жовтень), column 4",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month10ErrorPayableDifference",
+      "label": "Сума авансового внеску... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 5 = month10ErrorPayableCorrected minus month10ErrorPayableAsDeclared.",
+      "sourceRef": "Section II, row 63 (Жовтень), column 5",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month10ErrorPaidAsDeclared",
+      "label": "В тому числі сплачена... зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount paid for October as originally declared, before this correction.",
+      "sourceRef": "Section II, row 63 (Жовтень), column 6",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month10ErrorPaidCorrected",
+      "label": "В тому числі сплачена... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount paid for October.",
+      "sourceRef": "Section II, row 63 (Жовтень), column 7",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month10ErrorPaidDifference",
+      "label": "В тому числі сплачена... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month10ErrorPaidCorrected minus month10ErrorPaidAsDeclared.",
+      "sourceRef": "Section II, row 63 (Жовтень), column 8",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month11ErrorPayableAsDeclared",
+      "label": "Сума авансового внеску... визначена за даними звітного періоду, в якому виявлена помилка, зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount payable for November as originally declared, before this correction.",
+      "sourceRef": "Section II, row 64 (Листопад), column 3",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month11ErrorPayableCorrected",
+      "label": "Сума авансового внеску... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount payable for November.",
+      "sourceRef": "Section II, row 64 (Листопад), column 4",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month11ErrorPayableDifference",
+      "label": "Сума авансового внеску... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 5 = month11ErrorPayableCorrected minus month11ErrorPayableAsDeclared.",
+      "sourceRef": "Section II, row 64 (Листопад), column 5",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month11ErrorPaidAsDeclared",
+      "label": "В тому числі сплачена... зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount paid for November as originally declared, before this correction.",
+      "sourceRef": "Section II, row 64 (Листопад), column 6",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month11ErrorPaidCorrected",
+      "label": "В тому числі сплачена... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount paid for November.",
+      "sourceRef": "Section II, row 64 (Листопад), column 7",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month11ErrorPaidDifference",
+      "label": "В тому числі сплачена... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month11ErrorPaidCorrected minus month11ErrorPaidAsDeclared.",
+      "sourceRef": "Section II, row 64 (Листопад), column 8",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month12ErrorPayableAsDeclared",
+      "label": "Сума авансового внеску... визначена за даними звітного періоду, в якому виявлена помилка, зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount payable for December as originally declared, before this correction.",
+      "sourceRef": "Section II, row 65 (Грудень), column 3",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month12ErrorPayableCorrected",
+      "label": "Сума авансового внеску... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount payable for December.",
+      "sourceRef": "Section II, row 65 (Грудень), column 4",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month12ErrorPayableDifference",
+      "label": "Сума авансового внеску... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 5 = month12ErrorPayableCorrected minus month12ErrorPayableAsDeclared.",
+      "sourceRef": "Section II, row 65 (Грудень), column 5",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month12ErrorPaidAsDeclared",
+      "label": "В тому числі сплачена... зазначена в декларації (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The amount paid for December as originally declared, before this correction.",
+      "sourceRef": "Section II, row 65 (Грудень), column 6",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month12ErrorPaidCorrected",
+      "label": "В тому числі сплачена... уточнена сума (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "The corrected amount paid for December.",
+      "sourceRef": "Section II, row 65 (Грудень), column 7",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "month12ErrorPaidDifference",
+      "label": "В тому числі сплачена... різниця (грн, коп.)",
+      "type": "number",
+      "required": false,
+      "description": "Column 8 = month12ErrorPaidCorrected minus month12ErrorPaidAsDeclared.",
+      "sourceRef": "Section II, row 65 (Грудень), column 8",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalErrorPayableAsDeclared",
+      "label": "Сума авансового внеску... визначена за даними звітного періоду, зазначена в декларації (грн, коп.) — УСЬОГО",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Section II, row 66 ('УСЬОГО'), column 3",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalErrorPayableCorrected",
+      "label": "Сума авансового внеску... уточнена сума (грн, коп.) — УСЬОГО",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Section II, row 66 ('УСЬОГО'), column 4",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalErrorPayableDifference",
+      "label": "Сума авансового внеску... різниця (грн, коп.) — УСЬОГО",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Section II, row 66 ('УСЬОГО'), column 5",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalErrorPaidAsDeclared",
+      "label": "В тому числі сплачена... зазначена в декларації (грн, коп.) — УСЬОГО",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Section II, row 66 ('УСЬОГО'), column 6",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalErrorPaidCorrected",
+      "label": "В тому числі сплачена... уточнена сума (грн, коп.) — УСЬОГО",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Section II, row 66 ('УСЬОГО'), column 7",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalErrorPaidDifference",
+      "label": "В тому числі сплачена... різниця (грн, коп.) — УСЬОГО",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Section II, row 66 ('УСЬОГО'), column 8",
+      "visibleWhen": {
+        "field": "declarationType",
+        "equals": "corrective"
+      },
+      "validation": {
+        "minimum": 0
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "annexApAttestation",
+      "label": "Attestation of accuracy",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Наведена інформація є правильнною. (\"The information provided is correct.\" — sic, the source's own text carries this spelling.)",
+      "sourceRef": "Row 70, preceding the signature block ('Фізична особа – платник податку або уповноважена особа')"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "month1AdvancePayableEqualsCalculatedMinusCessation",
+      "compare": {
+        "field": "month1AdvancePayable",
+        "operator": "lessThanOrEqual",
+        "compareTo": "month1AdvanceCalculated"
+      }
+    }
+  ]
+}
