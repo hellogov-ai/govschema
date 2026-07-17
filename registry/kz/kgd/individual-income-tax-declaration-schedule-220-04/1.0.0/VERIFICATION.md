@@ -107,7 +107,9 @@ three times.
 - Item 30 gives the authoritative meaning of each column, used directly in
   this schema's field descriptions: column B is the country-of-residence
   code of the **non-resident payer** of the income (not a "treaty country"
-  as in Form 220.03); column C is the income-type code per Item 71; column D
+  as in Form 220.03); column C is the income-type code per Item 54(2)
+  (see the correction below — the schema as first authored mis-cited this
+  as "Item 71"); column D
   is the currency code of column E; column E is the foreign-currency income
   amount taxable in Kazakhstan; column F is that amount converted to tenge
   at the market rate on the last business day before the transaction; column
@@ -120,14 +122,64 @@ three times.
   2190 to line 220.01.001; code 2060 to line 220.01.012; all other codes to
   line 220.01.003; the column F grand total to line 220.01.019; the column G
   grand total to line 220.01.057 I).
-- **Item 71** gives a complete, 44-value inline legend for the income-type
-  code (column C) — genuinely richer sourcing than the undocumented-code
-  columns on the sibling Forms 220.01-220.03, none of which had an inline
-  legend on their own pages or in the Rules text examined by those cycles.
-  This schema models column C as an `enum` of all 44 codes (see
+- **Item 54(2)** gives a complete inline legend for the income-type code
+  (column C) — genuinely richer sourcing than the undocumented-code columns
+  on the sibling Forms 220.01-220.03, none of which had an inline legend on
+  their own pages or in the Rules text examined by those cycles. **Correction
+  (this cycle's review-gate fix, GOV-3554):** the schema as first authored
+  cited "Item 71" and modelled only 44 codes. Independent re-verification
+  during the GOV-3554 review gate found that Item 71 is not this form's own
+  legend at all — it sits in **Appendix 2** of the same Order (No. 695),
+  which is the Rules chapter for the unrelated **Form 100.00** (corporate
+  income tax declaration); it happens to carry a near-identical 44-code list
+  because the two forms' Rules chapters reuse largely the same drafting
+  boilerplate. Form 220.04's own Rules sit in **Appendix 9** (confirmed via
+  the Order's own numbered appendix list, item 9 = "форма 220.00"), and the
+  legend actually keyed to this appendix is **Item 54, sub-clause 2)** ("2)
+  доходы из источников за пределами Республики Казахстан"). That legend has
+  **46 distinct codes**, not 44 — it includes two codes entirely absent from
+  the schema as first published:
+  - `2360` — income from a decrease in insurance reserves created by
+    insurance/reinsurance organizations under insurance/reinsurance
+    contracts, received from a non-resident.
+  - `2420` — excess of positive over negative exchange-rate differences,
+    determined per IFRS and Kazakhstan's accounting/financial-reporting
+    legislation, outside Kazakhstan.
+
+  A third code, **`2460`** (income from a decrease in provisions created by
+  licensed banks and organizations performing certain banking operations,
+  received from a non-resident), is also missing from the 44-code list but
+  is **not printed as "2460" in Appendix 9's own Item 54(2) text** — that
+  text instead prints a second, out-of-sequence `2360` entry between codes
+  2450 and 2470, with the banking-provisions wording. This is a drafting
+  duplicate/typo in the government's own published Order, not a real second
+  meaning for code 2360: the identical banking-provisions wording is
+  correctly labelled `1460` in this same Item 54's parallel *domestic*-income
+  list (sub-clause 1, "доходы из источников в Республике Казахстан") a few
+  lines above, and correctly labelled `2460` in the equivalent foreign-income
+  legend of a *different* form's Rules chapter elsewhere in the same Order
+  (Appendix 6, Item 54, for Form 110.00) — confirmed by fetching and diffing
+  both occurrences against Appendix 9's text. Since the domestic/foreign code
+  pairs in this scheme consistently differ by exactly 1000 (`1010`↔`2010`,
+  `1450`↔`2450`, `1470`↔`2470`, etc.), `1460`↔`2460` is the only reading
+  consistent with the rest of the sequence, and a legend entry printed as a
+  literal duplicate of an already-used code number is not a usable value in
+  any case. This schema therefore models the code as `2460`, not the Order's
+  own typo'd `2360` duplicate, and documents the discrepancy here rather than
+  silently reproducing it.
+
+  This schema now models column C as an `enum` of the full, corrected
+  **47-code** set: the original 44, plus `2360`, `2420`, and `2460` (see
   `entry1IncomeTypeCode`'s description for the full legend, following the
   same enum-with-inline-legend convention already established for
   `si/furs/doh-odm-income-tax-return-instructions`'s `incomeEntry1Code`).
+  Checked whether this same "Item 71" mis-citation and 3-code gap could
+  recur elsewhere in this registry: `grep`-ing every other KZ KGD
+  `schema.json` (the parent `individual-income-tax-declaration`, Form
+  220.00, GOV-3477; and sibling schedules 220.01-220.03) for
+  `IncomeTypeCode`/`Item 71`/"видов доходов" found no matches — none of them
+  model an income-type-code enum, so this fix is fully scoped to this one
+  schema.
 - **Item 73** (country code, column B) and **Item 55** (currency code,
   column D) are each an external classifier referenced by number —
   "Классификатор стран мира" (Annex 22) and "Классификатор валют"
@@ -200,7 +252,7 @@ exactly 1 error): a missing required `iin`, a missing required
 `taxPeriodYear`, an invalid `iin` pattern (wrong digit count), an invalid
 `taxPeriodYear` type (string instead of integer), an invalid
 `entry1CountryCode` pattern (wrong digit count), an `entry1IncomeTypeCode`
-value not in the 44-value enum, a `totalForeignCurrencyAmount` given a
+value not in the 47-value enum, a `totalForeignCurrencyAmount` given a
 string instead of a number, and an unknown field not defined anywhere in
 this schema. All 10 were checked with a from-scratch, throwaway Node mock
 validator implementing this schema's own `required`/`validation` rules (not

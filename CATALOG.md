@@ -27,12 +27,21 @@
 > administrative expenses attributable to that income — confirmed via both a
 > three-band visual row count and an independent pixel-luminance
 > row-boundary scan. This cycle additionally read the Order's own full Rules
-> text (not just the scanned images), finding a genuine 44-value inline
-> legend for the income-type code (modelled as an `enum`, following the
+> text (not just the scanned images), finding an inline legend for the
+> income-type code (modelled as an `enum`, following the
 > `si/furs/doh-odm-income-tax-return-instructions` precedent) — richer
 > sourcing than the pattern-only undocumented-code columns on Forms
-> 220.01-220.03. Both validators pass at 538/538; 10 conformance fixtures (2
-> valid + 8 mutation-control) committed. See the Taxes vertical section
+> 220.01-220.03. **Correction (GOV-3554 review gate, same day):** the legend
+> was first mis-cited to "Item 71" (actually Appendix 2's Rules for the
+> unrelated Form 100.00) and modelled only 44 codes; independent
+> re-verification traced this form's own legend to Appendix 9, Item 54(2),
+> which has 46 distinct codes plus a 47th (`2460`) that the Order's own text
+> prints as a typo'd duplicate `2360` — cross-referenced against the
+> parallel domestic-income list and a sibling form's equivalent appendix to
+> confirm. The enum now models the full, corrected 47 codes; see the
+> document's own VERIFICATION.md. Both validators pass at 538/538; 10
+> conformance fixtures (2 valid + 8 mutation-control) committed. See the
+> Taxes vertical section
 > below and the document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-17, GOV-3544, "GovSchema Standard Research"): Kazakhstan's
@@ -14383,8 +14392,11 @@ v1.0.0.
 > иностранных источников, суммы уплаченного иностранного налога и зачета")
 > covers foreign-source income and the corresponding foreign-tax credit: a
 > single grand-total row with four total amounts, plus 17 entry rows each
-> capturing the paying non-resident's country code, an income-type code (a
-> genuine 44-value inline legend, modelled as `enum`), a currency code, the
+> capturing the paying non-resident's country code, an income-type code (an
+> inline legend of 47 distinct codes, modelled as `enum` — see the
+> document's own VERIFICATION.md for the GOV-3554 review-gate correction
+> that found 3 codes missing from an initial 44-value reading and traced the
+> legend to its actual source, Appendix 9 Item 54(2)), a currency code, the
 > income amount in foreign currency, the same amount in tenge, the
 > creditable foreign-tax amount, and management/administrative expenses.
 > Transcribed from the order's own scanned page images (179-180 of 194) plus,
@@ -19941,8 +19953,11 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   Executive Summary and Taxes vertical section above; its disclosed page
   count (2 pages, images 179-180) needed no correction. This cycle also read
   the Order's own HTML Rules text directly (Глава 6) for the first time in
-  this schedule series, finding a genuine 44-value inline legend for the
-  income-type code (modelled as `enum`) and confirming the country-code and
+  this schedule series, finding an inline legend for the income-type code
+  (modelled as `enum`; **corrected same-day at the GOV-3554 review gate to
+  the full 47-code legend at its actual source, Appendix 9 Item 54(2), after
+  an initial 44-value reading was traced to the wrong appendix** — see the
+  document's own VERIFICATION.md) and confirming the country-code and
   currency-code columns are each an external Customs Union classifier
   (referenced by annex number, not enumerated inline) — both remain
   pattern-constrained. The remaining six schedules (220.05-220.10) remain
