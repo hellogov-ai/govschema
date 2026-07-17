@@ -4,7 +4,18 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **541 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **542 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3581, "GovSchema Standard Research"): Ukraine's
+> Business Formation vertical gains a second schema**, via
+> `ua/moj/state-registration-legal-entity` (Form 2, the legal-entity sibling
+> to Form 1). The KZ `adilet.zan.kz` Form 220.0X image-endpoint outage the
+> GOV-3574 cycle documented was re-checked first and confirmed still fully
+> down, so this cycle deepened Ukraine's own disclosed Business Formation
+> backlog instead. Models 122 fields plus 4 `documents[]` entries; both
+> validators pass at 542/542; 14 conformance fixtures committed. See the
+> Business Formation vertical section below and the document's own
+> VERIFICATION.md for the full record.
 
 > **Update (2026-07-17, GOV-3574, "GovSchema Standard Research"): Cambodia's
 > Patent Tax Return gains its own continuation annex**, via
@@ -13439,6 +13450,42 @@ within an already-covered vertical:
 
 ### Business Formation — Incorporation, LLC, Company Registration (66/73 jurisdictions — 90%)
 
+> **Update (2026-07-17, GOV-3581, "GovSchema Standard Research"): Ukraine's
+> Business Formation vertical gains a second schema**, via
+> `ua/moj/state-registration-legal-entity` — Form 2, the same Ministry of
+> Justice's unified application for state registration of a legal entity
+> (юридична особа), the disclosed sibling to Form 1
+> (`ua/moj/state-registration-individual-entrepreneur`, GOV-3513) on the same
+> listing page. The KZ `adilet.zan.kz` Form 220.07-220.10 companion-schedule
+> backlog was re-checked first this cycle and found still fully down (every
+> image in the document's range, 170-194, still returns the site's own
+> maintenance placeholder — no narrower/wider than the outage the GOV-3574
+> cycle had already documented), so this cycle pivoted to Ukraine's own
+> disclosed backlog instead. `minjust.gov.ua/files/...` still 403's direct
+> sandbox fetches; the cited `.xlsx` was re-fetched via a Wayback Machine
+> snapshot (CDX-confirmed unchanged across two crawls by content digest) and
+> hashed. Python's stdlib `zipfile` opened the container directly this
+> cycle (no from-scratch DEFLATE-walker needed, unlike the GOV-3513 cycle's
+> sandbox). The source is a shared ten-page form (more than twice Form 1's
+> four pages) covering the same four registration actions plus optional
+> bundled VAT/simplified-tax-system and non-profit-registry elections;
+> scopes to the creation action only, modelling a single founder (individual
+> or legal entity) and the manager's own particulars. Models 122 fields plus
+> 4 `documents[]` entries. Both validators pass at 542/542; 14 conformance
+> fixtures (2 valid + 12 mutation-control) committed, all reproduced via a
+> from-scratch mock validator. Disclosed, not modelled: the
+> inclusion/changes/termination action variants, the legal-entity-as-manager
+> and public-authority sub-blocks, the ultimate beneficial owner page (its
+> own printed cell layout carries an unresolved ambiguity — two
+> near-identically-labelled passport-data cells with no distinguishing text
+> recoverable from the xlsx's native XML alone, and no scanned-image
+> fallback exists the way this registry's PDF-sourced schemas have),
+> founders beyond entry #1, termination/succession particulars, the
+> repeating other-authorized-person page, and economic-activity-code slots
+> 8-28 of the form's two 28-slot activity grids (this schema models the
+> first 7 of each, matching Form 1's own seven-slot convention). See the
+> document's own VERIFICATION.md for the full sourcing record.
+
 > **Update (2026-07-17, "GovSchema Standard Research"): Ukraine opens as the
 > registry's 73rd jurisdiction via this vertical**, via
 > `ua/moj/state-registration-individual-entrepreneur` — Form 1, the Ministry
@@ -17397,7 +17444,7 @@ now closed.
 | **SK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **UA** | 4 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
+| **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **UZ** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -20067,10 +20114,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   vertical section above. **Ukraine's remaining backlog: DMV and National
   ID**, both found weak. The
   inclusion/changes/termination registration actions on this same Form 1,
-  the page-3 multi-authorized-person block, the sibling Form 2
-  (legal-entity registration), and all ten of `ua/dps/individual-income-tax-declaration`'s
-  own companion schedules (ЄСВ1-3, КІК, Ф1-Ф4, МПЗ, АП) are also disclosed,
-  open backlog for a future minor-version or companion-schema cycle.
+  the page-3 multi-authorized-person block, and all ten of
+  `ua/dps/individual-income-tax-declaration`'s own companion schedules
+  (ЄСВ1-3, КІК, Ф1-Ф4, МПЗ, АП) are also disclosed, open backlog for a
+  future minor-version or companion-schema cycle. **Resolved further
+  (GOV-3581, 2026-07-17): the sibling Form 2 (legal-entity registration)
+  authored** via `ua/moj/state-registration-legal-entity` — see the
+  Executive Summary and Business Formation vertical section above. Form 2's
+  own inclusion/changes/termination action variants, its legal-entity-as-
+  manager and public-authority sub-blocks, its ultimate beneficial owner
+  page, founders beyond entry #1, its termination/succession particulars,
+  its repeating other-authorized-person page, and both forms' unbounded/
+  28-slot economic-activity-code tails remain disclosed, open backlog.
 
 - **GOV-3459 ("GovSchema Standard Research") — Kazakhstan opens as the
   registry's 72nd jurisdiction via Business Formation, authored via
