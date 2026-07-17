@@ -4,7 +4,38 @@
 
 ## Executive Summary
 
-**70 jurisdictions** | **525 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**71 jurisdictions** | **526 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3454, "GovSchema Standard Research"): Morocco
+> opens as the registry's 71st jurisdiction**, via
+> `ma/maec/evisa-application` — the Ministry of Foreign Affairs, African
+> Cooperation and Moroccans Living Abroad's (MAEC) individual electronic
+> visa application, sourced from the live, unauthenticated AngularJS
+> single-page application at `acces-maroc.ma`, whose bundled JS embeds the
+> real eVisa form's field markup in its own `$templateCache` — the same
+> technique already used for this registry's `am/mfa/evisa-application`
+> and `ge/mfa/evisa-application` schemas. This cycle first re-screened
+> Egypt's National ID vertical (the registry's only genuinely open,
+> unscreened backlog item at cycle start) and found it a confirmed dead
+> end this session — every official Egyptian domain is unreachable or
+> WAF-blocked, and the only reachable substitutes are too thin to author
+> from — then scouted three new-jurisdiction candidates in parallel:
+> Kazakhstan (Business Formation, left as backlog), Morocco (multiple
+> verticals), and Bahrain (confirmed dead end, every vertical funnelled
+> through a unified SSO login or WAF-gated e-visa). Morocco's eVisa portal
+> won on source strength. Models 26 fields across 5 steps (eligibility,
+> clauses, personal information, passport information, travel
+> information); the Jordan-only `nationalIdNumber` `requiredWhen` and every
+> validation pattern (`fieldFormat`/`passportFormat`/`emailFormat`) are
+> resolved to their literal regex/constant definitions in the bundle
+> rather than left as disclosed guesses. `documents[]` and the
+> server-computed `champsAffichees` conditional-block trigger are
+> disclosed, not modelled. See the document's own VERIFICATION.md for the
+> full sourcing record. Both validators pass at 526/526; 9 conformance
+> fixtures (2 valid + 7 mutation-control) committed, all reproduced via a
+> from-scratch mock validator. **Morocco opens with one vertical** (Visa);
+> Business Formation, DMV, Passport, Taxes, and National ID are open,
+> unscreened backlog.
 
 > **Update (2026-07-17, GOV-3462, "GovSchema Standard Research"): Egypt's
 > National ID & Civic Documents vertical opens**, via
@@ -11885,7 +11916,7 @@
 
 ## By Vertical
 
-### Passport (49/70 jurisdictions — 70%)
+### Passport (49/71 jurisdictions — 69%)
 
 > **Correction (GOV-3389):** numerator updated from 48 to 49 following
 > Mongolia's Passport vertical opening via
@@ -12385,7 +12416,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (56/70 jurisdictions — 80%)
+### DMV — Vehicle Registration, Licensing, Permits (56/71 jurisdictions — 79%)
 
 > **Update (2026-07-16, GOV-3403, "GovSchema Standard Research"): Mongolia's
 > DMV vertical opens**, via `mn/atunt/vehicle-plate-number-reservation` — the
@@ -12950,7 +12981,7 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (63/70 jurisdictions — 90%)
+### Business Formation — Incorporation, LLC, Company Registration (63/71 jurisdictions — 89%)
 
 > **Update (2026-07-16, GOV-3410, "GovSchema Standard Research"): Cambodia
 > opens as the registry's 69th jurisdiction via this vertical**, via
@@ -13895,7 +13926,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (61/70 jurisdictions — 87%)
+### Taxes — Income Tax Return, Tax Filing (61/71 jurisdictions — 86%)
 
 > **Update (2026-07-17, GOV-3447, "GovSchema Standard Research"): Egypt
 > opens as the registry's 70th jurisdiction via Taxes**, through
@@ -15124,7 +15155,12 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (59/70 jurisdictions — 84%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (60/71 jurisdictions — 85%)
+
+> **Update (2026-07-17, GOV-3454, "GovSchema Standard Research"): Morocco
+> opens as the registry's 71st jurisdiction via this vertical**, via
+> `ma/maec/evisa-application` — see the Executive Summary update above for
+> the full sourcing record. Numerator moves from 59/70 to 60/71.
 
 > **Update (2026-07-16, GOV-3375, "GovSchema Standard Research"): Mongolia
 > opens as this registry's 68th jurisdiction, via this vertical**, via
@@ -15855,7 +15891,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (49/70 jurisdictions — 70%)
+### National ID & Civic Documents (49/71 jurisdictions — 69%)
 
 > **Update (2026-07-17, GOV-3462, "GovSchema Standard Research"): Egypt
 > opens this vertical**, via `eg/mfa/civil-status-record-request` — the
@@ -16554,6 +16590,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LK** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **MA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -19126,6 +19163,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **GOV-3454 ("GovSchema Standard Research") — Morocco opens as the
+  registry's 71st jurisdiction via Visa, authored via
+  `ma/maec/evisa-application` (see the Executive Summary and Visa
+  vertical section above).** Morocco's remaining backlog: **Business
+  Formation, DMV, Passport, Taxes, and National ID** were not screened
+  this cycle and are open, unscreened backlog for a future cycle. The
+  same `acces-maroc.ma` AngularJS-bundle technique that sourced this
+  schema may generalize to other MAEC-run consular processes — worth
+  checking in a future cycle.
 
 - **GOV-3447 ("GovSchema Standard Research") — Egypt opens as the
   registry's 70th jurisdiction via Taxes, authored via

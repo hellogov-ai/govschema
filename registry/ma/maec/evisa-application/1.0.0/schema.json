@@ -1,0 +1,381 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ma/maec/evisa-application",
+  "version": "1.0.0",
+  "title": "Morocco Electronic Visa (e-Visa) Individual Application",
+  "description": "The Ministry of Foreign Affairs, African Cooperation and Moroccans Living Abroad's (Ministère des Affaires Étrangères, de la Coopération Africaine et des Marocains Résidant à l'Étranger, MAEC) individual electronic visa application, served unauthenticated by the AngularJS single-page application at acces-maroc.ma. The live wizard has six steps: (1) an eligibility pre-screen (nationality, country of habitual residence, date of birth, passport type, purpose/category of visit, and whether the applicant already holds another valid Moroccan visa); (2) acceptance of a dynamic, server-populated list of legal clauses/attestations, each individually mandatory; (3) personal identity details (last/first name, place of birth, phone, email, profession); (4) passport details (number, issuing country, issue date, expiry date, plus a national-ID-number field the live application only requires when the applicant's declared nationality is Jordanian); (5) travel details, including two conditionally-rendered sub-blocks the live application shows only for certain nationality/purpose combinations (an 'additional visa' block for applicants who already hold another valid visa, and a 'habitual residence' block for applicants who are foreign residents rather than travelling from their home country) plus the always-present arrival/departure dates; and (6) supporting-document uploads. Every field name, `required` attribute, and step grouping in this schema is sourced directly from the live application's own bundled JavaScript (`scripts/app-a10b0147a8.js`), whose embedded AngularJS `$templateCache` entry for `app/evisa/formulaire.html` holds the literal, uncompiled HTML markup the app renders for each step — not something inferred or reverse-engineered from compiled/rendered output. This schema does NOT model: the step-6 document uploads (`documents[]`), a dynamic, per-applicant list fetched from a gated referentiel API this session could not read unauthenticated (see verification.notes); the exact trigger condition under which the step-5 'additional visa' and 'habitual residence' sub-blocks appear (`champsAffichees`, a server-computed array whose triggering rule could not be independently confirmed from static analysis alone) — both sub-blocks' fields are modelled as optional (`required: false`, no `requiredWhen`) rather than gated on an unverified condition; and the separate, legacy `formulaireVisa`/`demandeVisa` module's dependent/'enfant' sub-form, which this session confirmed (via a `champsAffichees`/`enfant` occurrence grep against the live bundle) does not apply to this individual eVisa form at all. The nationality, country, passport-type, visit-category, additional-visa-type, profession, and entries-requested fields are all populated at runtime from the portal's own `/api/referentiel/*` reference-data endpoints; this session confirmed those endpoints are OAuth2-gated (`401 unauthorized`) and could not retrieve their literal enumerated values, so these fields are modelled as open strings rather than fabricated enums (see verification.notes). No application was actually submitted and no fee was paid in producing this schema. Filing this application is a traveller action performed directly with the Ministry of Foreign Affairs, African Cooperation and Moroccans Living Abroad through acces-maroc.ma; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by Morocco or its Ministry of Foreign Affairs.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of Foreign Affairs, African Cooperation and Moroccans Living Abroad",
+    "abbreviation": "MAEC",
+    "url": "https://www.acces-maroc.ma"
+  },
+  "process": {
+    "type": "application",
+    "language": "fr"
+  },
+  "source": {
+    "url": "https://www.acces-maroc.ma",
+    "retrievedAt": "2026-07-17",
+    "documentRef": "The live e-Visa Angular single-page application's own bundled `scripts/app-a10b0147a8.js`, whose embedded `$templateCache` entry for `app/evisa/formulaire.html` contains the actual, uncompiled HTML markup (`name`, `ng-model`, `required`, `ng-if` step-visibility guards) Angular renders for the eligibility, clauses, personal-information, passport-information, and travel-information steps."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-17",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-17",
+    "notes": "GOV-3454 (\"GovSchema Standard Research\"), opening Morocco as the registry's 71st jurisdiction. Fetched `https://www.acces-maroc.ma` (note: the bare apex `acces-maroc.ma` does not resolve; the `www.` subdomain does) and `https://www.acces-maroc.ma/scripts/app-a10b0147a8.js` this session with a plain `curl` and a standard desktop Chrome User-Agent string: HTTP 200/`text/html`/14,877 bytes (sha256 `ee69914ffe699293f90e01e7605a8f56faaf6d9cac3901bbeefd0a62ec48cc25`) and HTTP 200/`application/javascript`/1,500,168 bytes (sha256 `05481e21b3d214d9f1f705ada06d38af847015a8bef5ba6d4b23b8e8ee34e2c1`) respectively — served straight through Cloudflare (`cf-cache-status: HIT`) with no login/CAPTCHA/WAF gate on either static asset (a prior scouting pass's WAF-block finding applies to the rendered, API-hydrated SPA route, not these underlying assets). Confirmed via the same bundle's `Settings` constant (`/assets/static/env.js`, fetched live, plaintext) that `enableCaptcha: true` and an OAuth2 client-credentials flow gate the `/api/referentiel/*` reference-data reads and the demande-submission writes specifically, not the HTML/JS retrieval this schema is sourced from. Attempted the referentiel endpoints directly (nationalite, pays, typePasseport, categrorieVisa, visaAdditionnel, profession, typeEntreesDemandees) and confirmed each returns `401 unauthorized` (Spring Security OAuth2) without a valid bearer token obtainable from a plain, unauthenticated fetch — so the corresponding fields are modelled as open strings (no `enum`) rather than fabricated value lists, a disclosed limitation distinct from a hard block on the schema itself. Separately, grepped the bundle's `fieldFormat`/`passportFormat`/`emailFormat`/`isJordanie` references back to their literal definitions in the bundle's shared `Constants` module: `FIELD_FORMAT:/^[a-zA-Z0-9'\\-_/. ]*$/`, `PASSPORT_FORMAT:/^[A-Za-z0-9]+$/`, a full RFC-5322-style `EMAIL_FORMAT` regex, and `isJordanie()`'s body itself (`nationaliteActuel.code===u.CODE_PAYS_JORDANI`, where `CODE_PAYS_JORDANI:\"JOR\"`) — so `nationalIdNumber`'s conditional requirement is modelled with a real `requiredWhen: {field: \"nationality\", equals: \"JOR\"}` rather than left as an undischarged disclosure. Also confirmed, via a direct grep of the full bundle, that the only 'enfant'/dependent sub-form (`app/formulaireVisa/enfantModal.html`) belongs to a separate legacy Angular controller (`FormulairevisaController`) never referenced by `eVisaController`'s own `champsAffichees` conditionals (`grep` count of `enfant` inside `app/evisa/formulaire.html` itself is 0) — so no dependent/children flow is in scope for this schema. Models 26 `fields[]` across 5 steps (eligibility_screening, terms_and_conditions, personal_information, passport_information, travel_information) and 0 `documents[]` (the file-upload scope boundary described above). 2 valid conformance fixtures (0 errors each) plus 7 mutation-control fixtures (each raising exactly 1 error) are committed under `conformance/ma/maec/evisa-application/1.0.0/`. Both validators (`tools/validate.mjs`, `tools/validate-ajv.mjs`) pass."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-17"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "eligibility_screening",
+      "title": "Eligibility Screening",
+      "fields": [
+        "nationality",
+        "countryOfResidence",
+        "dateOfBirth",
+        "passportType",
+        "visitPurpose",
+        "hasAdditionalVisa"
+      ],
+      "next": "terms_and_conditions"
+    },
+    {
+      "id": "terms_and_conditions",
+      "title": "Terms & Conditions",
+      "fields": [
+        "clausesAccepted"
+      ],
+      "next": "personal_information"
+    },
+    {
+      "id": "personal_information",
+      "title": "Personal Information",
+      "fields": [
+        "lastName",
+        "firstName",
+        "placeOfBirth",
+        "phone",
+        "email",
+        "profession"
+      ],
+      "next": "passport_information"
+    },
+    {
+      "id": "passport_information",
+      "title": "Passport Information",
+      "fields": [
+        "passportNumber",
+        "passportIssuingCountry",
+        "passportIssueDate",
+        "passportExpiryDate",
+        "nationalIdNumber"
+      ],
+      "next": "travel_information"
+    },
+    {
+      "id": "travel_information",
+      "title": "Travel Information",
+      "fields": [
+        "additionalVisaValidFrom",
+        "additionalVisaValidUntil",
+        "additionalVisaEntriesRequested",
+        "additionalVisaNumber",
+        "residencePermitNumber",
+        "residencePermitValidUntil",
+        "arrivalDate",
+        "departureDate"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "nationality",
+      "label": "Nationalité (Nationality)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's declared nationality, chosen from the portal's own `/api/referentiel/nationalite` reference list. Modelled as an open string because that endpoint is OAuth2-gated and its literal value set could not be independently retrieved this session (see verification.notes).",
+      "sourceRef": "app/evisa/formulaire.html, `<select name=\"nationaliteSelected\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoBeneficiairesVisa.nationaliteActuel\" ng-options=\"item as item.libelle for item in eVisaCrtl.nationalites track by item.code\" ng-required=\"true\" ng-change=\"eVisaCrtl.onChangeNationalite()\">`"
+    },
+    {
+      "name": "countryOfResidence",
+      "label": "Pays de résidence (Country of Residence)",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's country of habitual residence, chosen from the same gated `/api/referentiel/pays` list used for passport-issuing country (excluding Morocco itself). Modelled as an open string for the same reason as `nationality`.",
+      "sourceRef": "app/evisa/formulaire.html, `<select name=\"paysResidenceSelected\" ng-model=\"eVisaCrtl.demandeIndividuel.refResidenceHabituelle.refPaysResidence\" ng-options=\"item as item.libelle for item in eVisaCrtl.paysWithoutMorocco track by item.code\">`, with `<option value=\"\" disabled selected required>`"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date de naissance (Date of Birth)",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's date of birth, entered via the site's date-picker widget. Applicants under 18 trigger a client-side warning message (`MSG_WARNING_MINEUR`) but the field remains a simple required date Entered in the site's own DD/MM/YYYY format (`eVisaCrtl.format=\"dd/MM/yyyy\"`).",
+      "sourceRef": "app/evisa/formulaire.html, `<input type=\"text\" name=\"dateNaissance\" uib-datepicker-popup=\"{{eVisaCrtl.format}}\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoBeneficiairesVisa.dateNaissance\" ... required readonly>`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    },
+    {
+      "name": "passportType",
+      "label": "Type de passeport (Passport Type)",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's passport type/category, chosen from the gated `/api/referentiel/typePasseport` reference list (e.g. ordinary, diplomatic, service). Modelled as an open string for the same reason as `nationality`.",
+      "sourceRef": "app/evisa/formulaire.html, `<select name=\"typePasseportSelected\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoPasseport.refTypePasseport\" ng-options=\"item as item.libelle for item in eVisaCrtl.typePasseport | excludeByProperty:'code':eVisaCrtl.getCodeTypePasseportToExclude(); track by item.code\" ng-required=\"true\" required>`"
+    },
+    {
+      "name": "visitPurpose",
+      "label": "Motif de voyage (Purpose of Visit)",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's category/purpose of visit, chosen from the gated `/api/referentiel/categrorieVisa` reference list. Modelled as an open string for the same reason as `nationality`. This selection is also what the live application uses to compute which of the two conditional travel-information sub-blocks (`additionalVisa*`, `residencePermit*`) it renders — a rule this session could not independently confirm (see the schema description).",
+      "sourceRef": "app/evisa/formulaire.html, `<select name=\"categorieVisaSelected\" ng-model=\"eVisaCrtl.demandeIndividuel.refCategoriesVisa\" ng-options=\"item as item.libelle for item in eVisaCrtl.categorieVisa track by item.code\" required ng-change=\"eVisaCrtl.onChangeCategorie()\">`"
+    },
+    {
+      "name": "hasAdditionalVisa",
+      "label": "Disposez-vous d'un autre visa valide ? (Do you hold another valid visa?)",
+      "type": "string",
+      "required": false,
+      "description": "Whether the applicant already holds another valid visa of a listed type, chosen from the gated `/api/referentiel/visaAdditionnel` reference list. The live markup carries no `required`/`ng-required` attribute on this control, so it is modelled as optional. A non-'AUCUN' (none) answer here is what the live application's own warning message (`MSG_WARNING_VISA_ADDITIONNEL`) reacts to and is presumed related to the step-5 'additional visa' sub-block becoming relevant, though the exact trigger is not independently confirmed.",
+      "sourceRef": "app/evisa/formulaire.html, `<select name=\"visaAdditionnelSelected\" ng-model=\"eVisaCrtl.demandeIndividuel.refVisaAdditionnel.refTypeVisaAdditionnel\" ng-options=\"item as item.libelle for item in eVisaCrtl.visaAdditionnel track by item.code\">` (no required attribute)"
+    },
+    {
+      "name": "clausesAccepted",
+      "label": "Acceptation des clauses (Acceptance of Clauses)",
+      "type": "boolean",
+      "required": true,
+      "description": "Attestation that the applicant has read and accepted every clause in the portal's own server-populated, dynamic clause list (each individual clause checkbox carries `required` in the live markup; this schema models the group as a single gating attestation since the exact number and text of clauses is server-driven and may change).",
+      "sourceRef": "app/evisa/formulaire.html, `<input type=\"checkbox\" name=\"clause\" id=\"chk-{{clause.id}}\" ng-repeat=\"clause in eVisaCrtl.clauses | orderBy:'libelle'\" ng-model=\"eVisaCrtl.options[$index]\" ng-value=\"clause\" ng-change=\"eVisaCrtl.toggleClause($index)\" required>`"
+    },
+    {
+      "name": "lastName",
+      "label": "Nom (Last Name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's last/family name as it appears on their passport.",
+      "sourceRef": "app/evisa/formulaire.html, `<input type=\"text\" name=\"nomBeneficiaire\" class=\"form-control\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoBeneficiairesVisa.nom\" ng-pattern=\"eVisaCrtl.fieldFormat\" required>`",
+      "validation": {
+        "pattern": "^[a-zA-Z0-9'\\-_/. ]*$"
+      }
+    },
+    {
+      "name": "firstName",
+      "label": "Prénom (First Name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's first/given name as it appears on their passport.",
+      "sourceRef": "app/evisa/formulaire.html, `<input type=\"text\" name=\"prenomBeneficiaire\" class=\"form-control\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoBeneficiairesVisa.prenom\" ng-pattern=\"eVisaCrtl.fieldFormat\" required>`",
+      "validation": {
+        "pattern": "^[a-zA-Z0-9'\\-_/. ]*$"
+      }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Lieu de naissance (Place of Birth)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's place of birth (city/town) as it appears on their passport.",
+      "sourceRef": "app/evisa/formulaire.html, `<input type=\"text\" name=\"lieuNaissanceBeneficiaire\" class=\"form-control\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoBeneficiairesVisa.lieuNaissance\" ng-pattern=\"eVisaCrtl.fieldFormat\" required>`",
+      "validation": {
+        "pattern": "^[a-zA-Z0-9'\\-_/. ]*$"
+      }
+    },
+    {
+      "name": "phone",
+      "label": "Téléphone (Phone)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's contact phone number, entered via an international-phone-number widget defaulting to Morocco (+212) as the initial country, though any valid international number is accepted.",
+      "sourceRef": "app/evisa/formulaire.html, `<input type=\"text\" name=\"telephoneBeneficiaire\" class=\"form-control\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoBeneficiairesVisa.telephone\" ng-intl-tel-input data-initial-country=\"ma\" required>`"
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's email address, used to send status updates and any post-submission 'complément de dossier' (additional-documents) requests.",
+      "sourceRef": "app/evisa/formulaire.html, `<input type=\"text\" name=\"mailBeneficiaire\" class=\"form-control mail\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoBeneficiairesVisa.mail\" ng-pattern=\"eVisaCrtl.emailFormat\" required>`",
+      "validation": {
+        "pattern": "^(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$"
+      }
+    },
+    {
+      "name": "profession",
+      "label": "Profession",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's profession/occupation, chosen from the gated `/api/referentiel/profession` reference list. Modelled as an open string for the same reason as `nationality`.",
+      "sourceRef": "app/evisa/formulaire.html, `<select name=\"ProfessionBeneficiaire\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoBeneficiairesVisa.refProfession\" ng-options=\"item as item.libelle for item in eVisaCrtl.professions track by item.code\" required>`"
+    },
+    {
+      "name": "passportNumber",
+      "label": "Numéro de passeport (Passport Number)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The applicant's passport/travel document number.",
+      "sourceRef": "app/evisa/formulaire.html, `<input class=\"form-control\" name=\"numPasseport\" type=\"text\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoPasseport.numPasseport\" ng-pattern=\"eVisaCrtl.passportFormat\" required>`",
+      "validation": {
+        "pattern": "^[A-Za-z0-9]+$"
+      }
+    },
+    {
+      "name": "passportIssuingCountry",
+      "label": "Délivré par (Issued By)",
+      "type": "string",
+      "required": true,
+      "description": "The country that issued the applicant's passport, chosen from the same gated `/api/referentiel/pays` list used for country of residence. The live application also client-side-validates that this matches the applicant's declared nationality's own country (`DELIVRANCE_NOTLIKE_NATIONNALITE` warning) — not separately enforced here since the underlying country-code values are unavailable.",
+      "sourceRef": "app/evisa/formulaire.html, `<select name=\"refPaysDelivrance\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoPasseport.refPaysDelivrance\" ng-options=\"item as item.libelle for item in eVisaCrtl.paysWithoutMorocco track by item.code\">` (option carries `disabled selected`, field itself required per step gating)"
+    },
+    {
+      "name": "passportIssueDate",
+      "label": "Délivré le (Issue Date)",
+      "type": "date",
+      "required": true,
+      "description": "The date the applicant's passport was issued Entered in the site's own DD/MM/YYYY format (`eVisaCrtl.format=\"dd/MM/yyyy\"`).",
+      "sourceRef": "app/evisa/formulaire.html, `<input type=\"text\" name=\"dateDelivrancePasseport\" class=\"form-control datepicker\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoPasseport.dateDelivrance\" ... required readonly>`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    },
+    {
+      "name": "passportExpiryDate",
+      "label": "Expire le (Expiry Date)",
+      "type": "date",
+      "required": true,
+      "description": "The passport's expiry date. The live application client-side-validates that the passport remains valid at least 90 days beyond the intended stay (`VALIDITE_PASSPORT_SUP_90J` warning), not separately enforced here Entered in the site's own DD/MM/YYYY format (`eVisaCrtl.format=\"dd/MM/yyyy\"`).",
+      "sourceRef": "app/evisa/formulaire.html, `<input type=\"text\" name=\"dateExpirationPasseport\" class=\"form-control datepicker\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoPasseport.dateExpiration\" ... required readonly>`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    },
+    {
+      "name": "nationalIdNumber",
+      "label": "Identifiant national (National ID Number)",
+      "type": "string",
+      "required": false,
+      "description": "A national identity number, required by the live application only when the applicant's declared `nationality` reference-list value equals `\"JOR\"` (confirmed directly in the bundle's own `isJordanie()` function body and its `CODE_PAYS_JORDANI` constant) — i.e. applicants who declare Jordanian nationality.",
+      "sourceRef": "app/evisa/formulaire.html, `<div class=\"form-group col-md-6\" ng-if=\"eVisaCrtl.isJordanie()\"><input class=\"form-control\" name=\"identifiantNational\" type=\"text\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoPasseport.identifiantNational\" ng-pattern=\"eVisaCrtl.fieldFormat\" required></div>`",
+      "validation": {
+        "pattern": "^[a-zA-Z0-9'\\-_/. ]*$"
+      },
+      "requiredWhen": {
+        "field": "nationality",
+        "equals": "JOR"
+      }
+    },
+    {
+      "name": "additionalVisaValidFrom",
+      "label": "Valable du (Valid From)",
+      "type": "date",
+      "required": false,
+      "description": "Start date of validity of the applicant's other, already-held valid visa. Only rendered by the live application when its server-computed `champsAffichees` list includes 'VISA_ADDITIONNEL' — modelled as optional rather than gated on an unverified trigger condition (see the schema description) Entered in the site's own DD/MM/YYYY format (`eVisaCrtl.format=\"dd/MM/yyyy\"`).",
+      "sourceRef": "app/evisa/formulaire.html, `<div ng-if=\"eVisaCrtl.champsAffichees.indexOf('VISA_ADDITIONNEL') !== -1\">...<input type=\"text\" name=\"dateValableDuVisaAdditionnel\" class=\"form-control datepicker\" ng-model=\"eVisaCrtl.demandeIndividuel.refVisaAdditionnel.dateValableDu\" ... required readonly>`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    },
+    {
+      "name": "additionalVisaValidUntil",
+      "label": "Valide jusqu'au (Valid Until)",
+      "type": "date",
+      "required": false,
+      "description": "Expiry date of validity of the applicant's other, already-held valid visa. Same conditional-rendering caveat as `additionalVisaValidFrom` Entered in the site's own DD/MM/YYYY format (`eVisaCrtl.format=\"dd/MM/yyyy\"`).",
+      "sourceRef": "app/evisa/formulaire.html, `<input type=\"text\" name=\"dateValiditeVisaAdditionnel\" class=\"form-control datepicker\" ng-model=\"eVisaCrtl.demandeIndividuel.refVisaAdditionnel.dateValidite\" ... required readonly>`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    },
+    {
+      "name": "additionalVisaEntriesRequested",
+      "label": "Nombre d'entrées demandées (Number of Entries Requested)",
+      "type": "string",
+      "required": false,
+      "description": "Number of entries requested for the additional visa (e.g. single/multiple), chosen from the gated `/api/referentiel/typeEntreesDemandees` reference list. Same conditional-rendering caveat as `additionalVisaValidFrom`. Modelled as an open string for the same reason as `nationality`.",
+      "sourceRef": "app/evisa/formulaire.html, `<select class=\"form-control\" name=\"nbrEntreesDemandees\" ng-model=\"eVisaCrtl.demandeIndividuel.refVisaAdditionnel.nbrEntreesDemandees\" ng-change=\"eVisaCrtl.onChangeNbrEntrees()\" required><option ng-repeat=\"item in eVisaCrtl.nbEntreesDemandees\" ng-value=\"{{item.code}}\">{{ item.libelle | translate}}</option></select>`"
+    },
+    {
+      "name": "additionalVisaNumber",
+      "label": "Numéro du visa additionnel (Additional Visa Number)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The document number of the applicant's other, already-held valid visa. Same conditional-rendering caveat as `additionalVisaValidFrom`.",
+      "sourceRef": "app/evisa/formulaire.html, `<input type=\"text\" name=\"numVisaAdditionnel\" class=\"form-control\" ng-model=\"eVisaCrtl.demandeIndividuel.refVisaAdditionnel.numVisaAdditionnel\" ng-pattern=\"eVisaCrtl.fieldFormat\" required>`",
+      "validation": {
+        "pattern": "^[a-zA-Z0-9'\\-_/. ]*$"
+      }
+    },
+    {
+      "name": "residencePermitNumber",
+      "label": "Numéro de carte de séjour résident (Residence Permit Number)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's foreign-resident permit/card number. Only rendered by the live application when its server-computed `champsAffichees` list includes 'RESIDENCE' (presumed: applicants who are foreign residents of a third country rather than travelling directly from their home country) — modelled as optional rather than gated on an unverified trigger condition.",
+      "sourceRef": "app/evisa/formulaire.html, `<div ng-if=\"eVisaCrtl.champsAffichees.indexOf('RESIDENCE') !== -1\">...<input class=\"form-control\" name=\"numCarteSejour\" type=\"text\" ng-model=\"eVisaCrtl.demandeIndividuel.refResidenceHabituelle.numCarteSejour\" ng-pattern=\"eVisaCrtl.fieldFormat\" required>`",
+      "validation": {
+        "pattern": "^[a-zA-Z0-9'\\-_/. ]*$"
+      }
+    },
+    {
+      "name": "residencePermitValidUntil",
+      "label": "Carte de séjour valide jusqu'au (Residence Permit Valid Until)",
+      "type": "date",
+      "required": false,
+      "description": "Expiry date of the applicant's foreign-resident permit/card. Same conditional-rendering caveat as `residencePermitNumber`. The live application client-side-validates at least 180 days' remaining validity (`VALIDITE_TITRE_SEJOUR_SUP_180J` warning), not separately enforced here Entered in the site's own DD/MM/YYYY format (`eVisaCrtl.format=\"dd/MM/yyyy\"`).",
+      "sourceRef": "app/evisa/formulaire.html, `<input type=\"text\" name=\"dateValiditeCarteSejour\" class=\"form-control datepicker\" ng-model=\"eVisaCrtl.demandeIndividuel.refResidenceHabituelle.dateValidite\" ... required readonly>`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    },
+    {
+      "name": "arrivalDate",
+      "label": "Date d'entrée (Arrival Date)",
+      "type": "date",
+      "required": true,
+      "description": "The applicant's intended arrival date in Morocco Entered in the site's own DD/MM/YYYY format (`eVisaCrtl.format=\"dd/MM/yyyy\"`).",
+      "sourceRef": "app/evisa/formulaire.html, `<input type=\"text\" name=\"dateArrivee\" class=\"form-control datepicker\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoVoyage.dateArrivee\" ... required readonly>`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    },
+    {
+      "name": "departureDate",
+      "label": "Date de sortie (Departure Date)",
+      "type": "date",
+      "required": true,
+      "description": "The applicant's intended departure date from Morocco. The live application client-side-validates this against the requested stay duration (`DUREE_SEJOUR_SUP` warning), not separately enforced here Entered in the site's own DD/MM/YYYY format (`eVisaCrtl.format=\"dd/MM/yyyy\"`).",
+      "sourceRef": "app/evisa/formulaire.html, `<input type=\"text\" name=\"dateSortie\" class=\"form-control datepicker\" ng-model=\"eVisaCrtl.demandeIndividuel.refInfoVoyage.dateSortie\" ... required readonly>`",
+      "validation": {
+        "pattern": "^\\d{2}/\\d{2}/\\d{4}$"
+      }
+    }
+  ]
+}
