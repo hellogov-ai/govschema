@@ -1,0 +1,735 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ua/moj/state-registration-individual-entrepreneur",
+  "version": "1.0.0",
+  "title": "Ukraine Individual Entrepreneur (ФОП) State Registration Application (Form 1)",
+  "description": "Register a natural person as an individual entrepreneur (фізична особа - підприємець, ФОП — Ukraine's sole-trader/individual-entrepreneur legal form) with Ukraine's Unified State Register of legal entities, individual entrepreneurs and public formations (ЄДР), via Form 1, a unified state-registration application form published by the Ministry of Justice of Ukraine and in force since 1 May 2023. Form 1 is a single, shared four-page application used for four distinct registration actions — initial registration as an entrepreneur, inclusion of information, registration of changes, and termination of entrepreneurial activity — plus an optional, separately-electable simplified-taxation-system (single tax) and VAT-payer registration bundled onto the form's fourth page. This schema scopes to the initial-registration action (registrationAction: new_registration): the applicant's identity and registered address, up to seven declared economic-activity codes, an optional family-farm-household declaration, contact details, the filing applicant's own particulars, and the optional simplified-tax-system/VAT bundled election. It discloses rather than models: the inclusion/changes/termination action variants and their own change-specific sub-fields, the pre-1-July-2004 legacy registration block, and the multi-authorized-person repeating page (page 3 of the source form). It does not submit anything or imply government endorsement.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "UA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Міністерство юстиції України (Ministry of Justice of Ukraine)",
+    "abbreviation": "MOJ",
+    "url": "https://minjust.gov.ua"
+  },
+  "process": {
+    "type": "registration",
+    "language": "uk"
+  },
+  "source": {
+    "url": "https://minjust.gov.ua/files/general/2023/04/27/20230427144630-72.xlsx",
+    "retrievedAt": "2026-07-17",
+    "documentRef": "Заява щодо державної реєстрації фізичної особи - підприємця (форма 1) — unified state-registration application form (Form 1), published by the Ministry of Justice of Ukraine, in force since 1 May 2023"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-17",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-17",
+    "notes": "GovSchema Standard Research cycle. Ukraine opens as the registry's 73rd jurisdiction, in the Business Formation vertical. minjust.gov.ua's own /files/ path returns HTTP 403 to this sandbox's direct fetches (confirmed with multiple User-Agent strings and a Referer header); the Wayback Machine holds a fresh crawl (timestamp 20260105124625, HTTP 200) of the exact cited file, re-fetched this cycle: 48,566 bytes, sha256:ba992e920f266d12439177a72cfbb21b13ef6536f801fb3e8cc997f84b8488e9, a valid PK-zip/xlsx container (PK\\x03\\x04 header confirmed byte-for-byte). The Ministry's own linked listing page (minjust.gov.ua/m/formi-zayav-u-sferi-derjavnoi-reestratsii-yuridichnih-osib-fizichnih-osib-pidpriemtsiv-ta-gromadskih-formuvan) was independently re-fetched via its own Wayback snapshot (timestamp 20260113030913, HTTP 200, 37,729 bytes, sha256:12f5e132f80b83d30adc83dc235f05dbbdbbd24ce04b09d21cce6e31dddbd488) and its own anchor text confirms this exact file as 'Заява щодо державної реєстрації фізичної особи - підприємця (форма 1), діє з 01 травня 2023 року' alongside 10 sibling forms (Form 2 legal entity, Form 3 government-body legal entity, Forms 4/6/7/8 public formations, Form 5 separate subdivision, Form 9/10 participant-share changes, Form 11 foreign-entity subdivision) — none of which is a simpler entry-level Business Formation candidate than Form 1 itself. Extraction method: the xlsx zip container was parsed with a small from-scratch Node script (no unzip/pip/openpyxl available in this sandbox) that walks each local-file-header-delimited entry and inflates its DEFLATE-compressed payload with zlib.inflateRawSync — the same raw-DEFLATE technique this registry has already used for PDF streams, generalized to a zip container. xl/workbook.xml confirmed the workbook's four sheets are named 'сторінка 1' / 'сторінка 2' / 'дод. сторінка 3' / 'дод. сторінка 4' (page 1 / page 2 / additional page 3 / additional page 4), matching the source form's own four-page structure. xl/sharedStrings.xml and each xl/worksheets/sheetN.xml were inflated and every populated cell decoded (resolving shared-string indices, handling both self-closing and content-bearing <c> elements) and read in full, in Ukrainian, cell-by-cell in row order across all four sheets — no OCR or rendering step was needed since the source is native XML text, not a scanned image. Page 1 carries four mutually-exclusive registration-action checkboxes (державна реєстрація фізичної особи підприємцем / включення відомостей / державна реєстрація змін / державна реєстрація припинення); this schema scopes to the first (registrationAction: new_registration, modelled as a disclosed judgment-call enum listing all four for completeness, matching this registry's kz/moj/state-registration-limited-liability-partnership precedent for a shared multi-action form). The change-specific checkboxes (surname/citizenship/passport/location/activity/contact/family-farm-document/authorized-person changes), the registration-timeframe radio (24/6/2 hours, changes-only), and the pre-1-July-2004 legacy registration block are all disclosed, not modelled, since they apply only to the changes/termination actions this schema does not scope to. Page 3 ('Відомості про особу, яка може вчиняти дії від імені фізичної особи - підприємця (за наявності)') describes a repeating, unbounded set of persons authorized to act on the entrepreneur's behalf, explicitly optional ('за наявності') and explicitly disclosed by the source's own instruction as extending onto additional sheets when more persons exist than fields on one page; this schema does not model it. Two 'or'-phrased source fields are modelled as independently optional rather than as an enforced choice, since GovSchema's requiredWhen/crossFieldValidation grammar has no unconditional 'at least one of' construct (only condition-gated requiredness): (1) 'Реєстраційний номер облікової картки платника податків або паспортні дані' (taxpayer registration number or passport data) — both taxpayerRegistrationNumber and passportSeriesNumber are optional; the source's own printed note further restricts passport-data use to persons whose passport itself carries a religious-objection mark permitting payments by passport series/number, per Ukrainian tax law; (2) the page-2 contact block's 'номер телефону та/або' label, printed immediately before the email-address field two rows later — both contactPhoneNumber and emailAddress are modelled as optional. Ukraine's RNOKPP (Реєстраційний номер облікової картки платника податків) is modelled as a 10-digit pattern per this well-documented national identifier convention (Law of Ukraine 'On the State Register of Individual Taxpayers'), not from a printed digit-count marker on the form's own blank cells. Ukraine's postal-index (індекс) format is modelled as 5 digits per the well-documented national postal-code convention (Ukrposhta), likewise not from an explicit digit-count marker in the extracted cell content. The +380 country-code phone prefix (contactPhoneNumber, additionalPhoneOrFax, submitterPhoneNumber) is modelled directly from the form's own printed prefix boxes ('+', '3', '8', '0' as the first four cells of each phone field's character-position grid), confirmed in the raw cell dump, not from external convention alone. Page 2's seven numbered economic-activity-code rows (1-7, confirmed via each row's own printed index in column C/B) and page 4's separate seven-row 'Обрані види економічної діяльності' (selected economic-activity types, for the tax-system election) are modelled as two independent bounded seven-slot groups (primaryActivityCode/activityCode2-7 and taxPrimaryActivityCode/taxActivityCode2-7), matching this registry's established bounded-repeating-group convention (e.g. entrantN/childN) rather than an unbounded array, since v0.3 fields remain flat. The page-4 simplified-tax-system election's own attestation sentence ('Підписанням цієї заяви... не здійснювати види діяльності, передбачені підпунктом 291.5.1 пункту 291.5 статті 291 Податкового кодексу України') is modelled as a documents[] attestation entry, requiredWhen electsSimplifiedTaxSystem is true, quoting the source text verbatim. No submission was made and no live government e-service account was created or required to author this schema."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-17"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "registrationAction",
+      "label": "Відомості про реєстраційну дію",
+      "type": "enum",
+      "required": true,
+      "description": "Which of the form's four registration actions this application performs. This schema scopes to new_registration (initial state registration of a natural person as an individual entrepreneur); the other three values are disclosed for completeness of the enum, not separately modelled below (see this document's own VERIFICATION.md).",
+      "sourceRef": "Сторінка 1 — \"Державна реєстрація фізичної особи підприємцем\" / \"Включення відомостей про фізичну особу - підприємця\" / \"Державна реєстрація змін до відомостей про фізичну особу - підприємця\" / \"Державна реєстрація припинення підприємницької діяльності фізичної особи - підприємця\"",
+      "validation": { "enum": ["new_registration", "inclusion", "changes", "termination"] }
+    },
+    {
+      "name": "surname",
+      "label": "Прізвище",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's surname.",
+      "sourceRef": "Сторінка 1 — \"Прізвище\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "givenName",
+      "label": "Власне ім'я",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's given name.",
+      "sourceRef": "Сторінка 1 — \"Власне ім’я\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "patronymic",
+      "label": "По батькові (за наявності)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's patronymic, if they have one.",
+      "sourceRef": "Сторінка 1 — \"По батькові (за наявності)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Дата народження",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's date of birth.",
+      "sourceRef": "Сторінка 1 — \"Дата народження\"",
+      "validation": {}
+    },
+    {
+      "name": "taxpayerRegistrationNumber",
+      "label": "Реєстраційний номер облікової картки платника податків",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's 10-digit Registration Number of the Taxpayer's Registration Card (РНОКПП), Ukraine's individual taxpayer identifier. The source form prints this alongside passportSeriesNumber as an 'or' pair; both are modelled as optional since GovSchema has no unconditional 'at least one of' construct — see this document's own VERIFICATION.md.",
+      "sourceRef": "Сторінка 1 — \"Реєстраційний номер облікової картки платника податків або\"",
+      "validation": { "pattern": "^[0-9]{10}$" }
+    },
+    {
+      "name": "passportSeriesNumber",
+      "label": "Паспортні дані (серія/номер або номер)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's passport series and number (older-format passports) or number only (ID-card-format passports). Per the source form's own printed note, passport data is used in lieu of a taxpayer registration number only by persons whose passport itself carries a mark permitting payments by passport series/number (a religious-objection exemption under Ukrainian tax law).",
+      "sourceRef": "Сторінка 1 — \"паспортні дані (серія/номер або номер)\"",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "uniqueRegisterRecordNumber",
+      "label": "Унікальний номер запису в ЄДДР (за наявності)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's unique record number in the Unified State Demographic Register (ЄДДР), if they have one.",
+      "sourceRef": "Сторінка 1 — \"Унікальний номер запису в ЄДДР (за наявності)\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "citizenshipCountry",
+      "label": "Країна громадянства",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's country of citizenship.",
+      "sourceRef": "Сторінка 1 — \"Країна громадянства\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "postalIndex",
+      "label": "індекс",
+      "type": "string",
+      "required": true,
+      "description": "The 5-digit Ukrposhta postal index of the entrepreneur's registered location.",
+      "sourceRef": "Сторінка 2 — \"Місцезнаходження: індекс\"",
+      "validation": { "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "regionType",
+      "label": "Автономна Республіка Крим / область / м. Київ / м. Севастополь",
+      "type": "enum",
+      "required": true,
+      "description": "The top-level administrative-region type of the registered location.",
+      "sourceRef": "Сторінка 2 — \"Автономна Республіка Крим\" / \"область\" / \"м. Київ\" / \"м. Севастополь\"",
+      "validation": { "enum": ["autonomous_republic_of_crimea", "oblast", "kyiv_city", "sevastopol_city"] }
+    },
+    {
+      "name": "oblastName",
+      "label": "назва області",
+      "type": "string",
+      "required": false,
+      "description": "The name of the oblast. Per the source form's own note, given only when regionType is oblast.",
+      "sourceRef": "Сторінка 2 — \"назва області\"",
+      "validation": { "maxLength": 100 },
+      "requiredWhen": { "field": "regionType", "equals": "oblast" }
+    },
+    {
+      "name": "districtName",
+      "label": "назва району",
+      "type": "string",
+      "required": false,
+      "description": "The name of the district (район), when applicable. Per the source form's own note, only the address particulars that actually exist for the given location are specified.",
+      "sourceRef": "Сторінка 2 — \"назва району\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "settlementName",
+      "label": "назва населеного пункту",
+      "type": "string",
+      "required": false,
+      "description": "The name of the settlement (населений пункт), when applicable.",
+      "sourceRef": "Сторінка 2 — \"назва населеного пункту\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "districtInSettlement",
+      "label": "назва району в населеному пункті",
+      "type": "string",
+      "required": false,
+      "description": "The name of the district within the settlement, when applicable.",
+      "sourceRef": "Сторінка 2 — \"назва району в населеному пункті\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "namedObjectName",
+      "label": "назва іменованого об'єкта",
+      "type": "string",
+      "required": false,
+      "description": "The name of the named object (e.g. a named residential complex), when applicable.",
+      "sourceRef": "Сторінка 2 — \"назва іменованого об'єкта\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "streetTypeAndName",
+      "label": "тип та назва площі, вулиці, провулку тощо",
+      "type": "string",
+      "required": false,
+      "description": "The type and name of the square, street, lane, etc.",
+      "sourceRef": "Сторінка 2 — \"тип та назва площі, вулиці, провулку тощо\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "houseNumber",
+      "label": "номер будинку",
+      "type": "string",
+      "required": true,
+      "description": "The house/building number of the registered location.",
+      "sourceRef": "Сторінка 2 — \"номер будинку\"",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "buildingNumber",
+      "label": "номер корпусу",
+      "type": "string",
+      "required": false,
+      "description": "The building/corpus number, when the address includes one.",
+      "sourceRef": "Сторінка 2 — \"номер корпусу\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "premisesType",
+      "label": "тип приміщення",
+      "type": "string",
+      "required": false,
+      "description": "The type of premises (e.g. apartment, office), when applicable.",
+      "sourceRef": "Сторінка 2 — \"тип приміщення\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "premisesNumber",
+      "label": "номер приміщення",
+      "type": "string",
+      "required": false,
+      "description": "The premises number, when applicable.",
+      "sourceRef": "Сторінка 2 — \"номер приміщення\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "primaryActivityCode",
+      "label": "Обрані види економічної діяльності (1)",
+      "type": "string",
+      "required": true,
+      "description": "The entrepreneur's primary economic-activity code (КВЕД), per the source form's own instruction that the principal activity is listed first.",
+      "sourceRef": "Сторінка 2 — \"Види економічної діяльності, у тому числі основний, який вказується першим:\" (row 1)",
+      "validation": { "minLength": 1, "maxLength": 10 }
+    },
+    {
+      "name": "activityCode2",
+      "label": "Обрані види економічної діяльності (2)",
+      "type": "string",
+      "required": false,
+      "description": "A second declared economic-activity code, when applicable.",
+      "sourceRef": "Сторінка 2 — economic-activity code list (row 2)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "activityCode3",
+      "label": "Обрані види економічної діяльності (3)",
+      "type": "string",
+      "required": false,
+      "description": "A third declared economic-activity code, when applicable.",
+      "sourceRef": "Сторінка 2 — economic-activity code list (row 3)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "activityCode4",
+      "label": "Обрані види економічної діяльності (4)",
+      "type": "string",
+      "required": false,
+      "description": "A fourth declared economic-activity code, when applicable.",
+      "sourceRef": "Сторінка 2 — economic-activity code list (row 4)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "activityCode5",
+      "label": "Обрані види економічної діяльності (5)",
+      "type": "string",
+      "required": false,
+      "description": "A fifth declared economic-activity code, when applicable.",
+      "sourceRef": "Сторінка 2 — economic-activity code list (row 5)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "activityCode6",
+      "label": "Обрані види економічної діяльності (6)",
+      "type": "string",
+      "required": false,
+      "description": "A sixth declared economic-activity code, when applicable.",
+      "sourceRef": "Сторінка 2 — economic-activity code list (row 6)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "activityCode7",
+      "label": "Обрані види економічної діяльності (7)",
+      "type": "string",
+      "required": false,
+      "description": "A seventh declared economic-activity code, when applicable. The source form's own bounded list has exactly seven rows on this page.",
+      "sourceRef": "Сторінка 2 — economic-activity code list (row 7)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "familyFarmEstablished",
+      "label": "Фізичною особою - підприємцем створено сімейне фермерське господарство",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the individual entrepreneur has established a family farm household (сімейне фермерське господарство) alongside this registration.",
+      "sourceRef": "Сторінка 2 — \"Фізичною особою - підприємцем створено сімейне фермерське господарство\"",
+      "validation": {}
+    },
+    {
+      "name": "familyFarmDocumentType",
+      "label": "Вид документа про створення сімейного фермерського господарства",
+      "type": "string",
+      "required": false,
+      "description": "The type of document establishing the family farm household. Required when familyFarmEstablished is true.",
+      "sourceRef": "Сторінка 2 — \"Вид документа про створення сімейного фермерського господарства (у разі створення сімейного фермерського господарства)\"",
+      "validation": { "maxLength": 200 },
+      "requiredWhen": { "field": "familyFarmEstablished", "equals": true }
+    },
+    {
+      "name": "contactPhoneNumber",
+      "label": "номер телефону",
+      "type": "string",
+      "required": false,
+      "description": "A contact telephone number for the individual entrepreneur, in Ukraine's +380 national format (confirmed from the form's own printed '+380' prefix boxes). The source form's label reads 'phone number and/or' immediately before the email-address field two rows later; both are modelled as independently optional — see this document's own VERIFICATION.md.",
+      "sourceRef": "Сторінка 2 — \"номер телефону та/або\"",
+      "validation": { "pattern": "^\\+380[0-9]{9}$" }
+    },
+    {
+      "name": "additionalPhoneOrFax",
+      "label": "додатково номер телефону/факсу (за бажанням)",
+      "type": "string",
+      "required": false,
+      "description": "An additional contact phone or fax number, if desired.",
+      "sourceRef": "Сторінка 2 — \"додатково номер телефону/факсу (за бажанням)\"",
+      "validation": { "pattern": "^\\+380[0-9]{9}$" }
+    },
+    {
+      "name": "emailAddress",
+      "label": "адреса електронної пошти",
+      "type": "string",
+      "required": false,
+      "description": "The individual entrepreneur's contact email address.",
+      "sourceRef": "Сторінка 2 — \"адреса електронної пошти\"",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "maxLength": 200 }
+    },
+    {
+      "name": "websiteAddress",
+      "label": "адреса сторінки в мережі Інтернет (за бажанням)",
+      "type": "string",
+      "required": false,
+      "description": "The individual entrepreneur's website address, if desired.",
+      "sourceRef": "Сторінка 2 — \"адреса сторінки в мережі Інтернет (за бажанням)\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "submitterSurname",
+      "label": "Прізвище (заявник)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Surname of the person submitting/signing this application (the applicant/filer, who may be the entrepreneur themselves or an authorized representative).",
+      "sourceRef": "Сторінка 2 — \"Відомості про заявника ...\" — \"Прізвище\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "submitterGivenName",
+      "label": "Власне ім'я (заявник)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Given name of the person submitting/signing this application.",
+      "sourceRef": "Сторінка 2 — \"Відомості про заявника ...\" — \"Власне ім’я\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "submitterPatronymic",
+      "label": "По батькові (за наявності) (заявник)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Patronymic of the submitting applicant, if they have one.",
+      "sourceRef": "Сторінка 2 — \"Відомості про заявника ...\" — \"По батькові (за наявності)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "submitterPassportSeriesNumber",
+      "label": "Паспортні дані (серія/номер або номер) (заявник)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Passport series and number (or number only) of the submitting applicant.",
+      "sourceRef": "Сторінка 2 — \"Паспортні дані (серія/номер або номер)\"",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "submitterPassportIssueDate",
+      "label": "дата видачі",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Date of issue of the submitting applicant's passport.",
+      "sourceRef": "Сторінка 2 — \"дата видачі\"",
+      "validation": {}
+    },
+    {
+      "name": "submitterPassportIssuedBy",
+      "label": "ким видано",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The authority that issued the submitting applicant's passport.",
+      "sourceRef": "Сторінка 2 — \"ким видано\"",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "submitterUniqueRegisterRecordNumber",
+      "label": "Унікальний номер запису в ЄДДР (за наявності) (заявник)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The submitting applicant's unique record number in the Unified State Demographic Register (ЄДДР), if they have one.",
+      "sourceRef": "Сторінка 2 — \"Унікальний номер запису в ЄДДР (за наявності)\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "submitterPhoneNumber",
+      "label": "Номер телефону (за бажанням) (заявник)",
+      "type": "string",
+      "required": false,
+      "description": "The submitting applicant's contact phone number, in Ukraine's +380 national format, if desired.",
+      "sourceRef": "Сторінка 2 — \"Номер телефону (за бажанням)\"",
+      "validation": { "pattern": "^\\+380[0-9]{9}$" }
+    },
+    {
+      "name": "paperExtractDeliveryMethod",
+      "label": "Прошу надати виписку у паперовій формі (за бажанням)",
+      "type": "enum",
+      "required": false,
+      "description": "How the applicant wishes to receive the paper-form register extract, if requested at all.",
+      "sourceRef": "Сторінка 2 — \"Прошу надати виписку у паперовій формі (за бажанням): особисто заявнику / поштовим відправленням на адресу місцезнаходження\"",
+      "validation": { "enum": ["in_person", "by_mail"] }
+    },
+    {
+      "name": "vatRegistrationElected",
+      "label": "Зареєструвати платником податку на додану вартість з",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant elects to register as a VAT payer alongside this registration. The whole tax-system-election section of the form is optional ('за бажанням').",
+      "sourceRef": "Сторінка 4 — \"Зареєструвати платником податку на додану вартість з\"",
+      "validation": {}
+    },
+    {
+      "name": "vatRegistrationDate",
+      "label": "дата реєстрації платником ПДВ",
+      "type": "date",
+      "required": false,
+      "description": "The date from which VAT-payer registration is elected. Required when vatRegistrationElected is true.",
+      "sourceRef": "Сторінка 4 — \"Зареєструвати платником податку на додану вартість з\" (date)",
+      "validation": {},
+      "requiredWhen": { "field": "vatRegistrationElected", "equals": true }
+    },
+    {
+      "name": "electsSimplifiedTaxSystem",
+      "label": "Обираю спрощену систему оподаткування, обліку та звітності з",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant elects the simplified taxation, accounting and reporting system (single tax) alongside this registration.",
+      "sourceRef": "Сторінка 4 — \"Обираю спрощену систему оподаткування, обліку та звітності з\"",
+      "validation": {}
+    },
+    {
+      "name": "simplifiedTaxSystemEffectiveDateType",
+      "label": "з дати / з дати державної реєстрації підприємцем",
+      "type": "enum",
+      "required": false,
+      "description": "Whether the simplified tax system takes effect from a specific date the applicant enters, or from the date of state registration as entrepreneur. Required when electsSimplifiedTaxSystem is true.",
+      "sourceRef": "Сторінка 4 — \"...з [дата] або з дати державної реєстрації підприємцем\"",
+      "validation": { "enum": ["specific_date", "registration_date"] },
+      "requiredWhen": { "field": "electsSimplifiedTaxSystem", "equals": true }
+    },
+    {
+      "name": "simplifiedTaxSystemEffectiveDate",
+      "label": "дата (спрощена система оподаткування)",
+      "type": "date",
+      "required": false,
+      "description": "The specific effective date for the simplified tax system election. Required when simplifiedTaxSystemEffectiveDateType is specific_date.",
+      "sourceRef": "Сторінка 4 — \"Обираю спрощену систему оподаткування, обліку та звітності з\" (date)",
+      "validation": {},
+      "requiredWhen": { "field": "simplifiedTaxSystemEffectiveDateType", "equals": "specific_date" }
+    },
+    {
+      "name": "singleTaxPayerGroup",
+      "label": "Група платника єдиного податку",
+      "type": "enum",
+      "required": false,
+      "description": "The single-tax payer group elected. Required when electsSimplifiedTaxSystem is true.",
+      "sourceRef": "Сторінка 4 — \"Група платника єдиного податку: перша група / друга група / третя група / четверта група\"",
+      "validation": { "enum": ["group_1", "group_2", "group_3", "group_4"] },
+      "requiredWhen": { "field": "electsSimplifiedTaxSystem", "equals": true }
+    },
+    {
+      "name": "singleTaxRatePercent",
+      "label": "Обрана ставка єдиного податку",
+      "type": "number",
+      "required": false,
+      "description": "The selected single-tax rate, as a percentage. Required when electsSimplifiedTaxSystem is true; the source form does not further condition this field on the chosen group, though in practice its applicability differs by group (see this document's own VERIFICATION.md).",
+      "sourceRef": "Сторінка 4 — \"Обрана ставка єдиного податку ___ відсотків\"",
+      "validation": { "minimum": 0, "maximum": 100 },
+      "requiredWhen": { "field": "electsSimplifiedTaxSystem", "equals": true }
+    },
+    {
+      "name": "businessActivityLocationType",
+      "label": "Місце провадження господарської діяльності",
+      "type": "enum",
+      "required": false,
+      "description": "Where the entrepreneur's business activity is conducted for tax purposes: at the registered location, anywhere within the territory of Ukraine, or at another specified address. Required when electsSimplifiedTaxSystem is true.",
+      "sourceRef": "Сторінка 4 — \"Місце провадження господарської діяльності: місцезнаходження / територія України / інша адреса\"",
+      "validation": { "enum": ["same_as_registered_location", "ukraine_territory", "other_address"] },
+      "requiredWhen": { "field": "electsSimplifiedTaxSystem", "equals": true }
+    },
+    {
+      "name": "taxAddressPostalIndex",
+      "label": "індекс (місце провадження господарської діяльності)",
+      "type": "string",
+      "required": false,
+      "description": "The 5-digit postal index of the other business-activity address. Required when businessActivityLocationType is other_address.",
+      "sourceRef": "Сторінка 4 — \"індекс\"",
+      "validation": { "pattern": "^[0-9]{5}$" },
+      "requiredWhen": { "field": "businessActivityLocationType", "equals": "other_address" }
+    },
+    {
+      "name": "taxAddressRegionType",
+      "label": "Автономна Республіка Крим / область / м. Київ / м. Севастополь (місце провадження господарської діяльності)",
+      "type": "enum",
+      "required": false,
+      "description": "The top-level administrative-region type of the other business-activity address. Required when businessActivityLocationType is other_address.",
+      "sourceRef": "Сторінка 4 — \"Автономна Республіка Крим\" / \"область\" / \"м. Київ\" / \"м. Севастополь\"",
+      "validation": { "enum": ["autonomous_republic_of_crimea", "oblast", "kyiv_city", "sevastopol_city"] },
+      "requiredWhen": { "field": "businessActivityLocationType", "equals": "other_address" }
+    },
+    {
+      "name": "taxAddressOblastName",
+      "label": "назва області (місце провадження господарської діяльності)",
+      "type": "string",
+      "required": false,
+      "description": "The name of the oblast. Given only when taxAddressRegionType is oblast.",
+      "sourceRef": "Сторінка 4 — \"назва області\"",
+      "validation": { "maxLength": 100 },
+      "requiredWhen": { "field": "taxAddressRegionType", "equals": "oblast" }
+    },
+    {
+      "name": "taxAddressDistrictName",
+      "label": "назва району (місце провадження господарської діяльності)",
+      "type": "string",
+      "required": false,
+      "description": "The name of the district, when applicable.",
+      "sourceRef": "Сторінка 4 — \"назва району\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "taxAddressSettlementName",
+      "label": "назва населеного пункту (місце провадження господарської діяльності)",
+      "type": "string",
+      "required": false,
+      "description": "The name of the settlement, when applicable.",
+      "sourceRef": "Сторінка 4 — \"назва населеного пункту\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "taxAddressDistrictInSettlement",
+      "label": "назва району в населеному пункті (місце провадження господарської діяльності)",
+      "type": "string",
+      "required": false,
+      "description": "The name of the district within the settlement, when applicable.",
+      "sourceRef": "Сторінка 4 — \"назва району в населеному пункті\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "taxAddressNamedObjectName",
+      "label": "назва іменованого об'єкта (місце провадження господарської діяльності)",
+      "type": "string",
+      "required": false,
+      "description": "The name of the named object, when applicable.",
+      "sourceRef": "Сторінка 4 — \"назва іменованого об'єкта\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "taxAddressStreetTypeAndName",
+      "label": "тип та назва площі, вулиці, провулку тощо (місце провадження господарської діяльності)",
+      "type": "string",
+      "required": false,
+      "description": "The type and name of the square, street, lane, etc.",
+      "sourceRef": "Сторінка 4 — \"тип та назва площі, вулиці, провулку тощо\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "taxAddressHouseNumber",
+      "label": "номер будинку (місце провадження господарської діяльності)",
+      "type": "string",
+      "required": false,
+      "description": "The house/building number of the other business-activity address. Required when businessActivityLocationType is other_address.",
+      "sourceRef": "Сторінка 4 — \"номер будинку\"",
+      "validation": { "maxLength": 20 },
+      "requiredWhen": { "field": "businessActivityLocationType", "equals": "other_address" }
+    },
+    {
+      "name": "taxAddressBuildingNumber",
+      "label": "номер корпусу (місце провадження господарської діяльності)",
+      "type": "string",
+      "required": false,
+      "description": "The building/corpus number, when the address includes one.",
+      "sourceRef": "Сторінка 4 — \"номер корпусу\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "taxAddressPremisesType",
+      "label": "тип приміщення (місце провадження господарської діяльності)",
+      "type": "string",
+      "required": false,
+      "description": "The type of premises, when applicable.",
+      "sourceRef": "Сторінка 4 — \"тип приміщення\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "taxAddressPremisesNumber",
+      "label": "номер приміщення (місце провадження господарської діяльності)",
+      "type": "string",
+      "required": false,
+      "description": "The premises number, when applicable.",
+      "sourceRef": "Сторінка 4 — \"номер приміщення\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "taxPrimaryActivityCode",
+      "label": "Обрані види економічної діяльності (1) (система оподаткування)",
+      "type": "string",
+      "required": false,
+      "description": "The primary economic-activity code declared for the tax-system election, from the form's own separate page-4 activity list. Required when electsSimplifiedTaxSystem is true.",
+      "sourceRef": "Сторінка 4 — \"Обрані види економічної діяльності:\" (row 1)",
+      "validation": { "maxLength": 10 },
+      "requiredWhen": { "field": "electsSimplifiedTaxSystem", "equals": true }
+    },
+    {
+      "name": "taxActivityCode2",
+      "label": "Обрані види економічної діяльності (2) (система оподаткування)",
+      "type": "string",
+      "required": false,
+      "description": "A second economic-activity code declared for the tax-system election, when applicable.",
+      "sourceRef": "Сторінка 4 — economic-activity code list (row 2)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "taxActivityCode3",
+      "label": "Обрані види економічної діяльності (3) (система оподаткування)",
+      "type": "string",
+      "required": false,
+      "description": "A third economic-activity code declared for the tax-system election, when applicable.",
+      "sourceRef": "Сторінка 4 — economic-activity code list (row 3)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "taxActivityCode4",
+      "label": "Обрані види економічної діяльності (4) (система оподаткування)",
+      "type": "string",
+      "required": false,
+      "description": "A fourth economic-activity code declared for the tax-system election, when applicable.",
+      "sourceRef": "Сторінка 4 — economic-activity code list (row 4)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "taxActivityCode5",
+      "label": "Обрані види економічної діяльності (5) (система оподаткування)",
+      "type": "string",
+      "required": false,
+      "description": "A fifth economic-activity code declared for the tax-system election, when applicable.",
+      "sourceRef": "Сторінка 4 — economic-activity code list (row 5)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "taxActivityCode6",
+      "label": "Обрані види економічної діяльності (6) (система оподаткування)",
+      "type": "string",
+      "required": false,
+      "description": "A sixth economic-activity code declared for the tax-system election, when applicable.",
+      "sourceRef": "Сторінка 4 — economic-activity code list (row 6)",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "taxActivityCode7",
+      "label": "Обрані види економічної діяльності (7) (система оподаткування)",
+      "type": "string",
+      "required": false,
+      "description": "A seventh economic-activity code declared for the tax-system election, when applicable. The source form's own bounded list has exactly seven rows on this page.",
+      "sourceRef": "Сторінка 4 — economic-activity code list (row 7)",
+      "validation": { "maxLength": 10 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantIdentityDocument",
+      "label": "Applicant's identity document (taxpayer registration number or passport data)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Сторінка 1 — \"Реєстраційний номер облікової картки платника податків або ... паспортні дані\""
+    },
+    {
+      "id": "submitterIdentityDocument",
+      "label": "Submitting applicant's passport",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "responsible-party",
+      "sourceRef": "Сторінка 2 — \"Паспортні дані (серія/номер або номер)\", \"дата видачі\", \"ким видано\""
+    },
+    {
+      "id": "simplifiedTaxSystemAttestation",
+      "label": "Simplified-tax-system activity-restriction attestation",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "electsSimplifiedTaxSystem", "equals": true },
+      "belongsTo": "applicant",
+      "statement": "Підписанням цієї заяви, у тому числі уповноваженою особою, фізична особа - підприємець зобов'язується перебуваючи на спрощеній системі оподаткування, обліку та звітності не здійснювати види діяльності, передбачені підпунктом 291.5.1 пункту 291.5 статті 291 Податкового кодексу України.",
+      "sourceRef": "Сторінка 4 — attestation statement accompanying the simplified-tax-system election"
+    }
+  ]
+}
