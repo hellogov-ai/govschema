@@ -4,7 +4,22 @@
 
 ## Executive Summary
 
-**72 jurisdictions** | **527 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**72 jurisdictions** | **528 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3477, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical opens (2 of 6 for Kazakhstan)**, via
+> `kz/kgd/individual-income-tax-declaration` — the Ministry of Finance's
+> Individual Income Tax Declaration (Form 220.00), resolving the GOV-3459
+> cycle's own disclosed backup candidate rather than scouting a fresh
+> jurisdiction. Sourced unauthenticated from the same `adilet.zan.kz`
+> Ministry of Justice legal-information system that supplied Kazakhstan's
+> Business Formation schema. Models the main declaration in full (27 fields)
+> while disclosing all ten of its schedules (Forms 220.01-220.10, 24 further
+> pages) at gating-checkbox level only, the same combined-form scoping
+> convention already established for Lithuania's GPM311 and Romania's
+> Formulary 212. See the Taxes vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record. Both validators pass at
+> 528/528; 10 conformance fixtures (2 valid + 8 mutation-control) committed.
 
 > **Update (2026-07-17, GOV-3459, "GovSchema Standard Research"): Kazakhstan
 > opens as the registry's 72nd jurisdiction**, via
@@ -13976,7 +13991,45 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (61/72 jurisdictions — 85%)
+### Taxes — Income Tax Return, Tax Filing (62/72 jurisdictions — 86%)
+
+> **Update (2026-07-17, GOV-3477, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical opens (2 of 6 for Kazakhstan)**, via
+> `kz/kgd/individual-income-tax-declaration` — the Ministry of Finance's
+> "Декларация по индивидуальному подоходному налогу" (Form 220.00), approved
+> as Appendix 9 to Order of the Minister of Finance No. 695 (12 November
+> 2025) and, like the GOV-3459 cycle's own Business Formation schema, sourced
+> unauthenticated from the Ministry of Justice's own legal-information
+> system, `adilet.zan.kz` (re-confirmed live this cycle, same TLS-chain
+> quirk as before — a server misconfiguration, not a real access gate).
+> Resolves the GOV-3459 cycle's own disclosed backup candidate rather than
+> scouting a fresh jurisdiction, per this registry's standing procedure of
+> preferring a genuinely open existing-jurisdiction backlog item over a new
+> one. The order embeds the actual form templates as scanned page images
+> rather than AcroForm widgets or HTML text; Form 220.00 itself is a single
+> page, independently read in full (23 numbered items across taxpayer
+> identification, declaration type, special taxpayer categories, an AIFC-
+> participant flag, currency code, a submitted-appendices checklist,
+> residency particulars, the total calculated tax amount, and the taxpayer
+> attestation block). Models 27 fields, including one boolean gate per
+> schedule (`appendix22001Attached` through `appendix22010Attached`). The
+> declaration's ten schedules (Forms 220.01-220.10, 24 further pages in the
+> reference specimen — 220.01 alone, worldwide income/deductions/tax
+> computation, is 5 pages, and 220.06, controlled-foreign-company taxation,
+> is 6) are modelled only at their own gating-checkbox level, their internal
+> line items left as disclosed backlog for future companion schemas — the
+> same combined-form scoping convention this registry already established
+> for Lithuania's GPM311, Romania's Formulary 212, and Greece's Ε1/Ε2/Ε3
+> return. Two fields (`currencyCode`, `residenceCountryCode`) cite external
+> Customs Union Commission classifiers by appendix number rather than
+> embedding or inventing a closed enum. 10 conformance fixtures (2 valid + 8
+> mutation-control) committed, all reproduced via a from-scratch mock
+> validator; both validators pass at 528/528. See the document's own
+> VERIFICATION.md for the full sourcing record. Numerator moves from 61/72
+> to 62/72; Kazakhstan's Taxes column flips ✗→✓ in the By Jurisdiction table
+> below, bringing Kazakhstan to 2 of 6 verticals (DMV, Passport, Visa, and
+> National ID remain re-confirmed weak/gated per the GOV-3459 cycle, not
+> re-screened this cycle).
 
 > **Update (2026-07-17, GOV-3447, "GovSchema Standard Research"): Egypt
 > opens as the registry's 70th jurisdiction via Taxes**, through
@@ -16638,7 +16691,7 @@ now closed.
 | **KE** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KH** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **KZ** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **KZ** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LK** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **MA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -19229,6 +19282,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   unauthenticated source surfaces, but Taxes specifically has a disclosed,
   ready-to-scope backup candidate (Individual Income Tax Declaration Form
   220.00, published via the same `adilet.zan.kz` route) for a future cycle.
+  **Resolved (GOV-3477, 2026-07-17): Taxes authored** via
+  `kz/kgd/individual-income-tax-declaration` — see the Executive Summary and
+  Taxes vertical section above; Kazakhstan's ten Form 220.00 schedules
+  (220.01-220.10) remain disclosed, open backlog for future companion
+  schemas, and DMV, Passport, Visa, and National ID remain re-confirmed
+  weak/gated per this cycle's own note above (not re-screened in the
+  GOV-3477 cycle).
   The multi-founder/non-resident-founder/corporate-founder paths and the
   branch/representative-office variants of this same Business Formation form
   are also disclosed, open backlog for a future minor-version cycle.
