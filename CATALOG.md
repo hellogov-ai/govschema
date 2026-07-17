@@ -4,7 +4,35 @@
 
 ## Executive Summary
 
-**72 jurisdictions** | **532 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **533 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, "GovSchema Standard Research"): Ukraine opens as the
+> registry's 73rd jurisdiction, in Business Formation**, via
+> `ua/moj/state-registration-individual-entrepreneur` — Form 1, "Заява щодо
+> державної реєстрації фізичної особи - підприємця" (Application for state
+> registration of a natural person as an individual entrepreneur, ФОП), a
+> unified state-registration form published directly by the Ministry of
+> Justice of Ukraine (Мін'юст) and in force since 1 May 2023. Direct fetches
+> to `minjust.gov.ua/files/...` 403'd from this sandbox; the exact cited
+> `.xlsx` and its own linked listing page were both re-fetched fresh via
+> Wayback Machine snapshots and hashed. The file is a zip container (no
+> `unzip`/`pip`/`openpyxl` available); a from-scratch Node script walked its
+> local-file-header-delimited entries and inflated each with
+> `zlib.inflateRawSync`, generalizing this registry's existing raw-DEFLATE
+> PDF-extraction technique to xlsx. The source is a single shared four-page
+> form covering four registration actions (new registration, inclusion,
+> changes, termination) plus an optional bundled simplified-tax-system/VAT
+> election; this schema scopes to the new-registration action — the
+> applicant's identity, registered address, up to seven declared
+> economic-activity codes, an optional family-farm-household declaration,
+> contact details, the filing applicant's own particulars, and the optional
+> page-4 tax-system election — and discloses the other three actions, the
+> page-3 multi-authorized-person block, and the pre-2004 legacy block as
+> out of scope. Ukraine's Visa, Passport, and Taxes verticals were all found
+> STRONG in the same scouting pass (each a directly downloadable
+> government-published form/PDF) and are open backlog for future cycles;
+> DMV and National ID were found weak. See the document's own VERIFICATION.md
+> for the full sourcing record.
 
 > **Update (2026-07-17, GOV-3506, "GovSchema Standard Research"): Kazakhstan's
 > Taxes vertical gains a second companion schedule**, via
@@ -12076,7 +12104,7 @@
 
 ## By Vertical
 
-### Passport (49/72 jurisdictions — 68%)
+### Passport (49/73 jurisdictions — 67%)
 
 > **Correction (GOV-3389):** numerator updated from 48 to 49 following
 > Mongolia's Passport vertical opening via
@@ -12576,7 +12604,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (56/72 jurisdictions — 78%)
+### DMV — Vehicle Registration, Licensing, Permits (56/73 jurisdictions — 77%)
 
 > **Update (2026-07-16, GOV-3403, "GovSchema Standard Research"): Mongolia's
 > DMV vertical opens**, via `mn/atunt/vehicle-plate-number-reservation` — the
@@ -13141,7 +13169,30 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (65/72 jurisdictions — 90%)
+### Business Formation — Incorporation, LLC, Company Registration (66/73 jurisdictions — 90%)
+
+> **Update (2026-07-17, "GovSchema Standard Research"): Ukraine opens as the
+> registry's 73rd jurisdiction via this vertical**, via
+> `ua/moj/state-registration-individual-entrepreneur` — Form 1, the Ministry
+> of Justice of Ukraine's unified application for state registration of a
+> natural person as an individual entrepreneur (ФОП), in force since 1 May
+> 2023. `minjust.gov.ua/files/...` 403'd on direct fetch from this sandbox;
+> both the cited `.xlsx` and its own linked listing page were re-fetched
+> fresh via Wayback Machine snapshots and hashed. Extracted with a
+> from-scratch Node script inflating the xlsx zip container's DEFLATE
+> entries directly (`zlib.inflateRawSync`), generalizing this registry's
+> raw-DEFLATE PDF-extraction technique to xlsx — no `unzip`/`pip`/`openpyxl`
+> available in this sandbox. The source is a single shared four-page form
+> covering four registration actions (new registration, inclusion, changes,
+> termination) plus an optional bundled simplified-tax-system/VAT election;
+> scopes to the new-registration action only. Models 70 fields plus 3
+> `documents[]` entries. Both validators pass at 533/533; 9 conformance
+> fixtures (2 valid + 7 mutation-control) committed, all reproduced via a
+> from-scratch mock validator. See the document's own VERIFICATION.md for
+> the full sourcing record, including Ukraine's other five verticals (Visa,
+> Passport, and Taxes all found STRONG and disclosed as open backlog; DMV
+> and National ID found weak). Denominator updated from 72 to 73 (Ukraine is
+> a brand-new jurisdiction); numerator updated from 65 to 66.
 
 > **Update (2026-07-17, GOV-3499, "GovSchema Standard Research"): Sri
 > Lanka's Business Formation vertical opens, closing Sri Lanka to 6 of 6**,
@@ -14142,7 +14193,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (62/72 jurisdictions — 86%)
+### Taxes — Income Tax Return, Tax Filing (62/73 jurisdictions — 85%)
 
 > **Update (2026-07-17, GOV-3506, "GovSchema Standard Research"): Kazakhstan's
 > Taxes vertical gains a third schema**, via
@@ -15465,7 +15516,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (60/72 jurisdictions — 83%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (60/73 jurisdictions — 82%)
 
 > **Update (2026-07-17, GOV-3454, "GovSchema Standard Research"): Morocco
 > opens as the registry's 71st jurisdiction via this vertical**, via
@@ -16201,7 +16252,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (50/72 jurisdictions — 69%)
+### National ID & Civic Documents (50/73 jurisdictions — 68%)
 
 > **Update (2026-07-17, GOV-3491, "GovSchema Standard Research"): Mexico
 > opens this vertical, closing Mexico to 6 of 6**, via
@@ -16934,6 +16985,7 @@ now closed.
 | **SK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **UA** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **UZ** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -19561,6 +19613,30 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **("GovSchema Standard Research") — Ukraine opens as the registry's 73rd
+  jurisdiction via Business Formation, authored via
+  `ua/moj/state-registration-individual-entrepreneur` (see the Executive
+  Summary and Business Formation vertical section above).** A prior
+  scouting pass had pre-confirmed the Ministry of Justice's Form 1 `.xlsx`
+  as reachable and a valid file, without extracting fields; this cycle
+  independently re-fetched (via Wayback Machine, since `minjust.gov.ua`
+  403'd direct sandbox fetches), hashed, and extracted every field.
+  Ukraine's remaining backlog: **Visa**
+  (`https://mfa.gov.ua/storage/app/sites/1/2018-02-02-visapp-en.pdf`),
+  **Passport**
+  (`https://libya.mfa.gov.ua/storage/app/sites/121/imported_content/5e30694f7a7d6.pdf`,
+  a consular mirror — a Wayback copy was truncated at 1MB and would need a
+  fresh full fetch), and **Taxes**
+  (`https://tax.gov.ua/data/normativ/000/001/65107/Podatkova_deklarats_ya_pro_maynoviy_stan_dohodi_vvoditsya_v_d_yu_z_01_s_chnya_2026_roku_.xls`)
+  were all found STRONG in scouting (directly downloadable government-
+  published forms) and are disclosed, ready-to-scope backlog for future
+  cycles; **DMV** and **National ID** were found weak. None of these five
+  were independently re-verified or authored this cycle. The
+  inclusion/changes/termination registration actions on this same Form 1,
+  the page-3 multi-authorized-person block, and the sibling Form 2
+  (legal-entity registration) are also disclosed, open backlog for a
+  future minor-version or companion-schema cycle.
 
 - **GOV-3459 ("GovSchema Standard Research") — Kazakhstan opens as the
   registry's 72nd jurisdiction via Business Formation, authored via
