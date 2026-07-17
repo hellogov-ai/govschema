@@ -4,7 +4,33 @@
 
 ## Executive Summary
 
-**72 jurisdictions** | **531 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**72 jurisdictions** | **532 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3506, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical gains a second companion schedule**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-02` — Form 220.02
+> (fixed-asset deductions), Appendix 2 to the Individual Income Tax
+> Declaration (Form 220.00, GOV-3477) and the computation behind the
+> Form 220.01 schedule's (GOV-3484) own `fixedAssetDeduction` line. This
+> cycle re-confirmed the 4 named National ID candidates from the standing
+> routine all remain resolved, then re-scanned CATALOG.md's own Known Gaps
+> section and By-Jurisdiction table fresh: every single-vertical-gap
+> jurisdiction (BR/CH/MK/PL/SK Visa, GR/MN National ID, RW Taxes) already has
+> its remaining vertical confirmed as a dead end, so this cycle deepened
+> Kazakhstan's own disclosed, pre-scouted Form 220.0X companion-schedule
+> backlog instead of scouting a new jurisdiction. Sourced from the same
+> `adilet.zan.kz` route as Forms 220.00 and 220.01 (Order of the Minister of
+> Finance No. 695, 12 November 2025), served unauthenticated aside from the
+> same documented TLS-chain quirk. Form 220.02 is embedded as two scanned
+> page images (`/files/1576/49/{176,177}.jpg`) — the exact boundary the
+> GOV-3484 cycle's own boundary check had already located and disclosed, and
+> its page count (2 pages) needed no correction this time, unlike Form
+> 220.01's. Models both pages in full: the opening/closing value-balance and
+> depreciation computation split across the Tax Code's four statutory
+> fixed-asset groups (lines 220.02.001-220.02.011) plus the one line
+> (220.02.012) the form itself prints ungrouped. See the document's own
+> VERIFICATION.md for the full sourcing record. Forms 220.03 through 220.10
+> remain open, disclosed backlog for future companion schemas.
 
 > **Update (2026-07-17, GOV-3499, "GovSchema Standard Research"): Sri
 > Lanka's Business Formation vertical opens, closing Sri Lanka to 6 of 6
@@ -14118,6 +14144,31 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (62/72 jurisdictions — 86%)
 
+> **Update (2026-07-17, GOV-3506, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical gains a third schema**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-02` — the second of
+> the ten companion schedules disclosed as backlog since the GOV-3477 cycle,
+> sourced from the same `adilet.zan.kz` order (re-confirmed live this cycle).
+> Form 220.02 ("Вычеты по фиксированным активам") covers fixed-asset
+> deductions across the Tax Code's four statutory asset groups: opening/
+> closing value balances, assets received/disposed, subsequent expenses that
+> increase the balance or are deducted directly, depreciation charges (including
+> the double-rate case), recognized loss on full-group disposal, the
+> sub-300-MCI de-minimis deduction, and the total deduction feeding the
+> Form 220.01 schedule's own `fixedAssetDeduction` line — plus one further
+> line (220.02.012, leased-asset subsequent expenses) the form itself prints
+> without the usual four-group split. Transcribed directly from the order's
+> own scanned page images (176-177 of 194, read at up to 3x zoom); a boundary
+> fetch of image 178 confirmed Form 220.02 is exactly the 2 pages the
+> GOV-3477 cycle's own disclosure had already estimated — no correction
+> needed this time. Models 58 fields. Numerator unchanged at 62/72
+> (Kazakhstan's Taxes column already flipped ✓ in the GOV-3477 cycle); this
+> is a third schema within an already-open vertical, not a new jurisdiction
+> opening. 9 conformance fixtures (2 valid + 7 mutation-control) committed,
+> all reproduced via a from-scratch mock validator; both validators pass at
+> 532/532. See the document's own VERIFICATION.md for the full sourcing
+> record.
+
 > **Update (2026-07-17, GOV-3484, "GovSchema Standard Research"): Kazakhstan's
 > Taxes vertical gains a second schema**, via
 > `kz/kgd/individual-income-tax-declaration-schedule-220-01` — the first of
@@ -16855,7 +16906,7 @@ now closed.
 | **KE** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KH** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **KZ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **KZ** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **MA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -19543,6 +19594,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   confirmed true figure (5 pages). The remaining nine schedules
   (220.02-220.10) remain disclosed, open backlog for future companion
   schemas.
+  **Resolved further (GOV-3506, 2026-07-17): Form 220.02 (fixed-asset
+  deductions) authored** via
+  `kz/kgd/individual-income-tax-declaration-schedule-220-02` — see the
+  Executive Summary and Taxes vertical section above; its disclosed page
+  count (2 pages, images 176-177) needed no correction. The remaining eight
+  schedules (220.03-220.10) remain disclosed, open backlog for future
+  companion schemas.
 
 - **GOV-3454 ("GovSchema Standard Research") — Morocco opens as the
   registry's 71st jurisdiction via Visa, authored via
