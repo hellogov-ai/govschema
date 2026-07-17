@@ -147,7 +147,10 @@ pass at 529/529 across the full registry with this schema added.
 
 - Forms 220.02 through 220.10 remain open backlog for future companion
   schemas — see the parent Form 220.00 schema's own VERIFICATION.md for each
-  remaining schedule's page count and subject matter.
+  remaining schedule's page count and subject matter. **Update (GOV-3506,
+  2026-07-17): Form 220.02 (fixed-asset deductions) is now resolved**, via
+  `kz/kgd/individual-income-tax-declaration-schedule-220-02` — Forms 220.03
+  through 220.10 remain open backlog.
 - Kazakhstan's remaining verticals — DMV, Passport, Visa, and National ID —
   remain re-confirmed weak/gated per the GOV-3459 cycle (Visa: reCAPTCHA;
   DMV/Passport/National ID: login+EDS-gated `egov.kz`); not re-screened this
