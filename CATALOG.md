@@ -4,7 +4,23 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **542 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **543 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3588, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its first companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-ap` (Annex АП, advance
+> payments for retail-fuel-trade individual entrepreneurs) — one of the ten
+> companion schedules `ua/dps/individual-income-tax-declaration` (GOV-3531)
+> disclosed but did not model. Kazakhstan's `adilet.zan.kz` Form 220.0X
+> image-endpoint outage was re-checked first and confirmed still down for a
+> third straight cycle, now with a changed failure signature (a genuine HTTP
+> 404 site-wide rather than a 200-status maintenance placeholder), so this
+> cycle deepened Ukraine's own disclosed backlog instead. Models both of the
+> Annex's twelve-month repeating tables (advance-payment calculation and
+> self-identified-error-correction) in full: 172 fields plus their own
+> annual-total rows. Both validators pass at 543/543; 12 conformance fixtures
+> committed. See the Taxes vertical section below and the document's own
+> VERIFICATION.md for the full record.
 
 > **Update (2026-07-17, GOV-3581, "GovSchema Standard Research"): Ukraine's
 > Business Formation vertical gains a second schema**, via
@@ -14510,6 +14526,35 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (63/73 jurisdictions — 86%)
 
+> **Update (2026-07-17, GOV-3588, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its first companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-ap` — Annex АП, the
+> advance-payment computation for individual entrepreneurs (other than those
+> on the simplified taxation system) engaged in retail fuel trade, one of the
+> ten companion schedules `ua/dps/individual-income-tax-declaration`
+> (GOV-3531) disclosed but did not model. This cycle first re-checked
+> Kazakhstan's `adilet.zan.kz` Form 220.0X image-serving endpoint (re-checked
+> and confirmed still down by both the GOV-3574 and GOV-3581 cycles) and
+> found it still down on a third independent check, now with a changed
+> failure signature — every image request returns a genuine HTTP 404 across
+> the full 170-194 range and even for an unrelated document's own image,
+> rather than the earlier cycles' 200-status maintenance placeholder — so
+> Forms 220.07-220.10 remain open backlog. Re-fetched the same source
+> workbook the parent declaration cites via the same Wayback Machine mirror
+> (three transient HTTP 500s, a fourth attempt HTTP 200 — the same flake
+> pattern the GOV-3581 cycle's own note already documented), confirmed
+> byte-identical to the parent declaration's own recorded sha256. Models the
+> Annex's own two twelve-month repeating tables in full — a
+> retail-outlet-count/advance-payment calculation (Розділ I) and a
+> self-identified-error-correction recomputation (Розділ ІІ, gated on
+> `declarationType == corrective`) — plus their own annual-total rows: 172
+> fields. Numerator unchanged at 63/73 (Ukraine's Taxes column already
+> flipped ✓ in the GOV-3531 cycle); this is a second schema within an
+> already-open vertical, not a new jurisdiction opening. 12 conformance
+> fixtures (2 valid + 10 mutation-control) committed, all reproduced via a
+> from-scratch mock validator; both validators pass at 543/543. See the
+> document's own VERIFICATION.md for the full sourcing record.
+
 > **Update (2026-07-17, GOV-3574, "GovSchema Standard Research"): Cambodia's
 > Taxes vertical gains a sixth schema**, via
 > `kh/gdt/patent-tax-return-additional-business-activities` — Form PR 008_1,
@@ -20126,6 +20171,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   page, founders beyond entry #1, its termination/succession particulars,
   its repeating other-authorized-person page, and both forms' unbounded/
   28-slot economic-activity-code tails remain disclosed, open backlog.
+  **Resolved further (GOV-3588, 2026-07-17): the first of
+  `ua/dps/individual-income-tax-declaration`'s ten disclosed companion
+  schedules authored** via
+  `ua/dps/individual-income-tax-declaration-annex-ap` (Annex АП,
+  advance-payment computation for retail-fuel-trade individual
+  entrepreneurs) — see the Executive Summary and Taxes vertical section
+  above. The remaining nine schedules (ЄСВ1-3, КІК, Ф1-Ф4, МПЗ) remain
+  disclosed, open backlog for future companion-schema cycles.
 
 - **GOV-3459 ("GovSchema Standard Research") — Kazakhstan opens as the
   registry's 72nd jurisdiction via Business Formation, authored via
