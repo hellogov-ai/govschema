@@ -4,7 +4,25 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **533 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **534 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3523, "GovSchema Standard Research"): Ukraine's
+> Visa vertical opens (2/6)**, via `ua/mfa/visa-application-form` — the
+> Ministry of Foreign Affairs' own English-language 36-item Visa Application
+> Form, deepening the GOV-3513 cycle's own disclosed Visa backlog candidate
+> for this jurisdiction. Direct fetch of `mfa.gov.ua` 403's from this
+> sandbox (matching GOV-3513's own experience with the same domain); fetched
+> instead via a Wayback Machine mirror and independently re-extracted
+> field-by-field, resolving an ambiguity the issue's own prior pass had
+> flagged (field 16, missing from that pass's extraction because its label
+> is encoded as a hex `<...>TJ` string under the source's embedded CID font
+> — resolved as `applicantPostalAddressAndEmail`). The form's own
+> right-column "For official use only" panel (including its own
+> receiving-officer "Submitted documents" checklist) is excluded as
+> read-only/out-of-scope, per this registry's established discipline for
+> officer/agency-facing review sections. Ukraine's remaining backlog:
+> **Passport** and **Taxes**, both still open. See the document's own
+> VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-17, "GovSchema Standard Research"): Ukraine opens as the
 > registry's 73rd jurisdiction, in Business Formation**, via
@@ -15516,7 +15534,12 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (60/73 jurisdictions — 82%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (61/73 jurisdictions — 84%)
+
+> **Update (2026-07-17, GOV-3523, "GovSchema Standard Research"): Ukraine's
+> Visa vertical opens (2/6)**, via `ua/mfa/visa-application-form` — see the
+> Executive Summary update above for the full sourcing record. Numerator
+> moves from 60/73 to 61/73.
 
 > **Update (2026-07-17, GOV-3454, "GovSchema Standard Research"): Morocco
 > opens as the registry's 71st jurisdiction via this vertical**, via
@@ -16985,7 +17008,7 @@ now closed.
 | **SK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **UA** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **UA** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **UZ** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -19622,17 +19645,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   as reachable and a valid file, without extracting fields; this cycle
   independently re-fetched (via Wayback Machine, since `minjust.gov.ua`
   403'd direct sandbox fetches), hashed, and extracted every field.
-  Ukraine's remaining backlog: **Visa**
-  (`https://mfa.gov.ua/storage/app/sites/1/2018-02-02-visapp-en.pdf`),
-  **Passport**
+  Ukraine's Visa backlog candidate has since been resolved — GOV-3523
+  authored `ua/mfa/visa-application-form`, opening the Visa vertical (2/6);
+  see the Executive Summary and Visa vertical section above. Ukraine's
+  remaining backlog: **Passport**
   (`https://libya.mfa.gov.ua/storage/app/sites/121/imported_content/5e30694f7a7d6.pdf`,
   a consular mirror — a Wayback copy was truncated at 1MB and would need a
-  fresh full fetch), and **Taxes**
-  (`https://tax.gov.ua/data/normativ/000/001/65107/Podatkova_deklarats_ya_pro_maynoviy_stan_dohodi_vvoditsya_v_d_yu_z_01_s_chnya_2026_roku_.xls`)
-  were all found STRONG in scouting (directly downloadable government-
-  published forms) and are disclosed, ready-to-scope backlog for future
-  cycles; **DMV** and **National ID** were found weak. None of these five
-  were independently re-verified or authored this cycle. The
+  fresh full fetch) and **Taxes**
+  (`https://tax.gov.ua/data/normativ/000/001/65107/Podatkova_deklarats_ya_pro_maynoviy_stan_dohodi_vvoditsya_v_d_yu_z_01_s_chnya_2026_roku_.xls`),
+  both still found STRONG in scouting (directly downloadable government-
+  published forms) and disclosed, ready-to-scope backlog for future cycles;
+  **DMV** and **National ID** were found weak. Passport and Taxes were not
+  independently re-verified or authored this cycle. The
   inclusion/changes/termination registration actions on this same Form 1,
   the page-3 multi-authorized-person block, and the sibling Form 2
   (legal-entity registration) are also disclosed, open backlog for a
