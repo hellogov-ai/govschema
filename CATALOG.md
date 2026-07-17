@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**69 jurisdictions** | **522 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**69 jurisdictions** | **523 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3440, "GovSchema Standard Research"): Cambodia's
+> Taxes vertical gains a fifth schema, closing out the `tax.gov.kh`
+> standalone-return backlog**, via `kh/gdt/withholding-tax-return` — the
+> General Department of Taxation's (GDT) Form WT 03 ("Return for
+> Withholding Tax", Articles 25 "New", 26 "New" and 31 "New" of the Law on
+> Taxation), Cambodia's monthly tax-withheld-at-source return. Re-scanned
+> CATALOG.md's live backlog fresh per the standing routine and found this
+> was the last of three sibling standalone tax-return candidates the
+> GOV-3417 cycle had explicitly sized/screened as ready-to-scope backlog but
+> left unauthored: Withholding Tax (Form WT 03, 327 widgets — this schema),
+> Tax on Salary (Form TOS 01, 292 widgets, authored GOV-3433), and Patent
+> Tax (Form PR 008, 80 widgets, authored GOV-3426). Directly downloadable
+> and unauthenticated from `tax.gov.kh`'s own "MONTHLY TAX RETURN FORM"
+> category (`sha256: e5e79c7270d04f0ae1e24859c887fc53ad469ada95014975366b26d1c8d72bf`,
+> 327 AcroForm widgets across 2 pages, matching the GOV-3417 scouting figure
+> exactly). Models the return's shared taxpayer-identification header (the
+> same layout as siblings `kh/gdt/monthly-vat-return` and
+> `kh/gdt/tax-on-salary-return`), Section I — Withholding Tax on Resident
+> Taxpayers (five payment-category rows at 15%/15%/6%/4%/10% plus their own
+> Total row, 18 fields), Section II — Withholding Tax on Non-Resident
+> Taxpayers (four payment-category rows, all at a flat 14%, plus their own
+> Total row, 15 fields), and the filing declaration — 49 fields in total.
+> Disclosed a source-form widget-numbering quirk: the PDF's own internal
+> names skip from `Amount6`/`Withholding6`/`Remarks6` (Section I's Total
+> row) straight to `Amount8`/`Withholding8`/`Remarks8` (Section II's first
+> row), with no `Amount7` widget anywhere — a gap in the source form's own
+> numbering, independently confirmed against the page's printed captions
+> rather than inferred from widget names alone. The form's own page 2, a
+> per-recipient "Details" schedule the form's own instructions say to
+> continue onto separate sheets when space is insufficient, is disclosed as
+> a future companion schema rather than modelled, the same treatment this
+> registry gave the sibling `kh/gdt` schemas' own page-2/3 annexes. See the
+> document's own VERIFICATION.md for the full sourcing record. Both
+> validators pass at 523/523; `verify-sources.mjs`, scoped to this schema's
+> directory, reports the cited URL clear; 9 conformance fixtures (2 valid +
+> 7 mutation-control) committed, all reproduced via a from-scratch mock
+> validator. This closes out the entire `tax.gov.kh` standalone-return
+> backlog the GOV-3417 cycle opened; no further ready-to-scope candidates
+> remain disclosed on that channel (the oversized combined "Monthly Tax
+> Return in New Form without Branch," 1,802 widgets/16 pages, remains
+> flagged too large to responsibly scope in one cycle). Cambodia's DMV,
+> Passport, Visa, and National ID verticals remain re-confirmed weak/dead
+> per the GOV-3410 cycle.
 
 > **Update (2026-07-17, GOV-3433, "GovSchema Standard Research"): Cambodia's
 > Taxes vertical gains a fourth schema**, via `kh/gdt/tax-on-salary-return` —
@@ -13770,6 +13814,14 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (60/69 jurisdictions — 87%)
 
+> **Update (2026-07-17, GOV-3440, "GovSchema Standard Research"): Cambodia's
+> Taxes vertical gains a fifth schema**, via `kh/gdt/withholding-tax-return`
+> — see the Executive Summary update above for the full sourcing record.
+> Numerator unchanged at 60/69 (already opened by GOV-3417's VAT 200
+> schema). This closes out the `tax.gov.kh` standalone-return backlog: no
+> further ready-to-scope sibling candidates on this channel remain
+> disclosed.
+
 > **Update (2026-07-17, GOV-3433, "GovSchema Standard Research"): Cambodia's
 > Taxes vertical gains a fourth schema**, via `kh/gdt/tax-on-salary-return`
 > — see the Executive Summary update above for the full sourcing record.
@@ -19028,7 +19080,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   continuation annex (page 3 of the same PDF, for enterprises with more
   than four business activities). Cambodia's DMV, Passport, Visa, and
   National ID verticals remain re-confirmed weak/dead per the GOV-3410
-  cycle; not re-screened this cycle.
+  cycle; not re-screened this cycle. **Resolved (GOV-3433, 2026-07-17):
+  Tax on Salary authored** via `kh/gdt/tax-on-salary-return` — see the
+  Executive Summary and Taxes vertical section above; Withholding Tax
+  (Form WT 03) remained the last sibling candidate. **Resolved further
+  (GOV-3440, 2026-07-17): Withholding Tax authored** via
+  `kh/gdt/withholding-tax-return` — see the Executive Summary and Taxes
+  vertical section above. This closes out the entire three-candidate
+  `tax.gov.kh` standalone-return backlog GOV-3417 opened; Form PR 008_1's
+  own continuation annex and the oversized combined "Monthly Tax Return in
+  New Form without Branch" (1,802 widgets/16 pages) remain the only
+  disclosed `tax.gov.kh` backlog items for a future cycle.
 
 - **GOV-3396 ("GovSchema Standard Research") — Mongolia Taxes: authored
   (see the Executive Summary and Taxes vertical section above), opening
