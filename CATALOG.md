@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **537 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **538 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3551, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical gains a fourth companion schedule**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-04` — the fourth of
+> ten disclosed companion schedules to the Individual Income Tax Declaration
+> (`kz/kgd/individual-income-tax-declaration`, GOV-3477), Form 220.04
+> ("Доходы из иностранных источников, суммы уплаченного иностранного налога и
+> зачета" — income from foreign sources, amounts of foreign tax paid and
+> credit), continuing the same schedule series the GOV-3484/GOV-3506/GOV-3544
+> cycles opened (Forms 220.01-220.03). Fetched via the same `adilet.zan.kz`
+> route as every prior Form 220.0X schema; Form 220.04 spans two scanned page
+> images (`179.jpg`, `180.jpg`), the exact boundary the GOV-3544 cycle's own
+> Form 220.03 boundary check had already located and disclosed. Models the
+> taxpayer-identification header, the sheet-numbering field, a single grand-
+> total row with four total amounts, and 17 individual entry rows (one more
+> row than Form 220.03's 16) — each capturing the paying non-resident's
+> country-of-residence code, an income-type code, a currency code, the
+> income amount in foreign currency, the same amount converted to tenge, the
+> amount of foreign tax subject to credit, and the resident's management/
+> administrative expenses attributable to that income — confirmed via both a
+> three-band visual row count and an independent pixel-luminance
+> row-boundary scan. This cycle additionally read the Order's own full Rules
+> text (not just the scanned images), finding an inline legend for the
+> income-type code (modelled as an `enum`, following the
+> `si/furs/doh-odm-income-tax-return-instructions` precedent) — richer
+> sourcing than the pattern-only undocumented-code columns on Forms
+> 220.01-220.03. **Correction (GOV-3554 review gate, same day):** the legend
+> was first mis-cited to "Item 71" (actually Appendix 2's Rules for the
+> unrelated Form 100.00) and modelled only 44 codes; independent
+> re-verification traced this form's own legend to Appendix 9, Item 54(2),
+> which has 46 distinct codes plus a 47th (`2460`) that the Order's own text
+> prints as a typo'd duplicate `2360` — cross-referenced against the
+> parallel domestic-income list and a sibling form's equivalent appendix to
+> confirm. The enum now models the full, corrected 47 codes; see the
+> document's own VERIFICATION.md. Both validators pass at 538/538; 10
+> conformance fixtures (2 valid + 8 mutation-control) committed. See the
+> Taxes vertical section
+> below and the document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-17, GOV-3544, "GovSchema Standard Research"): Kazakhstan's
 > Taxes vertical gains a third companion schedule**, via
@@ -14346,6 +14384,50 @@ v1.0.0.
 > 535/535. See the document's own VERIFICATION.md for the full sourcing
 > record.
 
+> **Update (2026-07-17, GOV-3551, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical gains a fifth schema**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-04` — the fourth of
+> the ten companion schedules disclosed as backlog since the GOV-3477 cycle,
+> sourced from the same `adilet.zan.kz` order. Form 220.04 ("Доходы из
+> иностранных источников, суммы уплаченного иностранного налога и зачета")
+> covers foreign-source income and the corresponding foreign-tax credit: a
+> single grand-total row with four total amounts, plus 17 entry rows each
+> capturing the paying non-resident's country code, an income-type code (an
+> inline legend of 47 distinct codes, modelled as `enum` — see the
+> document's own VERIFICATION.md for the GOV-3554 review-gate correction
+> that found 3 codes missing from an initial 44-value reading and traced the
+> legend to its actual source, Appendix 9 Item 54(2)), a currency code, the
+> income amount in foreign currency, the same amount in tenge, the
+> creditable foreign-tax amount, and management/administrative expenses.
+> Transcribed from the order's own scanned page images (179-180 of 194) plus,
+> for the first time this schedule series, the order's own HTML Rules text
+> (Глава 6), which gives line-by-line field semantics and the income-type
+> legend absent from the scanned images alone. Models 126 fields. Numerator
+> unchanged at 63/73 (Kazakhstan's Taxes column already flipped ✓ in the
+> GOV-3477 cycle); this is a fifth schema within an already-open vertical,
+> not a new jurisdiction opening. 10 conformance fixtures (2 valid + 8
+> mutation-control) committed, all reproduced via a from-scratch mock
+> validator; both validators pass at 538/538. See the document's own
+> VERIFICATION.md for the full sourcing record.
+
+> **Update (2026-07-17, GOV-3544, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical gains a fourth schema**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-03` — the third of
+> the ten companion schedules disclosed as backlog since the GOV-3477 cycle,
+> sourced from the same `adilet.zan.kz` order. Form 220.03 ("Доход,
+> подлежащий освобождению от налогообложения в соответствии с международными
+> договорами") covers treaty-exempt income: a single grand-total row plus 16
+> individual treaty-entry rows (treaty-type code, treaty name, counterparty
+> country code, exempt-income amount). Transcribed from the order's own
+> scanned page image (178 of 194, a single page — boundary-confirmed both
+> ends). Models 68 fields. Numerator unchanged at 63/73 (Kazakhstan's Taxes
+> column already flipped ✓ in the GOV-3477 cycle); this is a fourth schema
+> within an already-open vertical, not a new jurisdiction opening. 9
+> conformance fixtures (2 valid + 7 mutation-control) committed, all
+> reproduced via a from-scratch mock validator; both validators pass at
+> 537/537. See the document's own VERIFICATION.md for the full sourcing
+> record.
+
 > **Update (2026-07-17, GOV-3506, "GovSchema Standard Research"): Kazakhstan's
 > Taxes vertical gains a third schema**, via
 > `kz/kgd/individual-income-tax-declaration-schedule-220-02` — the second of
@@ -19865,6 +19947,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   unrelated commercial domain) — see the Known Gaps section below. The
   remaining seven schedules (220.04-220.10) remain disclosed, open backlog
   for future companion schemas.
+  **Resolved further (GOV-3551, 2026-07-17): Form 220.04 (foreign-source
+  income and tax credit) authored** via
+  `kz/kgd/individual-income-tax-declaration-schedule-220-04` — see the
+  Executive Summary and Taxes vertical section above; its disclosed page
+  count (2 pages, images 179-180) needed no correction. This cycle also read
+  the Order's own HTML Rules text directly (Глава 6) for the first time in
+  this schedule series, finding an inline legend for the income-type code
+  (modelled as `enum`; **corrected same-day at the GOV-3554 review gate to
+  the full 47-code legend at its actual source, Appendix 9 Item 54(2), after
+  an initial 44-value reading was traced to the wrong appendix** — see the
+  document's own VERIFICATION.md) and confirming the country-code and
+  currency-code columns are each an external Customs Union classifier
+  (referenced by annex number, not enumerated inline) — both remain
+  pattern-constrained. The remaining six schedules (220.05-220.10) remain
+  disclosed, open backlog for future companion schemas.
 
 - **GOV-3454 ("GovSchema Standard Research") — Morocco opens as the
   registry's 71st jurisdiction via Visa, authored via
