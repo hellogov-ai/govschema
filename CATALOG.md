@@ -4,7 +4,38 @@
 
 ## Executive Summary
 
-**72 jurisdictions** | **529 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**72 jurisdictions** | **530 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3491, "GovSchema Standard Research"): Mexico's
+> National ID & Civic Documents vertical opens, closing Mexico to 6 of 6
+> verticals**, via `mx/ine/credencial-para-votar-application` — the
+> Instituto Nacional Electoral's (INE) application for the Credencial para
+> Votar, Mexico's de facto national identity document (grounded in Article
+> 143 of the Ley General de Instituciones y Procedimientos Electorales).
+> This cycle re-scanned the By-Jurisdiction table for single-vertical-gap
+> jurisdictions and scouted four candidates in parallel: AE Passport (weak
+> — a genuine ICP user-manual walkthrough exists but is screen-level, not
+> field-level), LK Business Formation (strong — a DRC eROC user guide,
+> delegated as backlog), GR National ID (confirmed dead end — in-person,
+> TAXISnet-appointment-gated, no downloadable specimen), and MX National ID
+> (strong — authored this cycle). Two other MX National ID candidates were
+> screened first and found weaker: CURP correction (email/in-person only,
+> no form) and the CURP Biométrica/Tarjeta de Identidad rollout
+> (biometric-enrollment-only). Sourced directly and unauthenticated from
+> `ine.mx` (no login/CAPTCHA/WAF gate); a single-page flat/scanned PDF whose
+> dense ruled-box layout was disambiguated via a rendered-image crop
+> technique (the same one used for `kz/kgd/individual-income-tax-declaration-schedule-220-01`,
+> GOV-3484). Models 27 fields across name, general biographic data,
+> domicile, and electoral-geographic identification, plus 4 `documents[]`
+> entries; the form's own "Para Uso Exclusivo del RFE" staff box and
+> "Medio de Identificación" verification grid are disclosed as
+> office-internal, not modelled. See the National ID & Civic Documents
+> vertical section below and the document's own VERIFICATION.md for the
+> full sourcing record. Both validators pass at 530/530; 10 conformance
+> fixtures (2 valid + 8 mutation-control) committed. **Mexico now stands at
+> 6 of 6 verticals** — no vertical remains open for Mexico. Sri Lanka's
+> Business Formation candidate is left as disclosed, ready-to-scope backlog
+> for a future cycle.
 
 > **Update (2026-07-17, GOV-3484, "GovSchema Standard Research"): Kazakhstan's
 > Taxes vertical gains a second schema**, via
@@ -16042,7 +16073,15 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (49/72 jurisdictions — 68%)
+### National ID & Civic Documents (50/72 jurisdictions — 69%)
+
+> **Update (2026-07-17, GOV-3491, "GovSchema Standard Research"): Mexico
+> opens this vertical, closing Mexico to 6 of 6**, via
+> `mx/ine/credencial-para-votar-application` — INE's application for the
+> Credencial para Votar, Mexico's de facto national identity document. See
+> the Executive Summary's GOV-3491 update above and the document's own
+> VERIFICATION.md for the full sourcing record. Numerator updated from 49
+> to 50; denominator unchanged.
 
 > **Update (2026-07-17, GOV-3462, "GovSchema Standard Research"): Egypt
 > opens this vertical**, via `eg/mfa/civil-status-record-request` — the
@@ -16746,7 +16785,7 @@ now closed.
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **MX** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -18586,9 +18625,88 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Summary update above and the document's own `verification.notes` for
     the full sourcing record. Mongolia now stands at 5 of 6 verticals;
     National ID remains a confirmed dead end.
+36. **Mexico's National ID & Civic Documents vertical opens, closing Mexico
+    to 6 of 6 (GOV-3491, 2026-07-17).** This cycle re-scanned the
+    By-Jurisdiction table for single-vertical-gap jurisdictions (a
+    faster-converging heuristic than always deepening whichever
+    jurisdiction is currently hot) and scouted four candidates in parallel:
+    AE Passport (weak — ICP's own 72-page Smart Services user-manual PDF,
+    unauthenticated and non-AcroForm, gives a genuine screen-by-screen
+    walkthrough of the passport-renewal wizard at pages 15-24, but field
+    labels live only inside embedded screenshot images, not extractable
+    text — would need per-page image transcription to reach authoring
+    fidelity, left as backlog); LK Business Formation (strong — DRC's own
+    34-page "USER GUIDE eROC SYSTEM Incorporation" PDF, unauthenticated,
+    screenshot-annotated, since the primary Form 1 is system-generated only
+    inside the login-gated eROC portal — left as disclosed, ready-to-scope
+    backlog for a future cycle rather than authored this same session); GR
+    National ID (confirmed dead end — astynomia.gr's own text states the
+    application form is handed to the applicant in person at the issuing
+    police authority, behind a TAXISnet-gated appointment portal, with no
+    downloadable specimen anywhere, unlike GR's own passport vertical);
+    and MX National ID (strong — authored this cycle via
+    `mx/ine/credencial-para-votar-application`). Two other Mexican National
+    ID candidates were screened first and found weaker: CURP correction at
+    `gob.mx/curp` (handled only by email or an in-person RENAPO/Registro
+    Civil visit, no downloadable form) and the 2024-2025 CURP
+    Biométrica/Tarjeta de Identidad rollout (in-person/biometric-enrollment
+    only). The INE Credencial para Votar application — sourced directly
+    and unauthenticated from `ine.mx`, a single-page flat/scanned PDF with
+    no AcroForm/Widget annotations — was fetched, hashed
+    (sha256:d000063beda08bda4074a252b83fe668bde5c949821b26e4791d938b16636b76,
+    483,640 bytes), and its dense ruled-box/checkbox layout disambiguated
+    via a rendered-image, section-by-section crop (`pdfjs-dist` +
+    `node-canvas`, 3x scale) — the same zoomed-image-transcription
+    technique this registry used for
+    `kz/kgd/individual-income-tax-declaration-schedule-220-01` (GOV-3484).
+    Models 27 fields (name; general biographic data including CURP and a
+    naturalized-citizen sub-block; domicile; electoral-geographic
+    identification; and the closing sworn declaration's place/date) plus 4
+    `documents[]` entries. The form's own "Para Uso Exclusivo del RFE"
+    staff-only processing box (including its unexplained numeric
+    "Movimiento Solicitado" codes) and its "Medio de Identificación"
+    document-verification grid (birth-certificate reference plus the
+    authorizing official's name and issuance date) are disclosed as
+    office-internal, not modelled — the same treatment this registry gives
+    office-internal control blocks elsewhere (e.g.
+    `mx/sre/passport-application`'s own "Campos de control"). Two mock
+    conformance scenarios found 0 errors each, plus 8 mutation controls
+    each correctly raised exactly 1 error. See the Executive Summary update
+    above and the document's own VERIFICATION.md for the full sourcing
+    record and every disclosed scoping/judgment call. **Mexico now stands
+    at 6 of 6 verticals** (Passport, DMV, Business Formation, Taxes, Visa,
+    National ID & Civic Documents) — no vertical remains open for Mexico.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
+- **GR National ID (astynomia.gr / gov.gr / id.gov.gr)** — GOV-3491,
+  2026-07-17. Unlike Greece's own passport vertical (a genuine rendered
+  specimen image exists), astynomia.gr's own text states the ID-card
+  application form ("Αίτηση – υπεύθυνη δήλωση") is handed to the applicant
+  in person by the issuing police authority, printed on-site during the
+  appointment — never published as a downloadable PDF. The booking flow
+  itself (id.gov.gr / myInfo/ELAS) is TAXISnet-login-gated just to reserve
+  an appointment slot; gov.gr's own service page for ID cards returned
+  HTTP 403 (WAF) to both curl and WebFetch. mitos.gov.gr is reachable but
+  lists only supporting-document requirements, not the application form's
+  own field labels.
+- **MX CURP correction (gob.mx/curp)** — GOV-3491, 2026-07-17. No
+  downloadable form exists; correction is handled only via email
+  (`tramitescurp@segob.gob.mx`) or an in-person RENAPO/Registro Civil
+  module visit. The 2024-2025 CURP Biométrica/Tarjeta de Identidad rollout
+  is similarly in-person/biometric-enrollment-only, with no online form.
+  Mexico's National ID vertical was instead opened via the INE Credencial
+  para Votar application (see the Executive Summary and item 36 above).
+- **AE Passport, field-level fidelity (icp.gov.ae)** — GOV-3491,
+  2026-07-17, left as open backlog rather than a hard dead end. ICP's own
+  72-page Smart Services user-manual PDF (unauthenticated,
+  `icp.gov.ae/ica_files/smart_app/pdf/5.23_...`) gives a genuine
+  screen-by-screen walkthrough of the passport-renewal wizard at pages
+  15-24, but the field labels themselves live only inside embedded
+  screenshot images, not the PDF's extractable text layer — a future cycle
+  could revisit this with a per-page image-zoom transcription pass (the
+  same technique used for GOV-3484 and this cycle's own MX schema) to reach
+  authoring fidelity.
 - **KH Visa (evisa.gov.kh)** — GOV-3410, 2026-07-16. A real headless
   Chromium session passes the site's bot challenge, but the wizard's own
   Step 1 (labelled "SECURITY") renders exactly one input, a custom text

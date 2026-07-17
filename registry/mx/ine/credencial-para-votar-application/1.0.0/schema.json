@@ -1,0 +1,373 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "mx/ine/credencial-para-votar-application",
+  "version": "1.0.0",
+  "title": "Mexico Voter ID Card Application (Credencial para Votar, INE)",
+  "description": "Application to the Instituto Nacional Electoral (INE) for issuance of the Credencial para Votar (\"Voter ID Card\"), the credential Mexico's Registro Federal de Electores (RFE, Federal Registry of Electors) issues to citizens under Article 143 of the Ley General de Instituciones y Procedimientos Electorales (LGIPE). The Credencial para Votar functions as Mexico's de facto national identity document — it is the identification most commonly required and accepted across Mexican public and private life, well beyond voting — which is why this schema targets this registry's National ID & Civic Documents vertical rather than Voter Registration. Modelled from INE's own official, single-page, print-and-fill form, \"Solicitud de Expedición de Credencial para Votar\" (RFE reference 0301010100001), published directly and unauthenticated at ine.mx (no login/CAPTCHA/WAF gate). The form is a flat/scanned-style layout (no AcroForm/Widget annotations) filled out in person at an INE module. Models the applicant-facing data across five groups: full name; general biographic data (place/date of birth, age, schooling, occupation, sex, CURP, twin indicator, and — for naturalized citizens — naturalization certificate particulars); domicile (used for electoral-roll notifications); electoral-geographic identification (state, district, municipality, section, locality, block); and the closing sworn petition (place and date of the Art. 143 LGIPE declaration). A companion \"Extranjero\" version of the same form exists for a foreign national resident in Mexico's separate INE registration track and is a disclosed companion-schema candidate, not modelled here (see VERIFICATION.md). Out of scope, and disclosed rather than silently modelled: the form's entire \"Para uso exclusivo del RFE\" administrative box (processing date, internal request number, movement-type code, elector key, national folio, and the attending official's own name) — genuine office-internal processing data, not applicant input, the same treatment this registry gives office-internal control blocks elsewhere (e.g. mx/sre/passport-application's own 'Campos de control'); the \"Medio de identificación\" verification grid recording which foundational document (typically a birth certificate) the module validated in person, together with the authorizing official's name and the credential's own issuance date — also office-completed verification metadata; and wet-ink signature plus right/left thumbprint capture, both physical actions performed at the module. Does not submit anything and does not imply government endorsement.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MX",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Instituto Nacional Electoral",
+    "abbreviation": "INE",
+    "url": "https://www.ine.mx"
+  },
+  "process": {
+    "type": "application",
+    "language": "es-MX"
+  },
+  "source": {
+    "url": "https://ine.mx/wp-content/uploads/2025/03/Solicitud-de-Expedicion-de-Credencial.pdf",
+    "retrievedAt": "2026-07-17",
+    "documentRef": "Solicitud de Expedición de Credencial para Votar — Registro Federal de Electores, Instituto Nacional Electoral"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-17",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-17",
+    "notes": "GovSchema Standard Research cycle GOV-3491. Mexico's five other verticals (Passport, DMV, Business Formation, Taxes, Visa) were already published in this registry; National ID & Civic Documents was the sole remaining open backlog item, per this catalog's own By-Jurisdiction table. Two candidates were screened this cycle: a CURP-correction request at gob.mx/curp (confirmed a dead end — corrections are handled only by email or an in-person RENAPO/Registro Civil visit, with no downloadable form) and the newer CURP Biométrica/Tarjeta de Identidad initiative (confirmed in-person/biometric-enrollment-only, no online form). The INE Credencial para Votar application was found strong and authored instead. Fetched directly from ine.mx (HTTP 200, content-type application/pdf, content-length 483,640 bytes, no login/CAPTCHA/WAF gate; sha256:d000063beda08bda4074a252b83fe668bde5c949821b26e4791d938b16636b76), confirmed a single-page document via pdfjs-dist. The PDF carries a native text layer (extracted with per-glyph x/y coordinates) plus dense grid-line artwork (checkbox parentheses, ruled boxes) that the text layer alone does not fully disambiguate, so the page was additionally rendered to a raster image (pdfjs-dist + node-canvas, 3x scale) and read section-by-section as five cropped images spanning the full page height — the same zoomed-image-transcription technique this registry used for kz/kgd/individual-income-tax-declaration-schedule-220-01 (GOV-3484) — to confirm the exact grid layout, in particular the boundary between the applicant-facing 'NOMBRE COMPLETO'/'DATOS GENERALES'/'DOMICILIO'/'IDENTIFICACIÓN ELECTORAL' blocks and the two administrative/verification blocks ('PARA USO EXCLUSIVO DEL RFE' at the top, and the 'MEDIO DE IDENTIFICACIÓN'/'DOCUMENTO DE IDENTIDAD CON FOTOGRAFÍA'/'COMPROBANTE DE DOMICILIO' verification grid plus 'PROTESTO LO NECESARIO' attestation block at the bottom). No live INE portal account was created or required to author this schema."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-17"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "lastNamePaternal",
+      "label": "Apellido Paterno",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "NOMBRE COMPLETO — Apellido Paterno",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "lastNameMaternal",
+      "label": "Apellido Materno",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Maternal surname. Left optional per this registry's standard treatment of the Mexican two-surname naming convention (e.g. mx/sre/passport-application), since not every applicant's civil-registry record carries a second surname.",
+      "sourceRef": "NOMBRE COMPLETO — Apellido Materno",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "firstName",
+      "label": "Nombre(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "NOMBRE COMPLETO — Nombre(s)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Lugar de Nacimiento",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DATOS GENERALES — Lugar de Nacimiento",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "birthEntityCode",
+      "label": "Clave",
+      "type": "string",
+      "required": false,
+      "description": "A short code column printed immediately after Lugar de Nacimiento in the same row; INE's own state/entity abbreviation for the place of birth is the most likely intent, but no digit/letter-count marker or legend is printed on the form itself to confirm the exact format, so this is modelled as an unconstrained free string rather than an invented pattern.",
+      "sourceRef": "DATOS GENERALES — Clave",
+      "validation": { "maxLength": 10 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Fecha de Nacimiento",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DATOS GENERALES — Fecha de Nacimiento",
+      "validation": {}
+    },
+    {
+      "name": "age",
+      "label": "Edad",
+      "type": "integer",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's age. Article 143 LGIPE scopes this credential to citizens in full exercise of their political rights, i.e. adults; modelled with a minimum of 18.",
+      "sourceRef": "DATOS GENERALES — Edad",
+      "validation": { "minimum": 18 }
+    },
+    {
+      "name": "educationLevel",
+      "label": "Escolaridad",
+      "type": "string",
+      "required": false,
+      "description": "Highest level of schooling completed. The form provides a write-in column, not a fixed checkbox list.",
+      "sourceRef": "DATOS GENERALES — Escolaridad",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "occupation",
+      "label": "Ocupación",
+      "type": "string",
+      "required": false,
+      "sourceRef": "DATOS GENERALES — Ocupación",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "sex",
+      "label": "Sexo",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The form's own column is a plain write-in cell with no printed option list; hombre/mujer is modelled per this registry's established convention for the same field on mx/sre/passport-application, since no other value was found printed anywhere on this form.",
+      "sourceRef": "DATOS GENERALES — Sexo",
+      "validation": { "enum": ["hombre", "mujer"] }
+    },
+    {
+      "name": "naturalizationCertificateNumber",
+      "label": "No. de Certificado de Naturalización",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Naturalization-certificate number, applicable only to naturalized (not birthright) Mexican citizens. The form combines number and date in a single 'No. de Certificado de Naturalización y Fecha' column; modelled here as two distinct fields alongside naturalizationCertificateDate. Left optional since it does not apply to the ordinary birthright-citizen applicant, and the form itself provides no separate yes/no naturalization-status field this could be gated on.",
+      "sourceRef": "DATOS GENERALES — No. de Certificado de Naturalización y Fecha",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "naturalizationCertificateDate",
+      "label": "Fecha de Certificado de Naturalización",
+      "type": "date",
+      "required": false,
+      "description": "Date of the naturalization certificate, applicable only to naturalized citizens. See naturalizationCertificateNumber.",
+      "sourceRef": "DATOS GENERALES — No. de Certificado de Naturalización y Fecha",
+      "validation": {}
+    },
+    {
+      "name": "curp",
+      "label": "CURP",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Clave Única de Registro de Población. Unlike mx/sre/passport-application's own CURP field (modelled optional there per that form's explicit 'if the applicant has one' qualifier), this form's CURP column carries no such qualifying language, so it is modelled as required. Pattern reused verbatim from this registry's own established CURP regex (mx/sre/passport-application).",
+      "sourceRef": "DATOS GENERALES — CURP",
+      "validation": {
+        "pattern": "^[A-Z][AEIOU][A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])[HM](AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QO|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[A-Z0-9][0-9]$"
+      }
+    },
+    {
+      "name": "isTwin",
+      "label": "Gemelo",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the applicant has a twin, a disambiguation flag the RFE uses when matching biometric/biographic records against the electoral roll.",
+      "sourceRef": "DATOS GENERALES — Gemelo",
+      "validation": {}
+    },
+    {
+      "name": "addressStreet",
+      "label": "Calle",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Street of the domicile the applicant most recently registered with the Padrón Electoral, used for electoral notifications, per the form's own preceding declaration paragraph.",
+      "sourceRef": "DOMICILIO — Calle",
+      "validation": { "minLength": 1, "maxLength": 250 }
+    },
+    {
+      "name": "addressExteriorNumber",
+      "label": "No. Ext.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DOMICILIO — No. Ext.",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "addressInteriorNumber",
+      "label": "No. Int.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "DOMICILIO — No. Int.",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "addressNeighborhood",
+      "label": "Colonia",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "DOMICILIO — Colonia",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "addressPostalCode",
+      "label": "C.P.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Mexican postal codes are a well-documented 5-digit national convention; the form's own blank carries no digit-count marker.",
+      "sourceRef": "DOMICILIO — C.P.",
+      "validation": { "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "residenceTime",
+      "label": "Tiempo de Residencia",
+      "type": "string",
+      "required": true,
+      "description": "How long the applicant has resided at the declared domicile, e.g. '2 años'. The form provides a plain write-in column, not a bounded numeric field with a fixed unit.",
+      "sourceRef": "DOMICILIO — Tiempo de Residencia",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "electoralStateEntity",
+      "label": "Entidad",
+      "type": "string",
+      "required": true,
+      "sourceRef": "IDENTIFICACIÓN ELECTORAL — Entidad",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "electoralDistrict",
+      "label": "Distrito",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's federal electoral district. Modelled as a free string; the form's own blank carries no digit-count marker confirming a fixed numeric width.",
+      "sourceRef": "IDENTIFICACIÓN ELECTORAL — Distrito",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "electoralMunicipality",
+      "label": "Municipio",
+      "type": "string",
+      "required": true,
+      "sourceRef": "IDENTIFICACIÓN ELECTORAL — Municipio",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "electoralLocality",
+      "label": "Localidad",
+      "type": "string",
+      "required": true,
+      "sourceRef": "IDENTIFICACIÓN ELECTORAL — Localidad",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "electoralSection",
+      "label": "Sección",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's electoral section number, also referenced (as a restated, not independently modelled, value) in the form's own closing petition paragraph ('...en la sección ____ solicitado el ____'). Modelled as a free string since the form's own blank carries no digit-count marker confirming a fixed numeric width.",
+      "sourceRef": "IDENTIFICACIÓN ELECTORAL — Sección",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "electoralBlock",
+      "label": "Manzana",
+      "type": "string",
+      "required": false,
+      "description": "Urban block number. Left optional since block/manzana numbering does not apply in every locality (e.g. rural areas).",
+      "sourceRef": "IDENTIFICACIÓN ELECTORAL — Manzana",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "declarationPlace",
+      "label": "Lugar",
+      "type": "string",
+      "required": true,
+      "description": "Place where the applicant signs the closing 'Protesto lo necesario' sworn petition.",
+      "sourceRef": "PROTESTO LO NECESARIO — Lugar",
+      "validation": { "minLength": 1, "maxLength": 150 }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Fecha",
+      "type": "date",
+      "required": true,
+      "description": "Date the applicant signs the closing sworn petition. The form's own petition paragraph separately restates a section number and date inline ('...solicitado el ____'); this is treated as a restatement of electoralSection and this same date, not modelled as independent fields, to avoid asserting duplicate data the source itself does not distinguish.",
+      "sourceRef": "PROTESTO LO NECESARIO — Fecha",
+      "validation": {}
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityFoundationDocument",
+      "label": "Documento que acredita la identidad y nacionalidad (típicamente acta de nacimiento)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "the-module-records-institucion-numero-de-acta-o-folio-libro-tomo-y-foja-entidad-federativa-and-municipio-o-delegacion-in-its-own-medio-de-identificacion-verification-grid-along-with-the-authorizing-officials-name-and-the-credentials-own-issuance-date-office-completed-verification-metadata-not-modelled-as-applicant-fields",
+      "sourceRef": "MEDIO DE IDENTIFICACIÓN — Institución / Número de Acta o Folio / Libro, Tomo y Foja / Entidad Federativa / Municipio o Delegación"
+    },
+    {
+      "id": "photoIdDocument",
+      "label": "Documento de identidad con fotografía",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "DOCUMENTO DE IDENTIDAD CON FOTOGRAFÍA"
+    },
+    {
+      "id": "proofOfAddressDocument",
+      "label": "Comprobante de domicilio",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "COMPROBANTE DE DOMICILIO"
+    },
+    {
+      "id": "swornPetitionDeclaration",
+      "label": "Protesto lo necesario",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Por mi propio derecho ciudadano(a) mexicano(a) en pleno goce de mis derechos políticos... Por medio del presente escrito y con fundamento en el Art. 143 de la Ley General de Instituciones y Procedimientos Electorales, solicito respetuosamente la expedición de mi Credencial para Votar... Protesto lo necesario.",
+      "sourceRef": "Closing petition paragraph and 'PROTESTO LO NECESARIO' block"
+    }
+  ],
+  "steps": [
+    {
+      "id": "personal_name",
+      "title": "Nombre Completo",
+      "fields": ["lastNamePaternal", "lastNameMaternal", "firstName"],
+      "next": "general_data"
+    },
+    {
+      "id": "general_data",
+      "title": "Datos Generales",
+      "fields": ["placeOfBirth", "birthEntityCode", "dateOfBirth", "age", "educationLevel", "occupation", "sex", "naturalizationCertificateNumber", "naturalizationCertificateDate", "curp", "isTwin"],
+      "next": "domicile"
+    },
+    {
+      "id": "domicile",
+      "title": "Domicilio",
+      "fields": ["addressStreet", "addressExteriorNumber", "addressInteriorNumber", "addressNeighborhood", "addressPostalCode", "residenceTime"],
+      "next": "electoral_identification"
+    },
+    {
+      "id": "electoral_identification",
+      "title": "Identificación Electoral",
+      "fields": ["electoralStateEntity", "electoralDistrict", "electoralMunicipality", "electoralLocality", "electoralSection", "electoralBlock"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Protesto lo Necesario",
+      "fields": ["declarationPlace", "declarationDate"]
+    }
+  ]
+}
