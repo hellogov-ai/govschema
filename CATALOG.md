@@ -4,7 +4,50 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **535 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **536 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3537, "GovSchema Standard Research"): Ukraine's
+> Passport vertical opens (4/6)**, via
+> `ua/mfa/passport-application-for-travel-abroad` — the Ministry of Foreign
+> Affairs' own two-page "ЗАЯВА-АНКЕТА на оформлення паспорта громадянина
+> України для виїзду за кордон" (Application-questionnaire for issuance of
+> a passport of a citizen of Ukraine for travel abroad), the consular
+> edition filed by Ukrainian citizens residing abroad through a consulate —
+> deepening this jurisdiction's own disclosed Passport backlog candidate
+> (the last of Ukraine's three preceding same-week cycles' three disclosed
+> "STRONG" candidates to be authored; DMV and National ID were both found
+> weak by GOV-3513). The disclosed source URL, mirrored on the Ukrainian
+> Embassy in Libya's own consular pages, 403's on direct fetch; the specific
+> Wayback Machine capture the backlog note itself had flagged
+> (`20220705215542`) is confirmed genuinely truncated by Wayback's own 1 MiB
+> per-capture crawl cap (its own `warning: 299 wayback content truncated by
+> "length"` header), so a different, three-months-earlier sibling capture
+> (`20220413044121`, found via the CDX index) was used instead — a complete,
+> untruncated 1,293,642-byte file. A genuine 2-page AcroForm PDF with 57
+> fully generic (`fill_N`/`GroupN`), non-self-documenting widget names; every
+> field's meaning was resolved by correlating each widget's own PDF
+> rectangle against the nearest text row in the page's own text layer, the
+> same coordinate-correlation technique this registry uses for other
+> generic-AcroForm-field-name sources (e.g.
+> `pl/mswia/wniosek-o-wydanie-dowodu-osobistego`). Models the residence-
+> status-abroad selection; the ten-item circumstance-for-issuance checklist
+> (including a first-passport-for-a-child-under-16 circumstance that
+> unlocks its own five-item reason sub-checklist); the taxpayer registration
+> number; Ukrainian- and Latin-script name fields plus up to three
+> previously-used full names; date of birth and sex; country/region/postal
+> address of residence abroad; place of residence in Ukraine before
+> departure (gated to permanent-residence-abroad applicants); contact phone
+> and email; consular-registration status with its own since-when date and
+> institution name; and, split by residence-status, either the temporary-
+> residence reason or the permanent-residence-abroad permit's granting
+> institution and date. Does not model the form's own three officer-only
+> blocks (received/decision/issued) or the post-issuance passport-pickup
+> acknowledgement signature — this registry's established officer-facing and
+> post-issuance-receipt exclusions. This closes **Ukraine to 4 of 6
+> verticals** — DMV and National ID, both confirmed weak by GOV-3513, remain
+> open. Both validators pass at 536/536; 10 conformance fixtures (2 valid + 8
+> mutation-control) committed. See the Passport vertical section below and
+> the document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-17, GOV-3531, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical opens (3/6)**, via `ua/dps/individual-income-tax-declaration`
@@ -12143,7 +12186,19 @@
 
 ## By Vertical
 
-### Passport (49/73 jurisdictions — 67%)
+### Passport (50/73 jurisdictions — 68%)
+
+> **Correction (GOV-3537):** numerator updated from 49 to 50 following
+> Ukraine's Passport vertical opening via
+> `ua/mfa/passport-application-for-travel-abroad` — Ukraine was already
+> counted in the 73-jurisdiction denominator (opened via GOV-3513's Business
+> Formation schema, with Visa and Taxes added by GOV-3523/GOV-3531); this
+> schema moves that column to ✓, which is what moves the numerator — it does
+> not change the denominator, and it brings Ukraine to 4/6 coverage (DMV and
+> National ID remain open, both confirmed weak by GOV-3513). See the
+> Executive Summary's GOV-3537 update above and the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed scope
+> decision.
 
 > **Correction (GOV-3389):** numerator updated from 48 to 49 following
 > Mongolia's Passport vertical opening via
@@ -17056,7 +17111,7 @@ now closed.
 | **SK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **UA** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
+| **UA** | 4 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **UZ** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -19699,13 +19754,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   backlog candidate has since been resolved too — GOV-3531 authored
   `ua/dps/individual-income-tax-declaration`, opening the Taxes vertical
   (3/6); see the Executive Summary and Taxes vertical section above.
-  Ukraine's remaining backlog: **Passport**
+  Ukraine's Passport backlog candidate has since been resolved too —
+  GOV-3537 authored `ua/mfa/passport-application-for-travel-abroad`
   (`https://libya.mfa.gov.ua/storage/app/sites/121/imported_content/5e30694f7a7d6.pdf`,
-  a consular mirror — a Wayback copy was truncated at 1MB and would need a
-  fresh full fetch), still found STRONG in scouting (a directly downloadable
-  government-published form) and disclosed, ready-to-scope backlog for a
-  future cycle; **DMV** and **National ID** were found weak. Passport was not
-  independently re-verified or authored this cycle. The
+  a consular mirror), opening the Passport vertical (4/6); the specific
+  Wayback capture this note itself had flagged as truncated at 1MB was
+  confirmed genuinely truncated by Wayback's own 1 MiB crawl cap, so a
+  different, untruncated sibling capture (three months earlier, found via
+  the CDX index) was used instead — see the Executive Summary and Passport
+  vertical section above. **Ukraine's remaining backlog: DMV and National
+  ID**, both found weak. The
   inclusion/changes/termination registration actions on this same Form 1,
   the page-3 multi-authorized-person block, the sibling Form 2
   (legal-entity registration), and all ten of `ua/dps/individual-income-tax-declaration`'s
