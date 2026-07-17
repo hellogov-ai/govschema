@@ -38,9 +38,10 @@
 > Secretary, and Shareholder — the same single-founder/single-officer
 > scoping convention this registry already applies to company-formation
 > schemas (e.g. `kz/moj/state-registration-limited-liability-partnership`).
-> Models 43 fields plus 3 `documents[]` entries (the system-generated
-> incorporation application itself, plus the Director's and Secretary's
-> consent-and-certificate forms). Multiple stakeholders, corporate
+> Models 43 fields plus 4 `documents[]` entries (the system-generated
+> incorporation application itself, the applicant-drafted Articles of the
+> Association, plus the Director's and Secretary's consent-and-certificate
+> forms). Multiple stakeholders, corporate
 > stakeholders, and the antecedent Name Reservation procedure (which
 > produces the company name carried into this incorporation step) are
 > disclosed, not modelled. See the Business Formation vertical section
@@ -13137,7 +13138,7 @@ within an already-covered vertical:
 > single business-objective selection, and exactly one natural-person
 > Director, Secretary, and Shareholder, matching this registry's existing
 > single-founder/single-officer scoping convention for company-formation
-> schemas. Models 43 fields plus 3 `documents[]` entries. Multiple
+> schemas. Models 43 fields plus 4 `documents[]` entries. Multiple
 > stakeholders, corporate stakeholders, and the antecedent Name Reservation
 > procedure that produces the company name carried into this incorporation
 > step are disclosed, not modelled. Both validators pass at 531/531; 10

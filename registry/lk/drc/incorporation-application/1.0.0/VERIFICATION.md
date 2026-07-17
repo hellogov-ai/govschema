@@ -149,6 +149,20 @@ implementing this schema's own `required`/`requiredWhen`/`validation` rules
 `tools/validate.mjs` and `tools/validate-ajv.mjs` pass at 531/531 across the
 full registry with this schema added.
 
+## Review-gate correction
+
+The review gate for PR #582 (GOV-3502) caught a `documents[]` gap: the
+original submission cited Figure 1.37 (the Download list, 3 items) for the
+document count, but Figure 1.38 (the actual Upload Documents screen — the
+one that governs what the applicant must submit) shows 4 required items,
+each with the same asterisk. A 4th `documents[]` entry,
+`articlesOfAssociation` (`category: supporting-evidence`, applicant-drafted
+rather than system-generated), was added sourced to Figure 1.38, and the
+schema description / `verification.notes` / CATALOG.md references to "3
+`documents[]`" were corrected to 4. Both validators re-run clean at 531/531
+after the fix; conformance fixtures are unaffected since none of the 10
+exercise `documents[]`.
+
 ## Known gaps
 
 - Multi-founder/multi-officer, corporate-stakeholder, branch/foreign-company
