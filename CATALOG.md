@@ -4,7 +4,28 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **534 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **535 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3531, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical opens (3/6)**, via `ua/dps/individual-income-tax-declaration`
+> — the State Tax Service's own annual "Податкова декларація про майновий
+> стан і доходи" (Tax Declaration on Property Status and Income), deepening
+> the same disclosed Taxes backlog candidate the GOV-3513 and GOV-3523
+> cycles both re-confirmed STRONG. The source is a legacy BIFF8 `.xls`
+> workbook (confirmed by its own `D0 CF 11 E0` OLE2 magic number, not an
+> xlsx/zip container), fetched via a Wayback Machine mirror after a direct
+> `tax.gov.ua` fetch 403'd, and parsed with the `xlsx` npm package across all
+> 11 of its own sheets. Models the main declaration sheet in full —
+> declaration type/period, taxpayer identity and address, five taxpayer-
+> category flags, fifteen income sub-lines, three non-taxable-income
+> sub-lines, the annual-income and PIT/military-levy/USC settlement totals,
+> a corrective-filing error-correction block, bank details for a
+> tax-discount refund, and a bounded three-entry own-property/rental-property
+> table — and discloses all ten companion schedules (ЄСВ1-3, КІК, Ф1-Ф4,
+> МПЗ, АП) at gating-checkbox/count level only, the same combined-form
+> scoping convention already established for Kazakhstan's Form 220.00
+> (GOV-3477). Ukraine's remaining backlog: **Passport**, still open. See the
+> document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-17, GOV-3523, "GovSchema Standard Research"): Ukraine's
 > Visa vertical opens (2/6)**, via `ua/mfa/visa-application-form` — the
@@ -14211,7 +14232,34 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (62/73 jurisdictions — 85%)
+### Taxes — Income Tax Return, Tax Filing (63/73 jurisdictions — 86%)
+
+> **Update (2026-07-17, GOV-3531, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical opens (3 of 6 for Ukraine)**, via
+> `ua/dps/individual-income-tax-declaration` — the State Tax Service of
+> Ukraine's (DPS) annual "Податкова декларація про майновий стан і доходи"
+> (Tax Declaration on Property Status and Income), sourced from a legacy
+> BIFF8 `.xls` workbook published directly on `tax.gov.ua` (fetched via a
+> Wayback Machine mirror after a direct fetch 403'd this sandbox) and parsed
+> with the `xlsx` npm package. Models the main declaration sheet ('Деклар
+> 2024') across all eight of its own numbered sections — declaration type/
+> period, taxpayer identity/address, taxpayer-category flags, fifteen income
+> sub-lines and three non-taxable-income sub-lines, the annual-income and
+> tax-settlement totals, a corrective-filing error-correction block, bank
+> details, and a bounded three-entry own-property/rental-property table —
+> and discloses all ten companion schedules (ЄСВ1-3, КІК, Ф1-Ф4, МПЗ, АП) at
+> gating-checkbox/count level, the same combined-form scoping convention
+> already established for Kazakhstan's Form 220.00 (GOV-3477). Two of the
+> ten schedule-attachment checkboxes (КІК, and both ЄСВ2/ЄСВ3) are modelled
+> as attachment *counts* rather than plain booleans, per the source's own
+> footnotes 8-9. Models 96 fields. Numerator moves from 62/73 to 63/73 — a
+> new jurisdiction opening this vertical, not an additional schema within an
+> already-open one. Ukraine's Business Formation and Visa verticals were
+> already open (GOV-3513, GOV-3523); Passport remains disclosed, open
+> backlog. 11 conformance fixtures (2 valid + 9 mutation-control) committed,
+> all reproduced via a from-scratch mock validator; both validators pass at
+> 535/535. See the document's own VERIFICATION.md for the full sourcing
+> record.
 
 > **Update (2026-07-17, GOV-3506, "GovSchema Standard Research"): Kazakhstan's
 > Taxes vertical gains a third schema**, via
@@ -17008,7 +17056,7 @@ now closed.
 | **SK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **UA** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
+| **UA** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **UZ** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -19647,20 +19695,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   403'd direct sandbox fetches), hashed, and extracted every field.
   Ukraine's Visa backlog candidate has since been resolved — GOV-3523
   authored `ua/mfa/visa-application-form`, opening the Visa vertical (2/6);
-  see the Executive Summary and Visa vertical section above. Ukraine's
-  remaining backlog: **Passport**
+  see the Executive Summary and Visa vertical section above. Ukraine's Taxes
+  backlog candidate has since been resolved too — GOV-3531 authored
+  `ua/dps/individual-income-tax-declaration`, opening the Taxes vertical
+  (3/6); see the Executive Summary and Taxes vertical section above.
+  Ukraine's remaining backlog: **Passport**
   (`https://libya.mfa.gov.ua/storage/app/sites/121/imported_content/5e30694f7a7d6.pdf`,
   a consular mirror — a Wayback copy was truncated at 1MB and would need a
-  fresh full fetch) and **Taxes**
-  (`https://tax.gov.ua/data/normativ/000/001/65107/Podatkova_deklarats_ya_pro_maynoviy_stan_dohodi_vvoditsya_v_d_yu_z_01_s_chnya_2026_roku_.xls`),
-  both still found STRONG in scouting (directly downloadable government-
-  published forms) and disclosed, ready-to-scope backlog for future cycles;
-  **DMV** and **National ID** were found weak. Passport and Taxes were not
+  fresh full fetch), still found STRONG in scouting (a directly downloadable
+  government-published form) and disclosed, ready-to-scope backlog for a
+  future cycle; **DMV** and **National ID** were found weak. Passport was not
   independently re-verified or authored this cycle. The
   inclusion/changes/termination registration actions on this same Form 1,
-  the page-3 multi-authorized-person block, and the sibling Form 2
-  (legal-entity registration) are also disclosed, open backlog for a
-  future minor-version or companion-schema cycle.
+  the page-3 multi-authorized-person block, the sibling Form 2
+  (legal-entity registration), and all ten of `ua/dps/individual-income-tax-declaration`'s
+  own companion schedules (ЄСВ1-3, КІК, Ф1-Ф4, МПЗ, АП) are also disclosed,
+  open backlog for a future minor-version or companion-schema cycle.
 
 - **GOV-3459 ("GovSchema Standard Research") — Kazakhstan opens as the
   registry's 72nd jurisdiction via Business Formation, authored via
