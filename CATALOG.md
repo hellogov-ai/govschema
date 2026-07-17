@@ -4,7 +4,33 @@
 
 ## Executive Summary
 
-**71 jurisdictions** | **526 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**72 jurisdictions** | **527 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3459, "GovSchema Standard Research"): Kazakhstan
+> opens as the registry's 72nd jurisdiction**, via
+> `kz/moj/state-registration-limited-liability-partnership` — Appendix 2 to
+> the Rules for the state service "State registration of legal entities,
+> accounting registration of their branches and representative offices," an
+> Order of the Acting Minister of Justice of the Republic of Kazakhstan
+> published in full, unauthenticated, on the Ministry of Justice's own ИПС
+> «Әділет» legal-information system (`adilet.zan.kz`). This candidate was
+> scouted in parallel with Morocco during the GOV-3454 cycle and delegated
+> as a child issue (GOV-3459); this cycle re-confirmed the source is still
+> live and authored the 23-item application form, scoped to a single
+> Kazakhstan-resident natural-person founder who is also the sole
+> beneficial owner. Models 56 fields across the entity's identity, director,
+> founder, beneficial-owner, address, and economic-activity particulars,
+> plus a `requiredWhen`-gated bundled bank-account-opening/employee-
+> accident-insurance sub-request. **Kazakhstan opens with one vertical**
+> (Business Formation); DMV, Passport, Taxes, Visa, and National ID were
+> screened this cycle and confirmed weak/gated (Visa: CAPTCHA; DMV/
+> Passport/Taxes-filing/National ID: login+EDS-gated `egov.kz`/
+> `cabinet.salyk.kz`), though Taxes has a disclosed backup candidate (Form
+> 220.00, same `adilet.zan.kz` sourcing route) for a future cycle. Both
+> validators pass at 527/527; 10 conformance fixtures (2 valid + 8
+> mutation-control) committed, all reproduced via a from-scratch mock
+> validator. See the document's own VERIFICATION.md for the full sourcing
+> record.
 
 > **Update (2026-07-17, GOV-3454, "GovSchema Standard Research"): Morocco
 > opens as the registry's 71st jurisdiction**, via
@@ -11916,7 +11942,7 @@
 
 ## By Vertical
 
-### Passport (49/71 jurisdictions — 69%)
+### Passport (49/72 jurisdictions — 68%)
 
 > **Correction (GOV-3389):** numerator updated from 48 to 49 following
 > Mongolia's Passport vertical opening via
@@ -12416,7 +12442,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (56/71 jurisdictions — 79%)
+### DMV — Vehicle Registration, Licensing, Permits (56/72 jurisdictions — 78%)
 
 > **Update (2026-07-16, GOV-3403, "GovSchema Standard Research"): Mongolia's
 > DMV vertical opens**, via `mn/atunt/vehicle-plate-number-reservation` — the
@@ -12981,7 +13007,31 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (63/71 jurisdictions — 89%)
+### Business Formation — Incorporation, LLC, Company Registration (64/72 jurisdictions — 89%)
+
+> **Update (2026-07-17, GOV-3459, "GovSchema Standard Research"): Kazakhstan
+> opens as the registry's 72nd jurisdiction via this vertical**, via
+> `kz/moj/state-registration-limited-liability-partnership` — Appendix 2 to
+> the Rules for the state service "State registration of legal entities,
+> accounting registration of their branches and representative offices" (an
+> Order of the Acting Minister of Justice of the Republic of Kazakhstan,
+> No. 66, 29 May 2020), published in full and unauthenticated on the
+> Ministry of Justice's own ИПС «Әділет» legal-information system. This
+> backlog candidate was scouted in parallel with Morocco during the GOV-3454
+> cycle and delegated as a child issue (GOV-3459); this cycle re-confirmed
+> the source is still live (a server TLS misconfiguration, not a real access
+> gate) and authored the 23-item application form, scoped to a single
+> Kazakhstan-resident natural-person founder who is also the sole beneficial
+> owner. Models 56 fields, including a `requiredWhen`-gated bundled
+> bank-account-opening/employee-accident-insurance sub-request. Both
+> validators pass at 527/527; 10 conformance fixtures (2 valid + 8
+> mutation-control) committed, all reproduced via a from-scratch mock
+> validator. See the document's own VERIFICATION.md for the full sourcing
+> record, including Kazakhstan's other five verticals (Visa CAPTCHA-gated;
+> DMV, Passport, Taxes filing, and National ID all login+EDS-gated, though
+> Taxes has a disclosed `adilet.zan.kz`-sourced backup candidate for a
+> future cycle). Denominator updated from 71 to 72 (Kazakhstan is a
+> brand-new jurisdiction); numerator updated from 63 to 64.
 
 > **Update (2026-07-16, GOV-3410, "GovSchema Standard Research"): Cambodia
 > opens as the registry's 69th jurisdiction via this vertical**, via
@@ -13926,7 +13976,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (61/71 jurisdictions — 86%)
+### Taxes — Income Tax Return, Tax Filing (61/72 jurisdictions — 85%)
 
 > **Update (2026-07-17, GOV-3447, "GovSchema Standard Research"): Egypt
 > opens as the registry's 70th jurisdiction via Taxes**, through
@@ -15155,7 +15205,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (60/71 jurisdictions — 85%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (60/72 jurisdictions — 83%)
 
 > **Update (2026-07-17, GOV-3454, "GovSchema Standard Research"): Morocco
 > opens as the registry's 71st jurisdiction via this vertical**, via
@@ -15891,7 +15941,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (49/71 jurisdictions — 69%)
+### National ID & Civic Documents (49/72 jurisdictions — 68%)
 
 > **Update (2026-07-17, GOV-3462, "GovSchema Standard Research"): Egypt
 > opens this vertical**, via `eg/mfa/civil-status-record-request` — the
@@ -16588,6 +16638,7 @@ now closed.
 | **KE** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KH** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **KZ** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **LK** | 5 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **MA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -19163,6 +19214,24 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   publishing pattern.
 
 ## Genuinely open, well-sourced candidates (new jurisdictions)
+
+- **GOV-3459 ("GovSchema Standard Research") — Kazakhstan opens as the
+  registry's 72nd jurisdiction via Business Formation, authored via
+  `kz/moj/state-registration-limited-liability-partnership` (see the
+  Executive Summary and Business Formation vertical section above).**
+  Scouted alongside Morocco during the GOV-3454 cycle and delegated as a
+  child issue; the source (`adilet.zan.kz`, the Ministry of Justice's own
+  legal-information system) remained live and unauthenticated on
+  re-fetch. Kazakhstan's remaining backlog: **DMV, Passport, Taxes, Visa,
+  and National ID** were screened this cycle and confirmed weak/gated (Visa:
+  reCAPTCHA; DMV/Passport/Taxes-filing/National ID: login+EDS-gated
+  `egov.kz`/`cabinet.salyk.kz`) — not hard dead ends if a genuinely new
+  unauthenticated source surfaces, but Taxes specifically has a disclosed,
+  ready-to-scope backup candidate (Individual Income Tax Declaration Form
+  220.00, published via the same `adilet.zan.kz` route) for a future cycle.
+  The multi-founder/non-resident-founder/corporate-founder paths and the
+  branch/representative-office variants of this same Business Formation form
+  are also disclosed, open backlog for a future minor-version cycle.
 
 - **GOV-3454 ("GovSchema Standard Research") — Morocco opens as the
   registry's 71st jurisdiction via Visa, authored via
