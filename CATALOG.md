@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **538 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **539 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3558, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical gains a fifth companion schedule**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-05` — the fifth of
+> ten disclosed companion schedules to the Individual Income Tax Declaration
+> (`kz/kgd/individual-income-tax-declaration`, GOV-3477), Form 220.05
+> ("Учет убытков" — loss accounting), continuing the same schedule series the
+> GOV-3484/GOV-3506/GOV-3544/GOV-3551 cycles opened (Forms 220.01-220.04).
+> Fetched via the same `adilet.zan.kz` route as every prior Form 220.0X
+> schema; Form 220.05 is a single scanned page image (`181.jpg`), the exact
+> boundary the GOV-3551 cycle's own Form 220.04 boundary check had already
+> located and disclosed. This cycle's live re-fetch of the image-serving
+> endpoint hit a genuine, transient, site-wide maintenance outage (the site's
+> own "Ведутся технические работы" placeholder, confirmed even for
+> already-published sibling images) — so image 181 was verified via a
+> same-day, sha256-matched cached copy rather than a fresh fetch this cycle;
+> see the document's own VERIFICATION.md. Models the taxpayer-identification
+> header and 11 individual loss-entry rows (loss type, the tax period the
+> loss arose in, and the amount carried forward) — confirmed via both a
+> visual row count and an independent pixel-luminance row-boundary scan, with
+> no separate grand-total row on this schedule (a genuine structural
+> difference from Forms 220.01-220.04, confirmed both by the pixel scan and
+> by the Order's own Rules text). The loss-type column (Item 33(2)) is an
+> external reference to Chapter 35 of the Tax Code, not enumerated inline in
+> this Order's own text, so it remains an unconstrained string rather than an
+> invented enum. **Correction found in three already-merged sibling
+> schemas:** while re-deriving this schedule's own `source.documentRef`, this
+> cycle cross-checked the Order's own enacting clause against the HTML
+> content stream's appendix headers and found that Forms 220.02, 220.03, and
+> 220.04's published schemas each cite an appendix number (10, 11, 12
+> respectively) that the enacting clause actually assigns to unrelated forms
+> (250.00, 270.00, 300.00) appearing much later in the document — the whole
+> 220-series image bundle (Form 220.00 plus all ten schedules) is in fact
+> housed under a single "Приложение 9", matching Form 220.00/220.01's own
+> already-correct citations. This cycle's own schema cites the re-derived
+> "Приложение 9" rather than repeating the apparent decoy-citation pattern;
+> flagged in the document's own VERIFICATION.md for independent review rather
+> than silently fixing those already-merged documents. Both validators pass
+> at 539/539; 12 conformance fixtures (2 valid + 10 mutation-control)
+> committed. See the Taxes vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-17, GOV-3551, "GovSchema Standard Research"): Kazakhstan's
 > Taxes vertical gains a fourth companion schedule**, via
@@ -14357,6 +14398,29 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (63/73 jurisdictions — 86%)
 
+> **Update (2026-07-17, GOV-3558, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical gains a sixth schema**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-05` — the fifth of
+> the ten companion schedules disclosed as backlog since the GOV-3477 cycle,
+> sourced from the same `adilet.zan.kz` order. Form 220.05 ("Учет убытков")
+> covers loss accounting: 11 entry rows, each capturing the type of loss
+> (an external Tax Code Chapter 35 reference, not enumerated inline — kept as
+> a plain string), the tax period the loss arose in, and the amount carried
+> forward. Unlike Forms 220.01-220.04, this schedule has no separate
+> grand-total row. Transcribed from the order's own scanned page image
+> (181 of 194), salvaged this cycle from a same-day cache after the image
+> endpoint hit a live maintenance outage, plus the order's own HTML Rules
+> text (Глава 7). This cycle also found and flagged (without altering) a
+> `documentRef` appendix-number discrepancy in the already-merged Forms
+> 220.02/220.03/220.04 schemas — see the Executive Summary above and the
+> document's own VERIFICATION.md. Models 35 fields. Numerator unchanged at
+> 63/73 (Kazakhstan's Taxes column already flipped ✓ in the GOV-3477 cycle);
+> this is a sixth schema within an already-open vertical, not a new
+> jurisdiction opening. 12 conformance fixtures (2 valid + 10
+> mutation-control) committed, all reproduced via a from-scratch mock
+> validator; both validators pass at 539/539. See the document's own
+> VERIFICATION.md for the full sourcing record.
+
 > **Update (2026-07-17, GOV-3531, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical opens (3 of 6 for Ukraine)**, via
 > `ua/dps/individual-income-tax-declaration` — the State Tax Service of
@@ -19962,6 +20026,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   (referenced by annex number, not enumerated inline) — both remain
   pattern-constrained. The remaining six schedules (220.05-220.10) remain
   disclosed, open backlog for future companion schemas.
+  **Resolved further (GOV-3558, 2026-07-17): Form 220.05 (loss accounting)
+  authored** via
+  `kz/kgd/individual-income-tax-declaration-schedule-220-05` — see the
+  Executive Summary and Taxes vertical section above; its disclosed page
+  count (1 page, image 181) needed no correction, though this cycle could
+  not independently re-confirm the far-end boundary (image 182, Form
+  220.06) by a fresh visual read, since the image endpoint was in a live
+  maintenance outage for the duration of this cycle — see the document's
+  own VERIFICATION.md. This cycle also found and flagged a `documentRef`
+  appendix-number discrepancy in the already-merged Forms 220.02/220.03/
+  220.04 schemas (each cites a decoy "next sequential" appendix number
+  belonging to an unrelated later form, rather than the correct shared
+  "Приложение 9" that actually houses the whole 220-series bundle) without
+  altering those already-merged documents. The remaining five schedules
+  (220.06-220.10) remain disclosed, open backlog for future companion
+  schemas.
 
 - **GOV-3454 ("GovSchema Standard Research") — Morocco opens as the
   registry's 71st jurisdiction via Visa, authored via
