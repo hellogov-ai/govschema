@@ -4,7 +4,40 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **543 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **544 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3595, "GovSchema Standard Research"): Kazakhstan's
+> `adilet.zan.kz` image-endpoint outage has cleared, reopening the Form
+> 220.07-220.10 backlog** — three straight prior cycles (GOV-3574, GOV-3581,
+> GOV-3588) each independently re-confirmed the outage, most recently as a
+> site-wide HTTP 404. This cycle re-tested fresh (`curl -k` against images
+> 170 and 182-200) and found every one returns a genuine HTTP 200 with a
+> valid JPEG body, including the two specific files (182.jpg, 183.jpg) even
+> the GOV-3568 cycle's own completed Form 220.06 schema could not read at
+> the time. Authored the next schedule in the series,
+> `kz/kgd/individual-income-tax-declaration-schedule-220-07` — Form 220.07,
+> gratuitously received (transferred) property, a non-commercial-
+> organization disclosure appendix. Independently re-fetched
+> `https://adilet.zan.kz/rus/docs/V2500037390`, located Глава 9 (Items
+> 37-39) via full-text search, and confirmed the image boundary two ways
+> (Rules-text chapter transition and direct visual read of page headers):
+> the schedule spans exactly three pages (images 188-190), with Form 220.08
+> beginning immediately after at image 191. Models the taxpayer header, a
+> dedicated grand-total row (received/transferred amounts), and 12
+> individual entry rows (counterparty BIN/IIN, country-of-residence code,
+> nonresident registration number, a four-value property-type code, a
+> property code, a confirming document's number and date, and the amount
+> received or transferred) — 113 fields. Disclosed, not resolved, a genuine
+> primary-source discrepancy: the form's own printed footnote states columns
+> D and E are not filled for gratuitous-deduction receipts, while the Rules
+> text's own Item 39(6) instead names column F for the same case; both are
+> transcribed verbatim into the affected fields' own descriptions. Both
+> validators pass at 544/544; 13 conformance fixtures (2 valid + 11
+> mutation-control) committed, re-derived against a from-scratch ajv mock
+> validator built from the schema's own field definitions. Forms 220.08
+> through 220.10 remain disclosed, open backlog for future cycles. See the
+> Taxes vertical section below and the document's own VERIFICATION.md for
+> the full sourcing record.
 
 > **Update (2026-07-17, GOV-3588, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its first companion schedule**, via
@@ -14600,6 +14633,34 @@ v1.0.0.
 > validator; both validators pass at 540/540. See the document's own
 > VERIFICATION.md for the full sourcing record.
 
+> **Update (2026-07-17, GOV-3595, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical gains an eighth schema, after the `adilet.zan.kz`
+> image-endpoint outage cleared**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-07` — the seventh
+> of the ten companion schedules disclosed as backlog since the GOV-3477
+> cycle. Three straight prior cycles (GOV-3574, GOV-3581, GOV-3588) had each
+> found the image endpoint down; this cycle re-tested fresh and found it
+> fully recovered (every image 170, 182-200 returns HTTP 200 with a valid
+> JPEG body). Form 220.07 ("Безвозмездно полученное (переданное)
+> имущество") covers gratuitously received/transferred property reporting
+> for non-commercial organizations: a dedicated grand-total row plus 12
+> entry rows (counterparty BIN/IIN, country-of-residence code, nonresident
+> registration number, a four-value property-type code, a property code, a
+> confirming document's number and date, and the amount received or
+> transferred) — 113 fields, spanning images 188-190 (confirmed both via
+> the order's own Rules-text chapter boundary and direct visual read of
+> each page's own printed header). Discloses, without resolving, a genuine
+> conflict between the form's own printed footnote (columns D and E not
+> filled for gratuitous-deduction receipts) and the Rules text's own Item
+> 39(6) (naming column F for the same case) — see the document's own
+> VERIFICATION.md. Numerator unchanged at 63/73 (Kazakhstan's Taxes column
+> already flipped ✓ in the GOV-3477 cycle); this is an eighth schema within
+> an already-open vertical, not a new jurisdiction opening. 13 conformance
+> fixtures (2 valid + 11 mutation-control) committed, reproduced via a
+> from-scratch ajv mock validator; both validators pass at 544/544. Forms
+> 220.08-220.10 remain disclosed, open backlog. See the document's own
+> VERIFICATION.md for the full sourcing record.
+
 > **Update (2026-07-17, GOV-3558, "GovSchema Standard Research"): Kazakhstan's
 > Taxes vertical gains a sixth schema**, via
 > `kz/kgd/individual-income-tax-declaration-schedule-220-05` — the fifth of
@@ -20293,6 +20354,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   entry below). Forms 220.07-220.10 remain open backlog; a future cycle
   should re-check the image endpoint fresh rather than assume this
   outage is still current.
+  **Resolved further (GOV-3595, 2026-07-17): the outage has cleared, and
+  Form 220.07 (gratuitously received/transferred property) authored** via
+  `kz/kgd/individual-income-tax-declaration-schedule-220-07` — see the
+  Executive Summary and Taxes vertical section above. The prior GOV-3574
+  cycle's own concern (no visually-confirmable row count) is resolved: a
+  fresh pixel-luminance border scan of the now-accessible image 188
+  confirmed 12 entry rows plus a distinct grand-total row. Two prior
+  cycles (GOV-3581, GOV-3588) had each re-confirmed the outage still down
+  before pivoting to Ukraine's own backlog instead; this cycle re-tested
+  the endpoint fresh rather than assuming the outage persisted, per the
+  note above, and found it fully recovered. The remaining three schedules
+  (220.08-220.10) remain disclosed, open backlog for future companion
+  schemas.
 
 - **GOV-3454 ("GovSchema Standard Research") — Morocco opens as the
   registry's 71st jurisdiction via Visa, authored via
