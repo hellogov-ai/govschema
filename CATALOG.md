@@ -4,7 +4,35 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **540 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **541 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3574, "GovSchema Standard Research"): Cambodia's
+> Patent Tax Return gains its own continuation annex**, via
+> `kh/gdt/patent-tax-return-additional-business-activities` — Form PR 008_1
+> ("ADDITIONAL BUSINESS ACTIVITIES"), the one remaining disclosed backlog
+> item on `kh/gdt/patent-tax-return` (GOV-3426). This cycle first attempted
+> the next companion schedule in Kazakhstan's `kz/kgd` Form 220.0X series
+> (Form 220.07, gratuitously received/transferred property) but found
+> `adilet.zan.kz`'s image-serving endpoint fully down for **every** image
+> tested in that document's range (170-194, not just Form 220.07's own
+> 188-190, including images the immediately preceding GOV-3568 cycle had
+> fetched successfully the same day) — a full-site outage broader than any
+> prior cycle's narrower gap, confirmed by repeated retries over several
+> minutes and a failed `docx`-export fallback. Rather than fabricate Form
+> 220.07's repeating-table row count without any visual confirmation, this
+> cycle pivoted to the Cambodia annex instead: re-fetched the same PDF
+> `kh/gdt/patent-tax-return` already sourced (byte-identical sha256,
+> confirming it unchanged since GOV-3426), extracted its 32-widget page 3
+> via `pdfjs-dist`, and additionally **rendered the page to an image** to
+> resolve a text-extraction ambiguity the raw content stream alone could
+> not (two printed labels — the last row's own number and the following
+> "Total" line — had merged onto what read as one garbled line in the text
+> layer; the rendered image confirmed 12 ordinary numbered rows followed by
+> a separate Total line). Modelled as `businessActivity5`-`16` fields,
+> continuing the main return's own four-row numbering rather than the
+> annex's independent 1-12 printed labels. Kazakhstan's Form 220.07-220.10
+> remain disclosed, open backlog pending the source outage clearing in a
+> future cycle — see the Taxes vertical section below for the full record.
 
 > **Update (2026-07-17, GOV-3568, "GovSchema Standard Research"): Kazakhstan's
 > Taxes vertical gains a sixth companion schedule — its largest so far**, via
@@ -14435,6 +14463,19 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (63/73 jurisdictions — 86%)
 
+> **Update (2026-07-17, GOV-3574, "GovSchema Standard Research"): Cambodia's
+> Taxes vertical gains a sixth schema**, via
+> `kh/gdt/patent-tax-return-additional-business-activities` — Form PR 008_1,
+> the continuation annex to `kh/gdt/patent-tax-return` for enterprises
+> declaring more than four business activities. See the Executive Summary
+> update above for the full sourcing record, including this cycle's pivot
+> away from a full-site `adilet.zan.kz` image-endpoint outage that blocked
+> the next Kazakhstan Form 220.0X companion schedule. Numerator unchanged
+> at 63/73 (Cambodia's Taxes vertical already open); this closes out the
+> last disclosed `tax.gov.kh` sibling-form backlog besides the oversized
+> combined "Monthly Tax Return in New Form without Branch" (flagged too
+> large to responsibly scope in a single cycle).
+
 > **Update (2026-07-17, GOV-3568, "GovSchema Standard Research"): Kazakhstan's
 > Taxes vertical gains a seventh schema — its largest companion schedule
 > yet**, via `kz/kgd/individual-income-tax-declaration-schedule-220-06` — the
@@ -17326,7 +17367,7 @@ now closed.
 | **JO** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
-| **KH** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **KH** | 7 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KZ** | 5 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -20128,6 +20169,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   — see the document's own VERIFICATION.md for exactly which fields this
   affects and the disclosed gap. The remaining four schedules (220.07-
   220.10) remain disclosed, open backlog for future companion schemas.
+  **Update (GOV-3574, 2026-07-17): a full-site image-endpoint outage
+  blocked this series this cycle.** Attempting Form 220.07 (gratuitously
+  received/transferred property, disclosed at images 188-190), this
+  cycle's live re-fetch of `adilet.zan.kz`'s image-serving endpoint found
+  **every** image tested in the document's range (170, 175, 180-194, not
+  just 188-190) returning the site's own maintenance placeholder, across
+  repeated retries over several minutes and a failed `docx`-export
+  fallback — a broader, full-document outage than the narrow 2-file gap
+  the GOV-3568 cycle above had worked around by citing the Order's own
+  Rules text. That workaround does not extend to Form 220.07's repeating-
+  table row count, which the Rules text does not state and no cycle could
+  visually confirm; rather than fabricate a row count, this cycle pivoted
+  to a different candidate (see the Executive Summary and Cambodia's
+  entry below). Forms 220.07-220.10 remain open backlog; a future cycle
+  should re-check the image endpoint fresh rather than assume this
+  outage is still current.
 
 - **GOV-3454 ("GovSchema Standard Research") — Morocco opens as the
   registry's 71st jurisdiction via Visa, authored via
@@ -20222,7 +20279,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   `tax.gov.kh` standalone-return backlog GOV-3417 opened; Form PR 008_1's
   own continuation annex and the oversized combined "Monthly Tax Return in
   New Form without Branch" (1,802 widgets/16 pages) remain the only
-  disclosed `tax.gov.kh` backlog items for a future cycle.
+  disclosed `tax.gov.kh` backlog items for a future cycle. **Resolved
+  further (GOV-3574, 2026-07-17): Form PR 008_1 authored** via
+  `kh/gdt/patent-tax-return-additional-business-activities` — see the
+  Executive Summary and Taxes vertical section above. Only the oversized
+  combined "Monthly Tax Return in New Form without Branch" (1,802
+  widgets/16 pages, already flagged too large to responsibly scope in a
+  single cycle) remains disclosed `tax.gov.kh` backlog.
 
 - **GOV-3396 ("GovSchema Standard Research") — Mongolia Taxes: authored
   (see the Executive Summary and Taxes vertical section above), opening
