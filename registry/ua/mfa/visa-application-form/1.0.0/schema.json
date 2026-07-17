@@ -1,0 +1,555 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ua/mfa/visa-application-form",
+  "version": "1.0.0",
+  "title": "Ukraine Visa Application Form",
+  "description": "Apply for a Ukrainian national entry visa (short- or long-term stay, or transit) as a foreign national, via the Ministry of Foreign Affairs of Ukraine's own numbered, 36-item Visa Application Form. The form follows the common EU/Schengen-style application template in layout but is Ukraine's own national instrument, not a Schengen form: it is confirmed Ukraine-specific by field 23 ('Previous Ukrainian visas'), field 24 (entry to Ukraine's temporarily-occupied Crimea/Sevastopol territories after 10 June 2015), fields 26-28 (arrival into/departure from/period of stay in Ukraine), and repeated 'Ukraine' references throughout. Models the applicant's identity and passport particulars, address and contact details, residence/occupation, travel purpose and entry-count request, prior-Ukrainian-visa and Crimea/Sevastopol-entry history, any entry permit needed for a final destination beyond Ukraine, the intended Ukraine itinerary, inviting-person/entity and expense-coverage disclosures, an optional minor/incapacitated-applicant guardian block, and the closing place/date/signature. Does not model the form's own right-hand 'For official use only' column (visa application number, date of application, the receiving officer's own submitted-documents checklist, visa decision/category/validity, fee/day/entry counts, expedited-service flag, vignette number, issue/print date, passport-return date, and the visa officer's own signature block) — consistent with how other consular-form schemas in this registry (e.g. co/cancilleria/visa-application-individual) exclude officer/agency-facing review sections. Does not submit anything and does not imply endorsement by, or affiliation with, the Ministry of Foreign Affairs of Ukraine or the Ukrainian government.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "UA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of Foreign Affairs of Ukraine (Міністерство закордонних справ України)",
+    "abbreviation": "MFA",
+    "url": "https://mfa.gov.ua"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://mfa.gov.ua/storage/app/sites/1/2018-02-02-visapp-en.pdf",
+    "retrievedAt": "2026-07-17",
+    "documentRef": "Ukraine Ministry of Foreign Affairs 'VISA APPLICATION FORM', English-language edition, filename '2018-02-02-visapp-en.pdf'"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-17",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-17",
+    "notes": "GovSchema Standard Research cycle. Ukraine's Visa vertical opens (2/6), deepening the GOV-3513 cycle's own disclosed Visa backlog candidate for this jurisdiction (opened 73rd via Business Formation). Direct fetch of mfa.gov.ua/storage/... returns HTTP 403 to this sandbox (matching the GOV-3513 cycle's own experience with mfa.gov.ua); fetched instead via the Wayback Machine mirror (https://web.archive.org/web/2018/https://mfa.gov.ua/storage/app/sites/1/2018-02-02-visapp-en.pdf), HTTP 200: 149,185 bytes, sha256:0fa40d9f59cdf9115ab320c6e580cf552d14d73ca16a21c1bccce4be6a66ee74, a genuine 2-page PDF (/Type/Pages /Count 2, confirmed byte-for-byte) with no AcroForm widgets (a flat/print specimen). Extraction method: located and decompressed both pages' own content streams (zlib.decompress on each page's Contents stream, keyed off each Page object's own /Contents reference so page 1 and page 2 were extracted and read independently, not just concatenated) and interpreted the PDF content-stream text-showing operators (Tj/TJ, with Td/TD/T* as line breaks) directly, per this registry's established raw-stream PDF-extraction technique. The source's own glyphs are split across two distinct string encodings within the same content stream: literal ASCII (...)Tj strings for most Latin text, and hex <...>TJ strings under a Type0/Identity-H CID font for a second subset of runs (including every checkbox glyph, rendered as CID 0x0191) — the embedded font's own /ToUnicode CMap (object 341, a bfchar/bfrange table mapping CIDs to Unicode, e.g. 0x0191 to U+25A1 '□') was extracted and used to decode every hex string; without it, roughly a third of the form's own text (including the checkbox glyphs and several field labels, e.g. field 16's) would have been silently dropped rather than garbled, which is what led this cycle to notice the gap and add hex-string decoding before treating the extraction as complete. All 36 of the source's own numbered fields were independently re-transcribed field-by-field, resolving every ambiguity flagged in this issue: field 16, missing from the issue's own field inventory, is 'Applicant's postal address and email address' (confirmed on page 1, immediately before field 17's telephone-number heading) — modelled as applicantPostalAddressAndEmail; field 7's unnumbered nationality-at-birth sub-field is confirmed genuinely unnumbered in the source (no '7b' printed) and is modelled as nationalityAtBirthIfDifferent. The form's own right-column 'For official use only' panel — confirmed by its interleaved position in the content stream directly alongside undisputed officer-only fields (Visa application no., Date of application, Visa decision, category/validity, fee/day/entry counts, vignette number, visa officer's own signature) — also contains a 'Submitted documents' checkbox list (passport document / medical insurance policy / means to cover expenses / document confirming purpose of travel / other); this is the receiving officer's own receipt checklist, not an applicant-facing checkbox on this form, and per this issue's own instruction to treat the official-use block as out-of-scope, it is not modelled as a documents[] entry (a self-declared supporting-documents checklist published by MFA outside this specific form would be a legitimate future companion-schema candidate, not modelled here). The applicant's own photo box (top of page 1, 'Applicant's photo') is modelled as the sole documents[] entry: applicantPhoto. No required-field asterisks or equivalent visual markers are present anywhere in the extracted text layer for any of the 36 numbered fields (confirmed both by direct text search and by checking that PDF operator-level '*' occurrences are path-operators/binary-image bytes, not string-literal content) — required vs. optional was therefore determined structurally: fields with no printed conditional qualifier ('if applicable', 'if different', 'please specify', or a parent yes/no gate) are modelled required:true, consistent with this being a mandatory government application form where an incomplete unconditional field blocks processing; every conditional field is modelled required:false with requiredWhen/visibleWhen tied to its own parent boolean or enum, disclosed field-by-field in VERIFICATION.md. Field 20 ('Employer's ... For students ...') and fields 30-32 (inviting person/entity/contact person) are modelled as single composite string fields, matching this form's own single-heading, single-blank-line grouping for each (the same discipline already applied to composite fields in this registry's co/cancilleria/visa-application-individual and at/bmeia/schengen-visa-application schemas). Field 34 (minor/incapacitated-applicant guardian details) has no dedicated 'is the applicant a minor?' gating field anywhere on the form to key a requiredWhen against, so it is modelled required:false unconditionally, per its own printed 'in cases where applicant is...' framing. No live submission was made or attempted; this is Ukraine's own foreign-facing consular application to a real, currently-operating government, and fabricating and submitting a real visa application against it would not be a safe or reversible action, consistent with this registry's established discipline for other live government-visa schemas."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-17"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "surname",
+      "label": "Surname(s) / Family name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 1 (p.1): 'Surname(s) / Family name(s) (as indicated in the passport document)'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "surnameAtBirth",
+      "label": "Surname(s) at birth / Previous surname(s)/family name(s)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Field 2 (p.1): 'Surname(s) / Family name(s) at birth / Previous surname(s)/family name(s)'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "givenNames",
+      "label": "Name(s) / Given name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 3 (p.1): 'Name(s) / Given name(s) (as indicated in the passport document)'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Field 4 (p.1): 'Date of birth (day-month-year)'"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 5 (p.1): 'Place of birth'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 6 (p.1): 'Country of birth'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "currentNationality",
+      "label": "Current nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 7 (p.1): 'Current nationality (as indicated in the passport document)'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "nationalityAtBirthIfDifferent",
+      "label": "Nationality at birth (if different)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Printed directly beneath field 7 with no number of its own — confirmed genuinely unnumbered in the source (no separate '7b' printed), not a transcription omission.",
+      "sourceRef": "Field 7 sub-line (p.1): 'Nationality at birth (if different)'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 8 (p.1): 'Sex' — checkboxes male / female",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 9 (p.1): 'Marital status' — checkboxes single / married / divorced/separated / widow(er)",
+      "validation": { "enum": ["single", "married", "divorced-or-separated", "widowed"] }
+    },
+    {
+      "name": "nationalIdentityNumber",
+      "label": "National identity/personal number (if applicable)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Field 10 (p.1): 'National identity/personal number (if applicable)'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "passportType",
+      "label": "Type of the passport document",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Field 11 (p.1): 'Type of the passport document' — checkboxes ordinary passport / diplomatic passport / service passport / official passport / special passport / other travel document (please specify)",
+      "validation": {
+        "enum": [
+          "ordinary-passport",
+          "diplomatic-passport",
+          "service-passport",
+          "official-passport",
+          "special-passport",
+          "other"
+        ]
+      }
+    },
+    {
+      "name": "passportTypeOtherDescription",
+      "label": "Other travel document (please specify)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "passportType", "equals": "other" },
+      "sourceRef": "Field 11 (p.1), free-text continuation of the 'other travel document (please specify)' checkbox",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport document's series/number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Field 12 (p.1): 'Passport document's series/number'",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "passportIssueDate",
+      "label": "Issue date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Field 13 (p.1): 'Issue date'"
+    },
+    {
+      "name": "passportValidUntil",
+      "label": "Valid until",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Field 14 (p.1): 'Valid until'"
+    },
+    {
+      "name": "passportIssuedBy",
+      "label": "Issued by / authority",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Field 15 (p.1): 'Issued by / authority (as indicated in the passport document)'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "applicantPostalAddressAndEmail",
+      "label": "Applicant's postal address and email address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Missing from this issue's own field inventory (flagged as 'unlabeled in extraction'); resolved this cycle from the source's own page-1 heading, positioned immediately before field 17's telephone-number heading. Modelled as one combined free-text field, matching the single heading and single blank-line box printed on the source.",
+      "sourceRef": "Field 16 (p.1): 'Applicant's postal address and email address'",
+      "validation": { "minLength": 1, "maxLength": 400 }
+    },
+    {
+      "name": "applicantTelephoneNumbers",
+      "label": "Telephone number(s) including international dial codes",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Field 17 (p.1): 'Telephone number(s) including international dial codes'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "residesInOtherCountry",
+      "label": "Residence in a country other than the country of current nationality",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Field 18 (p.1): 'Residence in a country other than the country of current nationality' — checkboxes no / yes"
+    },
+    {
+      "name": "residencePermitDetails",
+      "label": "Residence permit or equivalent — Document's type, series/number, issued by/authority",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": { "field": "residesInOtherCountry", "equals": true },
+      "sourceRef": "Field 18 sub-block (p.1): 'Residence permit or equivalent, Document's type, series/number, issued by/authority'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "residencePermitValidFrom",
+      "label": "Residence permit valid from",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "residesInOtherCountry", "equals": true },
+      "sourceRef": "Field 18 sub-block (p.1): 'valid from'"
+    },
+    {
+      "name": "residencePermitValidUntil",
+      "label": "Residence permit valid until",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "residesInOtherCountry", "equals": true },
+      "sourceRef": "Field 18 sub-block (p.1): 'until'"
+    },
+    {
+      "name": "currentOccupation",
+      "label": "Current occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Field 19 (p.1): 'Current occupation'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "employerOrEducationalEstablishmentDetails",
+      "label": "Employer's name, address, telephone and fax number, email address (or, for students, the educational establishment's own name, address, telephone and fax number, email address)",
+      "type": "string",
+      "required": true,
+      "description": "Single composite field, matching the source's own single heading and single blank-line box; the 'for students' alternative content is a printed continuation of the same field, not a separate one.",
+      "sourceRef": "Field 20 (p.1): 'Employer's name, address, telephone and fax number, email address. For students – their educational establishment's name, address, telephone and fax number, email address.'",
+      "validation": { "minLength": 1, "maxLength": 400 }
+    },
+    {
+      "name": "purposeOfTravel",
+      "label": "Purpose of travel/stay",
+      "type": "enum",
+      "required": true,
+      "description": "'short-term-stay' and 'long-term-stay' carry the source's own parenthetical thresholds: short-term stay is up to 90 days, long-term stay is more than 90 days.",
+      "sourceRef": "Field 21 (p.1): 'Purpose of travel/stay' — checkboxes transit / short-term stay (up to 90 days) / long-term stay (more than 90 days)",
+      "validation": { "enum": ["transit", "short-term-stay", "long-term-stay"] }
+    },
+    {
+      "name": "numberOfEntriesRequested",
+      "label": "Number of entries requested",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Field 22 (p.1): 'Number of entries requested' — checkboxes 1 / 2 / multiple",
+      "validation": { "enum": ["one", "two", "multiple"] }
+    },
+    {
+      "name": "hasPreviousUkrainianVisa",
+      "label": "Previous Ukrainian visas (issued during recent three years)",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Field 23 (p.2): 'Previous Ukrainian visas (issued during recent three years)' — checkboxes no / yes"
+    },
+    {
+      "name": "previousVisaValidFrom",
+      "label": "Date(s) of previous visa validity from",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "hasPreviousUkrainianVisa", "equals": true },
+      "sourceRef": "Field 23 sub-block (p.2): 'Date(s) of visa(s) validity: from'"
+    },
+    {
+      "name": "previousVisaValidUntil",
+      "label": "Date(s) of previous visa validity until",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "hasPreviousUkrainianVisa", "equals": true },
+      "sourceRef": "Field 23 sub-block (p.2): 'until'"
+    },
+    {
+      "name": "crimeaSevastopolEntrySince2015",
+      "label": "Entry to Ukraine's temporarily occupied territories of Crimea and the city of Sevastopol after 10 June 2015",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Field 24 (p.2): 'Entry to Ukraine's temporarily occupied territories of Crimea and the city of Sevastopol after 10 June 2015' — checkboxes no / yes"
+    },
+    {
+      "name": "crimeaVisitPurpose",
+      "label": "Please specify the purpose of the journey(s)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "crimeaSevastopolEntrySince2015", "equals": true },
+      "sourceRef": "Field 24 sub-block (p.2): 'Please specify the purpose of the journey(s)'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "crimeaSpecialPermitIssuedBy",
+      "label": "Special permit issued by / authority",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "crimeaSevastopolEntrySince2015", "equals": true },
+      "description": "Only some journey purposes require a special permit; not every 'yes' answer to crimeaSevastopolEntrySince2015 implies one was issued, so this is visibleWhen, not requiredWhen.",
+      "sourceRef": "Field 24 sub-block (p.2), special permit line",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "crimeaSpecialPermitValidFrom",
+      "label": "Special permit valid from",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "crimeaSevastopolEntrySince2015", "equals": true },
+      "sourceRef": "Field 24 sub-block (p.2): 'special permit valid: from'"
+    },
+    {
+      "name": "crimeaSpecialPermitValidUntil",
+      "label": "Special permit valid until",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "crimeaSevastopolEntrySince2015", "equals": true },
+      "sourceRef": "Field 24 sub-block (p.2): 'until'"
+    },
+    {
+      "name": "hasEntryPermitForFinalDestination",
+      "label": "Entry permit (or equivalent) for the final country of destination (for transiting through Ukraine's territory)",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Field 25 (p.2): 'Entry permit (or equivalent) for the final country of destination (for transiting though Ukraine's territory)' — checkboxes no / yes"
+    },
+    {
+      "name": "entryPermitTypeIssuedBy",
+      "label": "Permit or equivalent's type, issued by / authority",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasEntryPermitForFinalDestination", "equals": true },
+      "sourceRef": "Field 25 sub-block (p.2): 'Permit or equivalent's type, issued by / authority'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "entryPermitValidFrom",
+      "label": "Permit/equivalent valid from",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "hasEntryPermitForFinalDestination", "equals": true },
+      "sourceRef": "Field 25 sub-block (p.2): 'Permit/equivalent valid from'"
+    },
+    {
+      "name": "entryPermitValidUntil",
+      "label": "Permit/equivalent valid until",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "hasEntryPermitForFinalDestination", "equals": true },
+      "sourceRef": "Field 25 sub-block (p.2): 'until'"
+    },
+    {
+      "name": "intendedTransitDateFrom",
+      "label": "Intended transit date(s) from",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "hasEntryPermitForFinalDestination", "equals": true },
+      "sourceRef": "Field 25 sub-block (p.2): 'Intended transit date(s) from'"
+    },
+    {
+      "name": "intendedTransitDateUntil",
+      "label": "Intended transit date(s) until",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "hasEntryPermitForFinalDestination", "equals": true },
+      "sourceRef": "Field 25 sub-block (p.2): 'until'"
+    },
+    {
+      "name": "intendedArrivalDateUkraine",
+      "label": "Intended date of arrival into Ukraine",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Field 26 (p.2): 'Intended date of arrival into Ukraine'"
+    },
+    {
+      "name": "intendedDepartureDateUkraine",
+      "label": "Intended date of departure from Ukraine",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Field 27 (p.2): 'Intended date of departure from Ukraine'"
+    },
+    {
+      "name": "intendedStayFromUkraine",
+      "label": "Intended period of stay in Ukraine — from",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Field 28 (p.2): 'Intended period of stay in Ukraine' — from"
+    },
+    {
+      "name": "intendedStayUntilUkraine",
+      "label": "Intended period of stay in Ukraine — until",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Field 28 (p.2): 'Intended period of stay in Ukraine' — until"
+    },
+    {
+      "name": "residenceAddressInUkraine",
+      "label": "Applicant's residence address in Ukraine",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Single composite field; the source's own parenthetical names hotel(s)/temporary accommodation(s) name(s), telephone(s) and fax number(s), and email address(es) as an example of what this address box covers, not as separate sub-fields of their own.",
+      "sourceRef": "Field 29 (p.2): 'Applicant's residence address in Ukraine (hotel(s)/temporary accommodation(s) name(s), telephone(s) and fax number(s), email address(es))'",
+      "validation": { "minLength": 1, "maxLength": 400 }
+    },
+    {
+      "name": "invitingPersonDetails",
+      "label": "Surname/name of the inviting person in Ukraine",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Single composite field covering the source's own parenthetical address, telephone(s)/fax number(s), and email address(es). Optional: a tourism/hotel-based stay (see residenceAddressInUkraine) need not name an inviting person.",
+      "sourceRef": "Field 30 (p.2): 'Surname/name of the inviting person in Ukraine (postal/residence address, telephone(s) and fax number(s), email address(es))'",
+      "validation": { "maxLength": 400 }
+    },
+    {
+      "name": "invitingEntityDetails",
+      "label": "Name of the inviting entity/organisation",
+      "type": "string",
+      "required": false,
+      "description": "Single composite field covering the source's own parenthetical postal address, telephone(s)/fax number(s), and email address(es). Optional, as an alternative or addition to invitingPersonDetails.",
+      "sourceRef": "Field 31 (p.2): 'Name of the inviting entity/organisation (postal address, telephone(s) and fax number(s), email address(es))'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "invitingEntityContactPersonDetails",
+      "label": "Surname/name of the contact person of the inviting entity/organisation",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Single composite field covering the source's own parenthetical telephone(s)/fax number(s) and email address(es).",
+      "sourceRef": "Field 32 (p.2): 'Surname/name of the contact person of the inviting entity/organisation (telephone(s) and fax number(s), email address(es))'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "expensesCoveredBy",
+      "label": "Expenses as regards travelling to and stay in Ukraine are covered by",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Field 33 (p.2): 'Expenses as regards travelling to and stay in Ukraine are covered by' — checkboxes the applicant himself/herself / the inviting person/entity/organisation / the sending party/organisation",
+      "validation": {
+        "enum": [
+          "applicant",
+          "inviting-person-entity-organisation",
+          "sending-party-organisation"
+        ]
+      }
+    },
+    {
+      "name": "minorOrIncapacitatedGuardianDetails",
+      "label": "Minor/incapacitated applicant's parent/legal guardian details",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Single composite field covering the source's own parenthetical surname/name, current nationality/citizenship, postal/residence address, telephone(s)/fax number(s), and email address(es). The source names no separate 'is the applicant a minor or incapacitated?' gating field elsewhere on the form to key a requiredWhen against, so this is modelled unconditionally optional, per its own printed 'in cases where...' framing.",
+      "sourceRef": "Field 34 (p.2): 'In cases where applicant is a minor or an incapacitated person please specify the surname/family name and name(s)/given name(s), current nationality/citizenship, postal/residence address, telephone(s) and fax number(s), email address(es) of one of the parents/incapacitated person's legal guardian(s)'",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "signaturePlace",
+      "label": "Place",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Field 35 (p.2): 'Date and place' (place component)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "signatureDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Field 35 (p.2): 'Date and place' (date component)"
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantPhoto",
+      "label": "Applicant's photo",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "'Applicant's photo' placeholder box, top of page 1"
+    },
+    {
+      "id": "applicantOrGuardianSignature",
+      "label": "Signature of the applicant (or, for minors/incapacitated persons, of one of the minor's parents/incapacitated person's legal guardian(s))",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Paraphrased from the source form's own declaration paragraph preceding field 36's signature line (not a verbatim quote — see VERIFICATION.md): the applicant is aware the paid consular fee is not refunded; consents to the collection of the data and photograph required by this application, and to their use for decision-making purposes on this visa application; confirms having read and understood the declaration and declares that, to the best of their knowledge, all particulars given are true; is aware that any false statement may lead to visa refusal or to denial of entry to Ukraine on an already-granted visa; undertakes to leave Ukraine's territory before the issued visa expires; and acknowledges that holding a visa is only one prerequisite for entry, does not entitle the holder to compensation if entry is refused or has been refused, and that compliance with entry requirements will be checked again at border control.",
+      "sourceRef": "Field 36 (p.2): 'Applicant's signature (for minors/incapacitated persons – signature of one of the minor's parents/incapacitated person's legal guardian(s))', preceded on page 2 by the form's own declaration paragraph"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "departureNotBeforeArrival",
+      "compare": {
+        "field": "intendedDepartureDateUkraine",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "intendedArrivalDateUkraine"
+      }
+    },
+    {
+      "id": "intendedStayUntilAfterFrom",
+      "compare": {
+        "field": "intendedStayUntilUkraine",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "intendedStayFromUkraine"
+      }
+    },
+    {
+      "id": "passportValidUntilAfterIssueDate",
+      "compare": {
+        "field": "passportValidUntil",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "passportIssueDate"
+      }
+    }
+  ]
+}
