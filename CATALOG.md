@@ -4,7 +4,37 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **536 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **537 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3544, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical gains a third companion schedule**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-03` — the third of
+> ten disclosed companion schedules to the Individual Income Tax Declaration
+> (`kz/kgd/individual-income-tax-declaration`, GOV-3477), Form 220.03
+> ("Доход, подлежащий освобождению от налогообложения в соответствии с
+> международными договорами" — income exempt from taxation under
+> international treaties), continuing the same schedule series the
+> GOV-3484/GOV-3506 cycles opened (Forms 220.01, 220.02). Fetched via the
+> same `adilet.zan.kz` route as every prior Form 220.0X schema (a
+> TLS-chain-missing-intermediate quirk on that domain, not a real access
+> gate); Form 220.03 is a single scanned page image (`178.jpg`), boundary-
+> confirmed at both ends against the already-disclosed page-count estimate.
+> Models the taxpayer-identification header, a sheet-numbering field genuinely
+> new to this schedule series (not present on Forms 220.00-220.02), a single
+> printed grand-total row, and 16 individual treaty-entry rows (treaty type
+> code, treaty name, treaty-counterparty country code, exempt-income
+> amount) — the table's row count confirmed by both a direct visual count and
+> an independent pixel-pitch row-boundary measurement. Before picking this
+> candidate, this cycle also **corrected a mischaracterization in its own
+> prior "genuinely open" note for AE Passport**: the ICP Smart App manual
+> pages that note pointed at turn out to be the same already-published
+> `ae/icp/emirates-id-replacement` wizard, not a passport-issuance flow (see
+> the Known Gaps update below), and screened Turkey's `evisa.gov.tr` as a
+> potential 74th-jurisdiction candidate, found to redirect to an unrelated
+> third-party commercial domain. Both validators pass at 537/537; 9
+> conformance fixtures (2 valid + 7 mutation-control) committed. See the
+> Taxes vertical section below and the document's own VERIFICATION.md for the
+> full sourcing record.
 
 > **Update (2026-07-17, GOV-3537, "GovSchema Standard Research"): Ukraine's
 > Passport vertical opens (4/6)**, via
@@ -17083,7 +17113,7 @@ now closed.
 | **KE** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KH** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **KZ** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **KZ** | 5 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **MA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -19003,16 +19033,32 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   is similarly in-person/biometric-enrollment-only, with no online form.
   Mexico's National ID vertical was instead opened via the INE Credencial
   para Votar application (see the Executive Summary and item 36 above).
-- **AE Passport, field-level fidelity (icp.gov.ae)** — GOV-3491,
-  2026-07-17, left as open backlog rather than a hard dead end. ICP's own
-  72-page Smart Services user-manual PDF (unauthenticated,
-  `icp.gov.ae/ica_files/smart_app/pdf/5.23_...`) gives a genuine
-  screen-by-screen walkthrough of the passport-renewal wizard at pages
-  15-24, but the field labels themselves live only inside embedded
-  screenshot images, not the PDF's extractable text layer — a future cycle
-  could revisit this with a per-page image-zoom transcription pass (the
-  same technique used for GOV-3484 and this cycle's own MX schema) to reach
-  authoring fidelity.
+- **AE Passport, field-level fidelity (icp.gov.ae)** — GOV-3491, 2026-07-17;
+  **corrected GOV-3544, 2026-07-17.** The GOV-3491 note above described
+  ICP's 72-page Smart Services (citizen-category) manual as giving "a
+  genuine screen-by-screen walkthrough of the passport-renewal wizard at
+  pages 15-24" behind screenshot-only field labels. This cycle fetched the
+  same manual directly (HTTP 200, 72 pages confirmed via `pdfjs-dist`) and
+  rendered pages 10-22 at 3x zoom to do that transcription pass — and found
+  pages 15-22 are **not** a passport wizard at all: they are the exact same
+  "Replace ID" (Emirates ID replacement) wizard already published as
+  `ae/icp/emirates-id-replacement` (identical screen titles, identical
+  `familyBookIssuanceDate`/`replacementReason: Lost/Stolen` fields matching
+  that document's own p.15 screenshot verbatim). The wizard's step 3/5 is
+  titled "Passport Information" only because Emirates ID replacement
+  collects the holder's passport particulars as supporting data — not
+  because this is a passport-issuance flow. The prior note's
+  characterization was a mischaracterization, not a genuine finding; this
+  source does not open AE's Passport vertical and should not be re-attempted
+  via this manual. AE Passport remains a genuinely open, weak/unresolved
+  candidate — the public `icp.gov.ae` service-detail page is
+  checklist-level only, and the 231-page Service Card Guide PDF is a text
+  catalog, not a screenshot walkthrough (both per the
+  `emirates-id-replacement` document's own prior VERIFICATION.md finding). A
+  future cycle should look for a genuinely different source (e.g. a live
+  Smart App session, or a consular-network PDF in the style that opened
+  Mongolia's and Ukraine's Passport verticals) rather than re-reading this
+  same manual.
 - **KH Visa (evisa.gov.kh)** — GOV-3410, 2026-07-16. A real headless
   Chromium session passes the site's bot challenge, but the wizard's own
   Step 1 (labelled "SECURITY") renders exactly one input, a custom text
@@ -19809,6 +19855,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   count (2 pages, images 176-177) needed no correction. The remaining eight
   schedules (220.03-220.10) remain disclosed, open backlog for future
   companion schemas.
+  **Resolved further (GOV-3544, 2026-07-17): Form 220.03 (treaty-exempt
+  income) authored** via
+  `kz/kgd/individual-income-tax-declaration-schedule-220-03` — see the
+  Executive Summary and Taxes vertical section above; its disclosed page
+  count (1 page, image 178) needed no correction. This cycle also corrected
+  a mischaracterized AE Passport candidate and screened Turkey's
+  `evisa.gov.tr` as a new-jurisdiction candidate (found to redirect to an
+  unrelated commercial domain) — see the Known Gaps section below. The
+  remaining seven schedules (220.04-220.10) remain disclosed, open backlog
+  for future companion schemas.
 
 - **GOV-3454 ("GovSchema Standard Research") — Morocco opens as the
   registry's 71st jurisdiction via Visa, authored via
