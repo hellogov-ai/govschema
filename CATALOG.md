@@ -4,7 +4,50 @@
 
 ## Executive Summary
 
-**70 jurisdictions** | **524 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**70 jurisdictions** | **525 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-17, GOV-3462, "GovSchema Standard Research"): Egypt's
+> National ID & Civic Documents vertical opens**, via
+> `eg/mfa/civil-status-record-request` — the Egyptian Consulate General,
+> London's own "نموذج: قيد/تجديد/إصدار/إضافة" ("Form: Registration /
+> Renewal / Issuance / Addition"), the consular-channel intake form for an
+> Egyptian citizen abroad to register, renew, or obtain an issuance of
+> their family civil-status record, or add a newly-born child to it. The
+> GOV-3447 cycle had disclosed this vertical as open, unscreened backlog
+> for Egypt immediately after closing Egypt's Taxes gap; this cycle
+> re-confirmed the domestic Ministry of Interior civil-registry/ID-card
+> channel (`moi.gov.eg`) remains account-gated/WAF-blocked per the GOV-3410
+> cycle's own finding, and instead found a genuinely new, unauthenticated
+> channel: the consulate's own "Downloadable Forms" page links directly to
+> a real AcroForm PDF (49 Widget annotations: 45 text fields, 4 checkboxes;
+> `sha256:7f3f3bf5302b39adfe50fb54737e7452e78d8e2285efacab3b78f9a23bb2e8d1`,
+> 78,322 bytes, re-fetched live and confirmed byte-identical), the same
+> consular-channel pattern this registry already established for
+> `th/mfa/thai-national-id-card-application`. Field semantics were derived
+> from a position-sorted RTL text-layer read cross-referenced against each
+> widget's rect, since a `pdfjs-dist`+`node-canvas` render attempt failed
+> in this sandboxed environment (a `TypeError` painting an inline
+> background image — a different symptom of the same disclosed sandboxed
+> PDF-render tooling gap as the `eg/eta` schema's own blank-canvas finding)
+> — the resulting field count was cross-checked against the PDF's own
+> widget inventory (45 text + 4 checkbox) as a substitute consistency
+> check, with an exact match. Models 33 fields: personal, passport,
+> conscription-status, professional, marital-status (with conditional
+> spouse particulars), contact/address (country of residence and Egypt),
+> a nearest-relative contact, two free-text supplementary-request lines, a
+> conditional child-addition sub-request, and three free-text
+> attached-document lines. Two printed option groups (the four
+> request-type labels, the three conscription-status options) have no
+> backing AcroForm widget at all — modelled as inferred `enum` fields
+> anyway, the same treatment this registry gave the `eg/eta` schema's own
+> non-fillable selector. See the document's own VERIFICATION.md for the
+> full sourcing record and every disclosed modelling judgment call. Both
+> validators pass at 525/525; `verify-sources.mjs`, scoped to this
+> schema's directory, reports the cited URL clear; 10 conformance fixtures
+> (2 valid + 8 mutation-control) committed, all reproduced via a
+> from-scratch mock validator. **Egypt now stands at 2 of 6 verticals**
+> (Taxes, National ID); Business Formation, DMV, Passport, and Visa remain
+> re-confirmed weak/dead per the GOV-3410 cycle.
 
 > **Update (2026-07-17, GOV-3447, "GovSchema Standard Research"): Egypt
 > opens as the registry's 70th jurisdiction**, via
@@ -15811,7 +15854,15 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (48/70 jurisdictions — 69%)
+### National ID & Civic Documents (49/70 jurisdictions — 70%)
+
+> **Update (2026-07-17, GOV-3462, "GovSchema Standard Research"): Egypt
+> opens this vertical**, via `eg/mfa/civil-status-record-request` — the
+> Egyptian Consulate General, London's consular civil-status intake form.
+> See the Executive Summary's GOV-3462 update above and the document's own
+> VERIFICATION.md for the full sourcing record. Numerator updated from 48
+> to 49; denominator unchanged (Egypt already counted toward the
+> 70-jurisdiction total via its Taxes vertical, GOV-3447).
 
 > **Update (2026-07-16, GOV-3295/GOV-3298, "GovSchema Standard Research"):
 > Rwanda opens this vertical**, via `rw/irembo/nida-diaspora-application` —
@@ -16479,7 +16530,7 @@ now closed.
 | **DO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EC** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **EG** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **EG** | 2 | ✗ | ✗ | ✗ | ✓ | ✗ | ✓ |
 | **ES** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ET** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -18410,6 +18461,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   authored as `eg/eta/small-enterprise-tax-declaration` — see the
   Executive Summary update above. This opens Egypt as the registry's 70th
   jurisdiction.
+- **EG National ID — resolved, no longer a gap.** GOV-3447, 2026-07-17,
+  disclosed this vertical as open, unscreened backlog immediately after
+  closing Egypt's Taxes gap, since the domestic Ministry of Interior
+  channel had already been confirmed account-gated/WAF-blocked by GOV-3410.
+  GOV-3462, 2026-07-17, found a distinct, unauthenticated consular channel
+  instead — the Egyptian Consulate General, London's own civil-status
+  intake form — authored as `eg/mfa/civil-status-record-request`. See the
+  Executive Summary update above. **Egypt now stands at 2 of 6 verticals**
+  (Taxes, National ID).
 - **MN Taxes (itax.mta.mn)** — GOV-3382, 2026-07-16 (re-screen of a
   GOV-3375 finding). Unreachable this cycle too — connection timeout on
   both `https://` and `http://` from this environment, consistent with the
