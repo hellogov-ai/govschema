@@ -31,12 +31,13 @@
 > PDF-render tooling gap as the `eg/eta` schema's own blank-canvas finding)
 > — the resulting field count was cross-checked against the PDF's own
 > widget inventory (45 text + 4 checkbox) as a substitute consistency
-> check, with an exact match. Models 33 fields: personal, passport,
-> conscription-status, professional, marital-status (with conditional
-> spouse particulars), contact/address (country of residence and Egypt),
-> a nearest-relative contact, two free-text supplementary-request lines, a
-> conditional child-addition sub-request, and three free-text
-> attached-document lines. Two printed option groups (the four
+> check, with an exact match. Models 37 fields: request type, personal,
+> passport, conscription-status, professional, arrival date,
+> marital-status (with conditional spouse particulars), contact/address
+> (country of residence and Egypt), a nearest-relative contact, two
+> free-text supplementary-request lines, a conditional child-addition
+> sub-request, and three free-text attached-document lines. Two printed
+> option groups (the four
 > request-type labels, the three conscription-status options) have no
 > backing AcroForm widget at all — modelled as inferred `enum` fields
 > anyway, the same treatment this registry gave the `eg/eta` schema's own
