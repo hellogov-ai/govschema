@@ -1,0 +1,940 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ua/dps/individual-income-tax-declaration",
+  "version": "1.0.0",
+  "title": "Ukraine Tax Declaration on Property Status and Income",
+  "description": "The State Tax Service of Ukraine's (Державна податкова служба України, DPS) \"Податкова декларація про майновий стан і доходи\" (Tax Declaration on Property Status and Income) — the annual individual income tax and military-levy return filed by citizens, individual entrepreneurs, independent professionals, and other individuals under the Tax Code of Ukraine. Approved by Order of the Ministry of Finance of Ukraine No. 859 of 2 October 2015, as amended by Order No. 119 of 26 February 2025 (the edition modelled here, effective for reporting periods from 1 January 2026). Published, unauthenticated, directly by the State Tax Service on tax.gov.ua as a legacy Excel (.xls) template containing the main declaration plus ten companion schedules. This v1.0.0 models the main declaration sheet ('Деклар 2024') in full — Section I general information (declaration type/period, taxpayer identity and tax address, filing-authority and residency particulars, taxpayer-category flags), the authorized-filer block, Section II taxable income (line 10 and its fifteen sub-lines), Section III non-taxable income (line 11 and its three sub-lines), Section IV total annual income (line 12), Section V's own headline tax-obligation and budget-settlement lines (13, 20.1-20.3, 21.1, 22.1), Section VI's error-correction block (lines 23-27, corrective filings only), Section VII bank details for a tax-discount refund, Section VIII's own-property/rental-property table (three printed row slots), the ten-schedule attachment checklist, the filing date, and the closing attestation. It does not model: the nine adjustment lines between 13 and 20 (13.1, 14-19 — advance payments, minimum-tax-obligation offsets, the tax-discount reduction, a notarial-refund line, and a foreign-tax-credit line), each of which is itself computed from one of the ten companion schedules (АП, МПЗ, Ф3, and others) that this schema discloses only at gating-checkbox/count level, not internally; and the internal line items of any of the ten schedules themselves (ЄСВ1, ЄСВ2, ЄСВ3, КІК, Ф1, Ф2, Ф3, Ф4, МПЗ, АП) — each spans its own dedicated sheet in the source workbook and is left as disclosed, open backlog for a future, separately-versioned companion schema, the same combined-form scoping convention this registry already established for Kazakhstan's Form 220.00 (GOV-3477) and its own companion schedules (GOV-3484, GOV-3506). GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Government of Ukraine or the State Tax Service of Ukraine.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "UA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Державна податкова служба України (State Tax Service of Ukraine)",
+    "abbreviation": "DPS",
+    "url": "https://tax.gov.ua"
+  },
+  "process": {
+    "type": "filing",
+    "language": "uk"
+  },
+  "source": {
+    "url": "https://tax.gov.ua/data/normativ/000/001/65107/Podatkova_deklarats_ya_pro_maynoviy_stan_dohodi_vvoditsya_v_d_yu_z_01_s_chnya_2026_roku_.xls",
+    "retrievedAt": "2026-07-17",
+    "documentRef": "Форма податкової декларації про майновий стан і доходи, затверджена наказом Міністерства фінансів України від 02.10.2015 № 859 (у редакції наказу від 26.02.2025 № 119), чинна з 01.01.2026 — аркуш 'Деклар 2024'"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-17",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-17",
+    "notes": "GovSchema Standard Research cycle GOV-3531, deepening Ukraine's own disclosed Taxes backlog candidate (flagged when Ukraine's Visa vertical opened via GOV-3523, itself deepening the GOV-3513 cycle that opened Ukraine as the registry's 73rd jurisdiction via Business Formation). Direct fetch of tax.gov.ua/data/normativ/... returns HTTP 403 to this sandbox; fetched instead via the Wayback Machine mirror cited in this issue (https://web.archive.org/web/2024/https://tax.gov.ua/data/normativ/000/001/65107/Podatkova_deklarats_ya_pro_maynoviy_stan_dohodi_vvoditsya_v_d_yu_z_01_s_chnya_2026_roku_.xls), HTTP 200: 869,376 bytes, sha256:7c67f4c421a1a8fc610f9226819d223debcb56b3fd1fc3d5f75ce0247cc7f0ac. File-identity check: the first 8 bytes are D0 CF 11 E0 A1 B1 1A E1, the OLE2/Compound File Binary Format magic number, confirming a genuine legacy BIFF8 .xls, not an HTML error page or an xlsx/zip container disguised with an .xls extension (this issue's own warning that Python's zipfile module cannot open it was independently reconfirmed: the file has no PK\\x03\\x04 zip local-file-header signature anywhere in the first 4KB). Parsed with the `xlsx` npm package (installed fresh in a scratch directory, not committed to this repository) via `XLSX.readFile`, which opened all 11 declared sheets: 'Деклар 2024' (the main declaration, modelled by this schema), 'ЄСВ 1', 'ЄСВ 2', 'ЄСВ 3', 'КІК ', 'Ф 1', 'Ф 2', 'Ф 3', 'Ф4', 'МПЗ', and 'АП' — matching this issue's own inventory exactly. The main sheet was read cell-by-cell with `XLSX.utils.decode_range`/`encode_cell` (not the row-array helper alone, which silently merges adjacent non-empty cells and obscures which column each value belongs to) across its full 172-row extent, cross-referencing column A's own printed item/line numbers against each row's label text to resolve every field's exact source position. Every one of the main form's own numbered items (1, 1.1, 2, 3-9 in Section I; 10-10.15 in Section II; 11-11.3 in Section III; 12 in Section IV; 13-22.1 in Section V; 23-27 in Section VI) and its own unnumbered structural blocks (the tax address sub-fields under item 4, the bank-details block under Section VII, the property table under Section VIII, the ten-schedule attachment checklist, and the filing-date/attestation block) was independently transcribed with its own row/column coordinates, not carried over from any prior pass, since no prior cycle had extracted this file's fields. Scoping decisions, made and documented here rather than silently: (1) Section V's own adjustment lines 13.1 and 14-19 are each a value computed from one of the ten schedules already disclosed at gating-checkbox/count level (13.1 from АП, 14-15 from МПЗ, 16 from Ф3, 18 references a foreign-tax credit tied to schedules not modelled here) — modelling their derived totals without the schedules that produce them would misrepresent this v1.0's own completeness, so they are left as backlog alongside their source schedules, and this schema instead models only the section's own three headline lines that a filer reports directly (13, and the final budget-settlement lines 20.1-20.3/21.1/22.1). (2) Section II's own income sub-lines (10.1-10.15, 10.6.1, 10.13.1) are modelled as a single reported amount each (the sheet's own column 3, 'Сума доходів') rather than each line's full five-column breakdown (income amount, PIT/military-levy withheld by a tax agent, PIT/military-levy self-payable) — most of those columns are marked 'x' (not applicable) for the majority of income types in the source itself, and the two that do carry a genuine five-column shape (line 10 and, by cross-reference, line 13's own 'графа 6 рядка 10') are exactly the ones this schema does model as their own headline total. (3) Section VI's error-correction rows (23-27) each carry four independent tax-obligation-type columns in the source (minimum tax obligation, unified social contribution, PIT, military levy); this v1.0 models each row's PIT-column figure only, as the tax type common to every filer under this form, and notes in each field's own description that the source table's other three columns are not modelled. (4) The property table (Section VIII) prints exactly three blank numbered row slots (row codes 1-3) with no continuation notice; modelled as a bounded three-entry repeating group (property1.../property2.../property3...), matching the source's own printed extent rather than an unbounded array (spec v0.3 fields remain flat — no array-of-object model exists yet, per SPEC.md §6.1). Two of the source's own footnotes (8 and 9) change a gating field's own type from boolean to integer: footnote 8 states the КІК attachment count (not merely presence) is entered, and footnote 9 states the same for ЄСВ2 and ЄСВ3 — modelled as appendixKikCount/appendixEsv2Count/appendixEsv3Count (integer, minimum 0), while the remaining seven attachments (Ф1-Ф4, МПЗ, ЄСВ1, АП) are plain presence checkboxes with no such footnote, modelled as booleans. Item 8's five taxpayer-category checkboxes ('громадянин' / tax-discount claimant / independent-professional-or-farm-member / entrepreneur / activity-terminated-or-emigrating) carry no 'select one' instruction in the source and are not mutually exclusive in substance (e.g. a citizen may simultaneously claim a tax discount), so they are modelled as five independent booleans, the same treatment this registry's kz/kgd/individual-income-tax-declaration schema already gave its own item 6 special-category checkboxes. The taxpayer's own registration-number field (item 3's own continuation, rows 25-27) is printed as an either/or with the applicant's passport series/number for religious objectors who declined a tax registration number, so it is modelled as a free string with no numeric-only pattern, rather than a fixed-length RNOKPP pattern. The form's own right-hand-column-equivalent officer block (rows 162-169: the tax authority's own electronic-database entry mark and desk-review outcome) is excluded as read-only/officer-facing, consistent with this registry's established discipline for agency-facing review sections. No submission was made and no live cabinet.tax.gov.ua account was created or required to author this schema."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-17"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "declarationType",
+      "label": "Тип декларації",
+      "type": "enum",
+      "required": true,
+      "description": "original = 'Звітна' (a regular declaration for the reporting period); revised_original = 'Звітна нова' (a new original declaration filed to supersede a previously filed original for the same period, before the filing deadline); corrective = 'Уточнююча' (an amendment to a declaration already accepted for a past period).",
+      "sourceRef": "Item 1, row 13-14: 'Тип декларації: Звітна | Звітна нова | Уточнююча'",
+      "validation": { "enum": ["original", "revised_original", "corrective"] }
+    },
+    {
+      "name": "isInformationalDeclaration",
+      "label": "Довідкова",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether this declaration is filed as an informational ('довідкова') submission — per footnote 1, filled when submitting the ЄСВ1 schedule marked 'pension assignment' or 'material-support/insurance-payment assignment', or when submitting the ЄСВ2 or ЄСВ3 schedule.",
+      "sourceRef": "Item 1.1, row 16-17: 'довідкова¹'"
+    },
+    {
+      "name": "reportingPeriodYear",
+      "label": "Звітний (податковий) період: рік",
+      "type": "integer",
+      "required": true,
+      "description": "The calendar year of the tax period for which this declaration is filed.",
+      "sourceRef": "Item 2.1, row 13-14/16: 'Звітний (податковий) період: рік'",
+      "validation": { "minimum": 1991 }
+    },
+    {
+      "name": "reportingPeriodMonth",
+      "label": "Звітний (податковий) період: місяць",
+      "type": "integer",
+      "required": false,
+      "description": "The calendar month of the reporting period, per footnote 2 — only filled by a person whose individual-entrepreneur or independent-professional activity registration was terminated (or equivalent, per the footnote's own list of cases) during the reporting year, or by a person submitting the ЄСВ1 schedule marked 'pension assignment' or 'material-support/insurance-payment assignment'.",
+      "sourceRef": "Item 2.2, row 16-17: 'місяць²'",
+      "validation": { "minimum": 1, "maximum": 12 }
+    },
+    {
+      "name": "correctedPeriodYear",
+      "label": "Звітний (податковий) період, що уточнюється: рік",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": { "field": "declarationType", "equals": "corrective" },
+      "description": "The calendar year of the tax period being amended by this corrective declaration.",
+      "sourceRef": "Row 13-14: 'Звітний (податковий) період, що уточнюється: рік'",
+      "validation": { "minimum": 1991 }
+    },
+    {
+      "name": "correctedPeriodMonth",
+      "label": "Звітний (податковий) період, що уточнюється: місяць",
+      "type": "integer",
+      "required": false,
+      "visibleWhen": { "field": "declarationType", "equals": "corrective" },
+      "description": "The calendar month of the period being corrected, per footnote 2's own scope (see reportingPeriodMonth) — not every corrective filing has one.",
+      "sourceRef": "Row 16-17: 'місяць²' (period-being-corrected column)",
+      "validation": { "minimum": 1, "maximum": 12 }
+    },
+    {
+      "name": "correctedDocumentRegistrationNumber",
+      "label": "Реєстраційний номер документа, який уточнюється",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "declarationType", "equals": "corrective" },
+      "description": "Per footnote 3: the registration number of the document (the originally filed declaration) being corrected, if that information is available.",
+      "sourceRef": "Row 19: 'Реєстраційний номер документа, який уточнюється³'",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "taxpayerFullName",
+      "label": "Прізвище, ім'я, по батькові платника податку",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The taxpayer's surname, given name, and patronymic (if any).",
+      "sourceRef": "Item 3, row 23: 'Прізвище (за наявності), ім'я, по батькові (за наявності) платника податку'",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "taxpayerTaxNumberOrPassport",
+      "label": "Реєстраційний номер облікової картки платника податку",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The taxpayer's registration number of the taxpayer account card (RNOKPP), or — for individuals who, on religious grounds, have declined a registration number and have a corresponding notation in their passport — their passport series (if any) and number instead. Modelled as a free string rather than a fixed-length numeric pattern to accommodate both formats.",
+      "sourceRef": "Row 25-27, continuation of item 3: 'Реєстраційний номер облікової картки платника податку або серія (за наявності) та номер паспорта...'",
+      "validation": { "minLength": 1, "maxLength": 50 }
+    },
+    {
+      "name": "postalCode",
+      "label": "Податкова адреса: Поштовий індекс",
+      "type": "string",
+      "required": true,
+      "description": "The postal code of the taxpayer's tax address (place of residence).",
+      "sourceRef": "Item 4, row 28: 'Поштовий індекс'",
+      "validation": { "pattern": "^[0-9]{5}$" }
+    },
+    {
+      "name": "region",
+      "label": "Область",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 4, row 29: 'Область'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "district",
+      "label": "Район",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 4, row 30: 'Район'",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "contactPhone",
+      "label": "Контактні телефони",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Per footnote 4, filled at the taxpayer's own discretion.",
+      "sourceRef": "Row 30: 'Контактні телефони⁴'",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "city",
+      "label": "Місто (селище, село)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 4, row 31: 'Місто (селище, село)'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "street",
+      "label": "Вулиця",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 4, row 32: 'Вулиця'",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "buildingNumber",
+      "label": "Номер будинку",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 4, row 33: 'Номер будинку'",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "buildingBlock",
+      "label": "Корпус",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Row 33: 'Корпус'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "apartmentNumber",
+      "label": "Номер квартири",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Row 33: 'Номер квартири'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "email",
+      "label": "Електронна адреса",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Per footnote 4, filled at the taxpayer's own discretion.",
+      "sourceRef": "Row 33: 'Електронна адреса⁴'",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "taxAuthorityName",
+      "label": "Найменування контролюючого органу, до якого подається декларація",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 5, row 34: 'Найменування контролюючого органу, до якого подається декларація'",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "residencyStatus",
+      "label": "Резидентський статус платника податку",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Item 6, row 36-37: 'Резидентський статус платника податку' — резидент / нерезидент",
+      "validation": { "enum": ["resident", "non_resident"] }
+    },
+    {
+      "name": "filledBy",
+      "label": "Декларація заповнена",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Item 7, row 36-37: 'Декларація заповнена' — самостійно платником податку / уповноваженою на це особою",
+      "validation": { "enum": ["self", "authorized_person"] }
+    },
+    {
+      "name": "isCitizenCategory",
+      "label": "Категорія платника: громадянин",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Item 8, row 39-40: 'Категорія платника' — громадянин",
+      "description": "The five item-8 category checkboxes carry no 'select one' instruction in the source and are not mutually exclusive in substance, so each is modelled as its own independent boolean."
+    },
+    {
+      "name": "claimsTaxDiscount",
+      "label": "Категорія платника: особа, яка заявляє право на податкову знижку",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Item 8, row 40: '...особа, яка заявляє право на податкову знижку'"
+    },
+    {
+      "name": "isIndependentProfessionalOrFarmMember",
+      "label": "Категорія платника: особа, яка провадить незалежну професійну діяльність / член фермерського господарства",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Item 8, row 40: '...особа, яка провадить незалежну професійну діяльність / член фермерського господарства'"
+    },
+    {
+      "name": "isEntrepreneur",
+      "label": "Категорія платника: підприємець",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Item 8, row 40: '...підприємець'"
+    },
+    {
+      "name": "isTerminatedActivityOrEmigrating",
+      "label": "Категорія платника: особа, стосовно якої проведено реєстрацію припинення підприємницької або незалежної професійної діяльності / втрачено статус члена фермерського господарства / особа, яка виїжджає за кордон на постійне місце проживання",
+      "type": "boolean",
+      "required": true,
+      "description": "Per footnote 5: covers a person whose individual-entrepreneur or independent-professional registration was terminated, who lost farm-household-member status, whose voluntary-participation contract ended, or who is leaving Ukraine for permanent residence abroad.",
+      "sourceRef": "Item 8, row 42: 'особа, стосовно якої проведено реєстрацію припинення підприємницької або незалежної професійної діяльності...⁵'"
+    },
+    {
+      "name": "authorizedPersonFullName",
+      "label": "Прізвище, ім'я, по батькові уповноваженої особи",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "filledBy", "equals": "authorized_person" },
+      "sourceRef": "Item 9, row 45: 'Прізвище (за наявності), ім'я, по батькові (за наявності) уповноваженої особи'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "authorizedPersonTaxNumber",
+      "label": "Реєстраційний номер облікової картки платника податку уповноваженої особи",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": { "field": "filledBy", "equals": "authorized_person" },
+      "description": "The authorized person's RNOKPP, or (for religious objectors) their passport series/number, matching the same either/or convention as taxpayerTaxNumberOrPassport.",
+      "sourceRef": "Row 47-49, continuation of item 9",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "totalIncomeIncluded",
+      "label": "Загальна сума доходів, які включаються до загального річного оподатковуваного доходу",
+      "type": "number",
+      "required": true,
+      "description": "Line 10 = the sum of lines 10.1 through 10.15, in hryvnia and kopecks.",
+      "sourceRef": "Line 10, row 55, column 3 ('Сума доходів')",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "salaryIncome",
+      "label": "Дохід, нарахований у формі заробітної плати, інших заохочувальних та компенсаційних виплат за трудовим договором",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Line 10.1, row 56, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "civilContractIncome",
+      "label": "Дохід у формі винагород та інших виплат за договорами цивільно-правового характеру",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Line 10.2, row 57, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "diiaCityIncome",
+      "label": "Дохід спеціаліста резидента Дія Сіті у вигляді заробітної плати чи винагороди за гіг-контрактом",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Line 10.3, row 58, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "dividendIncome",
+      "label": "Дохід у вигляді дивідендів",
+      "type": "number",
+      "required": false,
+      "description": "Excludes dividends on shares/investment certificates/corporate rights accrued by non-residents, and dividends not included in the general monthly/annual taxable income computation.",
+      "sourceRef": "Line 10.4, row 59, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "propertySaleIncomeTaxable",
+      "label": "Доходи від продажу (обміну) рухомого та/або нерухомого майна (додаток Ф4) — оподатковувані",
+      "type": "number",
+      "required": false,
+      "description": "Gated by appendixF4Attached when the taxable portion of this income is reported (compare propertySaleIncomeNonTaxable for the non-taxable portion).",
+      "sourceRef": "Line 10.5, row 60, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "leaseIncome",
+      "label": "Дохід від надання майна в лізинг, оренду (суборенду), житловий найм (піднайм)",
+      "type": "number",
+      "required": false,
+      "description": "Includes leaseIncomeFromNonAgentIndividual as a named sub-component.",
+      "sourceRef": "Line 10.6, row 61, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "leaseIncomeFromNonAgentIndividual",
+      "label": "Дохід від оренди земельних ділянок від фізичної особи-орендаря, яка не є податковим агентом",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Line 10.6.1, row 62, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "agriculturalProduceIncome",
+      "label": "Доходи від продажу власної сільськогосподарської продукції",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Line 10.7, row 63, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "investmentProfitIncome",
+      "label": "Інвестиційний прибуток (додаток Ф1)",
+      "type": "number",
+      "required": false,
+      "description": "Gated by appendixF1Attached.",
+      "sourceRef": "Line 10.8, row 64, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "inheritedOrGiftedPropertyValue",
+      "label": "Вартість успадкованого чи отриманого у дарунок майна",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Line 10.9, row 65, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "foreignSourceIncome",
+      "label": "Доходи, отримані з джерел за межами України",
+      "type": "number",
+      "required": false,
+      "description": "Per footnote 7, converted to hryvnia at the National Bank of Ukraine's exchange rate on the date the income accrued/was received.",
+      "sourceRef": "Line 10.10, row 66, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "entrepreneurNetIncome",
+      "label": "Чистий оподатковуваний дохід фізичної особи-підприємця (додаток Ф2)",
+      "type": "number",
+      "required": false,
+      "description": "Excludes entrepreneurs who elected the simplified taxation system. Gated by appendixF2Attached.",
+      "sourceRef": "Line 10.11, row 67, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "independentProfessionalNetIncome",
+      "label": "Чистий оподатковуваний дохід особи, яка провадить незалежну професійну діяльність (додаток Ф2)",
+      "type": "number",
+      "required": false,
+      "description": "Gated by appendixF2Attached.",
+      "sourceRef": "Line 10.12, row 68, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "otherIncome",
+      "label": "Інші доходи",
+      "type": "number",
+      "required": false,
+      "description": "Includes otherIncomeForgivenMortgageDebt as a named sub-component.",
+      "sourceRef": "Line 10.13, row 69, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "otherIncomeForgivenMortgageDebt",
+      "label": "Додаткове благо у вигляді прощеного (анульованого) боргу за іпотечним кредитом",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Line 10.13.1, row 70, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "cfcProfitShare",
+      "label": "Частина прибутку контрольованої іноземної компанії (додаток(и) КІК)",
+      "type": "number",
+      "required": false,
+      "description": "Gated by appendixKikCount.",
+      "sourceRef": "Line 10.14, row 71, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "foreignEntityProfitDistributionIncome",
+      "label": "Доходи, отримані у зв'язку з розподілом прибутку іноземного утворення без статусу юридичної особи",
+      "type": "number",
+      "required": false,
+      "description": "Income from a partnership/trust/fund formed abroad without legal-entity status, that is not itself a controlled foreign company.",
+      "sourceRef": "Line 10.15, row 72, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "nonTaxableIncomeTotal",
+      "label": "Доходи, які не включаються до загального річного оподатковуваного доходу",
+      "type": "number",
+      "required": true,
+      "description": "Line 11 = the sum of lines 11.1 through 11.3.",
+      "sourceRef": "Line 11, row 76, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "simplifiedSystemIncome",
+      "label": "Доходи від господарської діяльності за спрощеною системою оподаткування",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Line 11.1, row 77, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "propertySaleIncomeNonTaxable",
+      "label": "Доходи від продажу (обміну) рухомого та/або нерухомого майна (додаток Ф4) — неоподатковувані",
+      "type": "number",
+      "required": false,
+      "description": "Gated by appendixF4Attached when the non-taxable portion of this income is reported (compare propertySaleIncomeTaxable for the taxable portion).",
+      "sourceRef": "Line 11.2, row 78, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "otherNonTaxableIncome",
+      "label": "Інші доходи, що не підлягають оподаткуванню",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Line 11.3, row 79, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "totalAnnualIncome",
+      "label": "Загальна сума річного доходу",
+      "type": "number",
+      "required": true,
+      "description": "Line 12 = line 10 (totalIncomeIncluded) + line 11 (nonTaxableIncomeTotal).",
+      "sourceRef": "Line 12, row 82, column 3",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "totalPitObligation",
+      "label": "Загальна сума податкових зобов'язань з податку на доходи фізичних осіб",
+      "type": "number",
+      "required": false,
+      "description": "Line 13 = column 6 of line 10 (the self-payable PIT total across every attached income line). This v1.0 does not separately model column 6 of line 10 itself; line 13 is reported directly.",
+      "sourceRef": "Line 13, row 86",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "pitPayableToBudget",
+      "label": "Сума ПДФО, що підлягає сплаті до бюджету самостійно",
+      "type": "number",
+      "required": false,
+      "description": "Line 20.1, the positive settlement outcome (line 13 minus lines 16-19, which this schema does not separately model — see this document's own description).",
+      "sourceRef": "Line 20.1, row 96",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "pitRefundableFromBudget",
+      "label": "Сума ПДФО, що підлягає поверненню з бюджету",
+      "type": "number",
+      "required": false,
+      "description": "Line 20.2, the negative settlement outcome, reported here without a minus sign per the source's own convention.",
+      "sourceRef": "Line 20.2, row 97",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "pitMinimumObligationPayableByEntrepreneur",
+      "label": "Сума ПДФО у вигляді мінімального податкового зобов'язання, що підлягає сплаті",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Line 20.3, row 98",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "militaryLevyObligation",
+      "label": "Сума податкових зобов'язань з військового збору, що підлягає сплаті самостійно",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Line 21.1, row 100",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "uscObligation",
+      "label": "Сума зобов'язань з єдиного внеску, що підлягає обов'язковій сплаті самостійно",
+      "type": "number",
+      "required": false,
+      "description": "Gated by appendixEsv1Attached (the figure is carried from the ЄСВ1 schedule's own 'Усього' row, column 6, not itself modelled here).",
+      "sourceRef": "Line 22.1, row 102",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "errorPeriodOriginalAmount",
+      "label": "Сума ПДФО, яка підлягала перерахуванню до бюджету або поверненню за даними періоду, в якому виявлена помилка",
+      "type": "number",
+      "required": false,
+      "visibleWhen": { "field": "declarationType", "equals": "corrective" },
+      "description": "Line 23's own PIT-column figure. The source's own row 23 also carries independent minimum-tax-obligation, unified-social-contribution, and military-levy columns, not modelled in this v1.0 (see this document's own description).",
+      "sourceRef": "Line 23, row 105, ПДФО column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "errorPeriodCorrectedAmount",
+      "label": "Уточнена сума ПДФО, яка підлягає перерахуванню або поверненню",
+      "type": "number",
+      "required": false,
+      "visibleWhen": { "field": "declarationType", "equals": "corrective" },
+      "description": "Line 24's own PIT-column figure; see errorPeriodOriginalAmount for the other three unmodelled columns.",
+      "sourceRef": "Line 24, row 106, ПДФО column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "errorCorrectionIncreaseAmount",
+      "label": "Збільшення суми ПДФО, яка підлягала перерахуванню до бюджету",
+      "type": "number",
+      "required": false,
+      "visibleWhen": { "field": "declarationType", "equals": "corrective" },
+      "description": "Line 25.1 = errorPeriodCorrectedAmount minus errorPeriodOriginalAmount, when positive.",
+      "sourceRef": "Line 25.1, row 108, ПДФО column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "errorCorrectionDecreaseAmount",
+      "label": "Зменшення суми ПДФО, яка підлягала перерахуванню до бюджету",
+      "type": "number",
+      "required": false,
+      "visibleWhen": { "field": "declarationType", "equals": "corrective" },
+      "description": "Line 25.2 = errorPeriodOriginalAmount minus errorPeriodCorrectedAmount, when positive; reported without a minus sign per the source's own convention.",
+      "sourceRef": "Line 25.2, row 109, ПДФО column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "errorCorrectionSelfAssessedPenalty",
+      "label": "Сума штрафу, нарахована платником самостійно у зв'язку з виправленням помилки",
+      "type": "number",
+      "required": false,
+      "visibleWhen": { "field": "declarationType", "equals": "corrective" },
+      "description": "The self-assessed penalty for underreporting (3% or 5% under Tax Code Article 50(50.1), or 9%/18% under Article 50(50.11), applied to errorCorrectionIncreaseAmount).",
+      "sourceRef": "Line 26, row 110",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "errorCorrectionSelfAssessedLateFee",
+      "label": "Сума пені, нарахована платником самостійно",
+      "type": "number",
+      "required": false,
+      "visibleWhen": { "field": "declarationType", "equals": "corrective" },
+      "sourceRef": "Line 27, row 111",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "bankAccountNumber",
+      "label": "Номер рахунку",
+      "type": "string",
+      "required": false,
+      "classification": "financial",
+      "description": "For a refund of tax overwithheld/overpaid under the taxpayer's use of the tax-discount right. Ukrainian IBAN format: 'UA' followed by 27 digits.",
+      "sourceRef": "Section VII, row 114: 'Номер рахунку: UA...'",
+      "validation": { "pattern": "^UA[0-9]{27}$" }
+    },
+    {
+      "name": "bankName",
+      "label": "Найменування банку",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section VII, row 115: 'Найменування банку'",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "bankOrProviderId",
+      "label": "Ідентифікаційний код банку або небанківського надавача платіжних послуг",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section VII, row 117: 'Ідентифікаційний код банку або небанківського надавача платіжних послуг'",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "property1Category",
+      "label": "Категорія об'єкта (1)",
+      "type": "enum",
+      "required": false,
+      "description": "Section VIII prints exactly three blank numbered row slots (row codes 1-3); modelled as a bounded three-entry repeating group.",
+      "sourceRef": "Section VIII, row 124 (row code 1), column 2",
+      "validation": {
+        "enum": [
+          "land_plot_excluding_agricultural",
+          "residential_house",
+          "apartment",
+          "garden_or_dacha_house",
+          "garage",
+          "water_body",
+          "passenger_car",
+          "truck_or_special_vehicle",
+          "watercraft",
+          "aircraft",
+          "motorcycle_or_moped",
+          "agricultural_land_plot",
+          "other_movable_or_immovable_property"
+        ]
+      }
+    },
+    {
+      "name": "property1LocationOrModel",
+      "label": "Місцезнаходження об'єкта нерухомого майна або марка (модель) рухомого майна (1)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section VIII, row 124 (row code 1), column 3",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "property1YearAcquiredOrManufactured",
+      "label": "Рік набуття у власність / рік випуску (1)",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section VIII, row 124 (row code 1), column 4",
+      "validation": { "minimum": 1900 }
+    },
+    {
+      "name": "property1TotalAreaSqm",
+      "label": "Загальна площа нерухомого майна, кв. м (1)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Section VIII, row 124 (row code 1), column 5",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "property1AreaSharePercent",
+      "label": "Частка в загальній площі нерухомого майна, % (1)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Section VIII, row 124 (row code 1), column 6",
+      "validation": { "minimum": 0, "maximum": 100 }
+    },
+    {
+      "name": "property1RentedOut",
+      "label": "Відмітка про надання майна в оренду (суборенду, емфітевзис, суперфіцій), житловий найм (піднайм) (1)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Section VIII, row 124 (row code 1), column 7",
+      "validation": {}
+    },
+    {
+      "name": "property2Category",
+      "label": "Категорія об'єкта (2)",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Section VIII, row 125 (row code 2), column 2",
+      "validation": {
+        "enum": [
+          "land_plot_excluding_agricultural",
+          "residential_house",
+          "apartment",
+          "garden_or_dacha_house",
+          "garage",
+          "water_body",
+          "passenger_car",
+          "truck_or_special_vehicle",
+          "watercraft",
+          "aircraft",
+          "motorcycle_or_moped",
+          "agricultural_land_plot",
+          "other_movable_or_immovable_property"
+        ]
+      }
+    },
+    {
+      "name": "property2LocationOrModel",
+      "label": "Місцезнаходження об'єкта нерухомого майна або марка (модель) рухомого майна (2)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section VIII, row 125 (row code 2), column 3",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "property2YearAcquiredOrManufactured",
+      "label": "Рік набуття у власність / рік випуску (2)",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section VIII, row 125 (row code 2), column 4",
+      "validation": { "minimum": 1900 }
+    },
+    {
+      "name": "property2TotalAreaSqm",
+      "label": "Загальна площа нерухомого майна, кв. м (2)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Section VIII, row 125 (row code 2), column 5",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "property2AreaSharePercent",
+      "label": "Частка в загальній площі нерухомого майна, % (2)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Section VIII, row 125 (row code 2), column 6",
+      "validation": { "minimum": 0, "maximum": 100 }
+    },
+    {
+      "name": "property2RentedOut",
+      "label": "Відмітка про надання майна в оренду (суборенду, емфітевзис, суперфіцій), житловий найм (піднайм) (2)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Section VIII, row 125 (row code 2), column 7",
+      "validation": {}
+    },
+    {
+      "name": "property3Category",
+      "label": "Категорія об'єкта (3)",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "Section VIII, row 126 (row code 3), column 2",
+      "validation": {
+        "enum": [
+          "land_plot_excluding_agricultural",
+          "residential_house",
+          "apartment",
+          "garden_or_dacha_house",
+          "garage",
+          "water_body",
+          "passenger_car",
+          "truck_or_special_vehicle",
+          "watercraft",
+          "aircraft",
+          "motorcycle_or_moped",
+          "agricultural_land_plot",
+          "other_movable_or_immovable_property"
+        ]
+      }
+    },
+    {
+      "name": "property3LocationOrModel",
+      "label": "Місцезнаходження об'єкта нерухомого майна або марка (модель) рухомого майна (3)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section VIII, row 126 (row code 3), column 3",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "property3YearAcquiredOrManufactured",
+      "label": "Рік набуття у власність / рік випуску (3)",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section VIII, row 126 (row code 3), column 4",
+      "validation": { "minimum": 1900 }
+    },
+    {
+      "name": "property3TotalAreaSqm",
+      "label": "Загальна площа нерухомого майна, кв. м (3)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Section VIII, row 126 (row code 3), column 5",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "property3AreaSharePercent",
+      "label": "Частка в загальній площі нерухомого майна, % (3)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Section VIII, row 126 (row code 3), column 6",
+      "validation": { "minimum": 0, "maximum": 100 }
+    },
+    {
+      "name": "property3RentedOut",
+      "label": "Відмітка про надання майна в оренду (суборенду, емфітевзис, суперфіцій), житловий найм (піднайм) (3)",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Section VIII, row 126 (row code 3), column 7",
+      "validation": {}
+    },
+    {
+      "name": "appendixF1Attached",
+      "label": "Ф1",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the Ф1 schedule (investment profit) is attached. Gates that schedule's own line items, out of this schema's scope.",
+      "sourceRef": "Row 144-145, 'Додатки до декларації' checklist: 'Ф1'"
+    },
+    {
+      "name": "appendixF2Attached",
+      "label": "Ф2",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the Ф2 schedule (individual-entrepreneur / independent-professional net income) is attached. Gates that schedule's own line items, out of this schema's scope.",
+      "sourceRef": "Row 144-145, 'Додатки до декларації' checklist: 'Ф2'"
+    },
+    {
+      "name": "appendixF3Attached",
+      "label": "Ф3",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the Ф3 schedule (tax-discount computation) is attached. Gates that schedule's own line items, out of this schema's scope.",
+      "sourceRef": "Row 144-145, 'Додатки до декларації' checklist: 'Ф3'"
+    },
+    {
+      "name": "appendixF4Attached",
+      "label": "Ф4",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the Ф4 schedule (income from sale of movable/immovable property) is attached. Gates that schedule's own line items, out of this schema's scope.",
+      "sourceRef": "Row 144-145, 'Додатки до декларації' checklist: 'Ф4'"
+    },
+    {
+      "name": "appendixKikCount",
+      "label": "КІК",
+      "type": "integer",
+      "required": false,
+      "description": "Per footnote 8, the number of КІК (controlled-foreign-company) schedule attachments submitted, not merely a presence flag. Gates that schedule's own line items, out of this schema's scope.",
+      "sourceRef": "Row 144-145, 'Додатки до декларації' checklist: 'КІК⁸'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "appendixMpzAttached",
+      "label": "МПЗ",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the МПЗ schedule (minimum tax liability) is attached. Gates that schedule's own line items, out of this schema's scope.",
+      "sourceRef": "Row 144-145, 'Додатки до декларації' checklist: 'МПЗ'"
+    },
+    {
+      "name": "appendixEsv1Attached",
+      "label": "ЄСВ1",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the ЄСВ1 schedule (unified social contribution, primary) is attached. Gates that schedule's own line items, out of this schema's scope.",
+      "sourceRef": "Row 144-145, 'Додатки до декларації' checklist: 'ЄСВ1'"
+    },
+    {
+      "name": "appendixEsv2Count",
+      "label": "ЄСВ2",
+      "type": "integer",
+      "required": false,
+      "description": "Per footnote 9, the number of ЄСВ2 schedule attachments submitted (multiple may be filed for separate voluntary-participation-contract computations or documentary-inspection adjustments), not merely a presence flag. Gates that schedule's own line items, out of this schema's scope.",
+      "sourceRef": "Row 144-145, 'Додатки до декларації' checklist: 'ЄСВ2⁹'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "appendixEsv3Count",
+      "label": "ЄСВ3",
+      "type": "integer",
+      "required": false,
+      "description": "Per footnote 9, the number of ЄСВ3 schedule attachments submitted, not merely a presence flag. Gates that schedule's own line items, out of this schema's scope.",
+      "sourceRef": "Row 144-145, 'Додатки до декларації' checklist: 'ЄСВ3⁹'",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "appendixApAttached",
+      "label": "АП",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the АП schedule (advance payment computation, retail fuel trade) is attached. Gates that schedule's own line items, out of this schema's scope.",
+      "sourceRef": "Row 144-145, 'Додатки до декларації' checklist: 'АП'"
+    },
+    {
+      "name": "filingDate",
+      "label": "Дата подання декларації",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Row 147: 'Дата подання декларації'"
+    }
+  ],
+  "documents": [
+    {
+      "id": "declarationAttestation",
+      "label": "Attestation of accuracy",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Інформація, наведена в декларації, додатках і доповненнях до декларації, є достовірною. (\"The information provided in the declaration, its schedules, and its addenda is accurate.\")",
+      "sourceRef": "Row 149, preceding the signature block ('Фізична особа – платник податку або уповноважена особа')"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "totalAnnualIncomeAtLeastIncluded",
+      "compare": {
+        "field": "totalAnnualIncome",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "totalIncomeIncluded"
+      }
+    }
+  ]
+}
