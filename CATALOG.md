@@ -1,10 +1,42 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-17** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-18** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**73 jurisdictions** | **545 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **546 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-18, GOV-3609, "GovSchema Standard Research"): Kazakhstan's
+> Form 220.0X companion-schedule series gains its tenth member**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-09` — Form 220.09,
+> expenses of non-VAT-payer taxpayers for acquired goods, works, services
+> (Приложение 9 к Декларации). Independently re-tested `adilet.zan.kz`'s
+> image-serving endpoint fresh (images 192-202, `curl -k`) and confirmed it
+> remains up following the GOV-3595 cycle's own clearance of the
+> three-cycle outage (GOV-3574/3581/3588). Independently re-fetched
+> `https://adilet.zan.kz/rus/docs/V2500037390`, located Глава 11 (Items
+> 47-49) immediately following Form 220.08's own Глава 10 with no
+> intervening content, and confirmed the two-page boundary two ways (the
+> Rules-text chapter transition and a direct visual read of image 194's own
+> header, which turns out to belong to an unrelated Form 220.10 on digital
+> assets rather than a continuation of 220.09). Models the taxpayer header
+> (including a continuation-sheet numbering box absent from the immediately
+> preceding Form 220.08), a dedicated grand-total expense-amount row, and 12
+> individual entry rows (counterparty BIN/IIN, country-of-residence code, an
+> 18-box nonresident foreign tax-registration number conditioned on the
+> country code being present, a seven-value expense-type code, the expense
+> amount, and a four-value activity-type apportionment flag) — 76 fields
+> total. Disclosed, not resolved, a chapter-heading wording error: Глава
+> 11's own section title says "реализованным" (sold/realized) товарам,
+> работам, услугам, while Item 47's own body text and the form's printed
+> header both instead say "приобретенным" (acquired) — no footnote-vs-
+> Rules-text conflict was found this cycle, unlike Forms 220.07 and 220.08.
+> Both validators pass at 546/546; 12 conformance fixtures (2 valid + 10
+> mutation-control) committed, re-derived against a from-scratch ajv mock
+> validator built from the schema's own field definitions. Form 220.10
+> (digital-asset holdings) remains disclosed, open backlog for a future
+> cycle. See the Taxes vertical section below and the document's own
+> VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-17, GOV-3602, "GovSchema Standard Research"): Kazakhstan's
 > Form 220.0X companion-schedule series gains its ninth member**, via
@@ -14714,6 +14746,34 @@ v1.0.0.
 > vertical, not a new jurisdiction opening. 8 conformance fixtures (2 valid
 > + 6 mutation-control) committed, reproduced via a from-scratch ajv mock
 > validator; both validators pass at 545/545. Forms 220.09-220.10 remain
+> disclosed, open backlog. See the document's own VERIFICATION.md for the
+> full sourcing record.
+
+> **Update (2026-07-18, GOV-3609, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical gains a tenth schema**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-09` — the ninth
+> of the ten companion schedules disclosed as backlog since the GOV-3477
+> cycle. Independently re-confirmed the `adilet.zan.kz` image endpoint
+> remains up (images 192-202 all HTTP 200) after the GOV-3595 cycle's own
+> clearance. Form 220.09 ("Расходы налогоплательщиков, не являющихся
+> плательщиками НДС, по приобретенным товарам, работам, услугам") covers
+> expenses for acquired goods/works/services reported by non-VAT-payer
+> taxpayers: a dedicated grand-total expense-amount row plus 12 entry rows
+> (counterparty BIN/IIN, country-of-residence code, an 18-box nonresident
+> foreign tax-registration number conditioned on the country code being
+> present, a seven-value expense-type code, the expense amount, and a
+> four-value activity-type apportionment flag) — 76 fields, spanning
+> images 192-193 (confirmed both via the order's own Rules-text chapter
+> boundary and direct visual read of each page's own printed header).
+> Discloses, without resolving, a chapter-heading wording error (Глава
+> 11's own title says goods "sold/realized" while Item 47's body text and
+> the form's own header both say "acquired") — no footnote-vs-Rules-text
+> conflict was found this time, unlike Forms 220.07 and 220.08. Numerator
+> unchanged at 63/73 (Kazakhstan's Taxes column already flipped ✓ in the
+> GOV-3477 cycle); this is a tenth schema within an already-open vertical,
+> not a new jurisdiction opening. 12 conformance fixtures (2 valid + 10
+> mutation-control) committed, reproduced via a from-scratch ajv mock
+> validator; both validators pass at 546/546. Form 220.10 remains
 > disclosed, open backlog. See the document's own VERIFICATION.md for the
 > full sourcing record.
 
