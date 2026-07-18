@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **546 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **547 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-18, GOV-3616, "GovSchema Standard Research"): Kazakhstan's
+> Form 220.0X companion-schedule series is now complete**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-10` — Form 220.10,
+> information on digital assets (Приложение 10 к Декларации), the tenth and
+> last of the series' disclosed companion schedules. Independently
+> re-tested `adilet.zan.kz`'s image-serving endpoint fresh (images 192-205,
+> `curl -k`) and confirmed it remains up. Independently re-fetched
+> `https://adilet.zan.kz/rus/docs/V2500037390`, located Глава 12 (Items
+> 50-53) immediately following Form 220.09's own Глава 11 with no
+> intervening content, and confirmed the single-page boundary two ways
+> (the Rules-text chapter transition and a direct visual read of image
+> 195's own header, which turns out to belong to an entirely unrelated Form
+> 250.00 individual assets-and-liabilities declaration, not a further
+> companion schedule — confirming no Form 220.11 exists). Models the
+> taxpayer header, a start-of-period digital-asset table (a dedicated
+> quantity/value total row plus 4 entry rows), an end-of-period digital-
+> asset table (same shape), and a 5-row crypto-wallet table (address plus
+> wallet/exchange name, no total row) — 41 fields total. Disclosed, not
+> resolved, a genuine source-numbering oddity: the Order's own Rules text
+> reuses paragraph number "52." for both the start-of-period and
+> end-of-period digital-asset column descriptions, with no intervening
+> "53." — transcribed as printed rather than silently renumbered. Both
+> validators pass at 547/547; 9 conformance fixtures (2 valid + 7
+> mutation-control) committed. This closes Kazakhstan's entire Form 220.0X
+> companion-schedule series (Form 220.00 plus companion schedules 220.01
+> through 220.10, all now modelled) — no further undisclosed schedule
+> remains in this series. See the Taxes vertical section below and the
+> document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-18, GOV-3609, "GovSchema Standard Research"): Kazakhstan's
 > Form 220.0X companion-schedule series gains its tenth member**, via
@@ -14777,6 +14806,33 @@ v1.0.0.
 > disclosed, open backlog. See the document's own VERIFICATION.md for the
 > full sourcing record.
 
+> **Update (2026-07-18, GOV-3616, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical gains an eleventh schema, completing the Form 220.0X
+> companion-schedule series**, via
+> `kz/kgd/individual-income-tax-declaration-schedule-220-10` — the tenth
+> and last of the ten companion schedules disclosed as backlog since the
+> GOV-3477 cycle. Independently re-confirmed the `adilet.zan.kz` image
+> endpoint remains up (images 192-205 all HTTP 200). Form 220.10
+> ("Сведения по цифровым активам") covers digital-asset holdings: a
+> start-of-period table (dedicated quantity/value total row plus 4 entry
+> rows) and an end-of-period table of the same shape, plus a 5-row
+> crypto-wallet table (address and wallet/exchange name, no total row) —
+> 41 fields, spanning a single page (image 194, confirmed both via the
+> order's own Rules-text chapter boundary and direct visual read of image
+> 195's own header, which belongs to an unrelated Form 250.00 declaration —
+> confirming no Form 220.11 exists). Discloses, without resolving, a
+> genuine paragraph-numbering duplication in the Order's own Rules text
+> (Item "52." reused for both the start-of-period and end-of-period column
+> descriptions, with no intervening "53."). Numerator unchanged at 63/73
+> (Kazakhstan's Taxes column already flipped ✓ in the GOV-3477 cycle); this
+> is an eleventh schema within an already-open vertical, not a new
+> jurisdiction opening. 9 conformance fixtures (2 valid + 7
+> mutation-control) committed. Both validators pass at 547/547. **This
+> closes Kazakhstan's entire Form 220.0X companion-schedule series** — Form
+> 220.00 plus all ten companion schedules (220.01-220.10) are now modelled,
+> with no further undisclosed schedule remaining. See the document's own
+> VERIFICATION.md for the full sourcing record.
+
 > **Update (2026-07-17, GOV-3558, "GovSchema Standard Research"): Kazakhstan's
 > Taxes vertical gains a sixth schema**, via
 > `kz/kgd/individual-income-tax-declaration-schedule-220-05` — the fifth of
@@ -20483,6 +20539,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   note above, and found it fully recovered. The remaining three schedules
   (220.08-220.10) remain disclosed, open backlog for future companion
   schemas.
+  **Series closed (GOV-3616, 2026-07-18): the last two schedules
+  (220.09, GOV-3609; 220.10, GOV-3616) are now both authored.** Form
+  220.10 ("Сведения по цифровым активам", digital-asset holdings) is
+  confirmed the last schedule in the series — the Order's own Rules text
+  and a direct visual read of the image immediately following it (image
+  195, an unrelated Form 250.00 declaration) both confirm no Form 220.11
+  exists. **This companion-schedule series is now fully closed**: Form
+  220.00 (GOV-3477) plus all ten companion schedules 220.01-220.10 are
+  modelled — no further backlog remains in this series.
 
 - **GOV-3454 ("GovSchema Standard Research") — Morocco opens as the
   registry's 71st jurisdiction via Visa, authored via
