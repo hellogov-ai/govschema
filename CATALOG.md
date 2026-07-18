@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **548 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **549 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-18, GOV-3632, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its third companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-mpz` — Annex МПЗ, the
+> general minimum tax obligation (загальне мінімальне податкове зобов'язання,
+> ЗМПЗ) computation for individual entrepreneurs (other than those on the
+> simplified system) who own, lease, or otherwise use agricultural land
+> plots, per Article 177.14 of the Tax Code of Ukraine. One of the ten
+> companion schedules `ua/dps/individual-income-tax-declaration` (GOV-3531)
+> disclosed but did not model, and the third of those ten to be authored,
+> after Annex АП (GOV-3588) and Annex Ф4 (GOV-3623). Sized all eight
+> remaining sheets fresh (`!ref`/`!merges` count) before picking one: МПЗ
+> (`A1:DG72`, 153 merges) is by a wide margin the smallest, versus the
+> next-smallest at 183 rows (Ф2). Re-fetched the same source workbook the
+> parent declaration and both prior annexes cite via the same Wayback
+> Machine mirror (a direct HTTP 200, no transient-500 flake), confirmed
+> byte-identical to all three documents' own recorded sha256
+> (`7c67f4c421a1a8fc610f9226819d223debcb56b3fd1fc3d5f75ce0247cc7f0ac`).
+> Parsed the workbook's own 'МПЗ' sheet cell-by-cell, cross-referencing its
+> own 153-entry `!merges` array. Models the sheet in full: the
+> taxpayer-identification and declaration-type/period header (year-only,
+> matching Annex Ф4's own convention rather than Annex АП's month-bearing
+> one), Розділ І's bounded four-entry land-plot table (cadastral number,
+> KATOTTG code, own/leased area, assessed/unassessed normative valuation,
+> coefficient K, months held, assessed/unassessed minimum tax obligation,
+> each plot's own share percentage and PIT amount) plus its own total ЗМПЗ
+> row, and Розділ ІІ's three-line computation (the carried-forward ЗМПЗ
+> total, the total taxes/fees/payments paid across six sub-line categories,
+> and the positive difference carried to the parent declaration's Section
+> V) — 62 fields total. Confirmed, via the sheet's own per-cell "х"
+> (not-applicable) markings, an inverted per-row/total convention from
+> Annex Ф4's own tables: the total ЗМПЗ column is marked "х" on all four
+> individual land-plot rows and printed only on the section's own total
+> row, while the share-percentage and PIT-amount columns are the reverse.
+> Numerator unchanged at 63/73 (Ukraine's Taxes column already flipped ✓ in
+> the GOV-3531 cycle); this is a fourth schema within an already-open
+> vertical, not a new jurisdiction opening. 9 conformance fixtures (2 valid
+> + 7 mutation-control) committed, all reproduced via a from-scratch mock
+> validator; both validators pass at 549/549; `verify-sources` clean
+> (scoped run). See the document's own VERIFICATION.md for the full
+> sourcing record.
 
 > **Update (2026-07-18, GOV-3623, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its second companion schedule**, via
@@ -14689,6 +14730,17 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (63/73 jurisdictions — 86%)
 
+> **Update (2026-07-18, GOV-3632, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its third companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-mpz` — Annex МПЗ, the
+> general minimum tax obligation computation for agricultural-land owners/
+> lessees, per Article 177.14 of the Tax Code of Ukraine, one of the ten
+> companion schedules `ua/dps/individual-income-tax-declaration` (GOV-3531)
+> disclosed but did not model. See the Executive Summary update above for
+> the full sourcing record. Numerator unchanged at 63/73 (Ukraine's Taxes
+> column already flipped ✓); seven companion schedules (ЄСВ1, ЄСВ2, ЄСВ3,
+> КІК, Ф1, Ф2, Ф3) remain open backlog for future cycles.
+
 > **Update (2026-07-18, GOV-3623, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its second companion schedule**, via
 > `ua/dps/individual-income-tax-declaration-annex-f4` — Annex Ф4, the real
@@ -20469,6 +20521,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   see the Executive Summary and Taxes vertical section above. The remaining
   eight schedules (ЄСВ1-3, КІК, Ф1-Ф3, МПЗ) remain disclosed, open backlog
   for future companion-schema cycles.
+  **Resolved further (GOV-3632, 2026-07-18): the third of the ten disclosed
+  companion schedules authored** via
+  `ua/dps/individual-income-tax-declaration-annex-mpz` (Annex МПЗ, general
+  minimum tax obligation computation for agricultural land) — see the
+  Executive Summary and Taxes vertical section above. The remaining seven
+  schedules (ЄСВ1-3, КІК, Ф1-Ф3) remain disclosed, open backlog for future
+  companion-schema cycles.
 
 - **GOV-3459 ("GovSchema Standard Research") — Kazakhstan opens as the
   registry's 72nd jurisdiction via Business Formation, authored via
