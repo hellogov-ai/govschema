@@ -4,7 +4,47 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **547 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **548 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-18, GOV-3623, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its second companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-f4` — Annex Ф4, the
+> personal-income-tax and military-levy computation on income from the sale
+> (exchange) of real estate and/or movable property (e.g. vehicles), per
+> Articles 172 and 173 of the Tax Code of Ukraine. One of the ten companion
+> schedules `ua/dps/individual-income-tax-declaration` (GOV-3531) disclosed
+> but did not model, and the second of those ten to be authored, after Annex
+> АП (GOV-3588). Re-scanned CATALOG.md fresh this cycle and confirmed
+> Kazakhstan's Form 220.0X companion-schedule series (GOV-3477 through
+> GOV-3616) is now fully closed, with no further undisclosed schedule
+> remaining in that series; a single unscreened lead (an unrelated KZ Form
+> 250.00 individual assets-and-liabilities declaration, glimpsed only as an
+> image header during the GOV-3616 cycle's own boundary check) was
+> disclosed but not used this cycle without first confirming a genuine
+> unauthenticated source exists. Re-fetched the same source workbook the
+> parent declaration and Annex АП both cite via the same Wayback Machine
+> mirror (a direct HTTP 200 this time, no transient-500 flake), confirmed
+> byte-identical to both documents' own recorded sha256
+> (`7c67f4c421a1a8fc610f9226819d223debcb56b3fd1fc3d5f75ce0247cc7f0ac`).
+> Parsed the workbook's own 'Ф4' sheet (`!ref A1:CR70`) cell-by-cell,
+> cross-referencing its own 215-entry `!merges` array to resolve each
+> header label's true column span. Models the sheet in full: the
+> taxpayer-identification and declaration-type/period header (confirmed,
+> via direct inspection, to carry no companion "місяць" month column in
+> either period box — a genuine structural difference from Annex АП's own
+> footnote-driven month fields), Розділ І's bounded three-entry real-estate
+> sale/exchange table plus its own annual total row, Розділ ІІ's
+> identically-shaped bounded three-entry movable-property sale/exchange
+> table plus its own annual total row, and Section III's eight-line
+> PIT/military-levy computation — 96 fields total. Numerator unchanged at
+> 63/73 (Ukraine's Taxes column already flipped ✓ in the GOV-3531 cycle);
+> this is a third schema within an already-open vertical, not a new
+> jurisdiction opening. 9 conformance fixtures (2 valid + 7
+> mutation-control) committed, all reproduced via a from-scratch mock
+> validator; both validators pass at 548/548; `verify-sources` clean
+> (scoped run, only the expected bot/WAF-blocked WARNs on the direct
+> `tax.gov.ua` domain). See the document's own VERIFICATION.md for the full
+> sourcing record.
 
 > **Update (2026-07-18, GOV-3616, "GovSchema Standard Research"): Kazakhstan's
 > Form 220.0X companion-schedule series is now complete**, via
@@ -14649,6 +14689,16 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (63/73 jurisdictions — 86%)
 
+> **Update (2026-07-18, GOV-3623, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its second companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-f4` — Annex Ф4, the real
+> estate and movable-property sale-income PIT/military-levy computation, one
+> of the ten companion schedules `ua/dps/individual-income-tax-declaration`
+> (GOV-3531) disclosed but did not model. See the Executive Summary update
+> above for the full sourcing record. Numerator unchanged at 63/73 (Ukraine's
+> Taxes column already flipped ✓); eight companion schedules (ЄСВ1, ЄСВ2,
+> ЄСВ3, КІК, Ф1, Ф2, Ф3, МПЗ) remain open backlog for future cycles.
+
 > **Update (2026-07-17, GOV-3588, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its first companion schedule**, via
 > `ua/dps/individual-income-tax-declaration-annex-ap` — Annex АП, the
@@ -20412,6 +20462,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   entrepreneurs) — see the Executive Summary and Taxes vertical section
   above. The remaining nine schedules (ЄСВ1-3, КІК, Ф1-Ф4, МПЗ) remain
   disclosed, open backlog for future companion-schema cycles.
+  **Resolved further (GOV-3623, 2026-07-18): the second of the ten disclosed
+  companion schedules authored** via
+  `ua/dps/individual-income-tax-declaration-annex-f4` (Annex Ф4, real
+  estate/movable-property sale-income PIT and military-levy computation) —
+  see the Executive Summary and Taxes vertical section above. The remaining
+  eight schedules (ЄСВ1-3, КІК, Ф1-Ф3, МПЗ) remain disclosed, open backlog
+  for future companion-schema cycles.
 
 - **GOV-3459 ("GovSchema Standard Research") — Kazakhstan opens as the
   registry's 72nd jurisdiction via Business Formation, authored via
