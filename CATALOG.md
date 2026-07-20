@@ -4,7 +4,52 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **555 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **556 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-20, GOV-4037, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its tenth and last companion schedule, closing the
+> entire disclosed backlog**, via
+> `ua/dps/individual-income-tax-declaration-annex-esv1` — Annex ЄСВ1, the
+> calculation of accrued income of insured persons and the accrued unified
+> social contribution (ЄСВ), filed by individual entrepreneurs, independent
+> professionals, and farm household members. The tenth and final companion
+> schedule `ua/dps/individual-income-tax-declaration` (GOV-3531) disclosed
+> but did not model, closing that backlog in full after Annex АП
+> (GOV-3588), Annex Ф4 (GOV-3623), Annex МПЗ (GOV-3632), Annex Ф1
+> (GOV-3641), Annex КІК (GOV-3996 via GOV-3907), Annex Ф2 (GOV-4004 via
+> GOV-4002), Annex ЄСВ3 (GOV-4010), Annex Ф3 (GOV-4019 via GOV-4017), and
+> Annex ЄСВ2 (GOV-4026). Re-fetched the same source workbook the parent
+> declaration and all nine prior annexes cite via the exact timestamped
+> Wayback Machine snapshot, confirmed byte-identical to all ten documents'
+> own recorded sha256
+> (`7c67f4c421a1a8fc610f9226819d223debcb56b3fd1fc3d5f75ce0247cc7f0ac`) across
+> eleven cycles now. Parsed the workbook's own 'ЄСВ 1' sheet cell-by-cell
+> (`!ref` A1:CA244, 241 merges — the largest of the four remaining
+> candidates by merge count, as pre-sized by the GOV-4010 cycle), confirming
+> actual printed content ends at row 109. Deliberately did not assume
+> identity with its closest siblings (Annex ЄСВ2/ЄСВ3) and confirmed
+> several genuine structural departures instead: a genuinely three-value
+> `declarationType` enum (original/revised original/corrective — confirmed
+> via three distinct checkbox merges, unlike ЄСВ2/ЄСВ3's own two-value
+> convention); a second, distinct "period being corrected" box unique to
+> this schedule (since ЄСВ1 is the only ЄСВ-family sibling that actually
+> supports a corrective filing); a split число/місяць/рік termination-
+> registration date (unlike ЄСВ2's five undated fields); four payer-type
+> period boxes, one of which ("ФО – на загальній системі оподаткування")
+> is printed with a byte-identical duplicate label and no distinguishing
+> checkbox or footnote found anywhere on the sheet — confirmed via a
+> raw-codepoint comparison and disclosed as a genuine, unresolved source
+> ambiguity rather than guessed at; and a monthly table whose sixth column
+> header states an explicit multiplication formula ("графа 4 × графа 5")
+> that GovSchema's own `crossFieldValidation` vocabulary (GSP-0013 §3,
+> field-to-field comparison operators only) cannot express — the first
+> such spec-vocabulary gap this registry's UA DPS annex series has found,
+> disclosed rather than approximated. Numerator changes from 555 to 556
+> documents; Ukraine's own Taxes-vertical companion-schedule count moves
+> from 9 to 10 of 10 disclosed — **the entire disclosed backlog is now
+> closed**. Both validators pass at 556/556; 9 conformance fixtures. See
+> the Taxes vertical section below and the document's own VERIFICATION.md
+> for the full record.
 
 > **Update (2026-07-20, GOV-4026, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its ninth companion schedule**, via
@@ -14963,6 +15008,31 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (63/73 jurisdictions — 86%)
 
+> **Update (2026-07-20, GOV-4037, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its tenth and last companion schedule, closing the
+> entire disclosed backlog**, via
+> `ua/dps/individual-income-tax-declaration-annex-esv1` — Annex ЄСВ1, the
+> accrued-income/accrued-ЄСВ calculation filed by individual entrepreneurs,
+> independent professionals, and farm household members, the last of the
+> ten companion schedules `ua/dps/individual-income-tax-declaration`
+> (GOV-3531) disclosed but did not model. Did not assume identity with the
+> closest structural siblings (Annex ЄСВ2/ЄСВ3) and confirmed several
+> genuine structural departures instead: a genuinely three-value
+> `declarationType` enum (unlike ЄСВ2/ЄСВ3's own two-value convention); a
+> second "period being corrected" box unique to this schedule (the only
+> ЄСВ sibling actually supporting a corrective filing); a split
+> число/місяць/рік termination-registration date; four payer-type period
+> boxes, one printed with a byte-identical duplicate label and no
+> distinguishing checkbox found anywhere on the sheet (disclosed as an
+> unresolved ambiguity); and a monthly table whose sixth column states an
+> explicit multiplication formula that this spec's own
+> `crossFieldValidation` vocabulary cannot express (field-to-field
+> comparison operators only, no arithmetic products) — disclosed as a
+> genuine spec-vocabulary gap rather than approximated. See the Executive
+> Summary update above for the full sourcing record. Numerator unchanged
+> at 63/73 (Ukraine's Taxes column already flipped ✓); **all ten disclosed
+> companion schedules are now published — the backlog is fully closed.**
+
 > **Update (2026-07-20, GOV-4026, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its ninth companion schedule**, via
 > `ua/dps/individual-income-tax-declaration-annex-esv2` — Annex ЄСВ2, the
@@ -20968,6 +21038,26 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   with a two-value (not three-value) insured-person-category enum. The
   remaining schedule (ЄСВ1) remains disclosed, open backlog for a future
   companion-schema cycle.
+  **Resolved further (GOV-4037, 2026-07-20): the tenth and last of the ten
+  disclosed companion schedules authored** via
+  `ua/dps/individual-income-tax-declaration-annex-esv1` (Annex ЄСВ1,
+  accrued-income/accrued-ЄСВ calculation for individual entrepreneurs,
+  independent professionals, and farm household members) — see the
+  Executive Summary and Taxes vertical section above. **This closes the
+  entire disclosed ten-schedule companion backlog; no further companion
+  schedules to `ua/dps/individual-income-tax-declaration` remain open.**
+  This cycle confirmed a genuinely three-value `declarationType` enum
+  (unlike its closest siblings ЄСВ2/ЄСВ3's own two-value convention); a
+  second "period being corrected" box unique to this schedule (the only
+  ЄСВ-family sibling actually supporting a corrective filing); a split
+  число/місяць/рік termination-registration date; a byte-identical
+  duplicate payer-type label with no distinguishing checkbox found
+  anywhere on the sheet (disclosed as an unresolved ambiguity); and a
+  monthly table column header stating an explicit multiplication formula
+  ("графа 4 × графа 5") that this spec's own `crossFieldValidation`
+  vocabulary — field-to-field comparison operators only, no arithmetic
+  products — cannot express, the first such spec-vocabulary gap this
+  registry's UA DPS annex series has found.
 
 - **GOV-3459 ("GovSchema Standard Research") — Kazakhstan opens as the
   registry's 72nd jurisdiction via Business Formation, authored via
