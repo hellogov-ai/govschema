@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **552 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **553 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-20, GOV-4010, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its seventh companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-esv3` — Annex ЄСВ3, the
+> calculation of an increase or decrease in unified social contribution
+> (єдиний внесок, ЄСВ) liability following the results of a documentary
+> audit. One of the ten companion schedules
+> `ua/dps/individual-income-tax-declaration` (GOV-3531) disclosed but did not
+> model, and the seventh of those ten to be authored, after Annex АП
+> (GOV-3588), Annex Ф4 (GOV-3623), Annex МПЗ (GOV-3632), Annex Ф1 (GOV-3641),
+> Annex КІК (GOV-3996 via GOV-3907), and Annex Ф2 (GOV-4004 via GOV-4002). Of
+> the four remaining candidates (ЄСВ1, ЄСВ2, ЄСВ3, Ф3), none had been sized
+> by any prior cycle; this cycle sized all four fresh (ЄСВ1: 244 rows/241
+> merges, ЄСВ2: 250 rows/211 merges, ЄСВ3: 226 rows/131 merges, Ф3: 420
+> rows/202 merges) and picked ЄСВ3 as the smallest by both dimensions.
+> Re-fetched the same source workbook the parent declaration and all six
+> prior annexes cite via the same Wayback Machine mirror (a direct HTTP 200,
+> no transient-500 flake), confirmed byte-identical to all seven documents'
+> own recorded sha256
+> (`7c67f4c421a1a8fc610f9226819d223debcb56b3fd1fc3d5f75ce0247cc7f0ac`) across
+> eight cycles now. Parsed the workbook's own 'ЄСВ 3' sheet cell-by-cell
+> (`!ref` A1:CY226, 131 merges), confirming actual printed content ends at
+> row 89 (the remaining 137 declared rows are blank print-area padding, the
+> same pattern Annex Ф2's own sheet showed). **Two genuine structural firsts
+> among this registry's seven authored UA DPS annexes**: a second, distinct
+> passport-identification field for Pension Fund of Ukraine purposes
+> (alongside the standard RNOKPP/passport field), and a direct full-name
+> field on the annex itself (every other annex relies solely on the main
+> declaration's own name field). Also confirmed a genuinely **two-value**
+> `declarationType` enum (original/revised_original only — no third
+> "corrective" checkbox anywhere on the sheet, unlike every other authored
+> UA DPS annex's three-value convention), and that, unlike Annex Ф1/КІК/Ф2,
+> this sheet **does** print an accuracy-attestation sentence, so `documents`
+> is populated rather than omitted. Models the sheet in full, including its
+> fixed twelve-month table (one row per calendar month, each with an
+> insured-person category code, base amount, and liability amount) plus its
+> own total row. Numerator changes from 552 to 553 documents; Ukraine's own
+> Taxes-vertical companion-schedule count moves from 6 to 7 (of ten
+> disclosed); three schedules remain open backlog (ЄСВ1, ЄСВ2, Ф3). Both
+> validators pass at 553/553; 9 conformance fixtures. See the Taxes vertical
+> section below and the document's own VERIFICATION.md for the full record.
 
 > **Update (2026-07-20, GOV-4002, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its sixth companion schedule**, via
@@ -14838,6 +14879,24 @@ panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partn
 v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (63/73 jurisdictions — 86%)
+
+> **Update (2026-07-20, GOV-4010, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its seventh companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-esv3` — Annex ЄСВ3, the
+> calculation of an increase or decrease in unified social contribution
+> (ЄСВ) liability following a documentary audit, per one of the ten
+> companion schedules `ua/dps/individual-income-tax-declaration` (GOV-3531)
+> disclosed but did not model. Sized all four remaining candidates fresh
+> (none had been sized by any prior cycle) and picked ЄСВ3 as the smallest.
+> Confirmed two genuine structural firsts among this registry's seven
+> authored UA DPS annexes — a second, Pension-Fund-specific passport
+> identification field, and a direct full-name field — plus a genuinely
+> two-value (not three-value) `declarationType` enum, and, unlike Annex
+> Ф1/КІК/Ф2, an accuracy-attestation sentence that IS printed, so
+> `documents` is populated. Models the sheet's fixed twelve-month table
+> (one row per calendar month) in full. Numerator unchanged at 63/73
+> (Ukraine's Taxes column already flipped ✓); three companion schedules
+> (ЄСВ1, ЄСВ2, Ф3) remain open backlog for future cycles.
 
 > **Update (2026-07-20, GOV-4002, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its sixth companion schedule**, via
