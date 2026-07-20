@@ -4,7 +4,52 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **553 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **554 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-20, GOV-4017, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its eighth companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-f3` — Annex Ф3, the
+> calculation of the personal income tax amount refundable from the budget
+> due to exercising the taxpayer's right to a tax credit under Article 166 of
+> the Tax Code of Ukraine (eleven general expense categories under clause
+> 166.3, plus a parallel Diia City share-acquisition computation under
+> sub-clause 166.3.10). One of the ten companion schedules
+> `ua/dps/individual-income-tax-declaration` (GOV-3531) disclosed but did not
+> model, and the eighth of those ten to be authored, after Annex АП
+> (GOV-3588), Annex Ф4 (GOV-3623), Annex МПЗ (GOV-3632), Annex Ф1 (GOV-3641),
+> Annex КІК (GOV-3996 via GOV-3907), Annex Ф2 (GOV-4004 via GOV-4002), and
+> Annex ЄСВ3 (GOV-4010). Of the remaining two candidates (ЄСВ1, ЄСВ2, both
+> carrying a fixed twelve-month repeating table), Ф3 was already sized as
+> the smallest by merge count (202) and, unlike either, has no repeating
+> table of unknown size — a fixed line-item structure instead. Re-fetched
+> the same source workbook the parent declaration and all seven prior
+> annexes cite via the same Wayback Machine mirror (a direct HTTP 200, no
+> transient-500 flake), confirmed byte-identical to all eight documents' own
+> recorded sha256
+> (`7c67f4c421a1a8fc610f9226819d223debcb56b3fd1fc3d5f75ce0247cc7f0ac`) across
+> nine cycles now. Parsed the workbook's own 'Ф 3' sheet cell-by-cell (`!ref`
+> A1:BQ420, 202 merges), confirming actual printed content ends at row 117
+> (the remaining 303 declared rows are blank print-area padding). A genuine
+> **disclosed source-text inconsistency**: Section III's own lines 17.1/17.2
+> formulas literally cite "рядок 17" (a bare header row with no value of its
+> own) as their multiplicand, rather than "рядок 16" (the actual computed tax
+> base) — Section II's structurally identical lines 9.1/9.2 correctly cite
+> "рядок 8", confirming this is a source template error, not a modelling
+> choice. Also confirmed that four header rows on this sheet (lines 6, 9, 14,
+> 17) introduce a two-part rate/percentage split with no formula or distinct
+> value of their own — only their `.1`/`.2` children are modelled as fields —
+> and that this sheet's own footnote-level accuracy confirmation (unlike
+> Annex АП/Ф4/МПЗ/ЄСВ3's general attestation sentence) is conditional and
+> scoped to a single expense category (IDP housing rent, sub-clause
+> 166.3.9), so `documents` is omitted, matching Annex Ф1's own choice (for a
+> different reason) rather than the general-attestation annexes'. Models the
+> sheet in full: the header, Section I's own eleven-category expense list
+> and total, and both Section II's and Section III's own tax-credit
+> computations. Numerator changes from 553 to 554 documents; Ukraine's own
+> Taxes-vertical companion-schedule count moves from 7 to 8 (of ten
+> disclosed); two schedules remain open backlog (ЄСВ1, ЄСВ2). Both validators
+> pass at 554/554; 9 conformance fixtures. See the Taxes vertical section
+> below and the document's own VERIFICATION.md for the full record.
 
 > **Update (2026-07-20, GOV-4010, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its seventh companion schedule**, via
