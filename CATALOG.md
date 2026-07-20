@@ -4,7 +4,68 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **556 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **558 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-20, GOV-4050, "GovSchema Standard Research"): Kazakhstan's
+> Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
+> first companion schedule**, via
+> `kz/kgd/declaration-of-assets-and-liabilities-schedule-250-01` — Form
+> 250.01, foreign-registered real estate and foreign-registered vehicles.
+> The first of six companion schedules (250.01-250.06) the GOV-4043 cycle
+> disclosed but did not model when it authored the main Form 250.00
+> declaration. Re-fetched the same source (Order of the Minister of Finance
+> of the Republic of Kazakhstan No. 695, 12 November 2025,
+> `adilet.zan.kz/rus/docs/V2500037390`) fresh this cycle, byte-identical to
+> the GOV-4043 cycle's own fetch. Sized all six schedules by field count
+> before picking: 250.01 and 250.05 tied as the smallest two (~13 leaf
+> columns each), 250.02 and 250.04 the largest (~17-18 columns, three
+> repeating sections each); 250.01 was picked as the natural first schedule
+> in the numbered sequence given the tie. Models both of the schedule's own
+> repeating sections (foreign real estate, foreign-registered vehicles) via
+> this registry's standard flat `entryN`-prefixed convention (three rows
+> each, matching the reference specimen), and confirms a genuine
+> classifier-convention difference from the unrelated KZ 220.0X schedule
+> series: Form 250.00's own family of schedules cites a **two-letter**
+> country-code classifier (per the order's own explanatory text and worked
+> examples), while the 220.0X series cites a **three-digit** country code
+> for the same underlying classifier decision — confirmed directly from
+> each series' own explanatory text rather than assumed identical. Numerator
+> changes from 557 to 558 documents. Both validators pass at 558/558;
+> `verify-sources` clean (one tolerated TLS-chain WARN on `adilet.zan.kz`,
+> the same server-misconfiguration quirk documented across every prior KZ
+> cycle); 9 conformance fixtures. Five schedules (250.02-250.06) remain open
+> backlog. See the Taxes vertical section below and the document's own
+> VERIFICATION.md for the full record.
+
+> **Update (2026-07-20, GOV-4043, "GovSchema Standard Research"): Kazakhstan's
+> Taxes vertical gains a new declaration**, via
+> `kz/kgd/declaration-of-assets-and-liabilities` — Form 250.00, the
+> Declaration of Assets and Liabilities of a Natural Person, filed by
+> individuals in specified categories (public-office candidates and their
+> spouses, quasi-public-sector employees and their spouses, and other
+> categories designated by law) disclosing worldwide assets and liabilities
+> above a stated threshold. Sourced from the same Order of the Minister of
+> Finance of the Republic of Kazakhstan No. 695 (12 November 2025,
+> `adilet.zan.kz/rus/docs/V2500037390`) that also governs Form 220.00
+> (Appendix 10 rather than Form 220.00's own Appendix 9), a lead this
+> registry's own GOV-3616/GOV-3618 cycle had glimpsed only as an incidental
+> adjacent page image but never investigated. Models the main two-page
+> declaration in full (35 fields) — taxpayer-category and declaration-type
+> gating, the fourteen asset/liability disclosure checkboxes gating six
+> companion schedules, the below-threshold cash-on-hand table, and the
+> attestation block — leaving all six companion schedules (Forms
+> 250.01-250.06, each schedule considerably smaller than the Form 220.0X
+> series' own ten schedules) disclosed as open backlog. Confirms a genuine
+> structural difference from Form 220.00: Form 250.00's own `declarationType`
+> is a four-value enum (no liquidation option), unlike Form 220.00's
+> five-value convention — consistent with a personal asset-disclosure form
+> having no entrepreneurial-liquidation concept behind it. Numerator changes
+> from 556 to 557 documents; Kazakhstan gains a second Taxes-vertical
+> document family alongside Form 220.00's own eleven documents. Both
+> validators pass at 557/557; 11 conformance fixtures. See the Taxes
+> vertical section below and the document's own VERIFICATION.md for the
+> full record. **Update (GOV-4050):** the first of the six companion
+> schedules is now authored — see the update above.
 
 > **Update (2026-07-20, GOV-4037, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its tenth and last companion schedule, closing the
