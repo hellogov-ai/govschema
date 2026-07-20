@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **559 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **560 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-20, GOV-4064, "GovSchema Standard Research"): Kazakhstan's
+> Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
+> third companion schedule**, via
+> `kz/kgd/declaration-of-assets-and-liabilities-schedule-250-02` — Form
+> 250.02, foreign bank accounts (over the reporting threshold, and
+> separately for anti-corruption-restricted declarants regardless of
+> amount) and foreign equity stakes. The last of the two "largest" schedules
+> per the GOV-4050 cycle's own field-count sizing (250.02/250.04, ~17-18
+> columns, three repeating sections each) to be authored so far. Fetched the
+> schedule's own page image fresh (`adilet.zan.kz/files/1576/49/198.jpg`,
+> HTTP 200, 157,837 bytes) and read it directly via two 3x-zoom crops,
+> confirming three blank entry rows in each of the two bank-account
+> sections (Раздел В.а/б) but only two in the equity-stake section (item
+> 04) on the same page — a genuine, disclosed row-count difference within a
+> single schedule, not assumed uniform. Also discloses a genuine form-design
+> quirk: the equity-stake section's own column C header prints "Наименование
+> банковского учреждения" (bank institution name) verbatim, byte-identical
+> to the bank-name column label in the two sections above it, even though
+> item 04's own heading concerns equity stakes in a foreign legal entity
+> generally, not specifically banks — left as an unresolved ambiguity rather
+> than silently renamed. Numerator changes from 559 to 560 documents. Both
+> validators pass at 560/560; 10 conformance fixtures. Three schedules
+> (250.03, 250.04, 250.06) remain open backlog. See the Taxes vertical
+> section below and the document's own VERIFICATION.md for the full record.
 
 > **Update (2026-07-20, GOV-4057, "GovSchema Standard Research"): Kazakhstan's
 > Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
@@ -38,7 +63,8 @@
 > Both validators pass at 559/559; 10 conformance fixtures. Four schedules
 > (250.02, 250.03, 250.04, 250.06) remain open backlog. See the Taxes
 > vertical section below and the document's own VERIFICATION.md for the
-> full record.
+> full record. **Update (GOV-4064):** the third of the six companion
+> schedules (250.02) is now authored — see the update above.
 
 > **Update (2026-07-20, GOV-4050, "GovSchema Standard Research"): Kazakhstan's
 > Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
