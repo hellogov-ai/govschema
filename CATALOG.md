@@ -4,7 +4,53 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **553 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **554 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-20, GOV-4017/GOV-4019, "GovSchema Standard Research"):
+> Ukraine's Taxes vertical gains its eighth companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-f3` — Annex Ф3, the
+> calculation of the amount by which personal income tax obligations are
+> reduced through use of the taxpayer's right to a tax credit (податкова
+> знижка), per Article 166 of the Tax Code of Ukraine. One of the ten
+> companion schedules `ua/dps/individual-income-tax-declaration` (GOV-3531)
+> disclosed but did not model, and the eighth of those ten to be authored,
+> after Annex АП (GOV-3588), Annex Ф4 (GOV-3623), Annex МПЗ (GOV-3632),
+> Annex Ф1 (GOV-3641), Annex КІК (GOV-3996 via GOV-3907), Annex Ф2 (GOV-4004
+> via GOV-4002), and Annex ЄСВ3 (GOV-4010). Of the three remaining
+> candidates (ЄСВ1, ЄСВ2, Ф3), the GOV-4010 cycle had already sized all
+> three fresh (ЄСВ1: 244 rows/241 merges, ЄСВ2: 250 rows/211 merges, Ф3: 420
+> rows/202 merges); this cycle independently re-sized all three again from a
+> freshly re-fetched copy of the source workbook and picked Ф3 — fewest
+> merges, and the only one of the three with no repeating table at all
+> (ЄСВ1 and ЄСВ2 each carry their own fixed twelve-month table). Re-fetched
+> the same source workbook the parent declaration and all seven prior
+> annexes cite via the same Wayback Machine mirror (a direct HTTP 200, no
+> transient-500 flake), confirmed byte-identical to all eight documents'
+> own recorded sha256
+> (`7c67f4c421a1a8fc610f9226819d223debcb56b3fd1fc3d5f75ce0247cc7f0ac`) across
+> nine cycles now. Parsed the workbook's own 'Ф 3' sheet cell-by-cell
+> (`!ref` A1:BQ420, 202 merges), confirming actual printed content ends at
+> row 117. Models a fixed eleven-category incurred-expense table (mortgage
+> interest, charitable contributions, education, healthcare, life
+> insurance/pension contributions, reproductive technology or adoption,
+> alternative-fuel vehicle conversion, affordable housing, IDP rent,
+> COVID-19 treatment, and other unlisted expenses) plus a parallel pair of
+> PIT-refund computations — one for wages-financed expense categories, one
+> for the Diia City resident share-acquisition category financed by
+> dividend income. **A genuine structural finding**: of the four numbered
+> lines that also split into lettered sub-lines, only one (line 14) prints
+> its own aggregate cell as a literal "х" (not applicable) rather than a
+> fillable amount, confirmed via a full non-empty-cell dump and disclosed
+> rather than modelled as a phantom field; also disclosed, not silently
+> corrected, is an apparent citation inconsistency in the sheet's own
+> printed formula for line 18. Confirmed, like Annex Ф1, Annex КІК, and
+> Annex Ф2, **no accuracy-attestation sentence anywhere on this sheet** —
+> `documents` is therefore omitted entirely. Numerator changes from 553 to
+> 554 documents; Ukraine's own Taxes-vertical companion-schedule count moves
+> from 7 to 8 (of ten disclosed); two schedules remain open backlog (ЄСВ1,
+> ЄСВ2). Both validators pass at 554/554; 9 conformance fixtures. See the
+> Taxes vertical section below and the document's own VERIFICATION.md for
+> the full record.
 
 > **Update (2026-07-20, GOV-4010, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its seventh companion schedule**, via
@@ -14880,6 +14926,27 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (63/73 jurisdictions — 86%)
 
+> **Update (2026-07-20, GOV-4017/GOV-4019, "GovSchema Standard Research"):
+> Ukraine's Taxes vertical gains its eighth companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-f3` — Annex Ф3, the tax
+> credit (податкова знижка) computation under Article 166 of the Tax Code
+> of Ukraine, one of the ten companion schedules
+> `ua/dps/individual-income-tax-declaration` (GOV-3531) disclosed but did
+> not model. Re-sized the three then-remaining candidates (ЄСВ1, ЄСВ2, Ф3)
+> fresh and picked Ф3 — fewest merges, and the only one with no repeating
+> table (ЄСВ1/ЄСВ2 each carry a fixed twelve-month table). Models a fixed
+> eleven-category incurred-expense table plus parallel wages-financed and
+> Diia-City-dividend-financed PIT-refund computations. Confirmed a genuine
+> structural finding (one parent line's own aggregate cell is printed "х",
+> not fillable, unlike its three sibling parent lines) and disclosed, not
+> silently corrected, an apparent formula-reference inconsistency on the
+> sheet's own line 18. Like Annex Ф1, Annex КІК, and Annex Ф2, no
+> accuracy-attestation sentence is printed — `documents` is omitted
+> entirely. See the Executive Summary update above for the full sourcing
+> record. Numerator unchanged at 63/73 (Ukraine's Taxes column already
+> flipped ✓); two companion schedules (ЄСВ1, ЄСВ2) remain open backlog for
+> future cycles.
+
 > **Update (2026-07-20, GOV-4010, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its seventh companion schedule**, via
 > `ua/dps/individual-income-tax-declaration-annex-esv3` — Annex ЄСВ3, the
@@ -20784,6 +20851,43 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   anywhere on this sheet, so `documents` is again omitted entirely rather
   than fabricated. The remaining four schedules (ЄСВ1-3, Ф3) remain
   disclosed, open backlog for future companion-schema cycles.
+  **Resolved further (GOV-4010, 2026-07-20): the seventh of the ten
+  disclosed companion schedules authored** via
+  `ua/dps/individual-income-tax-declaration-annex-esv3` (Annex ЄСВ3, a
+  post-audit ЄСВ (unified social contribution) adjustment calculation) —
+  see the Executive Summary and Taxes vertical section above. This cycle
+  sized the four then-remaining candidates (ЄСВ1, ЄСВ2, ЄСВ3, Ф3) fresh —
+  none had been sized by any prior cycle — and picked ЄСВ3 as the smallest
+  by both row count and merge count. Two structural firsts for this
+  registry's UA DPS annexes: a second, distinct Pension-Fund-specific
+  passport identification field alongside the standard RNOKPP field, and a
+  direct `fullName` field (every other annex relies solely on the main
+  declaration's own name field). Also a genuine two-value `declarationType`
+  enum (original/revised_original only), unlike every other UA DPS annex's
+  three-value convention. The remaining three schedules (ЄСВ1, ЄСВ2, Ф3)
+  remain disclosed, open backlog for future companion-schema cycles.
+  **Resolved further (GOV-4017/GOV-4019, 2026-07-20): the eighth of the ten
+  disclosed companion schedules authored** via
+  `ua/dps/individual-income-tax-declaration-annex-f3` (Annex Ф3, the tax
+  credit (податкова знижка) computation under Article 166 of the Tax Code
+  of Ukraine) — see the Executive Summary and Taxes vertical section above.
+  This cycle re-sized the three then-remaining candidates (ЄСВ1, ЄСВ2, Ф3)
+  fresh and picked Ф3: fewest merges (202 vs. 241 and 211), and — more
+  significantly — the only one of the three with no repeating table at all
+  (ЄСВ1 and ЄСВ2 each carry their own fixed twelve-month table), making it
+  the more tractable candidate despite a comparable row count. A genuine
+  structural finding: of this schedule's four numbered parent lines that
+  also split into lettered sub-lines (lines 4, 6, 9, and 14), only line 14
+  prints its own aggregate cell as a literal "х" (not applicable) rather
+  than a fillable amount — confirmed via a full non-empty-cell dump, and
+  disclosed rather than modelled as a phantom field. Also disclosed, not
+  silently corrected: line 18's own printed formula cites "рядок 13 – рядок
+  17", where the mirrored Section II pattern (line 10's "рядок 5 – рядок
+  9") would suggest "рядок 16 – рядок 17" instead. Like Annex Ф1, Annex
+  КІК, and Annex Ф2, no accuracy-attestation sentence is printed anywhere
+  on this sheet, so `documents` is again omitted entirely. The remaining
+  two schedules (ЄСВ1, ЄСВ2) remain disclosed, open backlog for future
+  companion-schema cycles.
 
 - **GOV-3459 ("GovSchema Standard Research") — Kazakhstan opens as the
   registry's 72nd jurisdiction via Business Formation, authored via
