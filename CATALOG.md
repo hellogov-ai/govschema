@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **558 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **559 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-20, GOV-4057, "GovSchema Standard Research"): Kazakhstan's
+> Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
+> second companion schedule**, via
+> `kz/kgd/declaration-of-assets-and-liabilities-schedule-250-05` — Form
+> 250.05, intellectual-property/copyright objects and other high-value
+> property. Continues the GOV-4050 cycle's own pre-sizing of all six
+> companion schedules by field count: 250.01 (already authored) and 250.05
+> tied as the smallest two, so 250.05 is the natural next pick. Fetched the
+> schedule's own page image fresh (`adilet.zan.kz/files/1576/49/201.jpg`,
+> HTTP 200) and read it directly; the order's own full HTML document
+> returned HTTP 504 Gateway Timeout on five separate attempts this cycle —
+> a genuine, disclosed access gap distinct from the TLS-chain quirk
+> documented on every prior KZ cycle — but the page image itself prints
+> both classifier citations (a two-letter country code and, for the second
+> section, a three-letter currency code, both per Decision No. 378 of the
+> Customs Union Commission) as its own inline footnotes, so the schema
+> could still be authored to the same standard without the explanatory
+> chapter. Models both of the schedule's own repeating sections
+> (intellectual-property/copyright objects, gated by the parent's own
+> `hasIntellectualProperty`; other high-value property, gated by
+> `hasOtherHighValueProperty` and itself printed on the page as filled at
+> the declarant's own discretion) via this registry's standard flat
+> `entryN`-prefixed convention (three rows each, matching the reference
+> specimen). Confirms, rather than introduces, that the 250.0X family's own
+> repeated "Раздел В" section-heading text (identical across multiple
+> sections within a single schedule page, and across sibling schedules
+> 250.04/250.06 as well) is a form-wide labelling convention, not a
+> 250.05-specific ambiguity — the numbered item badge is the real section
+> differentiator throughout. Numerator changes from 558 to 559 documents.
+> Both validators pass at 559/559; 10 conformance fixtures. Four schedules
+> (250.02, 250.03, 250.04, 250.06) remain open backlog. See the Taxes
+> vertical section below and the document's own VERIFICATION.md for the
+> full record.
 
 > **Update (2026-07-20, GOV-4050, "GovSchema Standard Research"): Kazakhstan's
 > Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
@@ -35,7 +69,9 @@
 > the same server-misconfiguration quirk documented across every prior KZ
 > cycle); 9 conformance fixtures. Five schedules (250.02-250.06) remain open
 > backlog. See the Taxes vertical section below and the document's own
-> VERIFICATION.md for the full record.
+> VERIFICATION.md for the full record. **Update (GOV-4057):** the second of
+> the six companion schedules (250.05) is now authored — see the update
+> above.
 
 > **Update (2026-07-20, GOV-4043, "GovSchema Standard Research"): Kazakhstan's
 > Taxes vertical gains a new declaration**, via
