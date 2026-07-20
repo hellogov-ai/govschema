@@ -4,7 +4,44 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **554 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **555 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-20, GOV-4026, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its ninth companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-esv2` — Annex ЄСВ2, the
+> calculation of voluntary contributions to be paid under an agreement on
+> voluntary participation in the mandatory state social insurance system.
+> One of the ten companion schedules
+> `ua/dps/individual-income-tax-declaration` (GOV-3531) disclosed but did
+> not model, and the ninth of those ten to be authored, after Annex АП
+> (GOV-3588), Annex Ф4 (GOV-3623), Annex МПЗ (GOV-3632), Annex Ф1
+> (GOV-3641), Annex КІК (GOV-3996 via GOV-3907), Annex Ф2 (GOV-4004 via
+> GOV-4002), Annex ЄСВ3 (GOV-4010), and Annex Ф3 (GOV-4019 via GOV-4017).
+> Re-fetched the same source workbook the parent declaration and all eight
+> prior annexes cite via the exact timestamped Wayback Machine snapshot
+> (a direct HTTP 200, no flakes of any kind this cycle), confirmed
+> byte-identical to all nine documents' own recorded sha256
+> (`7c67f4c421a1a8fc610f9226819d223debcb56b3fd1fc3d5f75ce0247cc7f0ac`) across
+> ten cycles now. Parsed the workbook's own 'ЄСВ 2' sheet cell-by-cell
+> (`!ref` A1:CZ250, 211 merges), confirming actual printed content ends at
+> row 115. Deliberately did not assume identity with its closest sibling,
+> Annex ЄСВ3, and confirmed four genuine structural departures by reading
+> ЄСВ2's own cells directly: a voluntary-participation-agreement
+> identification block (contract number plus five dates) in place of
+> ЄСВ3's own audit-act fields, with none of the five dates printing
+> `число`/`місяць`/`рік` sub-labels the way ЄСВ3's own audit-act date does
+> (modelled as single `date`-typed fields rather than fabricated
+> day/month/year column splits); two insurance-type-selection lines with
+> no confirmed adjacent checkbox merge cell (disclosed as an ambiguity
+> rather than guessed); a headline total field printed ahead of its own
+> table, unique among this registry's authored UA DPS annexes; and a
+> four-column (not three-column) monthly table adding a total-days-of-
+> service figure, with a two-value (not three-value) insured-person-
+> category enum. Numerator changes from 554 to 555 documents; Ukraine's own
+> Taxes-vertical companion-schedule count moves from 8 to 9 (of ten
+> disclosed); one schedule (ЄСВ1) remains open backlog. Both validators
+> pass at 555/555; 9 conformance fixtures. See the Taxes vertical section
+> below and the document's own VERIFICATION.md for the full record.
 
 > **Update (2026-07-20, GOV-4017/GOV-4019, "GovSchema Standard Research"):
 > Ukraine's Taxes vertical gains its eighth companion schedule**, via
@@ -14926,6 +14963,28 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (63/73 jurisdictions — 86%)
 
+> **Update (2026-07-20, GOV-4026, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its ninth companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-esv2` — Annex ЄСВ2, the
+> calculation of voluntary contributions payable under an agreement on
+> voluntary participation in the mandatory state social insurance system,
+> one of the ten companion schedules
+> `ua/dps/individual-income-tax-declaration` (GOV-3531) disclosed but did
+> not model. Did not assume identity with the closest structural sibling
+> (Annex ЄСВ3) and confirmed four genuine structural departures instead: a
+> voluntary-participation-agreement identification block (contract number
+> plus five bare dd.mm.yyyy dates with no `число`/`місяць`/`рік` sub-labels,
+> modelled as `date`-typed fields rather than fabricated day/month/year
+> splits) in place of ЄСВ3's own audit-act fields; two insurance-type-
+> selection lines with no confirmed adjacent checkbox merge (disclosed as
+> an ambiguity); a headline total field ahead of its own table (unique
+> among this registry's authored UA DPS annexes); and a four-column
+> monthly table (adding a total-days-of-service figure to ЄСВ3's own
+> three-column shape) with a two-value insured-person-category enum. See
+> the Executive Summary update above for the full sourcing record.
+> Numerator unchanged at 63/73 (Ukraine's Taxes column already flipped ✓);
+> one companion schedule (ЄСВ1) remains open backlog for a future cycle.
+
 > **Update (2026-07-20, GOV-4017/GOV-4019, "GovSchema Standard Research"):
 > Ukraine's Taxes vertical gains its eighth companion schedule**, via
 > `ua/dps/individual-income-tax-declaration-annex-f3` — Annex Ф3, the tax
@@ -20888,6 +20947,27 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   on this sheet, so `documents` is again omitted entirely. The remaining
   two schedules (ЄСВ1, ЄСВ2) remain disclosed, open backlog for future
   companion-schema cycles.
+  **Resolved further (GOV-4026, 2026-07-20): the ninth of the ten disclosed
+  companion schedules authored** via
+  `ua/dps/individual-income-tax-declaration-annex-esv2` (Annex ЄСВ2, a
+  voluntary unified social contribution calculation, filed under an
+  agreement on voluntary participation in the mandatory state social
+  insurance system) — see the Executive Summary and Taxes vertical section
+  above. This cycle deliberately did not assume identity with the closest
+  structural sibling, Annex ЄСВ3, and confirmed four genuine structural
+  departures instead: a voluntary-participation-agreement identification
+  block (contract number plus five dates, none printing `число`/`місяць`/
+  `рік` sub-labels, modelled as `date`-typed fields rather than fabricated
+  day/month/year splits) in place of ЄСВ3's own audit-act fields; two
+  insurance-type-selection lines with no confirmed adjacent checkbox merge
+  cell (disclosed as an ambiguity rather than guessed, unlike the
+  coefficient-2 mark two lines below, which does have a confirmed
+  checkbox merge); a headline total field printed ahead of its own table,
+  unique among this registry's authored UA DPS annexes; and a four-column
+  (not three-column) monthly table adding a total-days-of-service figure,
+  with a two-value (not three-value) insured-person-category enum. The
+  remaining schedule (ЄСВ1) remains disclosed, open backlog for a future
+  companion-schema cycle.
 
 - **GOV-3459 ("GovSchema Standard Research") — Kazakhstan opens as the
   registry's 72nd jurisdiction via Business Formation, authored via
