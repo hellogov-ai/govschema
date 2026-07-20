@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **551 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **552 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-20, GOV-4002, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its sixth companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-f2` — Annex Ф2, the
+> personal income tax and/or military levy computation on income received by
+> a self-employed person (individual entrepreneur and/or independent
+> professional), per Articles 177 and 178 of the Tax Code of Ukraine. One of
+> the ten companion schedules `ua/dps/individual-income-tax-declaration`
+> (GOV-3531) disclosed but did not model, and the sixth of those ten to be
+> authored, after Annex АП (GOV-3588), Annex Ф4 (GOV-3623), Annex МПЗ
+> (GOV-3632), Annex Ф1 (GOV-3641), and Annex КІК (GOV-3996 via GOV-3907). Of
+> the five sheets the GOV-3632 cycle had already pre-sized, this cycle picked
+> Ф2 — the only one already sized ("183 rows, 278 merges") — over the four
+> still-unsized candidates (ЄСВ1, ЄСВ2, ЄСВ3, Ф3). Re-fetched the same source
+> workbook the parent declaration and all five prior annexes cite via the
+> same Wayback Machine mirror (a direct HTTP 200, no transient-500 flake),
+> confirmed byte-identical to all six documents' own recorded sha256
+> (`7c67f4c421a1a8fc610f9226819d223debcb56b3fd1fc3d5f75ce0247cc7f0ac`) across
+> seven cycles now. Parsed the workbook's own 'Ф 2' sheet cell-by-cell
+> (`!ref` A1:CR183, 278 merges — matching the pre-sizing note exactly). The
+> largest single UA DPS annex tables modelled so far: Section I's fixed
+> 4-entry business-activity income table and Section IV's fixed 6-entry
+> independent-professional-activity income table (versus Annex Ф4's 3-entry
+> and Annex МПЗ's 4-entry tables). **Also a genuine header difference from
+> every UA DPS annex since Annex АП**: this sheet's period boxes carry a
+> companion "місяць" (month) column (unlike Annex Ф4/МПЗ/Ф1/КІК's year-only
+> headers), gated to the same cessation-of-business-activity footnote scope
+> Annex АП's own month fields already established. Confirmed, like Annex Ф1
+> and Annex КІК, **no accuracy-attestation sentence anywhere on this sheet**
+> — `documents` is therefore omitted entirely rather than fabricated, per the
+> spec's own `minItems: 1` constraint. Models the sheet in full, including
+> Section II's fixed 4-group depreciation computation and both Section III's
+> and Section V's own PIT/military-levy budget-settlement computations.
+> Numerator changes from 551 to 552 documents; Ukraine's own Taxes-vertical
+> companion-schedule count moves from 5 to 6 (of ten disclosed); four
+> schedules remain open backlog (ЄСВ1, ЄСВ2, ЄСВ3, Ф3). Both validators pass
+> at 552/552; 9 conformance fixtures. See the Taxes vertical section below
+> and the document's own VERIFICATION.md for the full record.
 
 > **Update (2026-07-20, GOV-3907, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its fifth companion schedule**, via
@@ -14801,6 +14839,24 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (63/73 jurisdictions — 86%)
 
+> **Update (2026-07-20, GOV-4002, "GovSchema Standard Research"): Ukraine's
+> Taxes vertical gains its sixth companion schedule**, via
+> `ua/dps/individual-income-tax-declaration-annex-f2` — Annex Ф2, the
+> self-employed person's business and independent professional activity
+> income PIT/military-levy computation, per Articles 177 and 178 of the Tax
+> Code of Ukraine, one of the ten companion schedules
+> `ua/dps/individual-income-tax-declaration` (GOV-3531) disclosed but did not
+> model. Confirmed the sheet's own fixed-capacity tables (4 business-activity
+> entries, 6 independent-professional-activity entries) are the largest of
+> any UA DPS annex authored so far, and that this sheet's period boxes carry
+> a companion "місяць" column (unlike every annex since Annex АП). Like
+> Annex Ф1 and Annex КІК, this sheet prints no accuracy-attestation sentence
+> anywhere — `documents` is omitted entirely rather than fabricated. See the
+> Executive Summary update above for the full sourcing record. Numerator
+> unchanged at 63/73 (Ukraine's Taxes column already flipped ✓); four
+> companion schedules (ЄСВ1, ЄСВ2, ЄСВ3, Ф3) remain open backlog for future
+> cycles.
+
 > **Update (2026-07-20, GOV-3907, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its fifth companion schedule**, via
 > `ua/dps/individual-income-tax-declaration-annex-kik` — Annex КІК, the
@@ -20656,6 +20712,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   omitted entirely rather than fabricated. The remaining five schedules
   (ЄСВ1-3, Ф2, Ф3) remain disclosed, open backlog for future companion-
   schema cycles.
+  **Resolved further (GOV-4002, 2026-07-20): the sixth of the ten disclosed
+  companion schedules authored** via
+  `ua/dps/individual-income-tax-declaration-annex-f2` (Annex Ф2, self-employed
+  person's business and independent professional activity income) — see the
+  Executive Summary and Taxes vertical section above. This cycle confirmed
+  the largest single-table capacities of any UA DPS annex authored so far
+  (4-entry business-activity table, 6-entry independent-professional-
+  activity table) and a genuine header difference from every annex since
+  Annex АП: this sheet's period boxes carry a companion "місяць" column.
+  Like Annex Ф1 and Annex КІК, no accuracy-attestation sentence is printed
+  anywhere on this sheet, so `documents` is again omitted entirely rather
+  than fabricated. The remaining four schedules (ЄСВ1-3, Ф3) remain
+  disclosed, open backlog for future companion-schema cycles.
 
 - **GOV-3459 ("GovSchema Standard Research") — Kazakhstan opens as the
   registry's 72nd jurisdiction via Business Formation, authored via
