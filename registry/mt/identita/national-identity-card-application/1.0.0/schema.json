@@ -1,0 +1,335 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "mt/identita/national-identity-card-application",
+  "version": "1.0.0",
+  "title": "Malta Application for a Maltese Identity Card (Form ID10a)",
+  "description": "Identità's (Malta's national Agency for identity documents, passports, visas, expatriates and the Public Registry) \"Form ID10a — Application for a Maltese Identity Card\", filed by a Maltese citizen applying for a first identity card, renewing an expiring one, or replacing a lost/stolen/damaged one. Deepens Malta past its first two published verticals (mt/jobsplus/self-employed-declaration-of-commencement, Business Formation; mt/identita/passport-application, Passport), opening the National ID & Civic Documents vertical (3/6). This document models the applicant's own identity particulars (Section A.01); the applicant's property/address details (Section A.02); contact information and an eID account election (Section B.03); the applicant's own signed declaration (Section C.04); and the two applicant-facing sub-blocks printed under the form's own Section D.05 — an urgent-processing request and a collection-method election, each carrying its own applicant signature — modelled as two separate steps since they are structurally distinct sub-blocks under one printed section header. It excludes the form's own \"Għal Użu Intern\" (For Internal Use) office box on page 1 (year/age-bracket/urgency/hub/collection tick-boxes), the barcode-label placement box, and every \"Uffiċjal ta' Identità\" (Identità's Officer) signature line, none of which are applicant-supplied data; it also excludes page 4's bilingual GDPR privacy notice, which is informational only with no applicant input. Filing this application is a citizen action performed with Identità; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by Malta or Identità.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MT",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Identità (Malta's Agency for Identity Cards, Passports, Visas, Expatriates and Public Registry)",
+    "abbreviation": "Identità",
+    "url": "https://identita.gov.mt"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://identita.gov.mt/wp-content/uploads/2025/05/7.-Form-ID-10a.pdf",
+    "retrievedAt": "2026-07-21",
+    "documentRef": "\"Form ID10a — Application for a Maltese Identity Card\" (bilingual Maltese/English), Identità, native (non-AcroForm) PDF, 4 pages (pages 1-3 applicant-facing, page 4 a GDPR privacy notice)."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-21",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-21",
+    "notes": "GOV-4223 (\"GovSchema Standard Research\"). Form ID10a was scouted and banked as a strong candidate in the GOV-4215 cycle (parent of GOV-4217, which authored this document's own sibling mt/identita/passport-application) but not authored until this cycle. Re-fetched directly with a realistic desktop Chrome User-Agent: HTTP 200, `Content-Type: application/pdf`, 301,934 bytes (the GOV-4215 scouting note's own estimate was ~294KB, within rounding of the exact byte count), sha256 `803cd53d1e81bc52a4e1ea53d05913b9ad10bfb11ad84ae3526998528089dec2`, no login/CAPTCHA/Cloudflare gate. Confirmed mechanically: the retrieved bytes begin `%PDF-1.4` with a `/Linearized` dict reporting `/N 4` (4 pages), and contain no `/AcroForm`/`/Widget` occurrences — a flat, print-and-fill specimen like its own sibling Form A. This PDF's own text-showing operators use the same custom glyph-index font encoding as Form A (unreadable via a raw zlib-stream/paren-regex read) — resolved the same way, via `pdfjs-dist`'s real text-layer extraction running the PDF's own embedded `ToUnicode` CMaps, recovering clean, position-tagged Unicode text for all 4 pages directly from the PDF's own glyph-to-Unicode mapping, not an OCR guess. Page 4 is entirely a bilingual GDPR privacy notice with no applicant input and is excluded.\n\nModels 27 `fields[]` across 6 steps and 2 `documents[]` entries.\n\nFive disclosed source-fidelity findings: (1) Unlike its own sibling `mt/identita/passport-application`, where the only two field-level asterisks flag checkbox-style fields (per an explicit 'tick the box' footnote) rather than required ones, this form's asterisks track the page-1 instruction literally ('FILL IN ALL MANDATORY FIELDS (*) AND ALL OTHER FIELDS AS APPLICABLE') with no overriding footnote: the three field-level asterisks in Section A.01 (`identityCardNumber`, `name`, `surname`) are genuine mandatory text fields, so those three are modelled `required: true`. No other field in Section A.01 carries its own asterisk — `nameKnownAs`/`surnameKnownAs`/`sex`/`dateOfBirth`/`placeOfBirth` are modelled `required: false`, since the applicant's biographical particulars are presumably already on Identità's file under the supplied Identity Card number for a renewal/replacement filing and this form's own printed marks do not distinguish a first-time-applicant case that would need them supplied fresh. (2) Sections A.02, B.03, C.04, and D.05 each carry a section-header-level asterisk instead of (or in addition to) field-level ones; Section A.02's own header asterisk is modelled as making its core address line fields (`addressNumber`, `addressStreetName`, `addressLocality`) required, while `addressPropertyName` (a named-property line not every address has) is modelled optional; Section C.04's declaration fields are modelled uniformly required, since a declaration section is not functional without them and this form (unlike its sibling Form A) prints no minor-applicant carve-out anywhere exempting a signature. Section B.03's header asterisk is not extended to its own individual contact fields (`telephoneNumber`/`mobileNumber`/`emailAddress`), which are modelled optional consistent with `mt/identita/passport-application`'s own equivalent-fields precedent, absent any field-level mark distinguishing them. (3) Section A.02's own header reads, verbatim, 'ADDRESS (PROPERTY DETAILS) - PROOF OF ADDRESS FOR CHANGE OF ADDRESS IS NECESSARY' — a conditional supporting-document requirement, not a field-level instruction. Modelled as a directly-supplied boolean gate, `addressHasChanged` (not a printed checkbox, the same convention `cy/crmd/passport-application` and `mt/identita/passport-application` each established for their own compound-eligibility-note gates), controlling the `proofOfAddressDocument` document's `requiredWhen`. (4) Section D.05 is printed with the header 'GĦALL-UŻU UFFIĊJALI' / 'FOR OFFICIAL USE', yet the content beneath it is applicant-facing, not office-only: a static notice about presenting the old/temporary card at collection, an urgent-processing request sub-block (with its own blank reason line and applicant signature), and a collection-method election sub-block (with its own blank Servizz.gov hub-location line and applicant signature) — each genuinely completed and signed by the applicant, with a separate 'Uffiċjal ta' Identità' (Identità's Officer) line following each as the true office-only content. This mismatch between the section's own printed title and its actual applicant-facing content is disclosed here rather than silently corrected; this schema models the two applicant-facing sub-blocks as their own steps ('urgent_processing', 'collection') and excludes only the genuine officer-signature lines. The presenting of an old/temporary identity card at collection is modelled as the `oldOrTemporaryIdentityCardForCollection` document with `required: false`, since the form's own wording ('in order to pick up the new identity card, I have to present the old identity card or the temporary identity card') is printed unconditionally with no first-time-applicant carve-out, yet a genuine first-time applicant (this form's own internal-use age brackets include 14-15, suggesting first-issuance at age 14) would not hold either — disclosed as a tension between the blanket printed wording and the practical first-time-applicant case, rather than encoded as always-required. (5) The two collection-method sub-headings ('Tinġabar mit-Taqsima tal-Karta tal-Identità' / 'Picked up from the Identity Card Section', naming the Gattard House, Blata l-Bajda office; and 'Tinġabar mill-Hub ta' Servizz.gov' / 'Picked up from the Servizz.gov Hub', with a blank line for the specific hub) are modelled as the `collectionMethod` enum plus a dependent `servizzGovHubLocation` field, the same enum-plus-dependent-text-field convention `mt/identita/passport-application`'s own `dualCitizenshipStatus`/`otherCitizenshipCountry` pair used.\n\n2 valid mock scenarios (a renewal/replacement filing with an address change, opting into an eID account and requesting urgent processing, collecting from the Servizz.gov hub; a straightforward filing with no address change and no urgency, collecting from the Identity Card Section) plus 8 mutation-control fixtures (three missing statically-required fields in turn, a missing `proofOfAddressDocument`-gating field's dependent `urgentProcessingReason` while `urgentProcessingRequested` is true, a missing `servizzGovHubLocation` while `collectionMethod` is `SERVIZZ_GOV_HUB`, an invalid `sex` enum value, an invalid `collectionMethod` enum value, and an unknown top-level field) are committed under `conformance/mt/identita/national-identity-card-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own `fields[]`/`documents[]`, discarded after use, not committed) ran all 10: both valid scenarios at 0 errors, all 8 mutation controls each raising exactly 1 error, and confirmed every `requiredWhen` field/document reference resolves (0 dangling references). Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-21"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "applicant_details",
+      "title": "Section A.01: Applicant's Details",
+      "fields": ["identityCardNumber", "name", "nameKnownAs", "surname", "surnameKnownAs", "sex", "dateOfBirth", "placeOfBirth"],
+      "next": "address_details"
+    },
+    {
+      "id": "address_details",
+      "title": "Section A.02: Address (Property Details)",
+      "fields": ["addressNumber", "addressPropertyName", "addressStreetName", "addressLocality", "addressHasChanged"],
+      "next": "contact_information"
+    },
+    {
+      "id": "contact_information",
+      "title": "Section B.03: Contact Information",
+      "fields": ["telephoneNumber", "mobileNumber", "emailAddress", "wantsEidAccount"],
+      "next": "applicant_declaration"
+    },
+    {
+      "id": "applicant_declaration",
+      "title": "Section C.04: Declaration by the Applicant",
+      "fields": ["declarationFullName", "declarationIdentityCardNumber", "applicantSignature", "declarationDate"],
+      "next": "urgent_processing"
+    },
+    {
+      "id": "urgent_processing",
+      "title": "Section D.05: Urgent Processing Request",
+      "fields": ["urgentProcessingRequested", "urgentProcessingReason", "urgentRequestSignature"],
+      "next": "collection"
+    },
+    {
+      "id": "collection",
+      "title": "Section D.05: Collection of Identity Card",
+      "fields": ["collectionMethod", "servizzGovHubLocation", "collectionSignature"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "identityCardNumber",
+      "label": "ID Card Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section A.01 — \"Numru tal-Karta tal-Identità*\" / \"ID Card Number*\""
+    },
+    {
+      "name": "name",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section A.01 — \"Isem*\" / \"Name*\""
+    },
+    {
+      "name": "nameKnownAs",
+      "label": "Name k/a",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "No printed asterisk on this or the equivalent surname alias field — modelled optional, unlike `name` itself.",
+      "sourceRef": "Page 1, Section A.01 — \"Magħruf bħala (isem)\" / \"Name k/a\""
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section A.01 — \"Kunjom*\" / \"Surname*\""
+    },
+    {
+      "name": "surnameKnownAs",
+      "label": "Surname k/a",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section A.01 — \"Magħruf bħala (kunjom)\" / \"Surname k/a\""
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": false,
+      "description": "No printed asterisk on this field (unlike `identityCardNumber`/`name`/`surname`) — modelled optional. See this schema's own `verification.notes` for the disclosed asterisk-as-mandatory-marker convention this form uses, unlike its sibling `mt/identita/passport-application`.",
+      "sourceRef": "Page 1, Section A.01 — \"Sess\" / \"Sex\" — \"Maskili/Male, Femminili/Female, Ieħor/Other\"",
+      "validation": {
+        "enum": ["MALE", "FEMALE", "OTHER"]
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "description": "No printed asterisk on this field — modelled optional, on the same disclosed basis as `sex`.",
+      "sourceRef": "Page 1, Section A.01 — \"Data tat-Twelid\" / \"Date of Birth\" (D D M M Y Y Y Y entry boxes)"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": false,
+      "description": "No printed asterisk on this field — modelled optional, on the same disclosed basis as `sex`.",
+      "sourceRef": "Page 1, Section A.01 — \"Post tat-Twelid\" / \"Place of Birth\""
+    },
+    {
+      "name": "addressNumber",
+      "label": "Number",
+      "type": "string",
+      "required": true,
+      "description": "Section A.02's own header carries an asterisk with no further per-field marks; modelled required as a core address line, per this schema's own `verification.notes`.",
+      "sourceRef": "Page 2, Section A.02 — \"Numru\" / \"Number\""
+    },
+    {
+      "name": "addressPropertyName",
+      "label": "Name (of property)",
+      "type": "string",
+      "required": false,
+      "description": "A named-property line, not every address has one (many are number-and-street only) — modelled optional despite the section header's own asterisk, unlike `addressNumber`/`addressStreetName`/`addressLocality`.",
+      "sourceRef": "Page 2, Section A.02 — \"Isem\" / \"Name\" (property details block)"
+    },
+    {
+      "name": "addressStreetName",
+      "label": "Street Name",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 2, Section A.02 — \"Isem tat-Triq\" / \"Street Name\""
+    },
+    {
+      "name": "addressLocality",
+      "label": "Locality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 2, Section A.02 — \"Lokalità\" / \"Locality\""
+    },
+    {
+      "name": "addressHasChanged",
+      "label": "This application reflects a change of address",
+      "type": "boolean",
+      "required": true,
+      "description": "Not a printed checkbox. Section A.02's own header reads, verbatim: 'ADDRESS (PROPERTY DETAILS) - PROOF OF ADDRESS FOR CHANGE OF ADDRESS IS NECESSARY.' Modelled as this directly-supplied boolean gate — the same convention `mt/identita/passport-application` and `cy/crmd/passport-application` each established for their own compound-eligibility-note gates — controlling the `proofOfAddressDocument` document's requiredness.",
+      "sourceRef": "Page 2, Section A.02 heading note"
+    },
+    {
+      "name": "telephoneNumber",
+      "label": "Telephone Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "No field-level asterisk, despite Section B.03's own header asterisk — modelled optional, the same treatment `mt/identita/passport-application` gave its own equivalent contact fields.",
+      "sourceRef": "Page 2, Section B.03 — \"Numru tat-Telefown\" / \"Telephone Number\""
+    },
+    {
+      "name": "mobileNumber",
+      "label": "Mobile Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section B.03 — \"Numru tal-Mowbajl\" / \"Mobile Number\""
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section B.03 — \"Indirizz tal-Imejl\" / \"Email Address\"",
+      "validation": {
+        "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+      }
+    },
+    {
+      "name": "wantsEidAccount",
+      "label": "I want to apply for an eID account",
+      "type": "boolean",
+      "required": false,
+      "description": "A genuine printed Yes/No checkbox pair ('Iva'/'Yes', 'Le'/'No'), purely elective — modelled as a boolean rather than this schema's directly-supplied-gate convention, since it is itself a printed field the applicant ticks.",
+      "sourceRef": "Page 2, Section B.03 — \"Nixtieq napplika għall-kont tal-eID\" / \"I want to apply for an eID account\" — \"Iva/Yes, Le/No\""
+    },
+    {
+      "name": "declarationFullName",
+      "label": "Applicant's full name (declaration)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's own name and surname, inserted into the Section C.04 declaration sentence. Section C.04's own header asterisk is modelled as making every field in this declaration block required, and unlike its sibling `mt/identita/passport-application`, this form prints no minor-applicant carve-out anywhere exempting a signature.",
+      "sourceRef": "Page 2, Section C.04 — \"Jien (daħħal isem u kunjom / insert name and surname)\""
+    },
+    {
+      "name": "declarationIdentityCardNumber",
+      "label": "Identity card number (declaration)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section C.04 — \"numru ta' Karta tal-Identità\" / \"identity card number\""
+    },
+    {
+      "name": "applicantSignature",
+      "label": "Applicant's Signature",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section C.04 — \"Firma tal-Applikant/a\" / \"Applicant's Signature\""
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Page 2, Section C.04 — \"Data\" / \"Date\""
+    },
+    {
+      "name": "urgentProcessingRequested",
+      "label": "Requesting urgent issue of the Identity Card",
+      "type": "boolean",
+      "required": false,
+      "description": "Not a printed checkbox. The URGENT sub-block's own sentence reads, verbatim: 'I the undersigned request that my Identity Card is issued urgently because of: (give reason).' Modelled as this directly-supplied boolean gate, purely elective, the same convention as `addressHasChanged`.",
+      "sourceRef": "Page 3, Section D.05 (URGENT sub-block) heading sentence"
+    },
+    {
+      "name": "urgentProcessingReason",
+      "label": "Reason for urgent issue",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "urgentProcessingRequested", "equals": true },
+      "sourceRef": "Page 3, Section D.05 (URGENT sub-block) — \"(agħti r-raġuni / give reason)\""
+    },
+    {
+      "name": "urgentRequestSignature",
+      "label": "Applicant's Signature (urgent request)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "urgentProcessingRequested", "equals": true },
+      "classification": "pii",
+      "description": "Distinct from `applicantSignature` (Section C.04's own declaration signature) and `collectionSignature` (the collection-method election signature) — this form prints a separate signature line for each of its three applicant-facing sub-blocks.",
+      "sourceRef": "Page 3, Section D.05 (URGENT sub-block) — \"Firma tal-Applikant/a\" / \"Applicant's Signature\""
+    },
+    {
+      "name": "collectionMethod",
+      "label": "Identity card collection method",
+      "type": "enum",
+      "required": true,
+      "description": "The two collection sub-headings ('Picked up from the Identity Card Section', naming the Gattard House, Blata l-Bajda office; and 'Picked up from the Servizz.gov Hub') are modelled as this enum, the same enum-plus-dependent-text-field convention `mt/identita/passport-application`'s own `dualCitizenshipStatus`/`otherCitizenshipCountry` pair used.",
+      "sourceRef": "Page 3, Section D.05 (COLLECTION OF ID CARD sub-block) — \"Tinġabar mit-Taqsima tal-Karta tal-Identità\" / \"Picked up from the Identity Card Section\"; \"Tinġabar mill-Hub ta' Servizz.gov\" / \"Picked up from the Servizz.gov Hub\"",
+      "validation": {
+        "enum": ["IDENTITY_CARD_UNIT_GATTARD_HOUSE", "SERVIZZ_GOV_HUB"]
+      }
+    },
+    {
+      "name": "servizzGovHubLocation",
+      "label": "Servizz.gov hub location",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "collectionMethod", "equals": "SERVIZZ_GOV_HUB" },
+      "sourceRef": "Page 3, Section D.05 (COLLECTION OF ID CARD sub-block) — blank line following \"I the undersigned am choosing to pick up my identity card from Servizz.gov hub situated in ____.\""
+    },
+    {
+      "name": "collectionSignature",
+      "label": "Signature",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "A single signature line follows both collection-method options, applying to whichever the applicant selected.",
+      "sourceRef": "Page 3, Section D.05 (COLLECTION OF ID CARD sub-block) — \"Firma\" / \"Signature\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "oldOrTemporaryIdentityCardForCollection",
+      "label": "Old or temporary (pink) Identity Card, presented at collection",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "handling": "The form's own printed wording is unconditional, with no first-time-applicant carve-out — yet this form's own internal-use age brackets (14-15, 16-17, 18+) suggest it also covers a genuine first-issuance filing, where no prior card would exist. Modelled `required: false`, disclosing a tension between the blanket printed wording and the practical first-time-applicant case, rather than encoding it as always-required.",
+      "sourceRef": "Page 3, Section D.05 heading sentence — \"I am informed that in order to pick up the new identity card, I have to present the old identity card or the temporary identity card (pink form).\""
+    },
+    {
+      "id": "proofOfAddressDocument",
+      "label": "Proof of address",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "addressHasChanged", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Page 2, Section A.02 heading note — \"PROOF OF ADDRESS FOR CHANGE OF ADDRESS IS NECESSARY\""
+    }
+  ]
+}

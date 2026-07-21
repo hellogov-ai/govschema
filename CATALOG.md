@@ -4,7 +4,42 @@
 
 ## Executive Summary
 
-**76 jurisdictions** | **581 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**76 jurisdictions** | **582 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4223, "GovSchema Standard Research"): Malta's
+> National ID & Civic Documents vertical opens (3/6)**, via
+> `mt/identita/national-identity-card-application@1.0.0` — Identità's Form
+> ID10a, "Application for a Maltese Identity Card", filed by a Maltese
+> citizen applying for a first identity card, renewing an expiring one, or
+> replacing a lost/stolen/damaged one. Banked as a strong candidate in the
+> GOV-4215 scouting cycle (parent of GOV-4217, which authored this
+> document's own sibling `mt/identita/passport-application`), and authored
+> this cycle. Re-fetched `identita.gov.mt/wp-content/uploads/2025/05/7.-Form-ID-10a.pdf`
+> directly with a realistic desktop Chrome User-Agent: HTTP 200,
+> `application/pdf`, 301,934 bytes, sha256
+> `803cd53d1e81bc52a4e1ea53d05913b9ad10bfb11ad84ae3526998528089dec2`, no
+> login/CAPTCHA/Cloudflare gate. Confirmed mechanically: a genuine
+> `%PDF-1.4` flat, non-AcroForm, non-`/Widget` 4-page specimen using the
+> same custom glyph-index font encoding as its sibling Form A, resolved the
+> same way via `pdfjs-dist`'s `ToUnicode`-CMap text-layer extraction.
+> Models 27 fields across 6 steps (splitting the form's own printed
+> Section D.05 into two steps, since it bundles two structurally distinct
+> applicant-facing sub-blocks — an urgent-processing request and a
+> collection-method election — under one header) plus 2 `documents[]`
+> entries. Discloses 5 source-fidelity findings, most notably that (1)
+> unlike its sibling Form A, this form's asterisks track the page-1
+> "mandatory fields" instruction literally rather than flagging a checkbox
+> field, and (2) Section D.05 is printed "FOR OFFICIAL USE" yet its content
+> is genuinely applicant-facing (an urgent-processing request and a
+> collection-method election, each with its own applicant signature), with
+> only the actual "Uffiċjal ta' Identità" officer-signature lines excluded
+> as true office-only content. See the document's own VERIFICATION.md for
+> the full record. Deepens Malta to 3 of 6 verticals (Business Formation,
+> Passport, National ID & Civic Documents); DMV remains a weak/moderate
+> open backlog candidate, Taxes and Visa are confirmed dead ends — see the
+> National ID & Civic Documents vertical section below for the full
+> per-vertical record. Numerator/denominator unchanged at 76 (deepens an
+> existing jurisdiction); document count 581 → 582.
 
 > **Update (2026-07-21, GOV-4217, "GovSchema Standard Research"): Malta's
 > Passport vertical opens (2/6)**, via
@@ -18398,7 +18433,31 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (51/76 jurisdictions — 67%)
+### National ID & Civic Documents (52/76 jurisdictions — 68%)
+
+> **Update (2026-07-21, GOV-4223, "GovSchema Standard Research"): Malta's
+> National ID & Civic Documents vertical opens (3 of 6)**, via
+> `mt/identita/national-identity-card-application@1.0.0` — Identità's Form
+> ID10a, "Application for a Maltese Identity Card", banked as a strong
+> candidate in the GOV-4215 scouting cycle and authored this cycle. Models
+> 27 fields across 6 steps plus 2 `documents[]` entries. Discloses that
+> this form's own asterisk convention differs from its sibling
+> `mt/identita/passport-application`'s (here the asterisk tracks the
+> page-1 "mandatory fields" instruction literally rather than flagging a
+> checkbox), and that the form's own printed Section D.05 is titled "FOR
+> OFFICIAL USE" yet its content — an urgent-processing request and a
+> collection-method election, each with its own applicant signature — is
+> genuinely applicant-facing, not office-only. See the document's own
+> VERIFICATION.md for the full record, including all 5 disclosed
+> source-fidelity findings. Malta's remaining three verticals (DMV, Taxes,
+> Visa) were screened in the GOV-4215 cycle: DMV is weak/moderate (real
+> Transport Malta forms exist but the source domain 403s and mirrored
+> copies need better PDF tooling — a follow-up-session candidate, not a
+> hard dead end); Taxes and Visa are both confirmed dead ends (Taxes is an
+> eID-login-gated portal with no fillable form; Visa duplicates the
+> EU-harmonised Schengen short-stay template already modelled elsewhere in
+> this registry). Numerator updated from 51 to 52; denominator unchanged at
+> 76.
 
 > **Update (2026-07-21, GOV-4092/GOV-4094, "GovSchema Standard Research"):
 > Czech Republic opens this vertical, bringing Czechia to 5 of 6** (Passport
@@ -19132,7 +19191,7 @@ now closed.
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **MT** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **MT** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✓ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -19313,7 +19372,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Executive Summary and Business Formation vertical updates above.
       Opens Malta as the registry's 76th jurisdiction. Malta's other five
       verticals (DMV, Visa, Passport, Taxes, National ID) are open,
-      unscreened backlog.
+      unscreened backlog. **Update (GOV-4215, 2026-07-21):** all five
+      screened — Passport (Form A) and National ID (Form ID10a) both came
+      back strong, DMV weak/moderate (real Transport Malta forms exist but
+      the source domain 403s and mirrored copies need better PDF tooling),
+      Taxes and Visa both confirmed dead ends (Taxes is an eID-login-gated
+      portal with no fillable form; Visa duplicates the EU-harmonised
+      Schengen short-stay template already modelled elsewhere). **Update
+      (GOV-4217, 2026-07-21): Passport is now authored** as
+      `mt/identita/passport-application` — see the Executive Summary and
+      Passport vertical updates above. **Update (GOV-4223, 2026-07-21):
+      National ID is now also authored** as
+      `mt/identita/national-identity-card-application` — see the Executive
+      Summary and National ID & Civic Documents vertical updates above.
+      Malta is now 3/6; only DMV (weak/moderate, not a hard dead end)
+      remains open backlog, with Taxes and Visa excluded as confirmed dead
+      ends.
     - **Ireland RBN1** (individual/sole-trader business-name registration,
       Companies Registration Office) — the direct `cro.ie` host remains
       Cloudflare-JS-challenge-gated (re-confirmed this cycle, HTTP 403),
