@@ -109,7 +109,8 @@
 > VERIFICATION.md for the full record.
 
 > **Update (2026-07-21, GOV-4092/GOV-4094, "GovSchema Standard Research"):
-> Czech Republic closes to 6 of 6 verticals**, via
+> Czech Republic's National ID vertical closes, bringing it to 5 of 6
+> verticals**, via
 > `cz/mv/temporary-identity-card-application` — the Ministry of Interior's
 > (MV ČR) application for a temporary identity card (dočasný občanský
 > průkaz), a short-validity paper ID issued while the standard 10-year
@@ -121,7 +122,14 @@
 > distinct process: the temporary-card variant needs no biometric capture
 > and MV ČR publishes a genuine, unauthenticated .xlsx application form for
 > it (`mv.gov.cz`, cross-verified byte-for-byte against a PDF mirror hosted
-> by the Praha 14 municipal office). Three single-vertical-gap jurisdictions
+> by the Praha 14 municipal office). Czech Republic's Passport vertical
+> remains a confirmed dead end (GOV-1819, unchanged: biometric passports are
+> entirely clerk-entered in person, with no printed application form
+> published), so 5 of 6 is this jurisdiction's ceiling under the current
+> official publishing pattern — **correction (2026-07-21, GOV-4121,
+> "GovSchema Standard Research"): this update originally overstated the
+> result as "6 of 6"; the By-Jurisdiction table below was correct at 5/6 all
+> along.** Three single-vertical-gap jurisdictions
 > were scouted in parallel this cycle (Austria DMV, Netherlands Visa, and
 > this Czech National ID candidate); the other two are left as pre-scouted,
 > ready-to-author backlog for a future cycle — see the Known Gaps section
@@ -17878,7 +17886,9 @@ candidate, the other two as confirmed dead ends).
 ### National ID & Civic Documents (51/73 jurisdictions — 70%)
 
 > **Update (2026-07-21, GOV-4092/GOV-4094, "GovSchema Standard Research"):
-> Czech Republic opens this vertical, closing Czechia to 6 of 6**, via
+> Czech Republic opens this vertical, bringing Czechia to 5 of 6** (Passport
+> remains a confirmed dead end — see the Executive Summary correction
+> above), via
 > `cz/mv/temporary-identity-card-application` — MV ČR's application for a
 > temporary identity card (dočasný občanský průkaz). Overturns, in part, a
 > prior cycle's (GOV-1819) characterization of Czech National ID as a
