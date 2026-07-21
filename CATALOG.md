@@ -1,10 +1,38 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-20** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-21** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**73 jurisdictions** | **560 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **561 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4071, "GovSchema Standard Research"): Kazakhstan's
+> Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
+> fourth companion schedule**, via
+> `kz/kgd/declaration-of-assets-and-liabilities-schedule-250-03` — Form
+> 250.03, foreign housing-construction equity participation and investment
+> gold. One of the two "in between" schedules per the GOV-4050 cycle's own
+> field-count sizing (250.03/250.06, ~14 columns, two repeating sections
+> each), picked next in the numbered sequence with 250.01/250.05/250.02
+> already authored. Fetched the schedule's own page image fresh
+> (`adilet.zan.kz/files/1576/49/199.jpg`, HTTP 200, 137,704 bytes) and read
+> it directly via two zoomed crops, confirming four blank entry rows in the
+> housing-construction section but five in the investment-gold section on
+> the same page — a genuine, disclosed within-page row-count difference,
+> consistent with the same kind of variation already found on Form 250.02.
+> Also re-fetched the order's own full HTML explanatory text (the GOV-4057
+> cycle's persistent HTTP 504 against this endpoint did not recur) and read
+> Глава 5 in full. Discloses a genuine form-design ambiguity: the
+> investment-gold weight column prints three labelled 3-digit-box groups
+> (КГ./Г./МГ.) plus a fourth, unlabelled 3-digit-box group, which neither
+> the image nor the order's own prose resolves — modelled as three separate
+> numeric fields (`WeightKg`/`WeightG`/`WeightMg`) with the unlabelled
+> fourth group folded into `WeightMg`'s own description as an open
+> ambiguity. Numerator changes from 560 to 561 documents. Both validators
+> pass at 561/561; 10 conformance fixtures (independently re-checked against
+> an ad-hoc ajv schema built from the document's own field constraints).
+> Two schedules (250.04, 250.06) remain open backlog. See the Taxes vertical
+> section below and the document's own VERIFICATION.md for the full record.
 
 > **Update (2026-07-20, GOV-4064, "GovSchema Standard Research"): Kazakhstan's
 > Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
@@ -30,6 +58,8 @@
 > validators pass at 560/560; 10 conformance fixtures. Three schedules
 > (250.03, 250.04, 250.06) remain open backlog. See the Taxes vertical
 > section below and the document's own VERIFICATION.md for the full record.
+> **Update (GOV-4071):** the fourth of the six companion schedules (250.03)
+> is now authored — see the update above.
 
 > **Update (2026-07-20, GOV-4057, "GovSchema Standard Research"): Kazakhstan's
 > Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
