@@ -4,7 +4,25 @@
 
 ## Executive Summary
 
-**76 jurisdictions** | **579 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**76 jurisdictions** | **580 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4208, "GovSchema Standard Research"): Cyprus
+> gains a Business Formation schema**, via
+> `cy/drcor/business-name-registration-individual@1.0.0` — the Department
+> of Registrar of Companies and Intellectual Property's Form EE1,
+> "Application for registration of a business name" (individual-owner
+> path), filed under Article 52 of the Partnerships and Business Names Law,
+> Cap. 116. This was a pre-scouted candidate left unauthored at GOV-4169
+> (2026-07-21) after that cycle's own scouting reported the Greek text as
+> glyph-index-encoded with no ToUnicode CMap; this cycle re-examined that
+> specific concern and found it does not reproduce — `pdfjs-dist`'s
+> standard text-extraction API decodes the Greek text cleanly with no
+> glyph-mapping or pixel-scan pass needed. See the Business Formation
+> vertical update below and the document's own VERIFICATION.md for the
+> full sourcing record, including the individual-vs-body-corporate-owner
+> scoping decision. Cyprus moves from 1/6 to 2/6 verticals (Passport,
+> Business Formation); DMV, Taxes, Visa, and National ID remain confirmed
+> dead ends per the GOV-4121 cycle.
 
 > **Update (2026-07-21, GOV-4202, "GovSchema Standard Research"): Latvia's
 > Taxes vertical adds the Declaration DK pielikums**, via
@@ -14634,7 +14652,19 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (68/76 jurisdictions — 89%)
+### Business Formation — Incorporation, LLC, Company Registration (69/76 jurisdictions — 91%)
+
+> **Update (2026-07-21, GOV-4208, "GovSchema Standard Research"): Cyprus
+> gains its first Business Formation schema**, via
+> `cy/drcor/business-name-registration-individual` — Form EE1, "Application
+> for registration of a business name" (individual-owner path only; the
+> form's own body-corporate-owner path is out of scope, see the document's
+> own VERIFICATION.md). See the Executive Summary's GOV-4208 update above
+> for the full sourcing record, including the correction of a prior
+> cycle's own glyph-encoding finding. Numerator updated from 68 to 69;
+> denominator unchanged at 76 (Cyprus was already counted as a
+> jurisdiction via `cy/crmd/passport-application`). Cyprus's DMV, Taxes,
+> Visa, and National ID remain confirmed dead ends per the GOV-4121 cycle.
 
 > **Update (2026-07-21, GOV-4178, "GovSchema Standard Research"): Ireland
 > gains a companion sole-trader/business-name-registration schema**, via
@@ -19017,7 +19047,7 @@ now closed.
 | **CH** | 14 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CY** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| **CY** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **CZ** | 9 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DK** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -19261,6 +19291,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       is currently 1/6 (Passport only, via GOV-4124); this would open
       Business Formation (2/6). Not authored this cycle; remains open
       backlog, pending the glyph-decoding groundwork.
+      **Update (GOV-4208, 2026-07-21): now authored** as
+      `cy/drcor/business-name-registration-individual` — see the Executive
+      Summary and Business Formation vertical updates above. The
+      glyph-encoding concern flagged above did not reproduce:
+      `pdfjs-dist`'s standard text-extraction API decoded the Greek text
+      cleanly with no glyph-mapping or pixel-scan pass needed — see the
+      document's own VERIFICATION.md for the correction. Opens Cyprus's
+      Business Formation vertical (2/6); DMV/Taxes/Visa/National ID remain
+      confirmed dead ends per the GOV-4121 cycle. Ireland's RBN1 (above)
+      and this document are now this registry's two examples of the
+      individual-owner-scoped business-name-registration pattern.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
