@@ -1,0 +1,418 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "et/mor/individual-tin-registration",
+  "version": "1.0.1",
+  "title": "Ethiopia Individual Taxpayers Registration Application (TIN Registration)",
+  "description": "The Ministry of Revenue's (formerly the Ethiopian Revenues and Customs Authority, now restructured under the Regional States and City Administrations Tax Authority/Bureau framework) \"Individual Taxpayers Registration Application\" (\"የግለሰብ ታክስ ከፋዮች ምዝገባ ማመልከቻ\"), the bilingual Amharic/English form an individual files to register for a Tax Identification Number (TIN), report a change to previously registered details, or request a replacement TIN certificate. Deepens Ethiopia past its sole already-published vertical (`et/ics/e-visa-application`, Visa), opening the Taxes vertical (2/6). This document models the applicant's Ethiopian Digital ID (Fayda) number, the application-type and occupation selections, the applicant's own name and mother's name (both following the Ethiopian given/father's-name/grandfather's-name naming convention, in place of a Western surname), the applicant's spouse's name, birth particulars, a non-Ethiopian-citizen gate covering the form's own citizenship and work-permit fields, a residential address block, a business address block, and the applicant's own certification (signature and date) plus the form's identity-document attachment (any one of several accepted identity documents) and, for non-Ethiopian applicants, an additional work-permit attachment. The form's own instructions read, verbatim, \"Fill all fields... Mark 'N/A' for not relevant\" — since \"N/A\" is itself an acceptable literal value for a string field under that instruction, every field without a more specific printed conditional of its own is modelled `required: true`, consistent with the form's own blanket fill-all/use-N/A convention, rather than left optional by assumption (see `verification.notes` for the full reasoning and the two fields that carry a more specific printed conditional instead). The office-use-only reverse side of page 4 (registering officer's name/employee ID/signature/date, authorizing official's name/employee ID/signature/date, tax-center name, assigned TIN, and file number) is excluded as back-office data the applicant does not supply. Filing this registration is an individual's own action performed with the Ministry of Revenue (or the relevant Regional State/City Administration tax authority); this schema does not file the registration itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by Ethiopia or its Ministry of Revenue.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ET",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of Revenue (Regional States and City Administrations Tax Authority/Bureau)",
+    "abbreviation": "MoR",
+    "url": "https://www.mor.gov.et"
+  },
+  "process": {
+    "type": "registration",
+    "language": "am"
+  },
+  "source": {
+    "url": "https://www.mor.gov.et/Forms/1758114796961-717652740-form-TIN%20Registration%20Form%20For%20individual%2027.7.2017%20-%20Copy.pdf",
+    "retrievedAt": "2026-07-21",
+    "documentRef": "\"Individual Taxpayers Registration Application\" (\"የግለሰብ ታክስ ከፋዮች ምዝገባ ማመልከቻ\"), bilingual Amharic/English, native (non-AcroForm) flat PDF, 4 pages (page 1 an unlabelled cover/letterhead page with no extractable text; pages 2-4 applicant-facing), filename-dated 27.7.2017 (Ethiopian calendar), served via the Ministry of Revenue's own public `/api/forms` listing (form id 8, category \"Tax Payers Registration Forms\" / \"የታክስ ከፋዮች ምዝገባ ቅፆች\")."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-21",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-21",
+    "notes": "PATCH 1.0.0 → 1.0.1 (GOV-4250, GOV-4249 review gate follow-up): the 1.0.0 `verification.notes`/VERIFICATION.md claimed this schema models 34 `fields[]`; the actual `fields[]` array has 38 entries (confirmed via `node -e \"require('./schema.json').fields.length\"` → 38, and independently re-confirmed during the GOV-4249 review gate's own pdfjs-dist re-extraction of all 4 pages). Purely a prose correction to a summary count — no field, validation, or structural change of any kind — so this ships as a PATCH per VERSIONING.md's immutability rule rather than editing the published 1.0.0 directory. All content below is otherwise identical to 1.0.0's own record.\n\nGOV-4246 (\"GovSchema Standard Research\"). Opens Ethiopia's Taxes vertical (2 of 6; Visa, `et/ics/e-visa-application`, was already published). This cycle re-scanned CATALOG.md's own Known Gaps section and By-Jurisdiction table fresh, re-confirmed the routine's 4 standing National ID candidates (DE Steuer-ID, SG NRIC, NZ RealMe, remaining voter registration) all remain resolved, then scouted 3 single-vertical-published jurisdictions (Georgia, Ethiopia, Uzbekistan) across their 5 remaining verticals each via 3 parallel research passes. Georgia's National Agency of Public Registry business-registration template (STRONG) and Ethiopia's own Ethiopian Investment Commission investment-permit form and consular-mirrored passport-application form (both also STRONG) were left as disclosed, ready-to-author backlog for future cycles — see CATALOG.md's Known Gaps section. Uzbekistan's remaining 5 verticals were all confirmed WEAK/DEAD END this cycle: `my.gov.uz`'s services are consistently unauthenticated at the description level but require a login/digital-signature session for any actual field-level form, across Taxes, Business Formation, Passport, National ID, and DMV alike.\n\nReaching the live source: `mor.gov.et` is reachable directly (its TLS certificate chain required a `-k`/insecure-mode bypass from this sandbox's CA trust store, but the served content itself is genuinely public); the site's own `/api/forms` endpoint (`https://www.mor.gov.et/api/forms`) lists this form (id 8, title \"በግብር ከፋይነት ለመመዝገብ (ግለሰብ) የሚቀርብ ማመመልከቻ ቅፅ\", category \"Tax Payers Registration Forms\") with a direct `pdfFile` URL, independently re-fetched this cycle: HTTP 200, `Content-Type: application/pdf`, 1,162,355 bytes, sha256 `fc664f2147b2631821535a8a93023f722dd08db66795dcfc9840cb9c0224a292`, beginning `%PDF-1.5`. No login/CAPTCHA/WAF gate at any point in this retrieval.\n\nExtraction method: `pdfjs-dist`'s standard `getTextContent()` API (vendored at `/tmp/node_modules/pdfjs-dist`) decodes both the Amharic and English text cleanly, no glyph-index/ToUnicode workaround needed; text was rendered per page, grouped by y-coordinate row and sorted by x-coordinate, to reconstruct each bilingual field label in its printed layout position. `page.getAnnotations()` returns 0 entries on all 4 pages, and page 1 itself contains 0 text items and only 8 drawing operators (a cover/letterhead page bearing the national emblem, no applicant-facing content) — confirmed a flat, print-and-fill specimen with no interactive AcroForm fields, the same pattern as this registry's other Ethiopian and Maltese scanned/flat-PDF schemas.\n\nModels 38 `fields[]` across 6 steps (Registration & Occupation; Personal Details; Additional Personal Details; Residential Address; Business Address; Certification) plus 3 `documents[]` entries.\n\nDisclosed source-fidelity findings: (1) The form's own printed instructions read, verbatim, \"Fill all fields, ... Mark 'N/A' for not relevant.\" Because \"N/A\" is itself a valid literal value satisfying a `required: true` string field, every field without a more specific printed conditional of its own — including the Ethiopian Digital ID (Fayda) number (a still-rolling-out national program, not yet universally issued, per this cycle's own Ethiopia scouting pass) and the Spouse Name and Business Address blocks (both plainly headed, with no printed marital-status or business-ownership checkbox of their own) — is modelled `required: true` per this blanket instruction, rather than left optional by an assumption the printed text does not support. (2) The two fields explicitly qualified \"(ለውጭ ሀገር ዜጎች) / (For non-Ethiopians)\" — Citizenship and Work Permit No — carry a printed conditional narrower than the form's general fill-all/N/A instruction, so these are modelled `requiredWhen` a directly-supplied `isNonEthiopianCitizen` boolean gate is true, the same directly-supplied-boolean-gate convention this registry's own `mt/identita/national-identity-card-application` (`addressHasChanged`) established for a printed conditional with no checkbox of its own. An accompanying `workPermitDocument` attachment is gated the same way, reflecting the Attachments block's own closing clause, \"work permit (for foreigners).\" (3) Ethiopian personal names in this form follow the given-name/father's-name/grandfather's-name convention rather than a Western given-name/surname split — modelled as `firstName`/`middleName`/`lastName` for both the applicant's own name and mother's name, with `lastName` representing the paternal grandfather's given name per this naming convention, disclosed here rather than silently mismatched against a Western surname assumption. (4) The Certification block's own \"Full Name\" line is excluded as a redundant restatement of `firstName`/`middleName`/`lastName` already captured in Personal Details, rather than modelled as a duplicate field. (5) The reverse side of page 4 (registering officer's name/employee ID/signature/date; authorizing official's name/employee ID/signature/date; tax-center name; assigned TIN; file number), printed under the heading \"TO BE USED BY TAX AUTHORITY ONLY,\" is excluded as back-office data, not applicant-supplied.\n\n2 valid mock scenarios (an Ethiopian citizen applicant with a business address; a non-Ethiopian citizen applicant supplying citizenship, work permit number, and the work-permit document) plus 7 mutation-control fixtures (a missing statically-required field, an invalid `applicationType` enum value, an invalid `occupation` enum value, a missing `citizenship` while `isNonEthiopianCitizen` is true, a missing `workPermitNumber` while `isNonEthiopianCitizen` is true, a missing `signature`, and an unknown top-level field) are committed under `conformance/et/mor/individual-tin-registration/1.0.1/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all 9: both valid scenarios at 0 errors, all 7 mutation controls each raising exactly 1 error, and confirmed every `requiredWhen` field reference resolves (0 dangling references). Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-21"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "registration_and_occupation",
+      "title": "Registration & Occupation",
+      "fields": ["digitalIdNumber", "applicationType", "occupation"],
+      "next": "personal_details"
+    },
+    {
+      "id": "personal_details",
+      "title": "Personal Details",
+      "fields": ["firstName", "middleName", "lastName", "motherFirstName", "motherMiddleName", "motherLastName"],
+      "next": "additional_personal_details"
+    },
+    {
+      "id": "additional_personal_details",
+      "title": "Additional Personal Details",
+      "fields": ["spouseFirstName", "spouseMiddleName", "spouseLastName", "dateOfBirth", "countryOfBirth", "placeOfBirth", "isNonEthiopianCitizen", "citizenship", "workPermitNumber"],
+      "next": "residential_address"
+    },
+    {
+      "id": "residential_address",
+      "title": "Residential Address",
+      "fields": ["residentialRegionOrCityAdministration", "residentialZoneWoredaOrFarmersAssociation", "residentialCityOrSubCity", "residentialHouseNumber"],
+      "next": "business_address"
+    },
+    {
+      "id": "business_address",
+      "title": "Individual's Business Address",
+      "fields": ["businessHouseNumber", "businessStreetNameOrNumber", "businessAddressUniqueName", "businessKebele", "businessFarmersAssociation", "businessWoreda", "businessZone", "businessSubCity", "businessCity", "businessRegionOrCityAdministration", "businessOfficePhoneNumber", "businessFaxNumber", "businessEmail", "businessPoBox"],
+      "next": "certification"
+    },
+    {
+      "id": "certification",
+      "title": "Certification",
+      "fields": ["signature", "certificationDate"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "digitalIdNumber",
+      "label": "Ethiopian Digital ID (Fayda) No. / ፋይዳ ቁጥር",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's Ethiopian Digital ID (Fayda) number. Fayda is a still-rolling-out national program, not yet universally issued; per the form's own blanket \"Fill all fields ... Mark 'N/A' for not relevant\" instruction, an applicant without a Fayda number yet supplies the literal value \"N/A\" rather than leaving this field unset — see this schema's own `verification.notes`.",
+      "sourceRef": "Page 2 — \"የኢትዮጵያ ዲጅታል መታወቅያ ካርድ መረጃ/Ethiopian Digital ID card Details\" — \"ፋይዳ ቁጥር/ Ethiopian Digital ID No\""
+    },
+    {
+      "name": "applicationType",
+      "label": "Type of Application / የምዝገባ አይነት",
+      "type": "enum",
+      "required": true,
+      "description": "The three numbered application-type options this form itself serves: a new TIN registration, reporting a change to previously registered details, or requesting a replacement TIN certificate.",
+      "sourceRef": "Page 2 — \"የምዝገባ አይነትType of Application\" — \"አዲስ /New\"; \"የመረጃ ለውጥ/ Change Details\"; \"ምትክ የምዝገባ የምስከር ወረቀት /Replace TIN certificate\"",
+      "validation": {
+        "enum": ["NEW", "CHANGE_DETAILS", "REPLACE_TIN_CERTIFICATE"]
+      }
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation / የስራ አይነት",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 2 — \"የስራ አይነት /Occupation\" — \"ተማሪ/ student\"; \"ተቀጣሪ/employee\"; \"ነጋዴ/Trader\"; \"ሌላ/other\"",
+      "validation": {
+        "enum": ["STUDENT", "EMPLOYEE", "TRADER", "OTHER"]
+      }
+    },
+    {
+      "name": "firstName",
+      "label": "First Name / ስም",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's own given name. Ethiopian names follow a given-name/father's-name/grandfather's-name convention rather than a Western given-name/surname split — see this schema's own `verification.notes`.",
+      "sourceRef": "Page 2, Personal Details — \"ሙሉ ስም / Name\" — \"ስም / First\""
+    },
+    {
+      "name": "middleName",
+      "label": "Father's Name / የአባት",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Personal Details — \"ሙሉ ስም / Name\" — \"የአባት / Middle\""
+    },
+    {
+      "name": "lastName",
+      "label": "Grandfather's Name / የአያት",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Personal Details — \"ሙሉ ስም / Name\" — \"የአያት / Last\""
+    },
+    {
+      "name": "motherFirstName",
+      "label": "Mother's First Name / ስም",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Personal Details — \"የእናት ስም / Mother Name\" — \"ስም/ First\""
+    },
+    {
+      "name": "motherMiddleName",
+      "label": "Mother's Father's Name / የአባት",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Personal Details — \"የእናት ስም / Mother Name\" — \"የአባት / Middle\""
+    },
+    {
+      "name": "motherLastName",
+      "label": "Mother's Grandfather's Name / የአያት",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Personal Details — \"የእናት ስም / Mother Name\" — \"የአያት / Last\""
+    },
+    {
+      "name": "spouseFirstName",
+      "label": "Spouse's First Name / ስም",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Per the form's own blanket \"Fill all fields ... Mark 'N/A' for not relevant\" instruction, an unmarried applicant supplies the literal value \"N/A\" rather than leaving this field unset — see this schema's own `verification.notes`.",
+      "sourceRef": "Page 3 — \"የትዳር ጓደኛ ስም / Spouse Name\" — \"ስም / First\""
+    },
+    {
+      "name": "spouseMiddleName",
+      "label": "Spouse's Father's Name / የአባት",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 3 — \"የትዳር ጓደኛ ስም / Spouse Name\" — \"የአባት / Middle\""
+    },
+    {
+      "name": "spouseLastName",
+      "label": "Spouse's Grandfather's Name / የአያት",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 3 — \"የትዳር ጓደኛ ስም / Spouse Name\" — \"የአያት / Last name\""
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth / የትውልድ ቀን",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The form's own instructions direct use of the Ethiopian calendar.",
+      "sourceRef": "Page 3 — \"የትውልድ ቀን / Date of Birth\""
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of Birth / የትውልድ አገር",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3 — \"የትውልድ አገር/ Country of Birth\""
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth / የትውልድ ቦታ",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3 — \"የትውልድ ቦታ / Place of Birth\""
+    },
+    {
+      "name": "isNonEthiopianCitizen",
+      "label": "Applicant is a non-Ethiopian citizen",
+      "type": "boolean",
+      "required": true,
+      "description": "Not a printed checkbox. The form prints two fields explicitly qualified \"(ለውጭ ሀገር ዜጎች) / (For non-Ethiopians)\" — Citizenship and Work Permit No — with no boolean gate of their own; modelled as this directly-supplied gate, controlling the requiredness of `citizenship`, `workPermitNumber`, and the `workPermitDocument` attachment. See this schema's own `verification.notes`.",
+      "sourceRef": "Page 3 — \"(ለውጭ ሀገር ዜጎች) ዜግነት/ (For non-Ethiopians) Citizenship\"; \"(ለውጭ ሀገር ዜጎች) የስራ ፈቃድ ቁጥር / (For non-Ethiopians) Work Permit No\""
+    },
+    {
+      "name": "citizenship",
+      "label": "Citizenship (for non-Ethiopians) / ዜግነት",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isNonEthiopianCitizen", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Page 3 — \"(ለውጭ ሀገር ዜጎች) ዜግነት/ (For non-Ethiopians) Citizenship\""
+    },
+    {
+      "name": "workPermitNumber",
+      "label": "Work Permit No. (for non-Ethiopians) / የስራ ፈቃድ ቁጥር",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isNonEthiopianCitizen", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Page 3 — \"(ለውጭ ሀገር ዜጎች) የስራ ፈቃድ ቁጥር / (For non-Ethiopians) Work Permit No\""
+    },
+    {
+      "name": "residentialRegionOrCityAdministration",
+      "label": "Regional State / City Administration / ክልል/ከተማ አስተዳደር",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Residential Address — \"ክልል/ከተማ አስተዳደር/ Regional State/ City Adm.\""
+    },
+    {
+      "name": "residentialZoneWoredaOrFarmersAssociation",
+      "label": "Zone / Woreda / Farmer's Association / ዞን/ወረዳ/የገበሬ ማህበር",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Residential Address — \"ዞን/zone/ ወረዳ/ Woreda/የገበሬ ማህበር/ Farmer's ass.\""
+    },
+    {
+      "name": "residentialCityOrSubCity",
+      "label": "City / Sub-City / ከተማ/ክፍለከተማ",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Residential Address — \"ከተማ/ City/ክፍለከተማ/ Sub-City\""
+    },
+    {
+      "name": "residentialHouseNumber",
+      "label": "House Number / የቤት ቁጥር",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Residential Address — \"የቤት ቁጥር/ House Number\""
+    },
+    {
+      "name": "businessHouseNumber",
+      "label": "Business Address House Number / የቤት ቁጥር",
+      "type": "string",
+      "required": true,
+      "description": "Per the form's own blanket \"Fill all fields ... Mark 'N/A' for not relevant\" instruction, an applicant with no separate business address supplies the literal value \"N/A\" across this whole block rather than leaving it unset — see this schema's own `verification.notes`.",
+      "sourceRef": "Page 3 — \"የግለሰብ የንግድ ስራ አድራሻ/INDIVIDUAL'S BUSINESS ADDRESS\" — \"የቤት ቁጥር/ House Number\""
+    },
+    {
+      "name": "businessStreetNameOrNumber",
+      "label": "Street Name / Number (if any) / የመንገድ ስም ወይም ቁጥር",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Individual's Business Address — \"የመንገድ ስም ወይም ቁጥር (ካለ)/ Street Name/ Number (if any)\""
+    },
+    {
+      "name": "businessAddressUniqueName",
+      "label": "Unique Name of Address / የአድራሻ ልዩ መጠርያ",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Individual's Business Address — \"የአድራሻ ልዩ መጠርያ/ Unique name of address\""
+    },
+    {
+      "name": "businessKebele",
+      "label": "Kebele / ቀበሌ",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Individual's Business Address — \"ቀበሌ/ Kebele\""
+    },
+    {
+      "name": "businessFarmersAssociation",
+      "label": "Farmer's Association / የገበሬ ማህበር",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Individual's Business Address — \"የገበሬ ማህበር/ Farmer's association\""
+    },
+    {
+      "name": "businessWoreda",
+      "label": "Woreda / ወረዳ",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Individual's Business Address — \"ወረዳ/ Woreda\""
+    },
+    {
+      "name": "businessZone",
+      "label": "Zone / ዞን",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Individual's Business Address — \"ዞን/zone/\""
+    },
+    {
+      "name": "businessSubCity",
+      "label": "Sub-City / ክፍለከተማ",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Individual's Business Address — \"ክፍለከተማ/ Sub-City\""
+    },
+    {
+      "name": "businessCity",
+      "label": "City / ከተማ",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Individual's Business Address — \"ከተማ/ City\""
+    },
+    {
+      "name": "businessRegionOrCityAdministration",
+      "label": "Regional State / City Administration / ክልል/ከተማ አስተዳደር",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Individual's Business Address — \"ክልል/ከተማ አስተዳደር/ Regional State/ City Administration\""
+    },
+    {
+      "name": "businessOfficePhoneNumber",
+      "label": "Office Phone Number / ቢሮ የስልክ ቁጥር",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 3, Individual's Business Address — \"ቢሮ የስልክ ቁጥር/ Office Phone Number\""
+    },
+    {
+      "name": "businessFaxNumber",
+      "label": "Fax Number / ፋክስቁጥር",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Individual's Business Address — \"ፋክስቁጥር/ Fax Number\""
+    },
+    {
+      "name": "businessEmail",
+      "label": "E-mail Address / ኢ.ሜይል",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 3, Individual's Business Address — \"ኢ.ሜይል/ e-mail Address\""
+    },
+    {
+      "name": "businessPoBox",
+      "label": "P.O. Box / ፓ.ሳ.ቁ",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 3, Individual's Business Address — \"ፓ.ሳ.ቁ/p.o.box\""
+    },
+    {
+      "name": "signature",
+      "label": "Signature / ፊርማ",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 4, Certification — \"ፊርማ/ Signature\""
+    },
+    {
+      "name": "certificationDate",
+      "label": "Date / ቀን",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Page 4, Certification — \"ቀን/Date\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityProofDocument",
+      "label": "Identity document",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "acceptedTypes": [
+        "ethiopian_national_digital_id_fin",
+        "kebele_id",
+        "passport",
+        "driving_license",
+        "birth_certificate"
+      ],
+      "sourceRef": "Page 2, Certification/Attachments — \"የኢትዮጵያ ብሄራዊ ዲጅታል መታወቅያ(ፋይዳ ቁጥር) ወይም የቀበሌ መታወቂያ ወይም የኢትዮጵያ ወይም የሌላ አገር ፓስፖርት፣ የኢትዮጵያ ወይም የሌላ ሀገር መንጃ ፈቃድ ወይም የግለሰቡ የተረጋገጠ የልደት የምስክር ወረቀት / Ethiopia National Digital Card (FIN) Legal identity card, local or international driving license, birth certificate, Ethiopian or foreign passport\""
+    },
+    {
+      "id": "workPermitDocument",
+      "label": "Work permit (for non-Ethiopian applicants)",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "isNonEthiopianCitizen", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Page 2, Certification/Attachments — \"ለውጪ ሀገር ሰዎች የስራ ፈቃድ/ work permit (for foreigners)\""
+    },
+    {
+      "id": "certificationAttestation",
+      "label": "Certification of accuracy and completeness",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I hereby certify that the information given in this form is true and complete. I understand that any misrepresentation is punishable by law.",
+      "sourceRef": "Page 4, Certification — \"በዚህ ቅጽ ላይ የሰፈሩት ሁሉም መረጃዎች ትክክልና የተሟላ መሆኑን አረጋግጣለሁ፡/ I hereby certify that the information given in this form is true and complete. I understand that any misrepresentation is punishable by law\""
+    }
+  ]
+}
