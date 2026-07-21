@@ -4,7 +4,58 @@
 
 ## Executive Summary
 
-**76 jurisdictions** | **582 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**76 jurisdictions** | **583 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4230, "GovSchema Standard Research"): Malta's
+> Visa vertical opens (4/6)**, via
+> `mt/identita/long-stay-visa-application@1.0.0` — Identità's Central Visa
+> Unit's "Long Stay Maltese (D) Visa Application," Malta's own national
+> (Category D) long-stay visa, filed by a non-EU/EEA/Swiss national seeking
+> a stay in Malta exceeding the 90-day Schengen short-stay limit. **This
+> overturns this registry's own prior "MT Visa confirmed dead end" finding**
+> (recorded during the GOV-4215 scouting cycle): that finding examined only
+> Malta's Schengen (short-stay, Category C) visa, a genuine duplicate of the
+> EU-harmonized template already published as
+> `fr/france-visas/schengen-visa-application`; it did not examine this
+> distinct national D-visa, which is genuinely unscreened and structurally
+> analogous to Germany's (`de/auswaertiges-amt/national-visa-application`)
+> and Estonia's (`ee/vm/long-stay-visa-application`) own national-visa
+> schemas already in this registry. Re-fetched
+> `dvisa.identita.gov.mt/resources/dist/documents/application-v4.pdf`
+> directly with a realistic desktop Chrome User-Agent: HTTP 200,
+> `application/pdf`, 626,201 bytes — byte-identical to this cycle's own
+> scouting note — sha256
+> `b68be680039130d27847ab591e592a5487c6a45ece9bb03db801e12b9aa51112`, no
+> login/CAPTCHA/Cloudflare gate. Confirmed mechanically: a genuine
+> `%PDF-1.4` flat, non-AcroForm, non-`/Widget` 6-page specimen, extracted
+> with `pdfjs-dist`'s own text-layer extraction per this registry's
+> established Maltese-Identità-family pattern. Models 73 fields across 9
+> steps mirroring the form's own sections (Applicant's Details, Contact
+> Details, and Passport Details; Travel Information plus Home Address and
+> Malta Accommodation Details; Host Details in Malta; Parental Authority/
+> Legal Guardian; an unnumbered EU/EEA/Swiss family member sub-block
+> continuing the Parental Authority section) plus 9 `documents[]` entries.
+> Discloses 11 source-fidelity findings, most notably that (1) this form
+> carries no asterisks or other printed required/optional signal anywhere
+> across all 6 pages — unlike both sibling Identità-family forms already in
+> this registry — so every field's requiredness is a disclosed domain-
+> judgment call, and (2) the Host Details and Parental Authority sections
+> are each gated on a directly-supplied boolean, not a printed checkbox,
+> the same convention `mt/identita/passport-application` established.
+> Field-by-field compared against `de/auswaertiges-amt/national-visa-application`:
+> **genuinely distinct, not a duplicate** — shares only the opening
+> Schengen-harmonized identity/travel-document item shape, then diverges
+> with its own Host Details in Malta section, an EU/EEA/Swiss family-member
+> sub-block paralleling (but not identical to) Estonia's own, a minors-only
+> Parental Authority section (unlike Germany's unconditional adult-
+> applicant's-own-parents section), and its own 7-category purpose-of-
+> travel taxonomy sharing no labels with Germany's 6 or Estonia's 8. See the
+> document's own VERIFICATION.md for the full record. Deepens Malta to 4 of
+> 6 verticals (Business Formation, Passport, National ID & Civic Documents,
+> Visa); DMV remains a weak/moderate open backlog candidate, Taxes is the
+> sole remaining confirmed dead end — see the Visa vertical section below
+> for the full per-vertical record. Numerator/denominator unchanged at 76
+> (deepens an existing jurisdiction); document count 582 → 583.
 
 > **Update (2026-07-21, GOV-4223, "GovSchema Standard Research"): Malta's
 > National ID & Civic Documents vertical opens (3/6)**, via
@@ -17675,7 +17726,15 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (62/76 jurisdictions — 82%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (63/76 jurisdictions — 83%)
+
+> **Update (2026-07-21, GOV-4230, "GovSchema Standard Research"): Malta's
+> Visa vertical opens**, via `mt/identita/long-stay-visa-application` — see
+> the Executive Summary update above for the full sourcing record,
+> including the field-by-field duplicate-vs-distinct comparison against
+> `de/auswaertiges-amt/national-visa-application` and the overturned
+> GOV-4215 "MT Visa confirmed dead end" finding. Per the registry's
+> by-jurisdiction table, the Visa numerator moves to 63/76.
 
 > **Update (2026-07-21, GOV-4107, "GovSchema Standard Research"): the
 > Netherlands' Visa vertical opens**, via
@@ -19191,7 +19250,7 @@ now closed.
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **MT** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✓ |
+| **MT** | 2 | ✓ | ✗ | ✓ | ✗ | ✓ | ✓ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -19387,7 +19446,21 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Summary and National ID & Civic Documents vertical updates above.
       Malta is now 3/6; only DMV (weak/moderate, not a hard dead end)
       remains open backlog, with Taxes and Visa excluded as confirmed dead
-      ends.
+      ends. **Update (GOV-4230, 2026-07-21): the GOV-4215 Visa dead-end
+      finding is overturned — Visa is now authored** as
+      `mt/identita/long-stay-visa-application` v1.0.0 — see the Executive
+      Summary and Visa vertical updates above. The GOV-4215 screening only
+      examined Malta's Schengen (short-stay, Category C) visa, a genuine
+      duplicate of the EU-harmonized template already published as
+      `fr/france-visas/schengen-visa-application`; it did not examine
+      Malta's distinct national (Category D) long-stay visa, issued by
+      Identità's own Central Visa Unit, which is genuinely unscreened and
+      structurally analogous to Germany's and Estonia's own national-visa
+      schemas already in this registry — see the document's own
+      VERIFICATION.md for the full field-by-field duplicate-vs-distinct
+      comparison. Malta is now 4/6; only DMV (weak/moderate, not a hard
+      dead end) remains open backlog, with Taxes as the sole remaining
+      confirmed dead end.
     - **Ireland RBN1** (individual/sole-trader business-name registration,
       Companies Registration Office) — the direct `cro.ie` host remains
       Cloudflare-JS-challenge-gated (re-confirmed this cycle, HTTP 403),
