@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**75 jurisdictions** | **570 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**75 jurisdictions** | **571 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4144, "GovSchema Standard Research"): Latvia's
+> Taxes vertical deepens — Annex D2 (foreign-sourced income) added**, via
+> `lv/vid/annual-income-tax-declaration-form-d@1.1.0` (v1.0.0, GOV-4138,
+> opened the vertical with Form D plus Annex D1). Picked Annex D2 over the
+> other six annexes v1.0.0 banked as backlog because it is the most broadly
+> applicable (any Latvian resident with foreign income, not a narrow
+> carve-out like the seafarer-only D2¹) and its table renders as real HTML
+> markup exactly like Annex D1's, letting its column order be independently
+> cross-checked against the regulation's own formula references the same
+> way. Re-fetched `likumi.lv` directly: HTTP 200, 365,651 bytes, the same
+> byte count v1.0.0 recorded (the correct fidelity signal for this source,
+> per v1.0.0's own finding that its sha256 is unstable due to an unrelated
+> bot-detection script token). A MINOR, additive version bump — 61 new
+> optional fields in a new `foreign_sourced_income` step (130 → 191 fields
+> total), plus updated formula descriptions on the 4 existing Form D
+> summary rows that reference Annex D2. Discloses 4 source-fidelity
+> findings, including that Annex D2's own printed "Kopā" totals row
+> reserves a blank box for a per-row tax-rate column with no stated
+> summing formula, and that the tax-rate column itself is a 0–1 decimal
+> fraction rather than a 0–100 percentage (the printed tax-amount formula
+> multiplies it directly with no `/100` term). See the document's own
+> VERIFICATION.md for the full record. Annexes D1¹, D2¹, D3, D3¹, D4, DK,
+> the DK annex, and GD remain open backlog. Numerator/denominator unchanged
+> (64/75); document count 570 → 571.
 
 > **Update (2026-07-21, GOV-4138, "GovSchema Standard Research"): Latvia's
 > Taxes vertical opens (2 of 6)**, via
@@ -15488,6 +15513,16 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (64/75 jurisdictions — 85%)
 
+> **Update (2026-07-21, GOV-4144, "GovSchema Standard Research"): Latvia's
+> Taxes vertical deepens**, via
+> `lv/vid/annual-income-tax-declaration-form-d@1.1.0` — adds Annex D2
+> (foreign-sourced income) as a new step, a MINOR/additive version bump
+> from v1.0.0 (GOV-4138, Form D plus Annex D1). See the Executive Summary's
+> GOV-4144 update above and the document's own VERIFICATION.md for the full
+> sourcing record. Does not change the vertical's numerator/denominator
+> (Latvia already counted at v1.0.0); D1¹, D2¹, D3, D3¹, D4, DK, and GD
+> remain open backlog.
+
 > **Update (2026-07-21, GOV-4138, "GovSchema Standard Research"): Latvia's
 > Taxes vertical opens**, via `lv/vid/annual-income-tax-declaration-form-d`
 > — the State Revenue Service's (Valsts ieņēmumu dienests, VID) annual
@@ -18827,6 +18862,12 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Summary and Taxes vertical updates above. Scoped to Form D plus
       Annex D1 only; Annexes D1¹, D2, D2¹, D3, D3¹, D4, DK, the DK annex,
       and GD remain open backlog per the document's own VERIFICATION.md.
+      **Update (GOV-4144, 2026-07-21): Annex D2 (foreign-sourced income) is
+      now also authored**, bumping the document to v1.1.0 (MINOR/additive)
+      — see the Executive Summary and Taxes vertical updates above. Annexes
+      D1¹, D2¹, D3, D3¹, D4, DK, the DK annex, and GD remain open backlog;
+      D2¹ (seafarer foreign income) and D1¹ are the two most likely next
+      candidates, since both share Annex D2's real-HTML-table rendering.
     - **Saudi Arabia — screened, dead end across all six verticals this
       cycle (GOV-4121).** DMV (Absher/Muroor), Business Formation (Saudi
       Business Center), Taxes (ZATCA), and Passport (Jawazat) are all
