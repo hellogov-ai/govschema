@@ -4,7 +4,38 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **562 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **563 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4085, "GovSchema Standard Research"): Kazakhstan's
+> Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
+> sixth and last companion schedule, closing the entire 250.0X series**, via
+> `kz/kgd/declaration-of-assets-and-liabilities-schedule-250-06` — Form
+> 250.06, receivables/payables debt (including outside the Republic of
+> Kazakhstan) and property transferred to trust management. The only
+> schedule left after five prior cycles (GOV-4050, GOV-4057, GOV-4064,
+> GOV-4071, GOV-4078) authored the other five — not a choice among
+> candidates. Fetched the schedule's own page image fresh
+> (`adilet.zan.kz/files/1576/49/202.jpg`, HTTP 200, 142,690 bytes — matching
+> the byte count the GOV-4057 cycle's own boundary check had already
+> recorded for this same image) and read it directly via a 4x upscale. Both
+> of its sections print a uniform 4 blank rows each (re-counted via a
+> dedicated crop per section) — unlike GOV-4078's 3-way row-count gradient on
+> Form 250.04, this schedule shows no such gradient. Item 12's own footnote
+> gives a genuine two-value classifier (letters "Кт"/"Дт" for creditor/debtor
+> debt), modelled as an enum (`payable`/`receivable`) consistent with the
+> parent form's own `residencyStatus` convention; the same item's prose note
+> also states that debt to banks/organizations carrying out certain banking
+> operations is not reflected, except such debt located outside Kazakhstan —
+> disclosed as a scope note rather than a validation rule. The order's own
+> HTML explanatory chapter returned HTTP 504 again this cycle (same
+> persistent failure mode as GOV-4057/4064/4071/4078); the image itself
+> carried every field meaning needed. Numerator changes from 562 to 563
+> documents. Both validators pass at 563/563; 12 conformance fixtures
+> (independently checked against an ad-hoc ajv schema built from the
+> document's own field constraints). **This closes Kazakhstan's Form 250.0X
+> companion-schedule series in full — all six schedules (250.01-250.06) are
+> now authored.** See the Taxes vertical section below and the document's
+> own VERIFICATION.md for the full record.
 
 > **Update (2026-07-21, GOV-4078, "GovSchema Standard Research"): Kazakhstan's
 > Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
@@ -33,7 +64,9 @@
 > against an ad-hoc ajv schema built from the document's own field
 > constraints). One schedule (250.06) remains open backlog. See the Taxes
 > vertical section below and the document's own VERIFICATION.md for the full
-> record.
+> record. **Update (GOV-4085):** the sixth and last companion schedule
+> (250.06) is now authored, closing the entire series — see the update
+> above.
 
 > **Update (2026-07-21, GOV-4071, "GovSchema Standard Research"): Kazakhstan's
 > Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
