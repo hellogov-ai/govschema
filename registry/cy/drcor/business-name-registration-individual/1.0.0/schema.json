@@ -1,0 +1,429 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "cy/drcor/business-name-registration-individual",
+  "version": "1.0.0",
+  "title": "Cyprus Application for Registration of a Business Name by an Individual (Form EE1)",
+  "description": "Register a business (trade) name under which a sole individual trades, filed with the Department of Registrar of Companies and Intellectual Property (Τμήμα Εφόρου Εταιρειών και Διανοητικής Ιδιοκτησίας, part of the Ministry of Energy, Commerce and Industry) under Article 52 of the Partnerships and Business Names Law, Cap. 116 (Ο περί Ομορρύθμων και Ετερορρύθμων Συνεταιρισμών και Εμπορικών Επωνυμιών Νόμος). Form EE1's own \"Details of the Owner or of the Owning Company\" section covers both an individual owner and a body-corporate owner on the same page; this document is scoped to the individual-owner path only (the applicant is a natural person trading in their own name/right), mirroring how this registry already scopes ie/cro/business-name-registration-individual to the individual-applicant variant of Ireland's structurally similar business-name-registration form. A body-corporate owner (company name plus its own registration number, printed on the same form) is out of scope — see VERIFICATION.md. It does not submit the registration; the live companies.gov.cy source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by Cyprus or the Department of Registrar of Companies and Intellectual Property.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CY",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Registrar of Companies and Intellectual Property",
+    "abbreviation": "DRCOR",
+    "url": "https://www.companies.gov.cy/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "el-CY"
+  },
+  "source": {
+    "url": "https://www.companies.gov.cy/assets/modules/wgp/articles/201801/53/docs/ee1.pdf",
+    "retrievedAt": "2026-07-21",
+    "documentRef": "Form EE1 — \"Αίτηση για εγγραφή εμπορικής επωνυμίας\" (Application for registration of a business name), native flat PDF, 1 page"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-21",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-21",
+    "notes": "GOV-4208 (\"GovSchema Standard Research\"), continuing the pre-scouted candidate banked in GOV-4169's Known Gaps entry. That entry had flagged the Greek text as \"glyph-index-encoded (no ToUnicode CMap)\" and left the form unauthored pending glyph-decoding groundwork. This cycle re-fetched the source directly (HTTP 200, 87,675 bytes, Last-Modified 2019-05-07 — byte-identical to the GOV-4169-era fetch) and found the concern does not reproduce: pdfjs-dist's legacy text-extraction API decodes every Greek glyph correctly without any manual glyph-mapping pass, producing clean, directly-readable Unicode text (e.g. \"Αίτηση για εγγραφή εμπορικής επωνυμίας\"). The form carries no numbered explanatory notes (unlike ie/cro/business-name-registration-individual's RBN1, which has 8) — every field is a plain labelled box, so all field descriptions here are derived from the label text and general knowledge of Cyprus's business-name registration process, not from footnote cross-references. Field/row structure was recovered by grouping text items by their y-coordinate (transform[5], rounded) into printed rows, then ordering each row's items by x-coordinate (transform[4]) to recover left-to-right column order — this reveals a genuine two-column layout in several rows (e.g. y=419: \"Αρ.Ταυτότητας\" at x=137 paired with \"Αρ. Διαβατηρίου\" at x=351 on the same printed row) that a naive single-column text dump would not disclose.\n\nOut of scope: the owner-details section's own \"Όνομα\" (Name) field is paired on the same row with \"Αρ.Εγγραφής\" (Registration No.), which only applies when the owner is a registered body corporate rather than a natural person (the section header itself, \"Στοιχεία Ιδιοκτήτη ή Ιδιοκτήτριας Εταιρείας\", literally reads \"Details of the Owner or of the Owning Company\" — an either/or on the same form). This document models the individual-owner path only; ownerCompanyRegistrationNumber (and a company-owner name field distinct from ownerGivenName) are not modelled. A future companion document could cover the body-corporate-owner path the same way ie/cro/company-incorporation and ie/cro/business-name-registration-individual are modelled as separate documents in this registry, rather than one document with a discriminated owner-type union.\n\nownerIdCardNumber and ownerPassportNumber are both modelled as optional rather than one required and the other conditionally required: the source form provides both boxes with no printed note stating which applies to which nationality, and this registry's own standing pitfall list warns against gating requiredness on a notEquals-empty-string check against another optional field (a known false-negative on absent fields) — so the either/or relationship is disclosed in each field's own description rather than encoded as a brittle crossFieldValidation rule. nameApprovalApplicationNumber and natureOfBusinessCode are both modelled as optional: the form provides no explanatory note distinguishing an applicant-supplied value from a registrar-assigned one, and it would be a fabrication to assert either interpretation as certain from the source alone.\n\nTwo mock conformance scenarios (a complete individual-applicant filing, and a foreign-national owner using a passport rather than an ID card) each produced 0 validation errors under both tools/validate.mjs and tools/validate-ajv.mjs; 8 mutation-control fixtures (one per required-field omission spanning every step) each correctly raised exactly 1 error."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "businessName",
+      "label": "Business (trade) name",
+      "type": "string",
+      "required": true,
+      "description": "The trade name being registered under Article 52 of Cap. 116.",
+      "sourceRef": "\"Εμπορική Επωνυμία\" (Business Name)",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "natureOfBusinessDescription",
+      "label": "Nature of business",
+      "type": "string",
+      "required": true,
+      "description": "A description of the business activity carried on under the registered name.",
+      "sourceRef": "\"Φύση Εργασίας\" (Nature of Business)",
+      "validation": { "minLength": 1, "maxLength": 500 }
+    },
+    {
+      "name": "nameApprovalApplicationNumber",
+      "label": "Name-approval application number (optional)",
+      "type": "string",
+      "required": false,
+      "description": "The reference number of a prior application to the Registrar for approval of the business name, where one was filed and obtained before this registration application. Not explained by any footnote on the source form (which carries none), so modelled as optional rather than assuming it is always obtained beforehand.",
+      "sourceRef": "\"Αριθμός αίτησης για έγκριση ονόματος επωνυμίας\" (Application number for approval of the name)",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "natureOfBusinessCode",
+      "label": "Nature-of-business code (optional)",
+      "type": "string",
+      "required": false,
+      "description": "A business-activity classification code corresponding to natureOfBusinessDescription. The source form gives no key or list of valid codes, so this is modelled as an unconstrained optional string rather than a fabricated enum.",
+      "sourceRef": "\"Κωδικός Φύσης Εργασίας\" (Nature of Business Code)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "placeOfBusinessStreetOrAvenue",
+      "label": "Place of business — street/avenue",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Place of business address — \"Οδός/Λεωφ.\" (Street/Avenue)",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "placeOfBusinessStreetNumber",
+      "label": "Place of business — number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Place of business address — \"Αρ.\" (No.)",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "placeOfBusinessBuilding",
+      "label": "Place of business — building (optional)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Place of business address — \"Κτίριο\" (Building)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBusinessFloor",
+      "label": "Place of business — floor (optional)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Place of business address — \"Όροφος\" (Floor)",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "placeOfBusinessApartment",
+      "label": "Place of business — flat/apartment (optional)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Place of business address — \"Διαμ.\" (Flat)",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "placeOfBusinessParishTownVillage",
+      "label": "Place of business — parish/town/village",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Place of business address — \"Ενορία/Πόλη/Χωριό\" (Parish/Town/Village)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBusinessDistrict",
+      "label": "Place of business — district",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Place of business address — \"Επαρχία\" (District)",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "placeOfBusinessPostalCode",
+      "label": "Place of business — postal code",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Place of business address — \"Ταχ.Κώδικας\" (Postal Code)",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "ownerGivenName",
+      "label": "Owner — given name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Printed on the same row as \"Αρ.Εγγραφής\" (Registration No.), which applies only to a body-corporate owner and is out of scope here — see VERIFICATION.md.",
+      "sourceRef": "Owner details — \"Όνομα\" (Name)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "ownerSurname",
+      "label": "Owner — surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Επώνυμο\" (Surname)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "ownerGivenNameLatin",
+      "label": "Owner — given name in Latin characters",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Όνομα με λατινικούς χαρακτήρες\" (Given name in Latin characters)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "ownerSurnameLatin",
+      "label": "Owner — surname in Latin characters",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Επώνυμο με λατινικούς χαρακτήρες\" (Surname in Latin characters)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "ownerPreviousGivenName",
+      "label": "Owner — previous given name (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Προηγούμενο Όνομα\" (Previous given name)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "ownerPreviousSurname",
+      "label": "Owner — previous surname (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Προηγούμενο Επώνυμο\" (Previous surname)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "ownerIdCardNumber",
+      "label": "Owner — identity card number (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The source form provides this alongside ownerPassportNumber with no printed note stating which nationality of owner uses which; disclosed here as an either/or rather than encoded as a brittle cross-field requirement (see VERIFICATION.md).",
+      "sourceRef": "Owner details — \"Αρ.Ταυτότητας\" (ID Card No.)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "ownerPassportNumber",
+      "label": "Owner — passport number (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See ownerIdCardNumber — the source discloses no rule for which of the two identity-document fields a given owner must complete.",
+      "sourceRef": "Owner details — \"Αρ. Διαβατηρίου\" (Passport No.)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "ownerDateOfBirth",
+      "label": "Owner — date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Ημερ. Γεννήσεως\" (Date of Birth)"
+    },
+    {
+      "name": "ownerNationalityCountry",
+      "label": "Owner — country of nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Χώρα Υπηκοότ.\" (Country of Nationality)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "ownerOccupation",
+      "label": "Owner — occupation",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Επάγγελμα\" (Occupation)",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "ownerStreetOrAvenue",
+      "label": "Owner — residential street/avenue",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Οδός/Λεωφ.\" (Street/Avenue)",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "ownerStreetNumber",
+      "label": "Owner — residential number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Αρ.\" (No.)",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "ownerBuilding",
+      "label": "Owner — residential building (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Κτίριο\" (Building)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "ownerFloor",
+      "label": "Owner — residential floor (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Όροφος\" (Floor)",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "ownerApartment",
+      "label": "Owner — residential flat/apartment (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Διαμ.\" (Flat)",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "ownerParishTownVillage",
+      "label": "Owner — residential parish/town/village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Ενορία/Πόλη/Χωριό\" (Parish/Town/Village)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "ownerDistrict",
+      "label": "Owner — residential district",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Επαρχία\" (District)",
+      "validation": { "minLength": 1, "maxLength": 60 }
+    },
+    {
+      "name": "ownerPostalCode",
+      "label": "Owner — residential postal code",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Ταχ. Κώδικας\" (Postal Code)",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "ownerCountry",
+      "label": "Owner — country of residence",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Owner details — \"Χώρα\" (Country)",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "dateOfCommencementOfBusiness",
+      "label": "Date of commencement of business",
+      "type": "date",
+      "required": true,
+      "sourceRef": "\"Ημερ.Έναρξης Εργασιών\" (Date of Commencement of Business)"
+    },
+    {
+      "name": "otherBusinessNames",
+      "label": "Other business names under which the business is conducted (optional)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"Άλλες εμπορικές επωνυμίες υπό τις οποίες διεξάγονται οι εργασίες\" (Other business names under which the business is conducted)",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "ownerSignatureConfirmed",
+      "label": "Owner's signature confirmed",
+      "type": "boolean",
+      "required": true,
+      "description": "Records the fact of the owner's wet signature on the printed declaration, not the signature image itself, consistent with this registry's convention for wet-signature declarations.",
+      "sourceRef": "\"Υπογραφή Ιδιοκτήτη\" (Signature of Owner)"
+    },
+    {
+      "name": "signatureDate",
+      "label": "Date of signature",
+      "type": "date",
+      "required": true,
+      "sourceRef": "\"Ημερομηνία\" (Date)"
+    },
+    {
+      "name": "correspondenceName",
+      "label": "Correspondence — name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The name of the person or firm to whom the Registrar should address correspondence about this application (may differ from the owner, e.g. a representing advocate or accountant).",
+      "sourceRef": "\"Όνομα και Διεύθυνση για Αλληλογραφία\" (Name and Address for Correspondence) — \"Όνομα\" (Name)",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "correspondenceAddress",
+      "label": "Correspondence — address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Printed as a single free-text writing area, unlike the place-of-business and owner address blocks above which are printed as separately labelled street/building/floor/etc. boxes.",
+      "sourceRef": "\"Όνομα και Διεύθυνση για Αλληλογραφία\" — \"Διεύθυνση\" (Address)",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "correspondencePostalCode",
+      "label": "Correspondence — postal code",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"Όνομα και Διεύθυνση για Αλληλογραφία\" — \"Ταχ. Κώδικας\" (Postal Code)",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "correspondenceTelephone",
+      "label": "Correspondence — telephone (optional)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"Όνομα και Διεύθυνση για Αλληλογραφία\" — \"Τηλέφωνο\" (Telephone)",
+      "validation": { "maxLength": 30 }
+    }
+  ],
+  "steps": [
+    {
+      "id": "business_details",
+      "title": "Business name, nature of business, and place of business",
+      "fields": [
+        "businessName", "natureOfBusinessDescription", "nameApprovalApplicationNumber",
+        "natureOfBusinessCode", "placeOfBusinessStreetOrAvenue", "placeOfBusinessStreetNumber",
+        "placeOfBusinessBuilding", "placeOfBusinessFloor", "placeOfBusinessApartment",
+        "placeOfBusinessParishTownVillage", "placeOfBusinessDistrict", "placeOfBusinessPostalCode"
+      ],
+      "next": "owner"
+    },
+    {
+      "id": "owner",
+      "title": "Owner's particulars",
+      "fields": [
+        "ownerGivenName", "ownerSurname", "ownerGivenNameLatin", "ownerSurnameLatin",
+        "ownerPreviousGivenName", "ownerPreviousSurname", "ownerIdCardNumber", "ownerPassportNumber",
+        "ownerDateOfBirth", "ownerNationalityCountry", "ownerOccupation",
+        "ownerStreetOrAvenue", "ownerStreetNumber", "ownerBuilding", "ownerFloor", "ownerApartment",
+        "ownerParishTownVillage", "ownerDistrict", "ownerPostalCode", "ownerCountry"
+      ],
+      "next": "commencement"
+    },
+    {
+      "id": "commencement",
+      "title": "Commencement of business and other trade names",
+      "fields": ["dateOfCommencementOfBusiness", "otherBusinessNames"],
+      "next": "signature"
+    },
+    {
+      "id": "signature",
+      "title": "Signature",
+      "fields": ["ownerSignatureConfirmed", "signatureDate"],
+      "next": "correspondence"
+    },
+    {
+      "id": "correspondence",
+      "title": "Correspondence details",
+      "fields": [
+        "correspondenceName", "correspondenceAddress", "correspondencePostalCode", "correspondenceTelephone"
+      ]
+    }
+  ]
+}
