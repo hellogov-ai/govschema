@@ -4,7 +4,35 @@
 
 ## Executive Summary
 
-**75 jurisdictions** | **572 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**75 jurisdictions** | **573 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4163, "GovSchema Standard Research"): Latvia's
+> Taxes vertical deepens further — Annex D1¹ (income excluded from the
+> non-taxable minimum/reliefs) added**, via
+> `lv/vid/annual-income-tax-declaration-form-d@1.3.0` (v1.2.0, GOV-4154,
+> added Annex D2¹; v1.1.0, GOV-4144, added Annex D2; v1.0.0, GOV-4138,
+> opened the vertical with Form D plus Annex D1). Picks up Annex D1¹, the
+> candidate both v1.1.0's and v1.2.0's own Known Gaps lists flagged as most
+> likely next, since it shares Annex D1's and Annex D2's real-HTML-table
+> rendering. Re-fetched `likumi.lv` directly: HTTP 200, 365,651 bytes, the
+> same byte count v1.0.0–v1.2.0 all recorded. A MINOR, additive version
+> bump — 76 new optional fields (7 income-entry rows × 10 columns, plus 6
+> "Kopā" totals fields) in a new `income_excluded_from_reliefs` step (231 →
+> 307 fields total), plus 28 new `crossFieldValidation` rules and updated
+> formula descriptions on the 2 existing Form D summary rows that reference
+> Annex D1¹. Unlike this document's prior conditional-fill rules (always
+> disclosed, never encoded), the mutually-exclusive column 3/4/5 relationship
+> and the advance-tax cap this cycle *are* fully expressible with the
+> existing `crossFieldValidation` vocabulary, using the numeric
+> greater-than-zero-as-filled convention v1.2.0 already established. Discloses
+> 5 source-fidelity findings, most notably that this cycle's own source
+> issue stated the annex's table has 9 blank data rows, while independent
+> re-parsing (cross-checked three ways) found 7 — modelled per the
+> independent count, not the issue's stated count. See the document's own
+> VERIFICATION.md for the full record. Annexes D3, D3¹, D4, DK, the DK
+> annex, and GD remain open backlog; no further candidate sharing this
+> document's real-HTML-table-rendering precedent is known to remain open.
+> Numerator/denominator unchanged (64/75); document count 572 → 573.
 
 > **Update (2026-07-21, GOV-4154, "GovSchema Standard Research"): Latvia's
 > Taxes vertical deepens further — Annex D2¹ (seafarer foreign-sourced
@@ -15538,6 +15566,16 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (64/75 jurisdictions — 85%)
 
+> **Update (2026-07-21, GOV-4163, "GovSchema Standard Research"): Latvia's
+> Taxes vertical deepens further**, via
+> `lv/vid/annual-income-tax-declaration-form-d@1.3.0` — adds Annex D1¹
+> (income excluded from the non-taxable minimum/reliefs) as a new step, a
+> MINOR/additive version bump from v1.2.0 (GOV-4154, Annex D2¹). See the
+> Executive Summary's GOV-4163 update above and the document's own
+> VERIFICATION.md for the full sourcing record. Does not change the
+> vertical's numerator/denominator (Latvia already counted at v1.0.0); D3,
+> D3¹, D4, DK, and GD remain open backlog.
+
 > **Update (2026-07-21, GOV-4154, "GovSchema Standard Research"): Latvia's
 > Taxes vertical deepens further**, via
 > `lv/vid/annual-income-tax-declaration-form-d@1.2.0` — adds Annex D2¹
@@ -18910,6 +18948,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       remain open backlog; D1¹ is now the single most likely next
       candidate, since it shares Annex D1's and Annex D2's real-HTML-table
       rendering.
+      **Update (GOV-4163, 2026-07-21): Annex D1¹ (income excluded from the
+      non-taxable minimum/reliefs) is now also authored**, bumping the
+      document to v1.3.0 (MINOR/additive) — see the Executive Summary and
+      Taxes vertical updates above. Annex D1¹ is closed; Annexes D3, D3¹,
+      D4, DK, the DK annex, and GD remain open backlog. No further
+      candidate sharing this document's real-HTML-table-rendering
+      precedent is known to remain open — D3/D3¹ are excluded by this
+      registry's own narrow-scoping precedent for business-activity
+      accounting schedules (too formula-derived/broad), and D4/DK/GD were
+      not re-examined beyond the standing disclosure that they remain
+      unscoped.
     - **Saudi Arabia — screened, dead end across all six verticals this
       cycle (GOV-4121).** DMV (Absher/Muroor), Business Formation (Saudi
       Business Center), Taxes (ZATCA), and Passport (Jawazat) are all
