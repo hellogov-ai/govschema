@@ -4,7 +4,30 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **563 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **564 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4092/GOV-4094, "GovSchema Standard Research"):
+> Czech Republic closes to 6 of 6 verticals**, via
+> `cz/mv/temporary-identity-card-application` — the Ministry of Interior's
+> (MV ČR) application for a temporary identity card (dočasný občanský
+> průkaz), a short-validity paper ID issued while the standard 10-year
+> biometric-chip card is being produced. A prior cycle (GOV-1819) had
+> characterized Czech National ID as a confirmed dead end, since the
+> standard biometric card is never citizen-filled (an office-generated
+> printout is signed in person once biometrics are captured — reconfirmed
+> this cycle via `portal.gov.cz`). That characterization missed this
+> distinct process: the temporary-card variant needs no biometric capture
+> and MV ČR publishes a genuine, unauthenticated .xlsx application form for
+> it (`mv.gov.cz`, cross-verified byte-for-byte against a PDF mirror hosted
+> by the Praha 14 municipal office). Three single-vertical-gap jurisdictions
+> were scouted in parallel this cycle (Austria DMV, Netherlands Visa, and
+> this Czech National ID candidate); the other two are left as pre-scouted,
+> ready-to-author backlog for a future cycle — see the Known Gaps section
+> below. Numerator changes from 563 to 564 documents. Both validators pass
+> at 564/564; 8 conformance fixtures independently checked against an ad-hoc
+> ajv schema built from the document's own field constraints. See the
+> National ID vertical section below and the document's own VERIFICATION.md
+> for the full record.
 
 > **Update (2026-07-21, GOV-4085, "GovSchema Standard Research"): Kazakhstan's
 > Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
@@ -17722,7 +17745,25 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (50/73 jurisdictions — 68%)
+### National ID & Civic Documents (51/73 jurisdictions — 70%)
+
+> **Update (2026-07-21, GOV-4092/GOV-4094, "GovSchema Standard Research"):
+> Czech Republic opens this vertical, closing Czechia to 6 of 6**, via
+> `cz/mv/temporary-identity-card-application` — MV ČR's application for a
+> temporary identity card (dočasný občanský průkaz). Overturns, in part, a
+> prior cycle's (GOV-1819) characterization of Czech National ID as a
+> confirmed dead end: that finding is still correct for the standard
+> biometric-chip card (never citizen-filled), but did not identify this
+> distinct, genuinely citizen-fillable temporary-card process. See the
+> Executive Summary's GOV-4092/GOV-4094 update above and the document's own
+> VERIFICATION.md for the full sourcing record, including the disclosed
+> exclusion of roughly half this form's printed labels as clerk/
+> official-only. Numerator updated from 50 to 51; denominator unchanged.
+> This section's own tracked numerator has drifted from the By-Jurisdiction
+> table's live count in past cycles (the table is regenerated from the
+> registry directly and is the more authoritative source) — not reconciled
+> in this cycle, flagged here as a known accounting gap for a future cycle
+> to audit.
 
 > **Update (2026-07-17, GOV-3491, "GovSchema Standard Research"): Mexico
 > opens this vertical, closing Mexico to 6 of 6**, via
@@ -18400,7 +18441,7 @@ now closed.
 | **CH** | 14 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CZ** | 8 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **CZ** | 9 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DK** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -18476,6 +18517,28 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Genuinely open, well-sourced candidates
 
+0. **Pre-scouted single-vertical-gap candidates banked this cycle (GOV-4092,
+   2026-07-21), not yet authored:**
+   - **Austria DMV** — Führerscheinantrag (Anlage 3 to the
+     Führerscheingesetz-Durchführungsverordnung, BGBl. II Nr. 472/2012),
+     hosted both on Austria's official legal-gazette system
+     (`ris.bka.gv.at/Dokumente/Bundesnormen/NOR40146673/II_472_2012_Anlage_3.pdf`)
+     and mirrored by the Foreign Ministry
+     (`bmeia.gv.at/fileadmin/user_upload/Allgemein/Formulare/FormularFuehrerscheinantrag.pdf`).
+     Covers duplicate issuance, exchange of a foreign licence, code entry,
+     reinstatement, and surrender — not first-time issuance (a
+     driving-school-mediated process with no standalone PDF). Flat 2-page
+     form, ~35-45 fields including a ~20-box licence-class checklist.
+   - **Netherlands Visa** — IND form 9511
+     (`ind.nl/en/forms/9511.pdf`, "Application for admission and residence
+     'to stay with a family member'"), the MVV (Type D entry visa) plus
+     follow-on residence permit application. ~50-60 numbered fields with
+     conditional branches (minor legal-representative, sponsor-abroad vs.
+     sponsor-in-NL). The harmonized Schengen short-stay (C-visa) route for
+     NL is a confirmed dead end (`consular.mfaservices.nl`, account-gated).
+   - Both were verified reachable without login this cycle; Czech National
+     ID (see below) was picked instead for its smaller size and because it
+     closes a jurisdiction to 6/6. Left as ready-to-author backlog.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
