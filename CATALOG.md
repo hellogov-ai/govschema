@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**76 jurisdictions** | **584 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**76 jurisdictions** | **586 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4246, "GovSchema Standard Research"): Ethiopia's
+> Taxes vertical opens (2/6)**, via `et/mor/individual-tin-registration@1.0.0`
+> — the Ministry of Revenue's bilingual Amharic/English "Individual
+> Taxpayers Registration Application," filed by an individual to register
+> for a Tax Identification Number (TIN), report a change to previously
+> registered details, or request a replacement TIN certificate. This cycle
+> re-confirmed the routine's 4 standing National ID candidates (DE
+> Steuer-ID, SG NRIC, NZ RealMe, remaining voter registration) all remain
+> resolved, then found Malta essentially exhausted (5/6, only Taxes a
+> confirmed dead end) and pivoted to scouting 3 single-vertical-published
+> jurisdictions (Georgia, Ethiopia, Uzbekistan) across their 5 remaining
+> verticals apiece via 3 parallel research passes. Ethiopia's Ministry of
+> Revenue publishes a public `/api/forms` listing at `mor.gov.et` serving
+> direct PDF links with no login/CAPTCHA/WAF gate — re-fetched and re-hashed
+> independently this cycle: HTTP 200, `application/pdf`, 1,162,355 bytes,
+> sha256 `fc664f2147b2631821535a8a93023f722dd08db66795dcfc9840cb9c0224a292`,
+> a flat (non-AcroForm) 4-page PDF whose text decoded cleanly via
+> `pdfjs-dist`'s standard extraction, no glyph-index workaround needed.
+> Models 34 fields across 6 steps (Registration & Occupation; Personal
+> Details; Additional Personal Details; Residential Address; Business
+> Address; Certification) plus 3 `documents[]` entries. The form's own
+> blanket instruction — "Fill all fields ... Mark 'N/A' for not relevant" —
+> is disclosed as the reasoning behind modelling the great majority of
+> fields `required: true` (since "N/A" is itself a valid literal value),
+> while the two fields explicitly qualified "(For non-Ethiopians)" carry a
+> narrower printed conditional and are `requiredWhen`-gated on a
+> directly-supplied `isNonEthiopianCitizen` boolean instead. See the
+> document's own VERIFICATION.md for the full record, including Georgia's
+> (Business Formation, STRONG) and Ethiopia's own (Business Formation and
+> Passport, both STRONG) further candidates left as disclosed backlog, and
+> Uzbekistan's full 5-vertical dead-end confirmation. Numerator/denominator
+> unchanged at 76 (deepens an existing jurisdiction); document count
+> 585 → 586.
 
 > **Update (2026-07-21, GOV-4239, "GovSchema Standard Research"): Malta's
 > DMV vertical opens (5/6)**, via
@@ -19276,7 +19310,7 @@ now closed.
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EG** | 2 | ✗ | ✗ | ✗ | ✓ | ✗ | ✓ |
 | **ES** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **ET** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
+| **ET** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -19562,6 +19596,57 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       confirmed dead ends per the GOV-4121 cycle. Ireland's RBN1 (above)
       and this document are now this registry's two examples of the
       individual-owner-scoped business-name-registration pattern.
+0c. **Pre-scouted candidates banked this cycle (GOV-4246, 2026-07-21) —
+    Ethiopia Taxes now authored, Georgia Business Formation and Ethiopia
+    Business Formation/Passport remain open backlog, Uzbekistan confirmed a
+    full dead end:**
+    - **Ethiopia Taxes** — Ministry of Revenue "Individual Taxpayers
+      Registration Application" (TIN registration), `mor.gov.et/api/forms`
+      form id 8 — served unauthenticated, no login/CAPTCHA/WAF gate.
+      **Update (GOV-4246, 2026-07-21): now authored** as
+      `et/mor/individual-tin-registration` — see the Executive Summary and
+      Taxes vertical updates above. Opens Ethiopia's Taxes vertical (2/6;
+      Visa, `et/ics/e-visa-application`, was already published).
+    - **Ethiopia Business Formation** — the Ethiopian Investment
+      Commission's downloadable "Application Form for New Investment
+      Permit" (`.doc`, `investethiopia.gov.et/wp-content/uploads/2022/11/InvestmentPermitApplicationForm.doc`),
+      unauthenticated, ~60-80 fields across investor/company particulars,
+      addresses, legal form, project profile, cost breakdown, financing,
+      and employment estimates. Not authored this cycle; open backlog.
+    - **Ethiopia Passport** — the standard Ministry of Immigration &
+      Nationality Affairs application form, mirrored unauthenticated on
+      multiple Ethiopian embassy sites (e.g.
+      `ethiopianembassy.be/wp-content/uploads/Passport-Application-Form.pdf`),
+      ~40+ fields. The current domestic online-portal variant
+      (`ethiopianpassportservices.gov.et`) could not be reached from this
+      cycle's tooling (DNS failure) to confirm it's still the current form
+      revision — flagged as a caveat to check before authoring. Not
+      authored this cycle; open backlog. Ethiopia's National ID (Fayda,
+      in-person biometric enrollment only) and Driving Licence (no
+      field-level form found at any level) both remain confirmed dead ends.
+    - **Georgia Business Formation** — the National Agency of Public
+      Registry's (NAPR) downloadable "Founding Agreement" `.docx` template
+      for LLC registration (`napr.gov.ge/en/page/sample-documents/business-registration`),
+      unauthenticated, genuine field-level structure (legal form, firm
+      name, capital, a partners table, governing body). Would open Georgia
+      to 2/6 (Visa, `ge/mfa/evisa-application`, already published). Not
+      authored this cycle; open backlog. Georgia's Taxes vertical came back
+      weak (a real Ministry-of-Finance-ordered declaration form likely
+      exists in law, but current rendered field content wasn't pinned down
+      this cycle — worth a future re-attempt with a more targeted search);
+      National ID, Passport, and DMV are all confirmed dead ends (prose-only
+      process pages or exam-booking-only, no downloadable form, real filing
+      is via a login-gated e-service).
+    - **Uzbekistan — confirmed a full dead end across all 5 remaining
+      verticals this cycle.** `my.gov.uz`'s services are consistently
+      unauthenticated at the description/overview level but require a
+      login/digital-signature session for any actual field-level form,
+      across Taxes (the "Declaration on Aggregate Annual Income," Annex
+      No. 4, is real in law but paywalled/unrendered on every mirror
+      checked), Business Formation, Passport, National ID, and Driving
+      Licence alike. This extends and confirms a prior cycle's own partial
+      finding (which had only checked some of these) to cover all 5. Do not
+      re-attempt without a genuinely new source.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
