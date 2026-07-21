@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**76 jurisdictions** | **583 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**76 jurisdictions** | **584 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4239, "GovSchema Standard Research"): Malta's
+> DMV vertical opens (5/6)**, via
+> `mt/transport-malta/driving-licence-renewal@1.0.0` — Transport Malta's
+> Land Transport Directorate "Form DRV019 — Driving Licence Renewal Form"
+> (bilingual Maltese/English). This closes Malta's only remaining open
+> (non-dead-end) DMV backlog item, per the GOV-4215 scouting cycle and this
+> catalog's own Known Gaps section — only Taxes now remains a confirmed
+> dead end for Malta. The live origin `transport.gov.mt` is
+> Cloudflare-JS-challenge-gated on every path attempted, including the
+> file-streaming endpoint itself (re-confirmed this cycle, HTTP 403,
+> `cf-mitigated: challenge`); retrieved instead via a Wayback Machine
+> snapshot of the live PDF-streaming endpoint, crawled before/without
+> hitting the gate — HTTP 200, `application/pdf`, 590,784 bytes, sha256
+> `31da48262fc544080c6b5f422e8e845debd41eeb0f441402629298a0498b0e5e`,
+> independently re-fetched and re-hashed rather than trusted from the
+> issue's own report alone. Unlike the earlier GOV-4215 scouting concern
+> that Transport Malta mirrors would need "better PDF tooling," this flat,
+> non-AcroForm PDF's text decodes cleanly via `pdfjs-dist`'s standard
+> `getTextContent()` API with no glyph-index/ToUnicode workaround needed.
+> Models 10 fields across 4 steps (Personal Details; Driving Licence
+> Renewal Method; Declarations; Signature and Photograph) plus 2
+> `documents[]` entries. Discloses 4 source-fidelity findings, most
+> notably that (1) the "Personal Details" block's own printed note ("Fill
+> in only in case of changes ... and send a copy of your ID Card") is
+> modelled as a directly-supplied boolean gate, `personalDetailsHaveChanged`,
+> the same convention this registry's own `mt/identita/national-identity-card-application`
+> established; (2) `renewalChannel` is modelled as a required enum, the
+> same treatment `ie/dttas/driving-licence-renewal` gave its structurally
+> identical `applicationChannel` field, while the form's own detailed
+> within-channel payment logistics (bank IBAN/BIC, cheque payee, in-person
+> card payment) are excluded as back-office/payment-processing detail; (3)
+> both printed declarations (a forward-looking medical-condition
+> notification undertaking; a 185-day Maltese-residency declaration) are
+> modelled as directly-supplied declaration-content booleans rather than
+> the issue's own "yes/no + details" framing, since the retrieved PDF text
+> contains no details blank or present-tense disclosure question for
+> either; and (4) the photograph requirement is modelled unconditionally
+> optional rather than gated on the personal-details-changed condition,
+> since that external claim (from this issue's own scouting note) appears
+> nowhere in the retrieved PDF text and could not be independently
+> re-confirmed this cycle. See the document's own VERIFICATION.md for the
+> full record. Numerator/denominator unchanged at 76 (deepens an existing
+> jurisdiction); document count 583 → 584.
 
 > **Update (2026-07-21, GOV-4230, "GovSchema Standard Research"): Malta's
 > Visa vertical opens (4/6)**, via
@@ -14211,7 +14255,16 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (57/76 jurisdictions — 75%)
+### DMV — Vehicle Registration, Licensing, Permits (58/76 jurisdictions — 76%)
+
+> **Update (2026-07-21, GOV-4239, "GovSchema Standard Research"): Malta's
+> DMV vertical opens (5 of 6)**, via
+> `mt/transport-malta/driving-licence-renewal@1.0.0` — Transport Malta's
+> "Form DRV019 — Driving Licence Renewal Form". See the Executive Summary's
+> GOV-4239 update above and the document's own VERIFICATION.md for the full
+> sourcing record, including the Wayback-workaround retrieval and the 4
+> disclosed source-fidelity findings. Malta's remaining vertical (Taxes) is
+> a confirmed dead end. Numerator updated from 57 to 58.
 
 > **Update (2026-07-21, GOV-4100, "GovSchema Standard Research"): Austria's
 > DMV vertical opens, closing Austria to full 6/6 coverage**, via
@@ -19250,7 +19303,7 @@ now closed.
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **MT** | 2 | ✓ | ✗ | ✓ | ✗ | ✓ | ✓ |
+| **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -19460,7 +19513,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       VERIFICATION.md for the full field-by-field duplicate-vs-distinct
       comparison. Malta is now 4/6; only DMV (weak/moderate, not a hard
       dead end) remains open backlog, with Taxes as the sole remaining
-      confirmed dead end.
+      confirmed dead end. **Update (GOV-4239, 2026-07-21): DMV is now also
+      authored — Malta reaches 5/6**, via
+      `mt/transport-malta/driving-licence-renewal` v1.0.0 (Transport
+      Malta's Form DRV019, "Driving Licence Renewal Form") — see the
+      Executive Summary and DMV vertical updates above. The live
+      `transport.gov.mt` origin remained Cloudflare-gated as GOV-4215 found,
+      but the Wayback Machine's own crawl of the file-streaming endpoint
+      (independently re-fetched and re-hashed this cycle) supplied the
+      identical bytes, and this PDF's text decoded cleanly via
+      `pdfjs-dist`'s standard extraction with no glyph-index workaround
+      needed — resolving GOV-4215's "needs better PDF tooling" concern.
+      Only Taxes now remains a confirmed dead end for Malta.
     - **Ireland RBN1** (individual/sole-trader business-name registration,
       Companies Registration Office) — the direct `cro.ie` host remains
       Cloudflare-JS-challenge-gated (re-confirmed this cycle, HTTP 403),
