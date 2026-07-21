@@ -1,0 +1,320 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "cz/mv/temporary-identity-card-application",
+  "version": "1.0.0",
+  "title": "Czech Republic Temporary Identity Card (Dočasný občanský průkaz) Application",
+  "description": "Apply for a Czech temporary identity card (dočasný občanský průkaz) — a short-validity paper ID issued by the Ministry of Interior (Ministerstvo vnitra, MV ČR) as a stand-in while a citizen's standard 10-year biometric-chip identity card (občanský průkaz) is being produced, or in situations (e.g. urgent travel, loss just before a deadline) where the standard card's production time cannot be met. This document models the MV's own 'Žádost o vydání dočasného občanského průkazu' form. It closes the Czech Republic's National ID & Civic Documents vertical (6th and last of its six GovSchema verticals). A prior 'GovSchema Standard Research' cycle (GOV-1819, sourcing cz/mzv/zadost-o-udeleni-dlouhodobeho-viza) had characterized Czech National ID as a confirmed dead end, citing mv.gov.cz's and portal.gov.cz's own statements that the standard biometric OP is never citizen-filled — an office printout is produced and signed in person once biometrics are captured. That characterization is correct for the standard card and is reconfirmed here (portal.gov.cz/en/sluzby-vs/issue-of-identity-card-S143 still states this), but it did not identify a distinct, genuinely citizen-fillable form: the temporary-card variant, which does not require biometric capture and is instead requested on this xlsx/PDF form. This document does not submit an application; the live mv.gov.cz service and the applicant's local municipal office (obecní úřad obce s rozšířenou působností) with which the application must be filed are always authoritative.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministerstvo vnitra České republiky",
+    "abbreviation": "MV ČR",
+    "url": "https://mv.gov.cz"
+  },
+  "process": {
+    "type": "application",
+    "language": "cs-CZ"
+  },
+  "source": {
+    "url": "https://mv.gov.cz/soubor/zadost-o-vydani-docasneho-obcanskeho-prukazu.aspx",
+    "retrievedAt": "2026-07-21",
+    "documentRef": "\"Žádost o vydání dočasného občanského průkazu\" (Application for issuance of a temporary identity card), Ministerstvo vnitra České republiky. Hosted unauthenticated as an .xlsx file (HTTP 200, 21,626 bytes) at mv.gov.cz's own 'Formuláře ke stažení' (forms for download) section (mv.gov.cz/clanek/formulare-ke-stazeni.aspx?q=Y2hudW09Mg%3d%3d, 'Občanské průkazy' category). Field labels were read directly from the file's own xl/sharedStrings.xml (46 shared strings, all form-native — no third-party transcription). Cross-verified against a 2-page PDF mirror of the identical form hosted by the Praha 14 municipal office (praha14.cz/app/uploads/sites/2/2014/05/FORM-MV-zadost-o-vydani-docasneho-OP.pdf, HTTP 200, 269,563 bytes, text extracted via pdfjs-dist) — every label present in the xlsx also appears in the PDF's text layer, confirming a single stable form design across both mirrors."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-21",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-21",
+    "notes": "GOV-4092/GOV-4094: 'GovSchema Standard Research' cycle. Three candidates were scouted in parallel this cycle for single-vertical-gap jurisdictions (jurisdictions missing exactly one of the 6 verticals): Austria DMV (Führerscheinantrag, a genuine licence-duplicate/exchange/reinstatement form, but not first-time issuance — left as open backlog), Netherlands Visa (IND form 9511, MVV/long-stay family-reunification application, ~50-60 fields — left as open backlog given its larger scope), and this Czech National ID candidate, picked for its smaller, single-session-tractable size (46 shared strings / ~16 citizen fields) and because it fully closes a jurisdiction (CZ) to 6/6 rather than only adding a vertical. Disclosed judgment calls: (1) 'Státní občanství' (citizenship) is printed on the form immediately followed by 'ČESKÁ REPUBLIKA' with no other value shown anywhere in either source — modelled as a single fixed enum value rather than free text, since this document (unlike the standard OP, which foreign-born naturalized citizens also use) is scoped to holders of Czech citizenship by the form's own printed text. (2) 'Pohlaví' (sex) has no checkbox options printed in either extracted source (just the bare label) — modelled as the male/female enum used uniformly elsewhere in this registry's Czech-sourced civic forms, not independently confirmed by an on-form checkbox list here. (3) The address block (Obec/Část obce/č.p.(ev.)/Ulice/PSČ/Okres/č.or) is modelled as 7 discrete fields, unlike this registry's existing cz/md vehicle-registration schema, which collapses the same real-world address into a single free-text line — a genuine per-form structural difference, not an inconsistency to reconcile. 'Ulice' (street) and 'Část obce' (municipality part) are marked optional because Czech rural addresses commonly use only a conscription number (č.p.) without a named street or a municipality-part subdivision. (4) 'Rodinný stav/Partnerství' (marital status/partnership) carries its own printed instruction ('Pokud si nepřejete zápis tohoto údaje, rubriku nevyplňujte' — 'if you do not want this detail recorded, leave the field blank'), so it is modelled as optional free text, not an enum, since no checkbox options are printed for it on this form (unlike cz/mzv's national-visa maritalStatus, which does enumerate its own checkbox list). (5) The four 'Doklady předložené k vydání občanského průkazu' (documents submitted for issuance) lines — birth certificate, personal document, citizenship document, other, each with an '(issued by)' blank — are modelled as four independent, individually-optional documents[] entries (the applicant presents at least one to prove identity/citizenship, not necessarily all four); no crossFieldValidation 'at least one required' constraint exists in the current spec vocabulary to enforce this, so it is disclosed here in prose instead. (6) Excluded as clerk/official-only, matching this registry's established exclusion pattern for staff-filled fields: 'Číslo žádosti' (application number), the temporary card's own 'Číslo OP/Datum vydání/Platnost do/Vydal' block (populated once the card itself is produced), 'Totožnost ověřena podle' and 'Oprávnění k podání žádosti ověřeno podle' (both identity/authorization-verification lines completed by the receiving official), 'Datum přijetí žádosti' (date application received), every 'Jméno, příjmení a funkce oprávněné úřední osoby' / 'Razítko a podpis úřední osoby' occurrence (official name/function/stamp, appears twice), 'Zvláštní záznamy' (special notes), 'Údaje z předložených dokladů ověřeny' (submitted-documents verification), 'Datum převzetí občanského průkazu' (card-collection date) and its adjoining 'Podpis občana'/'Podpis oprávněné osoby...' collection-signature lines, 'Potvrzení o uhrazení správního poplatku' (fee-payment confirmation), and 'Datum a místo podání žádosti' (date and place of filing — positioned directly beside the official stamp/signature block on both sources, and most plausibly recorded contemporaneously by the receiving official rather than the applicant). (7) Ordinary wet-ink signature lines ('Podpis držitele', 'Podpis žadatele') are not modelled as data fields (no signature primitive exists in the spec's field-type vocabulary); the form's own accuracy declaration ('Prohlašuji a svým podpisem potvrzuji, že všechny údaje v této žádosti jsou pravdivé a úplné.') is instead modelled as a required documents[] attestation, the same treatment this registry uses elsewhere for signed declarations. No live submission was attempted; status remains 'draft'."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-21"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "surname",
+      "label": "Příjmení",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "MV form — 'Příjmení'",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "givenName",
+      "label": "Jméno, popř. jména",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "MV form — 'Jméno, popř. jména'",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Datum narození",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "MV form — 'Datum narození'"
+    },
+    {
+      "name": "sex",
+      "label": "Pohlaví",
+      "type": "enum",
+      "required": true,
+      "description": "No checkbox options are printed alongside this label in either source; modelled on the male/female convention used uniformly elsewhere in this registry's Czech-sourced civic forms rather than an independently confirmed on-form list.",
+      "sourceRef": "MV form — 'Pohlaví'",
+      "validation": {
+        "enum": ["male", "female"]
+      }
+    },
+    {
+      "name": "birthNumber",
+      "label": "Rodné číslo",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The Czech rodné číslo (birth/personal identification number), a 9-10 digit national identifier, per this registry's existing cz/md vehicle-registration schema's own ownerPersonalIdNumber convention.",
+      "sourceRef": "MV form — 'Rodné číslo'",
+      "validation": {
+        "pattern": "^[0-9]{8,10}$"
+      }
+    },
+    {
+      "name": "citizenship",
+      "label": "Státní občanství",
+      "type": "enum",
+      "required": true,
+      "description": "Printed on the form immediately followed by 'ČESKÁ REPUBLIKA' with no other value shown in either source — this document is scoped to holders of Czech citizenship, consistent with the printed text.",
+      "sourceRef": "MV form — 'Státní občanství' / 'ČESKÁ REPUBLIKA'",
+      "validation": {
+        "enum": ["Česká republika"]
+      }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Místo a okres narození / Místo a stát narození v cizině",
+      "type": "string",
+      "required": true,
+      "description": "Combined field per the form's own single line: place and district of birth for those born in the Czech Republic, or place and country of birth for those born abroad.",
+      "sourceRef": "MV form — 'Místo a okres narození / Místo a stát narození v cizině'",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "permanentAddressMunicipality",
+      "label": "Obec",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Municipality of the applicant's permanent-residence address (or their last permanent-residence address in the Czech Republic, per the form's own header for this block).",
+      "sourceRef": "MV form — 'Adresa místa trvalého pobytu' block, 'Obec'",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "permanentAddressMunicipalityPart",
+      "label": "Část obce",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional: not every Czech municipality is subdivided into named parts.",
+      "sourceRef": "MV form — 'Adresa místa trvalého pobytu' block, 'Část obce'",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "permanentAddressHouseNumber",
+      "label": "č.p.(ev.)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Číslo popisné/evidenční (conscription/registration number).",
+      "sourceRef": "MV form — 'Adresa místa trvalého pobytu' block, 'č.p.(ev.)'",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "permanentAddressOrientationNumber",
+      "label": "č.or",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Číslo orientační (street orientation number). Optional: not every address carries one, distinct from the conscription number above.",
+      "sourceRef": "MV form — 'Adresa místa trvalého pobytu' block, 'č.or'",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "permanentAddressStreet",
+      "label": "Ulice",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Optional: many Czech rural addresses use only a conscription number, with no named street.",
+      "sourceRef": "MV form — 'Adresa místa trvalého pobytu' block, 'Ulice'",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "permanentAddressPostalCode",
+      "label": "PSČ",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "MV form — 'Adresa místa trvalého pobytu' block, 'PSČ'",
+      "validation": {
+        "pattern": "^[0-9]{3} ?[0-9]{2}$"
+      }
+    },
+    {
+      "name": "permanentAddressDistrict",
+      "label": "Okres",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "MV form — 'Adresa místa trvalého pobytu' block, 'Okres'",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Rodinný stav/Partnerství",
+      "type": "string",
+      "required": false,
+      "description": "The form's own adjoining instruction: 'Pokud si nepřejete zápis tohoto údaje, rubriku nevyplňujte' ('if you do not want this detail recorded, leave the field blank'). No checkbox options are printed for this field on this form, unlike cz/mzv/zadost-o-udeleni-dlouhodobeho-viza's own maritalStatus enum.",
+      "sourceRef": "MV form — 'Rodinný stav/Partnerství'",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "representativeName",
+      "label": "Jméno (jména) a příjmení oprávněné osoby, která podává žádost za občana (§ 67 a § 68 návrhu zákona)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Filled only when the application is submitted by an authorized person on the citizen's behalf (e.g. a minor's legal representative), per the cited draft-act sections printed on the form.",
+      "sourceRef": "MV form — 'Jméno (jména) a příjmení oprávněné osoby, která podává žádost za občana (§ 67 a § 68 návrhu zákona)'",
+      "validation": {
+        "maxLength": 200
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantPhotographs",
+      "label": "2 fotografie o rozměru 35 x 45 mm (rodné číslo na zadní straně)",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "Two photographs, 35 x 45 mm, per the form's own instruction; the applicant's birth number is written on the back of each.",
+      "sourceRef": "MV form — 'Přiložte 2 fotografie o rozměru 35 x 45 mm. Na jejich zadní stranu uveďte rodné číslo.'"
+    },
+    {
+      "id": "birthCertificate",
+      "label": "Rodný list",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "handling": "One of four alternative supporting documents listed on the form to evidence the application; the applicant presents at least one, not necessarily all four (no 'at least one required' constraint exists in the current spec vocabulary to enforce this programmatically).",
+      "sourceRef": "MV form — 'Doklady předložené k vydání občanského průkazu', 'Rodný list (vydal)'"
+    },
+    {
+      "id": "personalDocument",
+      "label": "Osobní doklad",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "MV form — 'Doklady předložené k vydání občanského průkazu', 'Osobní doklad (vydal)'"
+    },
+    {
+      "id": "citizenshipDocument",
+      "label": "Doklad o státním občanství",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "MV form — 'Doklady předložené k vydání občanského průkazu', 'Doklad o státním občanství (vydal)'"
+    },
+    {
+      "id": "otherSupportingDocument",
+      "label": "Jiné",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "MV form — 'Doklady předložené k vydání občanského průkazu', 'Jiné'"
+    },
+    {
+      "id": "accuracyDeclaration",
+      "label": "Prohlášení o pravdivosti a úplnosti údajů",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Prohlašuji a svým podpisem potvrzuji, že všechny údaje v této žádosti jsou pravdivé a úplné. (I declare and confirm by my signature that all information in this application is true and complete.)",
+      "sourceRef": "MV form — 'Prohlašuji a svým podpisem potvrzuji, že všechny údaje v této žádosti jsou pravdivé a úplné.'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "applicant_identity",
+      "title": "Applicant identity",
+      "fields": [
+        "surname",
+        "givenName",
+        "dateOfBirth",
+        "sex",
+        "birthNumber",
+        "citizenship",
+        "placeOfBirth"
+      ],
+      "next": "permanent_address"
+    },
+    {
+      "id": "permanent_address",
+      "title": "Permanent residence address",
+      "fields": [
+        "permanentAddressMunicipality",
+        "permanentAddressMunicipalityPart",
+        "permanentAddressHouseNumber",
+        "permanentAddressOrientationNumber",
+        "permanentAddressStreet",
+        "permanentAddressPostalCode",
+        "permanentAddressDistrict"
+      ],
+      "next": "additional_details"
+    },
+    {
+      "id": "additional_details",
+      "title": "Additional details",
+      "fields": [
+        "maritalStatus",
+        "representativeName"
+      ]
+    }
+  ]
+}
