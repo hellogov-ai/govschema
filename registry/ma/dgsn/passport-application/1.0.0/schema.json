@@ -1,0 +1,829 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ma/dgsn/passport-application",
+  "version": "1.0.0",
+  "title": "Morocco Passport Application (Demande de Passeport)",
+  "description": "The Direction Générale de la Sûreté Nationale's (DGSN) online passport request form, served unauthenticated at passeport.ma/FormDemande/FormDemande. Completing this form online produces a reference number/receipt for an in-person appointment at a passport bureau (in Morocco) or consulate (abroad), where the biometric capture and physical supporting documents are handled; this schema models only the online data-entry step, not the in-person biometric/document-submission step. The form's single 'Raison' (reason/applicant-category) radio group drives four branches: an adult applicant ('Majeur'), an adult under legal guardianship ('Majeur placé sous tutelle'), a minor aged 12 to 18 ('Mineur de 12 à 18 ans'), and a minor under 12 ('Mineur moins de 12 ans'). The three minor/guardianship branches additionally render a parents'-information block and a legal-representative block; the legal-representative block itself can hand off to a proxy/mandatary ('mandataire') block if the representative grants a power of attorney. This schema does NOT model: the CAPTCHA field (`CaptchaText`), a bot-mitigation control rather than an application datum; the six document-upload/checklist pages linked from the site's own 'Pièces à fournir' menu (physical documents checked in person, not uploaded through this form); the five explanatory modal dialogs describing each non-parent legal-representative category (Tuteur Testamentaire, Kafil, Juge, Tuteur Datif, Autre) — informational prose only, with no additional form fields of their own; and the ~194-entry static country-name option lists behind `countryOfBirth`, `fatherNationality`, `motherNationality`, `legalRepresentativeNationality`, `mandataryNationality`, and the numerically-coded ~194-entry list behind `countryOfResidence` — all six are modelled as open strings rather than reproduced as literal enums, to avoid transcription error at that scale (see verification.notes for the exact option-value scheme each one uses, which is not consistent across the form). This schema was sourced directly from the live, unauthenticated HTML the site returns to a plain, unauthenticated GET request plus its own linked `FormDemande.js`, both fetched with a standard desktop browser User-Agent and no login/CAPTCHA/WAF gate on either asset (the CAPTCHA only gates final submission, not the page/field data itself). No application was actually submitted and no fee was paid in producing this schema. Filing this application is a traveller/citizen action performed directly with the Direction Générale de la Sûreté Nationale through passeport.ma; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by Morocco or its Direction Générale de la Sûreté Nationale.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MA",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Direction Générale de la Sûreté Nationale",
+    "abbreviation": "DGSN",
+    "url": "https://www.passeport.ma"
+  },
+  "process": {
+    "type": "application",
+    "language": "fr"
+  },
+  "source": {
+    "url": "https://www.passeport.ma/FormDemande/FormDemande",
+    "retrievedAt": "2026-07-21",
+    "documentRef": "The live 'Demande de passeport au Maroc' page's own rendered HTML `<form id=\"FormDemande\">` (every `name`/`id`/`data-val*`/`required` attribute and `<option>` list read directly from the served markup) plus its linked `js/FormDemande.js`, whose jQuery `.change()`/`.show()`/`.hide()` handlers on `.RadioRaison`, `#procuration`, `#pinconnu`/`#pdecede`, and `#minconnu`/`#mdecede` define every conditional-visibility and field-disabling rule this schema's `visibleWhen`/`requiredWhen` conditions are sourced from."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-21",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-21",
+    "notes": "GOV-4114 (\"GovSchema Standard Research\"). Morocco (opened GOV-3454 via `ma/maec/evisa-application`, its only vertical to date) had Business Formation, DMV, Passport, Taxes, and National ID all left as open, unscreened backlog; this cycle screened all five and found Passport the strongest by a wide margin — a fully unauthenticated, plain-HTML ASP.NET MVC form, versus Business Formation (OMPIC/`directentreprise.ma`, login-gated), DMV (NARSA, login-gated/unreachable), Taxes (DGI/SIMPL, login-gated e-filing with only unverifiable PDF adhesion forms as a fallback), and National ID (`cnie.ma`, unreachable, no field-level secondary source). Fetched `https://www.passeport.ma/FormDemande/FormDemande` and `https://www.passeport.ma/js/FormDemande.js` this session with a plain `curl` and a standard desktop Chrome User-Agent string: HTTP 200/`text/html`/132,381 bytes (sha256 `a2c802b2722886ee227d5816f97c0ecb504d53a5ce87c77cebdf8e61aac7b116`) and HTTP 200/`application/javascript`/58,447 bytes (sha256 `86e346986f8c665f1bf0d214eaf61c8deea2ca1ead141d22adba505a8caf51c8`) respectively — both served directly with only session/anti-bot cookies set (`TS...`, `MI=...`), no login redirect and no CAPTCHA on the GET itself. Models 49 `fields[]` across 5 steps (application_category, applicant_information, parent_information, legal_representative_information, proxy_mandatary_information) and 0 `documents[]` (see the schema description for the documents/CAPTCHA scope boundary). Six disclosed findings from this session's own read of the two fetched assets: (1) two mutually inconsistent country-code schemes on the same form — `_PaysNaissance_FR`/`_Pays_Pere`/`_Pays_Mere`/`_Pays_Representant`/`_Pays_Mandataire` all use the country's own display NAME as the option `value` (e.g. `value=\"ALGERIE\"`), while `_Pays` (country of residence) uses an unrelated numeric code (`value=\"201\"` for Afghanistan, `\"202\"` for Afrique du Sud, ...) — both confirmed by direct diff of the two `<select>` option blocks in the fetched HTML; (2) every boolean checkbox on this form (`NoMoisJour`, `NoJour`, `PereInconnu`, `PereDecede`, `MereInconnu`, `MereDecede`, `procuration`) is paired with a same-named hidden `type=\"false\"` fallback input and carries a `data-val-required` attribute — confirmed this is ASP.NET MVC's standard `Html.CheckBoxFor` output idiom (the framework always emits `data-val-required` on this pattern so the field always binds to a boolean, not because the box must be checked) by cross-checking that none of these boxes are pre-checked and the live default-load state (all four `RadioRaison` branches) never blocks navigation on them; all seven are modelled as optional attestations (`required: false`), not gated on `data-val-required`'s literal presence; (3) within each of the four dependent-person blocks (père, mère, représentant légal, mandataire), only the 'type de pièce d'identité' `<select>` (`typeIdPere`/`typeIdMere`/`typeIdRep`/`typeIdMan`) actually carries `data-val-required` in the fetched markup — the corresponding name, nationality, and ID-number `<input>`/`<select>` elements in all four blocks carry `data-val=\"true\"` (format-check only) but never `data-val-required`, confirmed by a direct grep of all four blocks' markup; modelled faithfully (`required: false` on all name/nationality/ID-number fields in these blocks, `requiredWhen` only on the four ID-type selects), rather than assuming the whole visually-grouped block is mandatory; (4) the postal-address field's (`_Adresse_FR`) own `data-val-regex-pattern` is `(?i)^[a-zA-Z0-9'-/.: ,\\s-]+$` — the leading `(?i)` inline case-insensitivity flag is .NET regex syntax (from the server-side `[RegularExpression]` attribute), not valid JavaScript `RegExp` syntax, so jQuery Validate's unobtrusive adapter would throw constructing this pattern client-side and the format check silently never fires in-browser (confirmed by attempting `new RegExp('(?i)^[a-zA-Z0-9...')` in a Node REPL this session, which throws `SyntaxError: Invalid regular expression`); modelled with the `(?i)` prefix stripped, since that is the evidently-intended pattern; (5) the day/month birth-date fields' (`_DateNaissanceJour`/`_DateNaissanceMois`) own `data-val-regex-pattern` (`[0-9]{2}$`) is not left-anchored, so it would technically accept any string merely ending in two digits; modelled here with the evidently-intended `^[0-9]{2}$`; (6) the phone field's (`_Num_Tel`) own `data-val-regex-pattern` (`^[5-6-7]{1}[0-9]{8}$`) contains a malformed character class (`[5-6-7]` parses as the range 5–6 plus a literal `-` plus a literal `7`, not 'one of 5, 6, or 7'); modelled here with the evidently-intended `^[5-7][0-9]{8}$`. Both validators (`tools/validate.mjs`, `tools/validate-ajv.mjs`) pass. 2 valid conformance fixtures (0 errors each) plus 8 mutation-control fixtures (each raising exactly 1 error) are committed under `conformance/ma/dgsn/passport-application/1.0.0/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-21"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "application_category",
+      "title": "Application Category & Fee",
+      "fields": [
+        "reasonForApplication",
+        "feeExemptionClaimed",
+        "stampCode",
+        "cnieNumber"
+      ],
+      "next": "applicant_information"
+    },
+    {
+      "id": "applicant_information",
+      "title": "Applicant Information",
+      "fields": [
+        "lastNameLatin",
+        "firstNameLatin",
+        "firstNameArabic",
+        "lastNameArabic",
+        "birthDateUnknownDayMonth",
+        "birthDateUnknownDay",
+        "birthDay",
+        "birthMonth",
+        "birthYear",
+        "gender",
+        "placeOfBirth",
+        "countryOfBirth",
+        "phone",
+        "email",
+        "postalAddress",
+        "city",
+        "postalCode",
+        "countryOfResidence"
+      ],
+      "next": "parent_information"
+    },
+    {
+      "id": "parent_information",
+      "title": "Parents' Information (minors only)",
+      "fields": [
+        "fatherUnknown",
+        "fatherDeceasedNoId",
+        "fatherLastName",
+        "fatherFirstName",
+        "fatherNationality",
+        "fatherIdType",
+        "fatherIdNumber",
+        "motherUnknown",
+        "motherDeceasedNoId",
+        "motherLastName",
+        "motherFirstName",
+        "motherNationality",
+        "motherIdType",
+        "motherIdNumber"
+      ],
+      "next": "legal_representative_information"
+    },
+    {
+      "id": "legal_representative_information",
+      "title": "Legal Representative Information",
+      "fields": [
+        "legalRepresentativeCapacity",
+        "legalRepresentativeLastName",
+        "legalRepresentativeFirstName",
+        "legalRepresentativeNationality",
+        "legalRepresentativeIdType",
+        "legalRepresentativeIdNumber",
+        "powerOfAttorneyGranted"
+      ],
+      "next": "proxy_mandatary_information"
+    },
+    {
+      "id": "proxy_mandatary_information",
+      "title": "Proxy / Mandatary Information",
+      "fields": [
+        "motherIsMandatary",
+        "mandataryLastName",
+        "mandataryFirstName",
+        "mandataryNationality",
+        "mandataryIdType",
+        "mandataryIdNumber"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "reasonForApplication",
+      "label": "Raison de la demande (Reason for the Request)",
+      "type": "string",
+      "required": true,
+      "description": "The applicant category, selected from a 4-option radio group that determines which downstream blocks (parents, legal representative, mandatary) apply. Modelled with the form's own literal wire values: \"1\" = Majeur (adult), \"2\" = Majeur placé sous tutelle (adult under legal guardianship), \"3\" = Mineur de 12 à 18 ans (minor aged 12-18), \"4\" = Mineur moins de 12 ans (minor under 12). \"1\" is pre-selected by default in the live form.",
+      "sourceRef": "`<input checked=\"checked\" class=\"RadioRaison\" data-val=\"true\" data-val-required=\"The Raison field is required.\" id=\"Majeur\" name=\"Raison\" type=\"radio\" value=\"1\" />` / `id=\"Majeur-t\" ... value=\"2\"` / `id=\"Mineur\" ... value=\"3\"` / `id=\"Mineur-12\" ... value=\"4\"`",
+      "validation": {
+        "enum": ["1", "2", "3", "4"]
+      }
+    },
+    {
+      "name": "feeExemptionClaimed",
+      "label": "Je suis exonéré des frais de timbre (I am exempt from stamp fees)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the applicant claims exemption from the stamp-duty fee. Only rendered by the live form for the Majeur, Mineur, and Mineur-12 branches (hidden entirely for Majeur placé sous tutelle). Carries `data-val-required` per the ASP.NET MVC checkbox idiom disclosed in verification.notes; modelled as an optional attestation, not a hard requirement.",
+      "sourceRef": "`<input class=\"RadioNoCodeTimbre\" data-val=\"true\" data-val-required=\"The field NoCodeTimbre must be a number.\" id=\"Exonere\" name=\"NoCodeTimbre\" type=\"radio\" value=\"1\" />`, inside `<div class=\"form-group col-md-6\" id=\"RadioNoCodeTimbre\">`, hidden via `FormDemande.js`'s `.RadioRaison` change handler when `id==\"Majeur-t\"`",
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["1", "3", "4"]
+      }
+    },
+    {
+      "name": "stampCode",
+      "label": "Code Timbre (Stamp Code)",
+      "type": "string",
+      "required": false,
+      "description": "The pre-purchased electronic stamp-duty code (\"e-Timbre\") the applicant enters instead of paying in person. Required unless the applicant has claimed fee exemption via `feeExemptionClaimed`.",
+      "sourceRef": "`<input autocomplete=\"off\" class=\"form-control\" data-val=\"true\" data-val-regex=\"Seuls les alphabets et numéros autorisés\" data-val-regex-pattern=\"^[a-zA-Z0-9]*$\" id=\"Code_ETimbre\" maxlength=\"16\" name=\"_Code_ETimbre\" title=\"Indiquez votre Code E-Timbre\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[a-zA-Z0-9]*$",
+        "maxLength": 16
+      },
+      "requiredWhen": {
+        "not": {
+          "field": "feeExemptionClaimed",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "cnieNumber",
+      "label": "N° CNIE (National Electronic ID Card Number)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The applicant's Carte Nationale d'Identité Electronique number. Required for the Majeur, Majeur placé sous tutelle, and Mineur (12-18) branches; the live form hides the field's required-asterisk (`#cnieAsterix`) specifically for the Mineur-12 (under-12) branch, since children under 12 typically do not yet hold a CNIE.",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-regex=\"Le numéro de la CNIE est invalide\" data-val-regex-pattern=\"^[a-zA-Z][a-zA-Z][1-9][0-9]*$|^[a-zA-Z][1-9][0-9]*$\" id=\"num_Cnie\" maxlength=\"10\" name=\"_Num_CNIE\" title=\"Indiquez votre N° de Carte Nationale d'Identité Electronique\" type=\"text\" value=\"\" />`, `<em class=\"red\" id=\"cnieAsterix\">*</em>` hidden for Mineur-12 per `FormDemande.js`",
+      "validation": {
+        "pattern": "^[a-zA-Z][a-zA-Z][1-9][0-9]*$|^[a-zA-Z][1-9][0-9]*$",
+        "maxLength": 10
+      },
+      "requiredWhen": {
+        "field": "reasonForApplication",
+        "in": ["1", "2", "3"]
+      }
+    },
+    {
+      "name": "lastNameLatin",
+      "label": "Nom (Last Name, Latin script)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's last/family name in Latin characters.",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-regex=\"Seuls les alphabets autorisés\" data-val-regex-pattern=\"^[a-zA-Z\\.\\-' ]*$\" data-val-required=\"Le nom est obligatoire\" maxlength=\"45\" name=\"_Nom_FR\" title=\"Indiquez votre nom en caractères latins\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[a-zA-Z.\\-' ]*$",
+        "maxLength": 45
+      }
+    },
+    {
+      "name": "firstNameLatin",
+      "label": "Prénom (First Name, Latin script)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's first/given name in Latin characters.",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-regex=\"Seuls les alphabets autorisés\" data-val-regex-pattern=\"^[a-zA-Z\\.\\-' ]*$\" data-val-required=\"Le prénom est obligatoire\" maxlength=\"45\" name=\"_Prenom_FR\" title=\"Indiquez votre prénom en caractères latins\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[a-zA-Z.\\-' ]*$",
+        "maxLength": 45
+      }
+    },
+    {
+      "name": "firstNameArabic",
+      "label": "الإسم الشخصي (First Name, Arabic script)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's first/given name in Arabic characters.",
+      "sourceRef": "`<input class=\"keyboard form-control\" data-val=\"true\" data-val-regex-pattern=\"^[؀-ۿ ]+$\" data-val-required=\"الإسم الشخصي باللغة العربية ضروري\" id=\"prenomAr\" maxlength=\"45\" name=\"_Prenom_AR\" title=\"أكتب اسمك الشخصي بالأحرف الأبجدية\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[؀-ۿ ]+$",
+        "maxLength": 45
+      }
+    },
+    {
+      "name": "lastNameArabic",
+      "label": "الإسم العائلي (Last Name, Arabic script)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's last/family name in Arabic characters.",
+      "sourceRef": "`<input class=\"keyboard form-control\" data-val=\"true\" data-val-regex-pattern=\"^[؀-ۿ ]+$\" data-val-required=\"الإسم العائلي باللغة العربية ضروري\" id=\"NomAr\" maxlength=\"45\" name=\"_Nom_AR\" title=\"أكتب اسمك العائلي بالأحرف الأبجدية\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[؀-ۿ ]+$",
+        "maxLength": 45
+      }
+    },
+    {
+      "name": "birthDateUnknownDayMonth",
+      "label": "Je ne dispose pas du jour et du mois de naissance (I do not have the day and month of birth)",
+      "type": "boolean",
+      "required": false,
+      "description": "Attestation that neither day nor month of birth is known, waiving `birthDay` and `birthMonth`. See verification.notes on the ASP.NET MVC checkbox idiom.",
+      "sourceRef": "`<input data-val=\"true\" data-val-required=\"The NoMoisJour field is required.\" id=\"Jour-mois\" name=\"NoMoisJour\" type=\"checkbox\" value=\"true\" />`"
+    },
+    {
+      "name": "birthDateUnknownDay",
+      "label": "Je ne dispose pas du jour de naissance (I do not have the day of birth)",
+      "type": "boolean",
+      "required": false,
+      "description": "Attestation that only the day of birth is unknown, waiving `birthDay`. See verification.notes on the ASP.NET MVC checkbox idiom.",
+      "sourceRef": "`<input data-val=\"true\" data-val-required=\"The NoJour field is required.\" id=\"Jour\" name=\"NoJour\" type=\"checkbox\" value=\"true\" />`"
+    },
+    {
+      "name": "birthDay",
+      "label": "Jour de naissance (Day of Birth)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Two-digit day of birth. The source's own `data-val-regex-pattern` (`[0-9]{2}$`) is not left-anchored; modelled here with the evidently-intended `^[0-9]{2}$` (see verification.notes).",
+      "sourceRef": "`<input class=\"form-control indate\" data-val=\"true\" data-val-length-max=\"2\" data-val-regex-pattern=\"[0-9]{2}$\" id=\"txtJour\" maxlength=\"2\" name=\"_DateNaissanceJour\" placeholder=\"Jour (JJ)\" title=\"Indiquez votre jour de naissance\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[0-9]{2}$"
+      },
+      "requiredWhen": {
+        "all": [
+          { "not": { "field": "birthDateUnknownDayMonth", "equals": true } },
+          { "not": { "field": "birthDateUnknownDay", "equals": true } }
+        ]
+      }
+    },
+    {
+      "name": "birthMonth",
+      "label": "Mois de naissance (Month of Birth)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Two-digit month of birth. The source's own `data-val-regex-pattern` (`[0-9]{2}$`) is not left-anchored; modelled here with the evidently-intended `^[0-9]{2}$` (see verification.notes).",
+      "sourceRef": "`<input class=\"form-control indate\" data-val=\"true\" data-val-length-max=\"2\" data-val-regex-pattern=\"[0-9]{2}$\" id=\"txtMois\" maxlength=\"2\" name=\"_DateNaissanceMois\" placeholder=\"Mois (MM)\" title=\"Indiquez votre mois de naissance\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[0-9]{2}$"
+      },
+      "requiredWhen": {
+        "not": { "field": "birthDateUnknownDayMonth", "equals": true }
+      }
+    },
+    {
+      "name": "birthYear",
+      "label": "Année de naissance (Year of Birth)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Four-digit year of birth; always required, with no corresponding \"unknown\" waiver checkbox.",
+      "sourceRef": "`<input class=\"form-control indate\" data-val=\"true\" data-val-length-max=\"4\" data-val-regex-pattern=\"[0-9]{4}$\" data-val-required=\"L'année de naissance est obligatoire\" id=\"txtAnnee\" maxlength=\"4\" name=\"_DateNaissanceAnnee\" placeholder=\"Année (AAAA)\" title=\"Indiquez votre année de naissance\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[0-9]{4}$"
+      }
+    },
+    {
+      "name": "gender",
+      "label": "Sexe (Gender)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's declared gender. The live form's own wire values are counter-intuitive: \"1\" = Féminin (female), \"2\" = Masculin (male) — confirmed directly from the two radio inputs' `value` attributes.",
+      "sourceRef": "`<input data-val=\"true\" data-val-required=\"Le sexe est obligatoire\" id=\"Masculain\" name=\"_Code_Sexe\" type=\"radio\" value=\"2\" />` (Masculin) / `<input id=\"Féminin\" name=\"_Code_Sexe\" type=\"radio\" value=\"1\" />` (Féminin)",
+      "validation": {
+        "enum": ["1", "2"]
+      }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Lieu de naissance (Place of Birth)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's city/town of birth.",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-regex=\"Seuls les alphabets autorisés\" data-val-regex-pattern=\"^[a-zA-Z\\.\\-' ]*$\" data-val-required=\"Le lieu de naissance est obligatoire\" maxlength=\"30\" name=\"_LieuNaissance_FR\" title=\"Indiquez votre lieu de naissance\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[a-zA-Z.\\-' ]*$",
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Pays de naissance (Country of Birth)",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's country of birth, chosen from the form's own static ~194-entry country dropdown. Modelled as an open string rather than a literal enum to avoid transcription error at that scale (see verification.notes); the option `value` is the country's own display name (e.g. \"ALGERIE\"), not an ISO code — a scheme distinct from `countryOfResidence` (see verification.notes finding 1).",
+      "sourceRef": "`<select class=\"form-control\" data-val=\"true\" data-val-required=\"Le pays de naissance est obligatoire\" name=\"_PaysNaissance_FR\" title=\"Indiquez votre pays de naissance\"><option value=\"AFGHANISTAN\">AFGHANISTAN</option>...</select>` (194 `<option>`s)"
+    },
+    {
+      "name": "phone",
+      "label": "N° de téléphone (Phone Number)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's Moroccan mobile phone number (9 digits, entered after a fixed, non-editable \"+212\" prefix). The source's own `data-val-regex-pattern` (`^[5-6-7]{1}[0-9]{8}$`) contains a malformed character class; modelled here with the evidently-intended `^[5-7][0-9]{8}$` (see verification.notes). Carries no `data-val-required` in the fetched markup.",
+      "sourceRef": "`<input value=\"+212\" class=\"form-control\" dir=\"ltr\" maxlength=\"13\" name=\"_Num_Tel\" type=\"text\" disabled=\"disabled\">` (fixed prefix) plus `<input class=\"form-control\" data-val=\"true\" data-val-regex=\"Le numéro de téléphone est invalide, exemple: 7XXXXXXXX, 6XXXXXXXX ou 5XXXXXXXX\" data-val-regex-pattern=\"^[5-6-7]{1}[0-9]{8}$\" dir=\"ltr\" maxlength=\"9\" name=\"_Num_Tel\" title=\"Indiquez votre numéro de téléphone\" type=\"text\" value=\"\" />` (editable field)",
+      "validation": {
+        "pattern": "^[5-7][0-9]{8}$"
+      }
+    },
+    {
+      "name": "email",
+      "label": "Adresse email (Email Address)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The applicant's email address, format-checked on blur by a `checkEmail()` JavaScript function rather than an inline regex. Carries no `data-val-required` in the fetched markup.",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-length=\"The field _Adresse_Mail must be a string with a maximum length of 80.\" data-val-length-max=\"80\" maxlength=\"80\" name=\"_Adresse_Mail\" onBlur=\"checkEmail(this);\" title=\"Indiquez votre adresse email\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "maxLength": 80
+      }
+    },
+    {
+      "name": "postalAddress",
+      "label": "Adresse postale (Postal Address)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's postal address. The source's own `data-val-regex-pattern` is prefixed `(?i)`, a .NET-only inline case-insensitivity flag invalid in JavaScript `RegExp`, so the client-side check never actually fires in-browser (see verification.notes); modelled here with the `(?i)` prefix stripped.",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-regex=\"L'adresse postal est incorrecte\" data-val-regex-pattern=\"(?i)^[a-zA-Z0-9'-/.: ,\\s-]+$\" data-val-required=\"L'adresse postal est obligatoire\" maxlength=\"60\" name=\"_Adresse_FR\" title=\"Indiquez votre adresse postale\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[a-zA-Z0-9'\\-/.: ,\\s-]+$",
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "city",
+      "label": "Ville (City)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant's city of residence.",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-length=\"The field _Ville must be a string with a maximum length of 20.\" data-val-length-max=\"20\" data-val-required=\"La ville est obligatoire\" maxlength=\"20\" name=\"_Ville\" title=\"Indiquez votre ville de résidence\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "postalCode",
+      "label": "Code postal (Postal Code)",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's postal code.",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-length=\"The field _Code_Postal must be a string with a maximum length of 10.\" data-val-length-max=\"10\" data-val-required=\"Le code postal est obligatoire\" maxlength=\"10\" name=\"_Code_Postal\" title=\"Indiquez votre code postal\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "maxLength": 10
+      }
+    },
+    {
+      "name": "countryOfResidence",
+      "label": "Pays (Country of Residence)",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's country of residence, chosen from a separate ~194-entry country dropdown whose option `value`s are an unrelated numeric code (e.g. \"201\" for Afghanistan, \"202\" for Afrique du Sud) rather than the country name used by `countryOfBirth` and the other nationality selects on this same form (see verification.notes finding 1). Modelled as an open string rather than a literal enum to avoid transcription error at that scale.",
+      "sourceRef": "`<select class=\"form-control\" data-val=\"true\" data-val-required=\"Le pays est obligatoire\" name=\"_Pays\" title=\"Indiquez votre pays de résidence\"><option value=\"201\">AFGHANISTAN</option>...</select>` (194 `<option>`s)"
+    },
+    {
+      "name": "fatherUnknown",
+      "label": "Père inconnu (Father Unknown)",
+      "type": "boolean",
+      "required": false,
+      "description": "Attestation that the applicant's father is unknown, which disables and clears the other father fields client-side. See verification.notes on the ASP.NET MVC checkbox idiom.",
+      "sourceRef": "`<input data-val=\"true\" data-val-required=\"The PereInconnu field is required.\" id=\"pinconnu\" name=\"PereInconnu\" type=\"checkbox\" value=\"true\" />`",
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["3", "4"]
+      }
+    },
+    {
+      "name": "fatherDeceasedNoId",
+      "label": "Père décédé sans document d'identité (Father Deceased, No ID Document)",
+      "type": "boolean",
+      "required": false,
+      "description": "Attestation that the applicant's father is deceased and left no identity document, which disables and clears the other father fields client-side. See verification.notes on the ASP.NET MVC checkbox idiom.",
+      "sourceRef": "`<input data-val=\"true\" data-val-required=\"The PereDecede field is required.\" id=\"pdecede\" name=\"PereDecede\" type=\"checkbox\" value=\"true\" />`",
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["3", "4"]
+      }
+    },
+    {
+      "name": "fatherLastName",
+      "label": "Nom père (Father's Last Name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The father's last name. Carries no `data-val-required` in the fetched markup despite appearing in a visually mandatory-seeming block (see verification.notes finding 3).",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-regex=\"Le nom du père est incorrecte\" data-val-regex-pattern=\"^[a-zA-Z\\.\\-' ]*$\" id=\"nomPere\" maxlength=\"45\" name=\"_Nom_Pere_FR\" title=\"Indiquez le nom de votre père\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[a-zA-Z.\\-' ]*$",
+        "maxLength": 45
+      },
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["3", "4"]
+      }
+    },
+    {
+      "name": "fatherFirstName",
+      "label": "Prénom père (Father's First Name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The father's first name. Carries no `data-val-required` in the fetched markup despite appearing in a visually mandatory-seeming block (see verification.notes finding 3).",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-regex=\"Le prénom du père est incorrecte\" data-val-regex-pattern=\"^[a-zA-Z\\.\\-' ]*$\" id=\"prenomPere\" maxlength=\"45\" name=\"_Prenom_Pere_FR\" title=\"Indiquez le prénom de votre père\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[a-zA-Z.\\-' ]*$",
+        "maxLength": 45
+      },
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["3", "4"]
+      }
+    },
+    {
+      "name": "fatherNationality",
+      "label": "Nationalité père (Father's Nationality)",
+      "type": "string",
+      "required": false,
+      "description": "The father's nationality, chosen from the same country-name-valued dropdown as `countryOfBirth`. Modelled as an open string for the same reason.",
+      "sourceRef": "`<select class=\"form-control\" data-val=\"true\" data-val-regex=\"Le pays du père est incorrecte\" data-val-regex-pattern=\"^[a-zA-Z\\.\\-'’ ]*$\" id=\"paysPere\" name=\"_Pays_Pere\" title=\"Indiquez la nationalité de votre père\">` (194 `<option>`s, no `data-val-required`)",
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["3", "4"]
+      }
+    },
+    {
+      "name": "fatherIdType",
+      "label": "Type pièce identité père (Father's ID Document Type)",
+      "type": "string",
+      "required": false,
+      "description": "The type of identity document held by the father, the one father-block field that genuinely carries `data-val-required` in the fetched markup. Required whenever the parent-information block applies and the father is neither declared unknown nor deceased-without-ID.",
+      "sourceRef": "`<select class=\"form-control\" data-val=\"true\" data-val-number=\"Le champ _Type_CNIE_Pere doit être un nombre.\" data-val-required=\"The _Type_CNIE_Pere field is required.\" id=\"typeIdPere\" name=\"_Type_CNIE_Pere\" title=\"Indiquez le type de la pièce d'identité de votre père\"><option value=\"0\">Selectionnez</option><option value=\"1\">CNIE</option><option value=\"2\">Passeport marocain</option><option value=\"3\">Carte d'immatriculation</option><option value=\"4\">Passeport étranger</option><option value=\"5\">Carte d'identité étrangère</option><option value=\"6\">Autres</option></select>`",
+      "validation": {
+        "enum": ["1", "2", "3", "4", "5", "6"]
+      },
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["3", "4"]
+      },
+      "requiredWhen": {
+        "all": [
+          { "field": "reasonForApplication", "in": ["3", "4"] },
+          { "not": { "field": "fatherUnknown", "equals": true } },
+          { "not": { "field": "fatherDeceasedNoId", "equals": true } }
+        ]
+      }
+    },
+    {
+      "name": "fatherIdNumber",
+      "label": "N° pièce identité père (Father's ID Document Number)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The father's identity document number. Carries no `data-val` attribute at all in the fetched markup (not even a format check), let alone `data-val-required`.",
+      "sourceRef": "`<input class=\"form-control\" id=\"numCniePere\" maxlength=\"10\" name=\"_Num_CNIE_Pere\" title=\"Indiquez le numéro de la pièce d'identité de votre père\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "maxLength": 10
+      },
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["3", "4"]
+      }
+    },
+    {
+      "name": "motherUnknown",
+      "label": "Mère inconnue (Mother Unknown)",
+      "type": "boolean",
+      "required": false,
+      "description": "Attestation that the applicant's mother is unknown, which disables and clears the other mother fields client-side. See verification.notes on the ASP.NET MVC checkbox idiom.",
+      "sourceRef": "`<input data-val=\"true\" data-val-required=\"The MereInconnu field is required.\" id=\"minconnu\" name=\"MereInconnu\" type=\"checkbox\" value=\"true\" />`",
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["3", "4"]
+      }
+    },
+    {
+      "name": "motherDeceasedNoId",
+      "label": "Mère décédée sans document d'identité (Mother Deceased, No ID Document)",
+      "type": "boolean",
+      "required": false,
+      "description": "Attestation that the applicant's mother is deceased and left no identity document, which disables and clears the other mother fields client-side. See verification.notes on the ASP.NET MVC checkbox idiom.",
+      "sourceRef": "`<input data-val=\"true\" data-val-required=\"The MereDecede field is required.\" id=\"mdecede\" name=\"MereDecede\" type=\"checkbox\" value=\"true\" />`",
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["3", "4"]
+      }
+    },
+    {
+      "name": "motherLastName",
+      "label": "Nom mère (Mother's Last Name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The mother's last name. Carries no `data-val-required` in the fetched markup despite appearing in a visually mandatory-seeming block (see verification.notes finding 3).",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-regex=\"Le nom du mère est incorrecte\" data-val-regex-pattern=\"^[a-zA-Z\\.\\-' ]*$\" id=\"nomMere\" maxlength=\"45\" name=\"_Nom_Mere_FR\" title=\"Indiquez le nom de votre mère\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[a-zA-Z.\\-' ]*$",
+        "maxLength": 45
+      },
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["3", "4"]
+      }
+    },
+    {
+      "name": "motherFirstName",
+      "label": "Prénom mère (Mother's First Name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The mother's first name. Carries no `data-val-required` in the fetched markup despite appearing in a visually mandatory-seeming block (see verification.notes finding 3).",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-regex=\"Le prénom du mère est incorrecte\" data-val-regex-pattern=\"^[a-zA-Z\\.\\-' ]*$\" id=\"prenomMere\" maxlength=\"45\" name=\"_Prenom_Mere_FR\" title=\"Indiquez le prénom de votre mère\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[a-zA-Z.\\-' ]*$",
+        "maxLength": 45
+      },
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["3", "4"]
+      }
+    },
+    {
+      "name": "motherNationality",
+      "label": "Nationalité mère (Mother's Nationality)",
+      "type": "string",
+      "required": false,
+      "description": "The mother's nationality, chosen from the same country-name-valued dropdown as `countryOfBirth`. Modelled as an open string for the same reason.",
+      "sourceRef": "`<select class=\"form-control\" data-val=\"true\" data-val-regex=\"Le pays de la mère est incorrecte\" data-val-regex-pattern=\"^[a-zA-Z\\.\\-'’ ]*$\" id=\"paysMere\" name=\"_Pays_Mere\" title=\"Indiquez la nationalité de votre mère\">` (194 `<option>`s, no `data-val-required`)",
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["3", "4"]
+      }
+    },
+    {
+      "name": "motherIdType",
+      "label": "Type pièce identité mère (Mother's ID Document Type)",
+      "type": "string",
+      "required": false,
+      "description": "The type of identity document held by the mother, the one mother-block field that genuinely carries `data-val-required` in the fetched markup. Required whenever the parent-information block applies and the mother is neither declared unknown nor deceased-without-ID.",
+      "sourceRef": "`<select class=\"form-control\" data-val=\"true\" data-val-number=\"Le champ _Type_CNIE_Mere doit être un nombre.\" data-val-required=\"The _Type_CNIE_Mere field is required.\" id=\"typeIdMere\" name=\"_Type_CNIE_Mere\" title=\"Indiquez le type de la pièce d'identité de votre mère\"><option value=\"0\">Selectionnez</option><option value=\"1\">CNIE</option><option value=\"2\">Passeport marocain</option><option value=\"3\">Carte d'immatriculation</option><option value=\"4\">Passeport étranger</option><option value=\"5\">Carte d'identité étrangère</option><option value=\"6\">Autres</option></select>`",
+      "validation": {
+        "enum": ["1", "2", "3", "4", "5", "6"]
+      },
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["3", "4"]
+      },
+      "requiredWhen": {
+        "all": [
+          { "field": "reasonForApplication", "in": ["3", "4"] },
+          { "not": { "field": "motherUnknown", "equals": true } },
+          { "not": { "field": "motherDeceasedNoId", "equals": true } }
+        ]
+      }
+    },
+    {
+      "name": "motherIdNumber",
+      "label": "N° pièce identité mère (Mother's ID Document Number)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The mother's identity document number. Carries no `data-val` attribute at all in the fetched markup (not even a format check), let alone `data-val-required`.",
+      "sourceRef": "`<input class=\"form-control\" id=\"numCnieMere\" maxlength=\"10\" name=\"_Num_CNIE_Mere\" title=\"Indiquez le numéro de la pièce d'identité de votre mère\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "maxLength": 10
+      },
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["3", "4"]
+      }
+    },
+    {
+      "name": "legalRepresentativeCapacity",
+      "label": "Agissant en qualité de (Acting in the Capacity of)",
+      "type": "string",
+      "required": false,
+      "description": "The legal representative's relationship to the minor/protected applicant. The live form's own footnote explains the father remains the legal representative of his minor children even after divorce, and maternal custody does not by itself confer legal-representative status on the mother.",
+      "sourceRef": "`<select class=\"form-control\" data-val=\"true\" data-val-number=\"Le champ _Code_Qualite_Representant doit être un nombre.\" data-val-required=\"The _Code_Qualite_Representant field is required.\" id=\"ddlQualiteRep\" name=\"_Code_Qualite_Representant\" title=\"Sélectionnez le choix correspondant à la qualité du représentant légal\"><option value=\"0\">Selectionnez</option><option value=\"1\">Père</option><option value=\"2\">Mère</option><option value=\"3\">Tuteur testamentaire</option><option value=\"4\">Kafil</option><option value=\"5\">Juge</option><option value=\"6\">Tuteur datif</option><option value=\"7\">Autre</option></select>`",
+      "validation": {
+        "enum": ["1", "2", "3", "4", "5", "6", "7"]
+      },
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["2", "3", "4"]
+      },
+      "requiredWhen": {
+        "field": "reasonForApplication",
+        "in": ["2", "3", "4"]
+      }
+    },
+    {
+      "name": "legalRepresentativeLastName",
+      "label": "Nom (représentant légal) (Legal Representative's Last Name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The legal representative's last name. Carries no `data-val-required` in the fetched markup despite appearing in a visually mandatory-seeming block (see verification.notes finding 3).",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-regex=\"Le nom du representant légal est incorrecte\" data-val-regex-pattern=\"^[a-zA-Z\\.\\-' ]*$\" id=\"nomRep\" maxlength=\"45\" name=\"_Nom_Rep_FR\" title=\"Indiquez le nom du représentant légal\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[a-zA-Z.\\-' ]*$",
+        "maxLength": 45
+      },
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["2", "3", "4"]
+      }
+    },
+    {
+      "name": "legalRepresentativeFirstName",
+      "label": "Prénom (représentant légal) (Legal Representative's First Name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The legal representative's first name. Carries no `data-val-required` in the fetched markup despite appearing in a visually mandatory-seeming block (see verification.notes finding 3).",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-regex=\"Le nom du representant légal est incorrecte\" data-val-regex-pattern=\"^[a-zA-Z\\.\\-' ]*$\" id=\"prenomRep\" maxlength=\"45\" name=\"_Prenom_Rep_FR\" title=\"Indiquez le prénom du représentant légal\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[a-zA-Z.\\-' ]*$",
+        "maxLength": 45
+      },
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["2", "3", "4"]
+      }
+    },
+    {
+      "name": "legalRepresentativeNationality",
+      "label": "Nationalité (représentant légal) (Legal Representative's Nationality)",
+      "type": "string",
+      "required": false,
+      "description": "The legal representative's nationality, chosen from the same country-name-valued dropdown as `countryOfBirth`. Modelled as an open string for the same reason. Carries no `data-val` attribute at all in the fetched markup.",
+      "sourceRef": "`<select class=\"form-control\" id=\"paysRep\" name=\"_Pays_Representant\" title=\"Indiquez la nationalité du représentant légal\">` (194 `<option>`s, no `data-val` attributes at all)",
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["2", "3", "4"]
+      }
+    },
+    {
+      "name": "legalRepresentativeIdType",
+      "label": "Type pièce identité (représentant légal) (Legal Representative's ID Document Type)",
+      "type": "string",
+      "required": false,
+      "description": "The type of identity document held by the legal representative, the one representative-block field that genuinely carries `data-val-required` in the fetched markup. Required whenever the legal-representative block applies.",
+      "sourceRef": "`<select class=\"form-control\" data-val=\"true\" data-val-number=\"Le champ _Type_CNIE_Representant doit être un nombre.\" data-val-required=\"The _Type_CNIE_Representant field is required.\" id=\"typeIdRep\" name=\"_Type_CNIE_Representant\" title=\"Indiquez le type de la pièce d'identité du représentant légal\"><option value=\"0\">Selectionnez</option><option value=\"1\">CNIE</option><option value=\"2\">Passeport marocain</option><option value=\"3\">Carte d'immatriculation</option><option value=\"4\">Passeport étranger</option><option value=\"5\">Carte d'identité étrangère</option><option value=\"6\">Autres</option></select>`",
+      "validation": {
+        "enum": ["1", "2", "3", "4", "5", "6"]
+      },
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["2", "3", "4"]
+      },
+      "requiredWhen": {
+        "field": "reasonForApplication",
+        "in": ["2", "3", "4"]
+      }
+    },
+    {
+      "name": "legalRepresentativeIdNumber",
+      "label": "N° pièce identité (représentant légal) (Legal Representative's ID Document Number)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The legal representative's identity document number. Carries no `data-val` attribute at all in the fetched markup (not even a format check), let alone `data-val-required`.",
+      "sourceRef": "`<input class=\"form-control\" id=\"numCnieRep\" maxlength=\"10\" name=\"_Num_CNIE_Representant\" title=\"Indiquez le numéro de la pièce d'identité du représentant légal\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "maxLength": 10
+      },
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["2", "3", "4"]
+      }
+    },
+    {
+      "name": "powerOfAttorneyGranted",
+      "label": "En cas de procuration remplir les renseignements du mandataire (If Granting Power of Attorney, Complete the Mandatary's Information)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the legal representative grants a power of attorney to a mandatary (e.g. the mother, or another close relative) to accompany the minor and complete the process. Checking this reveals the Proxy/Mandatary Information step. See verification.notes on the ASP.NET MVC checkbox idiom.",
+      "sourceRef": "`<input data-val=\"true\" data-val-required=\"The procuration field is required.\" id=\"procuration\" name=\"procuration\" type=\"checkbox\" value=\"true\" />`, gating `<div id=\"Mandataire\" style=\"display:none;\">` shown via `FormDemande.js`'s `#procuration` change handler",
+      "visibleWhen": {
+        "field": "reasonForApplication",
+        "in": ["2", "3", "4"]
+      }
+    },
+    {
+      "name": "motherIsMandatary",
+      "label": "La mère est le mandataire (The Mother is the Mandatary)",
+      "type": "boolean",
+      "required": false,
+      "description": "Shortcut attestation that the mother herself is the mandatary, which the live form uses to copy the mother's own name/nationality/ID fields into the mandatary fields. Only rendered for the Mineur and Mineur-12 branches (hidden for Majeur placé sous tutelle, which has no separate mother block to copy from).",
+      "sourceRef": "`<input type=\"checkbox\" id=\"mmandataire\" name=\"mmandataire\">`, inside `<div class=\"row\" id=\"rowmmandataire\" style=\"display:none;\">`, shown/hidden per branch via `FormDemande.js`'s `.RadioRaison` change handler",
+      "visibleWhen": {
+        "all": [
+          { "field": "reasonForApplication", "in": ["3", "4"] },
+          { "field": "powerOfAttorneyGranted", "equals": true }
+        ]
+      }
+    },
+    {
+      "name": "mandataryLastName",
+      "label": "Nom (mandataire) (Mandatary's Last Name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The mandatary's last name. Carries no `data-val-required` in the fetched markup.",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-regex=\"Le nom du mandataire est incorrecte\" data-val-regex-pattern=\"^[a-zA-Z\\.\\-' ]*$\" id=\"nomMan\" maxlength=\"45\" name=\"_Nom_Mandataire\" title=\"Indiquez le nom du mandataire\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[a-zA-Z.\\-' ]*$",
+        "maxLength": 45
+      },
+      "visibleWhen": {
+        "field": "powerOfAttorneyGranted",
+        "equals": true
+      }
+    },
+    {
+      "name": "mandataryFirstName",
+      "label": "Prénom (mandataire) (Mandatary's First Name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The mandatary's first name. Carries no `data-val-required` in the fetched markup.",
+      "sourceRef": "`<input class=\"form-control\" data-val=\"true\" data-val-regex=\"Le prénom du mandataire est incorrecte\" data-val-regex-pattern=\"^[a-zA-Z\\.\\-' ]*$\" id=\"prenomMan\" maxlength=\"45\" name=\"_Prenom_Mandataire\" title=\"Indiquez le prénom du mandataire\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "pattern": "^[a-zA-Z.\\-' ]*$",
+        "maxLength": 45
+      },
+      "visibleWhen": {
+        "field": "powerOfAttorneyGranted",
+        "equals": true
+      }
+    },
+    {
+      "name": "mandataryNationality",
+      "label": "Nationalité (mandataire) (Mandatary's Nationality)",
+      "type": "string",
+      "required": false,
+      "description": "The mandatary's nationality, chosen from the same country-name-valued dropdown as `countryOfBirth`. Modelled as an open string for the same reason.",
+      "sourceRef": "`<select class=\"form-control\" data-val=\"true\" data-val-regex=\"Le pays du mandataire est incorrecte\" data-val-regex-pattern=\"^[a-zA-Z\\.\\-'’ ]*$\" id=\"paysMan\" name=\"_Pays_Mandataire\" title=\"Indiquez la nationalité du mandataire\">` (194 `<option>`s, no `data-val-required`)",
+      "visibleWhen": {
+        "field": "powerOfAttorneyGranted",
+        "equals": true
+      }
+    },
+    {
+      "name": "mandataryIdType",
+      "label": "Type pièce identité (mandataire) (Mandatary's ID Document Type)",
+      "type": "string",
+      "required": false,
+      "description": "The type of identity document held by the mandatary, the one mandatary-block field that genuinely carries `data-val-required` in the fetched markup. Required whenever a power of attorney has been granted.",
+      "sourceRef": "`<select class=\"form-control\" data-val=\"true\" data-val-number=\"Le champ _Type_CNIE_Mandataire doit être un nombre.\" data-val-required=\"The _Type_CNIE_Mandataire field is required.\" id=\"typeIdMan\" name=\"_Type_CNIE_Mandataire\" title=\"Indiquez le type de la pièce d'identité du mandataire\"><option value=\"0\">Selectionnez</option><option value=\"1\">CNIE</option><option value=\"2\">Passeport marocain</option><option value=\"3\">Carte d'immatriculation</option><option value=\"4\">Passeport étranger</option><option value=\"5\">Carte d'identité étrangère</option><option value=\"6\">Autres</option></select>`",
+      "validation": {
+        "enum": ["1", "2", "3", "4", "5", "6"]
+      },
+      "visibleWhen": {
+        "field": "powerOfAttorneyGranted",
+        "equals": true
+      },
+      "requiredWhen": {
+        "field": "powerOfAttorneyGranted",
+        "equals": true
+      }
+    },
+    {
+      "name": "mandataryIdNumber",
+      "label": "N° pièce identité (mandataire) (Mandatary's ID Document Number)",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The mandatary's identity document number. Carries no `data-val` attribute at all in the fetched markup (not even a format check), let alone `data-val-required`.",
+      "sourceRef": "`<input class=\"form-control\" id=\"numCnieMan\" maxlength=\"10\" name=\"_Num_CNIE_Mandataire\" title=\"Indiquez le numéro de la pièce d'identité du mandataire\" type=\"text\" value=\"\" />`",
+      "validation": {
+        "maxLength": 10
+      },
+      "visibleWhen": {
+        "field": "powerOfAttorneyGranted",
+        "equals": true
+      }
+    }
+  ]
+}

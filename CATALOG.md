@@ -4,7 +4,43 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **566 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **567 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4114, "GovSchema Standard Research"): Morocco's
+> Passport vertical opens (2 of 6 for Morocco)**, via
+> `ma/dgsn/passport-application` — the Direction Générale de la Sûreté
+> Nationale's (DGSN) online passport request form, served fully
+> unauthenticated at `passeport.ma/FormDemande/FormDemande`: a plain
+> ASP.NET MVC page with every field's `name`/`id`/`data-val*` attribute
+> readable directly from the served HTML, no login/CAPTCHA/WAF gate on
+> the GET itself. Screened against Morocco's other four open verticals
+> this cycle (Business Formation via OMPIC/`directentreprise.ma`, DMV via
+> NARSA, Taxes via DGI/SIMPL, National ID via `cnie.ma`) and found
+> markedly stronger — all four remained login-gated or unreachable this
+> session. Models 49 fields across 5 steps (application_category,
+> applicant_information, parent_information,
+> legal_representative_information, proxy_mandatary_information),
+> covering the form's four applicant-category branches (adult; adult
+> under legal guardianship; minor 12-18; minor under 12) and their
+> dependent parent/legal-representative/proxy-mandatary sub-blocks. Six
+> disclosed findings: two inconsistent country-code schemes on the same
+> form (name-valued vs. numeric-coded country selects); the ASP.NET MVC
+> boolean-checkbox idiom producing a misleading `data-val-required` on
+> every optional attestation checkbox; an asymmetric requiredness pattern
+> repeated across all four dependent-person blocks (only the ID-type
+> select is genuinely required; name/nationality/ID-number never carry
+> `data-val-required`); a broken client-side regex on the postal-address
+> field (a `.NET`-only `(?i)` inline flag invalid in JavaScript `RegExp`);
+> and two malformed/non-anchored regexes on the birth-date and phone
+> fields. Egypt's previously-unscreened National ID vertical was also
+> screened this cycle and confirmed weak (a real online request-
+> initiation front end, but gated behind an authenticated citizen account
+> around a mandatory in-person biometric issuance step) — see the
+> document's own VERIFICATION.md and the Passport vertical section below
+> for the full record. Both validators pass at 567/567; 10 conformance
+> fixtures (2 valid + 8 mutation-control) committed. Numerator updated
+> from 566 to 567 (Morocco is not a newly opened jurisdiction — it
+> already had 1 of 6 verticals before this cycle).
 
 > **Update (2026-07-21, GOV-4107, "GovSchema Standard Research"): the
 > Netherlands closes to 6 of 6 verticals**, via
@@ -18565,7 +18601,7 @@ now closed.
 | **KZ** | 10 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| **MA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
+| **MA** | 2 | ✓ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -21567,7 +21603,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   this cycle and are open, unscreened backlog for a future cycle. The
   same `acces-maroc.ma` AngularJS-bundle technique that sourced this
   schema may generalize to other MAEC-run consular processes — worth
-  checking in a future cycle.
+  checking in a future cycle. **Update (GOV-4114, 2026-07-21): Morocco's
+  Passport vertical is now closed**, via `ma/dgsn/passport-application`
+  (DGSN's unauthenticated `passeport.ma` request form) — see the
+  Executive Summary update above and the document's own VERIFICATION.md.
+  This cycle also screened Business Formation (OMPIC/
+  `directentreprise.ma`, login-gated), DMV (NARSA, login-gated/
+  unreachable), and Taxes (DGI/SIMPL, login-gated e-filing; the ADC920F/
+  930F/940F adhesion-paperwork fallback remains unverified — every
+  secondary host exposing them was a wrapper site with no extractable
+  field text, not the PDFs themselves) — all three remain open,
+  re-confirmed weak/gated backlog. National ID (`cnie.ma`) was
+  attempted but the domain was unreachable this session (connection
+  refused/certificate error) with no field-level secondary source found;
+  remains open, unscreened.
 
 - **GOV-3447 ("GovSchema Standard Research") — Egypt opens as the
   registry's 70th jurisdiction via Taxes, authored via
