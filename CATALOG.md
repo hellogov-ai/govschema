@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **561 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **562 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4078, "GovSchema Standard Research"): Kazakhstan's
+> Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
+> fifth companion schedule**, via
+> `kz/kgd/declaration-of-assets-and-liabilities-schedule-250-04` — Form
+> 250.04, foreign securities/derivative financial instruments, digital
+> assets, and foreign brokerage accounts. The last of the two "largest"
+> schedules per the GOV-4050 cycle's own field-count sizing (250.02/250.04,
+> ~17-18 columns, three repeating sections each) to be authored, leaving only
+> 250.06 open. Fetched the schedule's own page image fresh
+> (`adilet.zan.kz/files/1576/49/200.jpg`, HTTP 200, 169,344 bytes) and read
+> it directly via a 3x Lanczos upscale — fully legible without further zoomed
+> crops. Confirms the sequential image-numbering pattern across all six
+> schedules (197-202.jpg = 250.01-250.06) and re-fetched Глава 6 of the
+> order's own full HTML text. Discloses a sharper three-way row-count
+> gradient than any prior 250.0X schedule — item 07 (securities) prints four
+> blank rows, item 08 (digital assets) three, item 09 (foreign brokerage
+> accounts) two, all on the same page — and a genuine structural difference:
+> item 08 has no country-code or currency-code column at all, since Глава 6's
+> own prose confirms its total-price column is always denominated in tenge.
+> Also discloses that the digital-asset quantity column's own worked example
+> (0.00000001, for Bitcoin) carries fractional quantities to at least eight
+> decimal places, modelled as an unconstrained non-negative number rather
+> than an integer. Numerator changes from 561 to 562 documents. Both
+> validators pass at 562/562; 10 conformance fixtures (independently checked
+> against an ad-hoc ajv schema built from the document's own field
+> constraints). One schedule (250.06) remains open backlog. See the Taxes
+> vertical section below and the document's own VERIFICATION.md for the full
+> record.
 
 > **Update (2026-07-21, GOV-4071, "GovSchema Standard Research"): Kazakhstan's
 > Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
@@ -33,6 +62,8 @@
 > an ad-hoc ajv schema built from the document's own field constraints).
 > Two schedules (250.04, 250.06) remain open backlog. See the Taxes vertical
 > section below and the document's own VERIFICATION.md for the full record.
+> **Update (GOV-4078):** the fifth of the six companion schedules (250.04) is
+> now authored — see the update above.
 
 > **Update (2026-07-20, GOV-4064, "GovSchema Standard Research"): Kazakhstan's
 > Declaration of Assets and Liabilities (Form 250.00, GOV-4043) gains its
