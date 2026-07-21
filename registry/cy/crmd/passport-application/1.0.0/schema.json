@@ -1,0 +1,656 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "cy/crmd/passport-application",
+  "version": "1.0.0",
+  "title": "Cyprus Passport Application (Application for the Issue/Reissue of a Passport or Temporary Passport)",
+  "description": "The Ministry of Interior's Civil Registry and Migration Department (CRMD) application form for the issue, reissue, or loss/theft/wear-and-tear replacement of a Republic of Cyprus passport or temporary passport (laissez passer). Opens Cyprus's Passport vertical (1 of 6) — the registry's 74th jurisdiction. This document models every applicant-facing field: the request-type selection; the applicant's identity, address, and marital-status particulars; the father's, mother's, and (where applicable) spouse's identity details; the applicant's own passport history (other Cyprus passports, foreign passports, prior loss); the Section VI declaration completed by a parent or guardian when the applicant is a minor; and the Section VII declaration completed by the applicant when over 18. It excludes the form's own printed \"FOR OFFICIAL USE\" block (issued passport number, receiving office, application/receipt numbers, a biometric-capture checkbox, and a 7-way passport-type classification), the officer's own countersignature line, and the page-4 instructions prose beyond the discrete supporting-document list it enumerates — none of these are applicant-supplied data. Filing this application is a citizen action performed in person with the CRMD (submission is not available online); this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Cyprus or its Ministry of Interior.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CY",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Civil Registry and Migration Department, Ministry of Interior",
+    "abbreviation": "CRMD",
+    "url": "https://www.gov.cy"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.gov.cy/media/sites/127/2025/11/Passport-form-ENGLISH.pdf",
+    "retrievedAt": "2026-07-21",
+    "documentRef": "\"Application for the issue/reissue of a Passport or Temporary passport (laissez Passer) of the Republic of Cyprus\", English-language edition, published by gov.cy November 2025"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-21",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-21",
+    "notes": "GOV-4121 (\"GovSchema Standard Research\" cycle). Cyprus was not yet in the registry; scouted in parallel with Latvia and Saudi Arabia via three research subagents after re-confirming that every existing single-vertical-gap jurisdiction (BR/CH/PL/SK/MK Visa, GR/HU National ID, remaining KZ/JO/Morocco verticals) is already a confirmed dead end. Saudi Arabia's six verticals are all Nafath/Absher-SSO-gated with no unauthenticated first-party form; Latvia's Uzņēmumu reģistrs KR2 sole-trader form is a genuine open Business Formation candidate left as pre-scouted backlog (see the Known Gaps update). Cyprus's Passport form won on source strength: independently re-fetched directly from `gov.cy` with a standard desktop User-Agent (WebFetch's own default UA is WAF-blocked on this asset; plain curl with a browser UA is not), HTTP 200, content-type application/pdf, content-length 217,081 bytes, last-modified 2025-11-20, sha256:3309049ceb05fb083801d4edd56e9c7ee87e9ead12e7e13d0824005a22e8f596. No login, CAPTCHA, or WAF gate on the asset itself.\n\nThis is a flat (non-AcroForm) 5-page scanned PDF — `pdfjs-dist`'s `getFieldObjects()` returns null/0 widgets — and its embedded OCR text layer is badly garbled (e.g. the marital-status checkbox row extracts as \"0Married Osingle 0 Divorced\"; the address block's own row labels are barely recoverable). Every field in this schema was instead derived from a 3x-scale page render (`pdfjs-dist` + `node-canvas`) read visually page by page, the same technique this registry has used for other badly-OCR'd or checkbox-heavy flat scans (e.g. `at/bmi/driving-licence-application`, GOV-4100). Page 5 is genuinely blank (a trailing sheet with no printed content) and page 4 is instructions prose only; both were confirmed by direct visual inspection, not assumed.\n\nSix disclosed source-fidelity findings: (1) Sections II and III (\"FATHER'S DETAILS\"/\"MOTHER'S DETAILS\") carry no \"if applicant is a minor\" qualifier anywhere, unlike Section VI (\"...OF UNDERAGE APPLICANTS\", printed explicitly) — modelled as required for every applicant regardless of age, since the form's own structure draws that line only at Section VI, not at II/III. (2) The father's and mother's blocks print an asymmetric label for the same concept: the father's row is headed \"Surname\", the mother's equivalent row is headed \"Family Name\" — kept as printed (`fatherSurname` vs `motherFamilyName`) rather than silently normalized to one term. (3) Section V(i)'s single input box is captioned with two stacked labels, \"Passport No.\" and \"Travel Document No.\", with no visual separation between them — modelled as one field (`otherCyprusPassportOrTravelDocumentNumber`) with both printed labels preserved in its own label/description, rather than guessing which one the box is \"really\" for. (4) Section VI's guardian party has no biographical block anywhere else on the form (unlike the father and mother, who each get a full Section II/III block) — only a signature and ID-card-number line inside the declaration itself; modelled as `guardianConsentSignature`/`guardianConsentIdentityCardNumber` with no counterpart `guardianName`/`guardianDateOfBirth` etc., since none exists to model. (5) Section VI's own printed text requires both parents' (or the guardian's) signature for every minor applicant, but the page-4 instructions carve out an exception (\"If parental care is exercised solely by one parent on the basis of a relevant order of the Family Court, the application shall be signed only by that parent\") and permit the guardian's signature as an alternative to both parents' entirely — GSP-0013's `requiredWhen` grammar has no \"exactly one of, unless N, in which case a different M\" primitive to express this directly (the same limitation this registry's `il/moin/dr1-passport-application` disclosed for its own single-parent-consent rule), so `fatherConsentSignature`/`motherConsentSignature` are modelled `requiredWhen applicantIsMinor` as the form's own printed default, with the sole-custody and guardian-instead-of-parents exceptions disclosed here rather than encoded. (6) `applicantIsMinor` itself is not a printed checkbox (the same convention `il/moin/dr1-passport-application` established) — it is modelled as a directly-supplied boolean gating both the Section VI (minor) and Section VII (adult) declaration paths, which the form itself renders as two mutually exclusive, age-gated sections.\n\nThe page-4 instructions' own numbered supporting-document list (item D) is modelled as `documents[]`: Identity Card (D.1, always required); previous passport/temporary passport \"where applicable\" (D.2, modelled `requiredWhen` a reissue or replacement, since a first-time `ISSUE` applicant has none); a police certificate \"in case of loss\" (D.3, modelled `requiredWhen applicationType` is `REPLACEMENT`, though the source text ties it specifically to loss/theft rather than the wear-and-tear branch `REPLACEMENT` also covers — disclosed here as a grammar-scope judgment call rather than encoded); a marriage certificate for married women wanting their husband's surname printed (D.4, left `required: false` with no `requiredWhen`, since the actual gating condition — wanting that specific surname option — has no corresponding field anywhere on the form); and, for first-time applicants only, a birth certificate and (only if citizenship was acquired by naturalization or registration) a Cypriot-citizenship certificate (D.7, both modelled `requiredWhen applicationType` is `ISSUE`, with the citizenship certificate's own naturalization/registration-only narrowing disclosed rather than encoded, the same treatment as D.3). The Section VI and Section VII declaration statements are each modelled as `attestation`-category `documents[]` entries carrying the form's own quoted text, `requiredWhen` the applicant's age-appropriate section applies.\n\n2 valid mock scenarios (an adult first-time applicant with no other passport history; a minor applicant whose application is signed by both parents) plus 8 mutation-control fixtures (a missing statically-required field, a missing father/mother-consent signature while `applicantIsMinor` is true, a missing `otherCyprusPassportOrTravelDocumentNumber` while `hasOtherCyprusPassport` is true, a missing birth-certificate document while `applicationType` is `ISSUE`, an invalid `sex` enum value, an invalid `applicationType` enum value, and an unknown top-level field) are committed under `conformance/cy/crmd/passport-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own `fields[]`/`documents[]`, discarded after use, not committed) ran all 10: both valid scenarios at 0 errors, all 8 mutation controls each raising exactly 1 error, and confirmed every `requiredWhen`/`requiredWhen` field/document reference resolves (0 dangling references). Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-21"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "applicationType",
+      "label": "Issue / Reissue / Replacement due to loss/theft/wear and tear",
+      "type": "enum",
+      "required": true,
+      "description": "The kind of passport action requested.",
+      "sourceRef": "Page 1, top checkbox row",
+      "validation": {
+        "enum": ["ISSUE", "REISSUE", "REPLACEMENT"]
+      }
+    },
+    {
+      "name": "name",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's given name.",
+      "sourceRef": "Page 2, top table — \"NAME\""
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's surname.",
+      "sourceRef": "Page 2, top table — \"SURNAME\""
+    },
+    {
+      "name": "identityCardNumber",
+      "label": "Identity Card No.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's Cyprus Identity Card number.",
+      "sourceRef": "Page 2 — \"Identity Card No.\""
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "Applicant's date of birth.",
+      "sourceRef": "Page 2 — \"Date of Birth\""
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's place of birth.",
+      "sourceRef": "Page 2 — \"Place of Birth\""
+    },
+    {
+      "name": "sex",
+      "label": "Sex (Male/female)",
+      "type": "enum",
+      "required": true,
+      "description": "Applicant's sex, as printed on the form.",
+      "sourceRef": "Page 2 — \"Sex (Male/female)\"",
+      "validation": {
+        "enum": ["MALE", "FEMALE"]
+      }
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "description": "Applicant's nationality.",
+      "sourceRef": "Page 2 — \"Nationality\""
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital Status",
+      "type": "enum",
+      "required": true,
+      "description": "Applicant's marital status.",
+      "sourceRef": "Page 2 — \"Marital Status\" checkbox row",
+      "validation": {
+        "enum": ["MARRIED", "SINGLE", "DIVORCED", "WIDOWED", "SEPARATED"]
+      }
+    },
+    {
+      "name": "addressDistrict",
+      "label": "District",
+      "type": "string",
+      "required": true,
+      "description": "District of the applicant's address.",
+      "sourceRef": "Page 2, ADDRESS block — \"District\""
+    },
+    {
+      "name": "addressMunicipalityOrCommunity",
+      "label": "Municipality/Community",
+      "type": "string",
+      "required": true,
+      "description": "Municipality or community of the applicant's address.",
+      "sourceRef": "Page 2, ADDRESS block — \"Municipality/ Community\""
+    },
+    {
+      "name": "addressQuarter",
+      "label": "Quarter",
+      "type": "string",
+      "required": false,
+      "description": "Quarter (neighborhood) of the applicant's address, where applicable.",
+      "sourceRef": "Page 2, ADDRESS block — \"Quarter\""
+    },
+    {
+      "name": "addressStreet",
+      "label": "Street",
+      "type": "string",
+      "required": true,
+      "description": "Street of the applicant's address.",
+      "sourceRef": "Page 2, ADDRESS block — \"Street\""
+    },
+    {
+      "name": "addressHouseNumber",
+      "label": "House No.",
+      "type": "string",
+      "required": true,
+      "description": "House number of the applicant's address.",
+      "sourceRef": "Page 2, ADDRESS block — \"House No.\""
+    },
+    {
+      "name": "addressApartmentNumber",
+      "label": "Apartment No.",
+      "type": "string",
+      "required": false,
+      "description": "Apartment number of the applicant's address, where applicable.",
+      "sourceRef": "Page 2, ADDRESS block — \"Apartment No.\""
+    },
+    {
+      "name": "addressPostalCode",
+      "label": "Postal Code",
+      "type": "string",
+      "required": true,
+      "description": "Postal code of the applicant's address.",
+      "sourceRef": "Page 2, ADDRESS block — \"Postal Code\""
+    },
+    {
+      "name": "homeTelephoneNumber",
+      "label": "Home Telephone No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Applicant's home telephone number.",
+      "sourceRef": "Page 2, ADDRESS block — \"Home Telephone No.\""
+    },
+    {
+      "name": "workTelephoneNumber",
+      "label": "Work Telephone No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Applicant's work telephone number.",
+      "sourceRef": "Page 2, ADDRESS block — \"Work Telephone No.\""
+    },
+    {
+      "name": "fatherIdentityCardNumber",
+      "label": "Identity Card No.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Father's Cyprus Identity Card number. Printed without any \"if applicant is a minor\" qualifier, unlike Section VI, so modelled as required for every applicant regardless of age.",
+      "sourceRef": "Page 2, SECTION II — FATHER'S DETAILS — \"Identity Card No.\""
+    },
+    {
+      "name": "fatherName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Father's given name.",
+      "sourceRef": "Page 2, SECTION II — FATHER'S DETAILS — \"Name\""
+    },
+    {
+      "name": "fatherSurname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Father's surname. The form prints \"Surname\" for the father's row and \"Family Name\" for the equivalent mother's row (see `motherFamilyName`) — kept as printed rather than normalized to one term.",
+      "sourceRef": "Page 2, SECTION II — FATHER'S DETAILS — \"Surname\""
+    },
+    {
+      "name": "fatherDateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "Father's date of birth.",
+      "sourceRef": "Page 2, SECTION II — FATHER'S DETAILS — \"Date of Birth\""
+    },
+    {
+      "name": "fatherPlaceOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "description": "Father's place of birth.",
+      "sourceRef": "Page 2, SECTION II — FATHER'S DETAILS — \"Place of Birth\""
+    },
+    {
+      "name": "fatherNationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "description": "Father's nationality.",
+      "sourceRef": "Page 2, SECTION II — FATHER'S DETAILS — \"Nationality\""
+    },
+    {
+      "name": "fatherPassportNumber",
+      "label": "Passport No.",
+      "type": "string",
+      "required": false,
+      "description": "Father's own Cyprus passport number, where he holds one.",
+      "sourceRef": "Page 2, SECTION II — FATHER'S DETAILS — \"Passport No.\""
+    },
+    {
+      "name": "motherIdentityCardNumber",
+      "label": "Identity Card No.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Mother's Cyprus Identity Card number. Printed without any \"if applicant is a minor\" qualifier, unlike Section VI, so modelled as required for every applicant regardless of age.",
+      "sourceRef": "Page 2, SECTION III — MOTHER'S DETAILS — \"Identity Card No.\""
+    },
+    {
+      "name": "motherName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Mother's given name.",
+      "sourceRef": "Page 2, SECTION III — MOTHER'S DETAILS — \"Name\""
+    },
+    {
+      "name": "motherFamilyName",
+      "label": "Family Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Mother's surname. The form prints \"Family Name\" for the mother's row and \"Surname\" for the equivalent father's row (see `fatherSurname`) — kept as printed rather than normalized to one term.",
+      "sourceRef": "Page 2, SECTION III — MOTHER'S DETAILS — \"Family Name\""
+    },
+    {
+      "name": "motherDateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "Mother's date of birth.",
+      "sourceRef": "Page 2, SECTION III — MOTHER'S DETAILS — \"Date of Birth\""
+    },
+    {
+      "name": "motherPlaceOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "description": "Mother's place of birth.",
+      "sourceRef": "Page 2, SECTION III — MOTHER'S DETAILS — \"Place of Birth\""
+    },
+    {
+      "name": "motherNationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "description": "Mother's nationality.",
+      "sourceRef": "Page 2, SECTION III — MOTHER'S DETAILS — \"Nationality\""
+    },
+    {
+      "name": "motherPassportNumber",
+      "label": "Passport No.",
+      "type": "string",
+      "required": false,
+      "description": "Mother's own Cyprus passport number, where she holds one.",
+      "sourceRef": "Page 2, SECTION III — MOTHER'S DETAILS — \"Passport No.\""
+    },
+    {
+      "name": "spouseIdentityCardNumber",
+      "label": "Identity Card No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Spouse's Cyprus Identity Card number. Section IV carries no explicit conditional marker tying it to `maritalStatus`, so it is modelled as unconditionally optional rather than `requiredWhen maritalStatus equals MARRIED` — applicants leave it blank when not applicable.",
+      "sourceRef": "Page 3, SECTION IV — HUSBAND'S/WIFE'S DETAILS — \"Identity Card No.\""
+    },
+    {
+      "name": "spouseName",
+      "label": "Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Spouse's given name.",
+      "sourceRef": "Page 3, SECTION IV — HUSBAND'S/WIFE'S DETAILS — \"Name\""
+    },
+    {
+      "name": "spouseSurname",
+      "label": "Surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Spouse's surname.",
+      "sourceRef": "Page 3, SECTION IV — HUSBAND'S/WIFE'S DETAILS — \"Surname\""
+    },
+    {
+      "name": "spouseDateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "description": "Spouse's date of birth.",
+      "sourceRef": "Page 3, SECTION IV — HUSBAND'S/WIFE'S DETAILS — \"Date of Birth\""
+    },
+    {
+      "name": "spousePlaceOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": false,
+      "description": "Spouse's place of birth.",
+      "sourceRef": "Page 3, SECTION IV — HUSBAND'S/WIFE'S DETAILS — \"Place of Birth\""
+    },
+    {
+      "name": "spouseNationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": false,
+      "description": "Spouse's nationality.",
+      "sourceRef": "Page 3, SECTION IV — HUSBAND'S/WIFE'S DETAILS — \"Nationality\""
+    },
+    {
+      "name": "spousePassportNumber",
+      "label": "Passport No.",
+      "type": "string",
+      "required": false,
+      "description": "Spouse's own passport number.",
+      "sourceRef": "Page 3, SECTION IV — HUSBAND'S/WIFE'S DETAILS — \"Passport No.\""
+    },
+    {
+      "name": "hasOtherCyprusPassport",
+      "label": "(i) Do you have any other Cyprus Passport?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the applicant holds any other current Cyprus passport.",
+      "sourceRef": "Page 3, SECTION V — PREVIOUS PASSPORTS OF THE APPLICANT — item (i)"
+    },
+    {
+      "name": "otherCyprusPassportOrTravelDocumentNumber",
+      "label": "Passport No. / Travel Document No.",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasOtherCyprusPassport",
+        "equals": true
+      },
+      "description": "The other Cyprus passport's number. The source form captions this single input box with two stacked labels, \"Passport No.\" and \"Travel Document No.\", with no visual separation between them — both are preserved here rather than guessing which one the box is for.",
+      "sourceRef": "Page 3, SECTION V, item (i) — \"Passport No. / Travel Document No.\""
+    },
+    {
+      "name": "hasForeignPassport",
+      "label": "(ii) Do you have a passport from another Country?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the applicant holds a passport from a country other than Cyprus.",
+      "sourceRef": "Page 3, SECTION V — item (ii)"
+    },
+    {
+      "name": "foreignPassportNumber",
+      "label": "Passport No.",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasForeignPassport",
+        "equals": true
+      },
+      "description": "The foreign passport's number.",
+      "sourceRef": "Page 3, SECTION V, item (ii) — \"Passport No.\""
+    },
+    {
+      "name": "foreignPassportCountryOfIssue",
+      "label": "Country of Issue",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasForeignPassport",
+        "equals": true
+      },
+      "description": "The country that issued the foreign passport.",
+      "sourceRef": "Page 3, SECTION V, item (ii) — \"Country of Issue\""
+    },
+    {
+      "name": "hasLostCyprusPassport",
+      "label": "(iii) Have you lost your Cyprus Passport?",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the applicant has ever lost a Cyprus passport.",
+      "sourceRef": "Page 3, SECTION V — item (iii)"
+    },
+    {
+      "name": "applicantIsMinor",
+      "label": "Applicant is under 18 years of age",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the applicant is a minor (under 18). Not a printed checkbox on the form itself — the form instead renders two separate, mutually exclusive declaration sections (Section VI for underage applicants, Section VII for applicants over 18) — but modelled explicitly here since it gates which of the two applies.",
+      "sourceRef": "Section VI heading (\"...OF UNDERAGE APPLICANTS\") vs. Section VII heading (\"...(over 18 years of age)\")"
+    },
+    {
+      "name": "underageApplicantFullName",
+      "label": "We, the undersigned parents/guardians of ___",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantIsMinor",
+        "equals": true
+      },
+      "classification": "pii",
+      "description": "The minor applicant's full name, as filled into the parents'/guardian's declaration sentence.",
+      "sourceRef": "Page 3, SECTION VI — \"We, the undersigned parents/guardians of ....... request the issue of a passport/temporary passport...\""
+    },
+    {
+      "name": "fatherConsentSignature",
+      "label": "Father's Signature",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantIsMinor",
+        "equals": true
+      },
+      "classification": "pii",
+      "description": "The father's printed name, standing in for their physical signature, consenting to the minor applicant's passport request. Modelled `requiredWhen applicantIsMinor` as the section's own printed default; the page-4 instructions carve out two exceptions not expressible in this grammar: a Family Court sole-custody order lets the other parent sign alone, and a guardian's signature (`guardianConsentSignature`) can stand in for both parents' entirely.",
+      "sourceRef": "Page 3, SECTION VI — \"Father's Signature\""
+    },
+    {
+      "name": "fatherConsentIdentityCardNumber",
+      "label": "Identity Card No.",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantIsMinor",
+        "equals": true
+      },
+      "classification": "pii",
+      "description": "Father's Identity Card number, re-entered beside his consent signature. Distinct from `fatherIdentityCardNumber` in Section II only in printed location; both are expected to carry the same value.",
+      "sourceRef": "Page 3, SECTION VI, father's signature row — \"Identity Card No.\""
+    },
+    {
+      "name": "motherConsentSignature",
+      "label": "Mother's Signature",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantIsMinor",
+        "equals": true
+      },
+      "classification": "pii",
+      "description": "The mother's printed name, standing in for their physical signature, consenting to the minor applicant's passport request. Modelled `requiredWhen applicantIsMinor` as the section's own printed default; see `fatherConsentSignature`'s description for the disclosed sole-custody/guardian exceptions.",
+      "sourceRef": "Page 3, SECTION VI — \"Mother's Signature\""
+    },
+    {
+      "name": "motherConsentIdentityCardNumber",
+      "label": "Identity Card No.",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantIsMinor",
+        "equals": true
+      },
+      "classification": "pii",
+      "description": "Mother's Identity Card number, re-entered beside her consent signature. Distinct from `motherIdentityCardNumber` in Section III only in printed location; both are expected to carry the same value.",
+      "sourceRef": "Page 3, SECTION VI, mother's signature row — \"Identity Card No.\""
+    },
+    {
+      "name": "guardianConsentSignature",
+      "label": "Guardian's Signature",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The legal guardian's printed name, standing in for their physical signature, consenting to the minor applicant's passport request in place of both parents. Unlike the father and mother, the guardian has no biographical block anywhere else on the form (no name/date-of-birth/nationality fields exist to model) — only this signature and ID-card-number line. Left unconditionally optional since it is an alternative path to `fatherConsentSignature`/`motherConsentSignature`, not an additional requirement, and GSP-0013's `requiredWhen` grammar has no \"either this pair or that field\" primitive to express the true either/or constraint.",
+      "sourceRef": "Page 3, SECTION VI — \"Guardian's Signature\""
+    },
+    {
+      "name": "guardianConsentIdentityCardNumber",
+      "label": "Identity Card No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Legal guardian's Identity Card number, re-entered beside their consent signature.",
+      "sourceRef": "Page 3, SECTION VI, guardian's signature row — \"Identity Card No.\""
+    },
+    {
+      "name": "applicantSignature",
+      "label": "Signature",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantIsMinor",
+        "equals": false
+      },
+      "classification": "pii",
+      "description": "The applicant's own printed name, standing in for their physical signature, attesting to the Section VII declaration. Applies only when the applicant is over 18 (Section VI applies instead for minors).",
+      "sourceRef": "Page 3, SECTION VII — \"Signature\""
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantIsMinor",
+        "equals": false
+      },
+      "description": "Date the Section VII declaration is signed by the applicant.",
+      "sourceRef": "Page 3, SECTION VII — \"Date\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityCard",
+      "label": "Identity Card",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 4, item D.1 — \"Identity Card.\""
+    },
+    {
+      "id": "previousPassportOrTemporaryPassport",
+      "label": "Previous passport or Temporary Passport (Laissez Passer)",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicationType",
+        "in": ["REISSUE", "REPLACEMENT"]
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Page 4, item D.2 — \"Previous passport or Temporary Passport (Laissez Passer) (where applicable).\" Not required for a first-time (ISSUE) application, which has no prior document to produce."
+    },
+    {
+      "id": "policeCertificateForLossOrTheft",
+      "label": "Police certificate confirming loss",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicationType",
+        "equals": "REPLACEMENT"
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Page 4, item D.3 — \"In case of loss of passport, a Police certificate to that effect.\" The source text ties this specifically to loss/theft, while REPLACEMENT also covers wear-and-tear replacements that would not need a police certificate — disclosed as a grammar-scope judgment call rather than encoded, since the schema has no separate loss/theft-vs-wear-and-tear field."
+    },
+    {
+      "id": "marriageCertificateForSurname",
+      "label": "Marriage Certificate",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 4, item D.4 — \"A Marriage Certificate in the case of married women who desire the surname of their husband to be written in the passport.\" Only needed by a married woman who wants her husband's surname printed in the passport — a condition with no corresponding field on the form, so left unconditionally optional rather than tied to maritalStatus."
+    },
+    {
+      "id": "birthCertificate",
+      "label": "Birth Certificate",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicationType",
+        "equals": "ISSUE"
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Page 4, item D.7.i — \"Persons submitting the application for a Passport ... for the first time should also produce ... Birth Certificate.\" Required only from first-time applicants."
+    },
+    {
+      "id": "cypriotCitizenshipCertificate",
+      "label": "Certificate of Cypriot Citizenship",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicationType",
+        "equals": "ISSUE"
+      },
+      "belongsTo": "applicant",
+      "sourceRef": "Page 4, item D.7.ii — \"Certificate of Cypriot citizenship if the applicant has acquired the Cypriot nationality by Naturalization or Registration.\" Narrowed to first-time applicants who acquired Cypriot nationality by naturalization or registration (not by birth) — a distinction with no corresponding field on the form, disclosed here as a grammar-scope judgment call rather than encoded, the same treatment given to policeCertificateForLossOrTheft."
+    },
+    {
+      "id": "parentalGuardianDeclaration",
+      "label": "Declaration by Parents/Guardians of Underage Applicants",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantIsMinor",
+        "equals": true
+      },
+      "belongsTo": "responsible-party",
+      "statement": "We, the undersigned parents/guardians of [applicant] request the issue of a passport/temporary passport (laissez passport) to him/her and certify that the details mentioned in the application are true and correct.",
+      "sourceRef": "Page 3, SECTION VI declaration paragraph"
+    },
+    {
+      "id": "applicantDeclaration",
+      "label": "Declaration by the Applicant (over 18 years of age)",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicantIsMinor",
+        "equals": false
+      },
+      "belongsTo": "applicant",
+      "statement": "I solemnly declare that all the information contained in this application, including the certificates and documents attached are true and correct and that I have not lost or renounced the Cypriot nationality.",
+      "sourceRef": "Page 3, SECTION VII declaration paragraph"
+    }
+  ]
+}

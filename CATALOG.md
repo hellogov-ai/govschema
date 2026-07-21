@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **567 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**74 jurisdictions** | **568 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4121, "GovSchema Standard Research"): Cyprus
+> opens as the registry's 74th jurisdiction via Passport (1 of 6)**, via
+> `cy/crmd/passport-application` — the Ministry of Interior's Civil
+> Registry and Migration Department (CRMD) application for the issue,
+> reissue, or loss/theft/wear-and-tear replacement of a Republic of Cyprus
+> passport or temporary passport (laissez passer). Scouted in parallel with
+> Latvia and Saudi Arabia after confirming every existing single-vertical
+> gap (BR/CH/PL/SK/MK Visa, GR/HU National ID, Kazakhstan's/Jordan's/
+> Morocco's remaining verticals) is already a confirmed dead end. Saudi
+> Arabia is a dead end across all six verticals (Nafath/Absher SSO or a
+> structurally circular Absher login gate every service); Latvia's
+> Business Formation (Register of Enterprises' KR2 sole-trader form) is a
+> strong open candidate left as pre-scouted backlog — see the Known Gaps
+> update below. Fetched directly from `gov.cy` with a standard desktop
+> User-Agent (its default WebFetch UA is WAF-blocked, a browser UA is
+> not): HTTP 200, 217,081 bytes, last-modified 2025-11-20, sha256
+> 3309049ceb05fb083801d4edd56e9c7ee87e9ead12e7e13d0824005a22e8f596. A flat,
+> non-AcroForm, badly-OCR'd scanned PDF — every field was derived from a
+> 3x-scale rendered image, not the garbled text layer. Discloses 7
+> source-fidelity findings: Sections II/III (parents' details) carry no
+> minor-only qualifier, unlike Section VI; an asymmetric label for the same
+> concept (father's row says "Surname," mother's says "Family Name");
+> Section V(i)'s single input box is captioned with two stacked, unrelated
+> labels; the guardian party has no biographical block anywhere on the
+> form, unlike the father and mother; Section VI's true consent rule (both
+> parents, unless a sole-custody order or a guardian applies instead)
+> exceeds `requiredWhen`'s expressiveness, the same limitation
+> `il/moin/dr1-passport-application` disclosed for its own rule;
+> `applicantIsMinor` is not a printed checkbox, gating two mutually
+> exclusive declaration sections instead; and two page-4 supporting-document
+> requirements are textually narrower than the schema's own `requiredWhen`
+> can express. Numerator changes from 567 to 568 documents; denominator
+> from 73 to 74. Both validators pass at 568/568; 10 conformance fixtures
+> (2 valid + 8 mutation-control) independently checked against a
+> from-scratch mock validator, confirming 0 dangling `requiredWhen`
+> references. See the Passport vertical section below and the document's
+> own VERIFICATION.md for the full record.
 
 > **Update (2026-07-21, GOV-4114, "GovSchema Standard Research"): Morocco's
 > Passport vertical opens (2 of 6 for Morocco)**, via
@@ -109,7 +147,8 @@
 > VERIFICATION.md for the full record.
 
 > **Update (2026-07-21, GOV-4092/GOV-4094, "GovSchema Standard Research"):
-> Czech Republic closes to 6 of 6 verticals**, via
+> Czech Republic's National ID vertical closes, bringing it to 5 of 6
+> verticals**, via
 > `cz/mv/temporary-identity-card-application` — the Ministry of Interior's
 > (MV ČR) application for a temporary identity card (dočasný občanský
 > průkaz), a short-validity paper ID issued while the standard 10-year
@@ -121,7 +160,14 @@
 > distinct process: the temporary-card variant needs no biometric capture
 > and MV ČR publishes a genuine, unauthenticated .xlsx application form for
 > it (`mv.gov.cz`, cross-verified byte-for-byte against a PDF mirror hosted
-> by the Praha 14 municipal office). Three single-vertical-gap jurisdictions
+> by the Praha 14 municipal office). Czech Republic's Passport vertical
+> remains a confirmed dead end (GOV-1819, unchanged: biometric passports are
+> entirely clerk-entered in person, with no printed application form
+> published), so 5 of 6 is this jurisdiction's ceiling under the current
+> official publishing pattern — **correction (2026-07-21, GOV-4121,
+> "GovSchema Standard Research"): this update originally overstated the
+> result as "6 of 6"; the By-Jurisdiction table below was correct at 5/6 all
+> along.** Three single-vertical-gap jurisdictions
 > were scouted in parallel this cycle (Austria DMV, Netherlands Visa, and
 > this Czech National ID candidate); the other two are left as pre-scouted,
 > ready-to-author backlog for a future cycle — see the Known Gaps section
@@ -13211,7 +13257,21 @@
 
 ## By Vertical
 
-### Passport (50/73 jurisdictions — 68%)
+### Passport (51/74 jurisdictions — 69%)
+
+> **Update (2026-07-21, GOV-4121, "GovSchema Standard Research"): Cyprus
+> opens as the registry's 74th jurisdiction via this vertical**, via
+> `cy/crmd/passport-application` — CRMD's application for the issue,
+> reissue, or replacement of a Republic of Cyprus passport or temporary
+> passport (laissez passer). See the Executive Summary's GOV-4121 update
+> above and the document's own VERIFICATION.md for the full sourcing
+> record, including the 7 disclosed source-fidelity findings and the
+> banked Latvia Business Formation backlog candidate. Numerator updated
+> from 50 to 51; denominator updated from 73 to 74. Cyprus's other five
+> verticals are open, unscreened backlog: Visa is a confirmed duplicate of
+> the EU-harmonized Schengen template already modelled elsewhere; Business
+> Formation, DMV, Taxes, and National ID were each screened this cycle and
+> found gated (see the document's own VERIFICATION.md).
 
 > **Correction (GOV-3537):** numerator updated from 49 to 50 following
 > Ukraine's Passport vertical opening via
@@ -13723,7 +13783,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (57/73 jurisdictions — 78%)
+### DMV — Vehicle Registration, Licensing, Permits (57/74 jurisdictions — 77%)
 
 > **Update (2026-07-21, GOV-4100, "GovSchema Standard Research"): Austria's
 > DMV vertical opens, closing Austria to full 6/6 coverage**, via
@@ -14299,7 +14359,7 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (66/73 jurisdictions — 90%)
+### Business Formation — Incorporation, LLC, Company Registration (66/74 jurisdictions — 89%)
 
 > **Update (2026-07-17, GOV-3581, "GovSchema Standard Research"): Ukraine's
 > Business Formation vertical gains a second schema**, via
@@ -15359,7 +15419,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (63/73 jurisdictions — 86%)
+### Taxes — Income Tax Return, Tax Filing (63/74 jurisdictions — 85%)
 
 > **Update (2026-07-20, GOV-4037, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its tenth and last companion schedule, closing the
@@ -17117,7 +17177,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (62/73 jurisdictions — 85%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (62/74 jurisdictions — 84%)
 
 > **Update (2026-07-21, GOV-4107, "GovSchema Standard Research"): the
 > Netherlands' Visa vertical opens**, via
@@ -17875,10 +17935,12 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (51/73 jurisdictions — 70%)
+### National ID & Civic Documents (51/74 jurisdictions — 69%)
 
 > **Update (2026-07-21, GOV-4092/GOV-4094, "GovSchema Standard Research"):
-> Czech Republic opens this vertical, closing Czechia to 6 of 6**, via
+> Czech Republic opens this vertical, bringing Czechia to 5 of 6** (Passport
+> remains a confirmed dead end — see the Executive Summary correction
+> above), via
 > `cz/mv/temporary-identity-card-application` — MV ČR's application for a
 > temporary identity card (dočasný občanský průkaz). Overturns, in part, a
 > prior cycle's (GOV-1819) characterization of Czech National ID as a
@@ -18571,6 +18633,7 @@ now closed.
 | **CH** | 14 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **CY** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | **CZ** | 9 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DK** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -18659,6 +18722,45 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    - **Update (GOV-4100):** the sibling Austria DMV candidate this same
      item had banked is now authored — see the Executive Summary update
      above (`at/bmi/driving-licence-application`) — closing Austria to 6/6.
+0a. **Pre-scouted new-jurisdiction candidate banked this cycle (GOV-4121,
+    2026-07-21):**
+    - **Latvia Business Formation** — the Register of Enterprises'
+      (Uzņēmumu reģistrs) Form **KR2**, sole-trader (individual merchant)
+      registration ("Pieteikums individuālā komersanta ierakstīšanai
+      komercreģistrā"), served directly and unauthenticated as a native
+      `.docx` at `apraksti.ur.gov.lv/lv/KR2%20veidlapa` (~46KB, docProps
+      last-modified 2025-10-06). Roughly 40-50 fields across 10 numbered
+      sections: individual-merchant identity (LV personal code or, for a
+      foreign person, birth date/address/ID-document details), business
+      name, address decomposed to Latvia's own cadastre schema, a
+      micro-enterprise tax-status opt-in, a guardian/custodian block, a
+      signer-on-behalf block (both reusing the same identity sub-schema as
+      the applicant), attached-documents list, contact/notification
+      preference, up to 2 signatures, and state-fee payment details. Would
+      open Latvia as the registry's 75th jurisdiction. Latvia's other five
+      verticals were screened the same cycle and found weaker: DMV (CSDD)
+      is fully e.csdd.lv-login-gated with no downloadable form; Visa is a
+      confirmed duplicate of the EU-harmonized Schengen template already
+      modelled elsewhere; Passport and National ID (PMLP) are both
+      in-person-appointment-only, with only a stale 2017 third-party-hosted
+      combined counter form found; Taxes (VID's annual income declaration,
+      Cabinet Regulation No. 662) is a genuine open but large multi-schedule
+      source not yet field-extracted.
+    - **Saudi Arabia — screened, dead end across all six verticals this
+      cycle (GOV-4121).** DMV (Absher/Muroor), Business Formation (Saudi
+      Business Center), Taxes (ZATCA), and Passport (Jawazat) are all
+      exclusively delivered through Absher or the Saudi Business Center
+      portal, gated behind Nafath national SSO; National ID/Iqama (Absher)
+      is structurally circular — Absher login itself requires an existing
+      national ID/Iqama to authenticate. `moi.gov.sa` was network-
+      unreachable from this session's tooling; the eVisa portal
+      (`visa.visitsaudi.com`) returned a Cloudflare/WAF block to automated
+      fetch, the only vertical not gated behind a national-ID-holder login
+      but unreachable without real browser automation this cycle. Not a
+      hard dead end for the eVisa vertical specifically if
+      browser-automation access becomes available in a future cycle; a
+      dead end for every other vertical under the current publishing
+      pattern.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
@@ -20512,6 +20614,29 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
+- **CY Business Formation, DMV, Taxes, National ID; CY Visa (confirmed
+  duplicate)** — GOV-4121, 2026-07-21. Business Formation's HE1
+  incorporation form (Companies Section, `companies.gov.cy`) is a sworn
+  affidavit that must be signed before a Cyprus lawyer in court, not a
+  self-service applicant form; the practical route is the login-gated
+  `efiling.drcor.mcit.gov.cy` e-filing portal. DMV's first-party host
+  (`mcw.gov.cy`, Road Transport Department) is unreachable this cycle
+  (DNS/migration dead, consistent with a mid-migration of legacy department
+  domains into the unified `gov.cy` portal); only third-party mirrors of
+  its TOM 9B/7B/7D forms were found. Taxes (TD1) has migrated fully to the
+  login-gated TAXISnet/TFA e-filing system; only a completion guide PDF
+  survives, not a fillable/flat form. National ID application
+  (`citizen-documents.service.gov.cy`) explicitly requires CY Login
+  national-SSO authentication, with no standalone downloadable form found.
+  Visa (`gov.cy/media/.../CY-Visa-Application-Form.pdf`) is open and
+  unauthenticated but a confirmed field-for-field duplicate (fields 1-33)
+  of the EU-harmonized Schengen Annex I template already modelled at
+  `de/auswaertiges-amt/national-visa-application` — notable because Cyprus
+  is not in the Schengen area, yet still applies the harmonized instrument.
+  Not hard dead ends for Business Formation/DMV if a genuinely new source
+  (a field-level e-filing guide, or `mcw.gov.cy` coming back online)
+  surfaces; dead ends for Taxes/National ID under the current
+  SSO-only publishing pattern.
 - **GR National ID (astynomia.gr / gov.gr / id.gov.gr)** — GOV-3491,
   2026-07-17. Unlike Greece's own passport vertical (a genuine rendered
   specimen image exists), astynomia.gr's own text states the ID-card
