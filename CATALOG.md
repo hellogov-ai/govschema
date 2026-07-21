@@ -4,7 +4,29 @@
 
 ## Executive Summary
 
-**75 jurisdictions** | **569 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**75 jurisdictions** | **570 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4138, "GovSchema Standard Research"): Latvia's
+> Taxes vertical opens (2 of 6)**, via
+> `lv/vid/annual-income-tax-declaration-form-d` — the State Revenue
+> Service's (VID) annual personal income tax declaration under Cabinet
+> Regulation No. 662, Form D (cover/identification and 27-row tax-
+> calculation summary) plus Annex D1 (taxation-year income earned in Latvia
+> excluding business income), banked as a genuine open candidate during the
+> GOV-4121/GOV-4129 cycles. Fetched `likumi.lv`'s own regulation page
+> directly with a standard desktop User-Agent: HTTP 200, 365,651 bytes,
+> stable across repeat fetches (sha256 not stable — isolated to one
+> obfuscated bot-detection `<script>` token, unrelated to the regulation
+> text). Annex 1 renders the actual forms as real HTML `<TABLE>` markup;
+> extracted with a from-scratch DOM-respecting `html.parser` walk (not
+> tag-stripping), which caught and corrected a naive-extraction pitfall the
+> issue itself flagged — flattening `<SUP>1</SUP>` superscripts collapses
+> "D1¹"/"D2¹"/"D3¹" annex cross-references into misleading "D11"/"D21"/
+> "D31" strings. Models 130 fields across 4 steps; explicitly leaves Annexes
+> D1¹, D2, D2¹, D3, D3¹, D4, DK, the DK annex, and GD as open backlog (see
+> the document's own VERIFICATION.md Known Gaps). See the Taxes vertical
+> section below for the full sourcing record. Numerator updated from 63 to
+> 64/75.
 
 > **Update (2026-07-21, GOV-4129, "GovSchema Standard Research"): Latvia
 > opens as the registry's 75th jurisdiction via Business Formation (1 of
@@ -15464,7 +15486,20 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (63/75 jurisdictions — 84%)
+### Taxes — Income Tax Return, Tax Filing (64/75 jurisdictions — 85%)
+
+> **Update (2026-07-21, GOV-4138, "GovSchema Standard Research"): Latvia's
+> Taxes vertical opens**, via `lv/vid/annual-income-tax-declaration-form-d`
+> — the State Revenue Service's (Valsts ieņēmumu dienests, VID) annual
+> personal income tax declaration under Cabinet Regulation No. 662 (30
+> October 2018, as amended by Cabinet Regulation No. 615 of 21 October
+> 2025, in force 2026-01-01). See the Executive Summary's GOV-4138 update
+> above and the document's own VERIFICATION.md for the full sourcing
+> record, including the 3 disclosed source-fidelity findings and the 9
+> annexes (D1¹, D2, D2¹, D3, D3¹, D4, DK, the DK annex, GD) left as open
+> backlog. Numerator updated from 63 to 64; denominator unchanged at 75.
+> Latvia's remaining four verticals (DMV, Visa, Passport, National ID) were
+> screened weak during GOV-4121 and remain open backlog.
 
 > **Update (2026-07-20, GOV-4037, "GovSchema Standard Research"): Ukraine's
 > Taxes vertical gains its tenth and last companion schedule, closing the
@@ -18785,9 +18820,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       is a confirmed duplicate of the EU-harmonized Schengen template
       already modelled elsewhere; Passport and National ID (PMLP) are both
       in-person-appointment-only, with only a stale 2017 third-party-hosted
-      combined counter form found; Taxes (VID's annual income declaration,
-      Cabinet Regulation No. 662) is a genuine open but large multi-schedule
-      source not yet field-extracted — these five remain open backlog.
+      combined counter form found — these four remain open backlog.
+      **Update (GOV-4138, 2026-07-21): Taxes (VID's annual income
+      declaration, Cabinet Regulation No. 662) is now authored** as
+      `lv/vid/annual-income-tax-declaration-form-d` — see the Executive
+      Summary and Taxes vertical updates above. Scoped to Form D plus
+      Annex D1 only; Annexes D1¹, D2, D2¹, D3, D3¹, D4, DK, the DK annex,
+      and GD remain open backlog per the document's own VERIFICATION.md.
     - **Saudi Arabia — screened, dead end across all six verticals this
       cycle (GOV-4121).** DMV (Absher/Muroor), Business Formation (Saudi
       Business Center), Taxes (ZATCA), and Passport (Jawazat) are all
