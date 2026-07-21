@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**75 jurisdictions** | **573 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**76 jurisdictions** | **574 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4169, "GovSchema Standard Research"): Malta
+> opens as the registry's 76th jurisdiction — Business Formation**, via
+> `mt/jobsplus/self-employed-declaration-of-commencement@1.0.0`, Jobsplus'
+> (Malta's public employment service corporation) "Declaration of
+> Commencement of Employment — Self-Employed Persons". Scouted fresh this
+> cycle after four consecutive cycles deepening Latvia's Taxes vertical
+> reached a natural pause (see the LV VID Known Gaps entry below for the
+> D4/DK-pielikums/GD re-examination this cycle also completed). Fetched
+> `jobsplus.gov.mt` directly: a plain `curl` (even with a realistic desktop
+> User-Agent) is blocked by a Cloudflare JS challenge, but this session's
+> own web-fetch tooling retrieved the genuine asset — HTTP 200,
+> `application/pdf`, 317,073 bytes, sha256
+> `a4cf3d5b98b92cc792d9c419c522ef5fe5edb5ed91d512596a3fdd23f73304fa`,
+> independently corroborated by a separate research pass earlier the same
+> cycle reporting the identical byte count. Confirmed mechanically (not
+> asserted from memory): a genuine `%PDF-1.6` flat, non-AcroForm,
+> non-`/Widget` specimen. Models 39 fields across 3 steps (Personal
+> Details; Details of Employment; Commercial Details of Self-Employed) plus
+> 3 `documents[]` attachment entries. Discloses 6 source-fidelity findings,
+> most notably that two explanatory notes beneath the Nationality checkbox
+> block each end in a lone, uncaptioned checkbox whose meaning ("situation
+> applies" vs. "document attached") the form itself never disambiguates,
+> and that Section C's address/locality/postcode trio are each printed with
+> a mandatory asterisk in tension with the section's own "tick this box if
+> same as Section A" shortcut. See the document's own VERIFICATION.md for
+> the full record. Malta's other five verticals (DMV, Visa, Passport,
+> Taxes, National ID) are open, unscreened backlog candidates for a future
+> cycle. Numerator/denominator 75 → 76; document count 573 → 574.
 
 > **Update (2026-07-21, GOV-4163, "GovSchema Standard Research"): Latvia's
 > Taxes vertical deepens further — Annex D1¹ (income excluded from the
@@ -13391,7 +13420,7 @@
 
 ## By Vertical
 
-### Passport (51/75 jurisdictions — 68%)
+### Passport (51/76 jurisdictions — 67%)
 
 > **Update (2026-07-21, GOV-4121, "GovSchema Standard Research"): Cyprus
 > opens as the registry's 74th jurisdiction via this vertical**, via
@@ -13917,7 +13946,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (57/75 jurisdictions — 76%)
+### DMV — Vehicle Registration, Licensing, Permits (57/76 jurisdictions — 75%)
 
 > **Update (2026-07-21, GOV-4100, "GovSchema Standard Research"): Austria's
 > DMV vertical opens, closing Austria to full 6/6 coverage**, via
@@ -14493,7 +14522,17 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (67/75 jurisdictions — 89%)
+### Business Formation — Incorporation, LLC, Company Registration (68/76 jurisdictions — 89%)
+
+> **Update (2026-07-21, GOV-4169, "GovSchema Standard Research"): Malta
+> opens as the registry's 76th jurisdiction via this vertical**, via
+> `mt/jobsplus/self-employed-declaration-of-commencement` — Jobsplus'
+> "Declaration of Commencement of Employment — Self-Employed Persons". See
+> the Executive Summary's GOV-4169 update above and the document's own
+> VERIFICATION.md for the full sourcing record, including the 6 disclosed
+> source-fidelity findings. Numerator updated from 67 to 68; denominator
+> updated from 75 to 76. Malta's other five verticals (DMV, Visa, Passport,
+> Taxes, National ID) are open, unscreened backlog.
 
 > **Update (2026-07-21, GOV-4129, "GovSchema Standard Research"): Latvia
 > opens as the registry's 75th jurisdiction via this vertical**, via
@@ -15564,7 +15603,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (64/75 jurisdictions — 85%)
+### Taxes — Income Tax Return, Tax Filing (64/76 jurisdictions — 84%)
 
 > **Update (2026-07-21, GOV-4163, "GovSchema Standard Research"): Latvia's
 > Taxes vertical deepens further**, via
@@ -17365,7 +17404,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (62/75 jurisdictions — 83%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (62/76 jurisdictions — 82%)
 
 > **Update (2026-07-21, GOV-4107, "GovSchema Standard Research"): the
 > Netherlands' Visa vertical opens**, via
@@ -18123,7 +18162,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (51/75 jurisdictions — 68%)
+### National ID & Civic Documents (51/76 jurisdictions — 67%)
 
 > **Update (2026-07-21, GOV-4092/GOV-4094, "GovSchema Standard Research"):
 > Czech Republic opens this vertical, bringing Czechia to 5 of 6** (Passport
@@ -18852,11 +18891,12 @@ now closed.
 | **KZ** | 10 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| **LV** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **LV** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **MA** | 2 | ✓ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **MT** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -18959,6 +18999,27 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       accounting schedules (too formula-derived/broad), and D4/DK/GD were
       not re-examined beyond the standing disclosure that they remain
       unscoped.
+      **Re-examination (GOV-4169, 2026-07-21):** D4, DK, and GD were each
+      re-fetched and read fresh this cycle (365,651 bytes, byte-identical
+      to every prior cycle). **Annex D4** ("Attaisnotie izdevumi par
+      izglītību, ārstnieciskajiem pakalpojumiem, ziedojumiem un
+      dāvinājumiem" — deductible education/medical/donation expenses) is a
+      genuine `<TABLE>` with 12 numbered columns, ~5 data rows — **viable,
+      same class as D1/D2/D1¹/D2¹**. **DK** is not itself an annex to Form
+      D but a standalone companion declaration on capital-asset
+      transactions begun-but-not-completed within the tax year, carrying
+      its own genuine sub-annex ("Deklarācijas DK pielikums", 6 numbered
+      columns) — **viable, but as its own schema/track, not a further Form
+      D annex step**. **GD** ("Gada kapitāla pieauguma ienākuma
+      precizēšanas deklarācija" — annual capital-gains correction
+      declaration) is a formula-derived tax **recomputation** (revenue
+      minus acquisition cost, tax owed minus withheld/foreign tax, split
+      across regular and crypto-asset sections) — **excluded, same
+      reasoning as D3/D3¹**. D4 is now the single most likely next
+      candidate for a future LV Taxes deepening cycle; the DK-pielikums is
+      a second, structurally distinct candidate (its own top-level schema,
+      not a Form D version bump). Not authored this cycle — Malta (below)
+      was chosen instead, since it opens a brand-new jurisdiction outright.
     - **Saudi Arabia — screened, dead end across all six verticals this
       cycle (GOV-4121).** DMV (Absher/Muroor), Business Formation (Saudi
       Business Center), Taxes (ZATCA), and Passport (Jawazat) are all
@@ -18974,6 +19035,45 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       browser-automation access becomes available in a future cycle; a
       dead end for every other vertical under the current publishing
       pattern.
+0b. **Pre-scouted candidates banked this cycle (GOV-4169, 2026-07-21) —
+    Malta now authored, Ireland and Cyprus remain open backlog:**
+    - **Malta Business Formation** — Jobsplus' "Declaration of Commencement
+      of Employment — Self-Employed Persons"
+      (`jobsplus.gov.mt/media/rqnokvpx/selfemployedenglish2024.pdf`), a
+      flat, non-AcroForm PDF reachable only through this session's own
+      web-fetch tooling (a plain `curl`, even with a realistic desktop
+      User-Agent, is Cloudflare-JS-challenge-blocked). **Update (GOV-4169,
+      2026-07-21): now authored** as
+      `mt/jobsplus/self-employed-declaration-of-commencement` — see the
+      Executive Summary and Business Formation vertical updates above.
+      Opens Malta as the registry's 76th jurisdiction. Malta's other five
+      verticals (DMV, Visa, Passport, Taxes, National ID) are open,
+      unscreened backlog.
+    - **Ireland RBN1** (individual/sole-trader business-name registration,
+      Companies Registration Office) — the direct `cro.ie` host remains
+      Cloudflare-JS-challenge-gated (re-confirmed this cycle, HTTP 403),
+      but an unauthenticated static mirror of the identical official form
+      was found at the Dún Laoghaire Local Enterprise Office,
+      `dlrceb.ie/_fileupload/Downloads/rbn1.pdf` (HTTP 200, 17,660 bytes,
+      no Cloudflare gate) — confirmed via direct content-stream
+      decompression to carry every real field label (Business name; Nature
+      of business; Date of adoption; individual applicant block; presenter
+      block; certification/signature). Ireland already has 5/6 verticals
+      via `ie/cro/company-incorporation` and others; RBN1 would be a
+      companion Business Formation schema for individual/sole-trader
+      business-name registration specifically, not a new vertical. Not
+      authored this cycle (Malta was chosen instead, opening a brand-new
+      jurisdiction); remains open backlog.
+    - **Cyprus EE1** (business-name registration by an individual,
+      Department of Registrar of Companies and Intellectual Property,
+      `companies.gov.cy/assets/modules/wgp/articles/201801/53/docs/ee1.pdf`)
+      — HTTP 200, 87,675 bytes, single-page official numbered form, no
+      login/JS-challenge gate. The Greek text is glyph-index-encoded (no
+      ToUnicode CMap), needing embedded-font glyph-mapping or a pixel-scan
+      extraction pass beyond what this cycle's scouting attempted. Cyprus
+      is currently 1/6 (Passport only, via GOV-4124); this would open
+      Business Formation (2/6). Not authored this cycle; remains open
+      backlog, pending the glyph-decoding groundwork.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
