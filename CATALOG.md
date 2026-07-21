@@ -4,7 +4,43 @@
 
 ## Executive Summary
 
-**76 jurisdictions** | **574 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**76 jurisdictions** | **575 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4178, "GovSchema Standard Research"): Ireland's
+> Business Formation vertical gains a companion sole-trader schema — RBN1**,
+> via `ie/cro/business-name-registration-individual@1.0.0`, the Companies
+> Registration Office's (CRO) Form RBN1, "Registration of Business Name by an
+> individual" (Registration of Business Names Act 1963, s.4). This does not
+> open a new vertical (Ireland's Business Formation vertical was already
+> covered by `ie/cro/company-incorporation`) but is the individual/sole-trader
+> business-name-registration companion this registry's own prior cycles
+> (recorded below under Known Gaps) had left as open backlog after the direct
+> `cro.ie` host proved Cloudflare-JS-challenge-gated. This cycle found an
+> unauthenticated static mirror of the identical official form at
+> `dlrceb.ie/_fileupload/Downloads/rbn1.pdf` (a Dún Laoghaire-Rathdown
+> Enterprise Board local-enterprise-office host), HTTP 200,
+> `application/pdf`, 17,660 bytes. Confirmed mechanically (not summarized): 3
+> `/Page` objects, every `FlateDecode` content stream independently
+> decompressed and its `Tj`/`TJ` text-showing operators walked in document
+> order together with their `Tm`/`Td`/`TD` operands, recovering the x/y
+> position of every field label and each of the form's 8 numbered
+> explanatory notes so each note could be matched to its correct field by
+> physical proximity rather than assumed from the notes' printed reading
+> order. Models 25 `fields[]` across 4 steps (business/trade details;
+> individual applicant particulars; presenter details; certification), with
+> address fields (principal place of business, residential address,
+> presenter address) modelled as single free-text multi-line strings —
+> deliberately not split into line1/line2 sub-fields the way this registry's
+> sibling `ie/cro/company-incorporation` does, because RBN1's own source form
+> prints each as one ruled writing box with no internal sub-labels, unlike
+> Form A1's separately labelled registered-office address lines. See the
+> document's own VERIFICATION.md for the full field-to-note mapping and two
+> disclosed open items (presenter sub-field mandatoriness; this specimen
+> prints no asterisk/mandatory-marker convention at all). Document count 574
+> → 575; jurisdiction count unchanged at 76 (no new jurisdiction opened).
+> Cyprus's own business-name-registration candidate (Form EE1) remains open
+> backlog, pending glyph-decoding groundwork for its un-mapped embedded font
+> — see Known Gaps below.
 
 > **Update (2026-07-21, GOV-4169, "GovSchema Standard Research"): Malta
 > opens as the registry's 76th jurisdiction — Business Formation**, via
@@ -14524,6 +14560,15 @@ within an already-covered vertical:
 
 ### Business Formation — Incorporation, LLC, Company Registration (68/76 jurisdictions — 89%)
 
+> **Update (2026-07-21, GOV-4178, "GovSchema Standard Research"): Ireland
+> gains a companion sole-trader/business-name-registration schema**, via
+> `ie/cro/business-name-registration-individual` — CRO Form RBN1,
+> "Registration of Business Name by an individual". Ireland was already
+> counted in this vertical's numerator via `ie/cro/company-incorporation`,
+> so the 68/76 count is unchanged; see the Executive Summary's GOV-4178
+> update above and the document's own VERIFICATION.md for the full sourcing
+> record.
+
 > **Update (2026-07-21, GOV-4169, "GovSchema Standard Research"): Malta
 > opens as the registry's 76th jurisdiction via this vertical**, via
 > `mt/jobsplus/self-employed-declaration-of-commencement` — Jobsplus'
@@ -18878,7 +18923,7 @@ now closed.
 | **GR** | 4 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **IE** | 12 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **IE** | 13 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IL** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -19053,17 +19098,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Companies Registration Office) — the direct `cro.ie` host remains
       Cloudflare-JS-challenge-gated (re-confirmed this cycle, HTTP 403),
       but an unauthenticated static mirror of the identical official form
-      was found at the Dún Laoghaire Local Enterprise Office,
-      `dlrceb.ie/_fileupload/Downloads/rbn1.pdf` (HTTP 200, 17,660 bytes,
-      no Cloudflare gate) — confirmed via direct content-stream
-      decompression to carry every real field label (Business name; Nature
-      of business; Date of adoption; individual applicant block; presenter
-      block; certification/signature). Ireland already has 5/6 verticals
-      via `ie/cro/company-incorporation` and others; RBN1 would be a
-      companion Business Formation schema for individual/sole-trader
-      business-name registration specifically, not a new vertical. Not
-      authored this cycle (Malta was chosen instead, opening a brand-new
-      jurisdiction); remains open backlog.
+      was found at the Dún Laoghaire-Rathdown Enterprise Board local
+      enterprise office, `dlrceb.ie/_fileupload/Downloads/rbn1.pdf` (HTTP
+      200, 17,660 bytes, no Cloudflare gate) — confirmed via direct
+      content-stream decompression to carry every real field label
+      (Business name; Nature of business; Date of adoption; individual
+      applicant block; presenter block; certification/signature).
+      **Update (GOV-4178, 2026-07-21): now authored** as
+      `ie/cro/business-name-registration-individual` — see the Executive
+      Summary update above. Ireland already had 6/6 verticals via
+      `ie/cro/company-incorporation` and others; RBN1 is a companion
+      Business Formation schema for individual/sole-trader business-name
+      registration specifically, not a new vertical.
     - **Cyprus EE1** (business-name registration by an individual,
       Department of Registrar of Companies and Intellectual Property,
       `companies.gov.cy/assets/modules/wgp/articles/201801/53/docs/ee1.pdf`)
@@ -19090,16 +19136,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
    prescribed by Kerala's own Partnership Rules) — see the Executive
    Summary update above and the document's own VERIFICATION.md. Ireland's
    RBN1 (individual business-name registration) was screened first for the
-   same gap but is blocked by a Cloudflare JavaScript challenge across the
-   entire `cro.ie` domain — a genuine bot-mitigation gate, not a missing
-   source; re-confirmed this cycle as still Cloudflare-managed-challenge-
-   gated even against a real headless-browser session with a realistic
-   desktop UA, worth retrying with a different Cloudflare-workaround
-   technique in a future cycle. New Zealand's NZBN sole-trader/partnership
-   registration was also reconfirmed this cycle as a RealMe-SSO-gated
-   single-page application with no PDF/prose field-by-field fallback
-   found. NZ's and Ireland's sole-trader/partnership candidates remain
-   open.
+   same gap and was for several cycles blocked by a Cloudflare JavaScript
+   challenge across the entire `cro.ie` domain — a genuine bot-mitigation
+   gate, not a missing source. **Update (GOV-4178, 2026-07-21): Ireland's
+   share is now closed too**, via
+   `ie/cro/business-name-registration-individual` (Form RBN1), sourced from
+   an unauthenticated static mirror of the identical official form (see the
+   Executive Summary update above) rather than a Cloudflare workaround for
+   `cro.ie` itself. New Zealand's NZBN sole-trader/partnership registration
+   was reconfirmed in the same cycle as this gap's India/Ontario closures as
+   a RealMe-SSO-gated single-page application with no PDF/prose
+   field-by-field fallback found; NZ's sole-trader/partnership candidate
+   remains the only open item in this gap.
 2. **Corporate income tax**: IE corporation tax (Form CT1) still has no
    corporate-return schema (its individual return is covered) — re-examined
    fresh in GOV-1444 (2026-07-06): Revenue.ie's year-specific Tax and Duty

@@ -1,0 +1,304 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ie/cro/business-name-registration-individual",
+  "version": "1.0.0",
+  "title": "Ireland Registration of a Business Name by an Individual (Form RBN1)",
+  "description": "Register a business name under which a sole individual (not a company or partnership) trades, filed with the Companies Registration Office (CRO) under section 4 of the Registration of Business Names Act 1963. This is a companion Business Formation document to ie/cro/company-incorporation: that document incorporates a new company (a distinct legal entity); this one instead registers the trading name of an individual who trades in their own name/right without forming a company. Scoped to Form RBN1 specifically (the individual-applicant variant); the CRO's parallel forms for a partnership (RBN1A) or a body corporate (RBN1B) applicant, and the post-registration amendment (Form RBN2) and cessation (Form RBN3) forms, are all out of scope — see VERIFICATION.md. It does not submit the registration; the live cro.ie source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by Ireland or the CRO.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "IE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Companies Registration Office",
+    "abbreviation": "CRO",
+    "url": "https://www.cro.ie/"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en-IE"
+  },
+  "source": {
+    "url": "https://www.dlrceb.ie/_fileupload/Downloads/rbn1.pdf",
+    "retrievedAt": "2026-07-21",
+    "documentRef": "Form RBN1 — \"Registration of Business Name by an individual\", native PDF, 3 pages"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-21",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-21",
+    "notes": "GOV-4178, continuing GOV-4176's research cycle. The primary cro.ie host (which itself hosts an equivalent RBN1 PDF under /-/media/) sits behind a Cloudflare JavaScript challenge that blocks both direct fetch and this environment's headless-browser tooling (the same block CATALOG.md already recorded against cro.ie for ie/cro/company-incorporation and, more recently, against a first RBN1 attempt in the Ontario-business-incorporation cycle). This cycle instead fetched an unauthenticated static mirror of the same official form hosted by Dun Laoghaire-Rathdown Enterprise Board (dlrceb.ie, a public-sector local enterprise office): HTTP 200, application/pdf, 17,660 bytes. Confirmed mechanically (not summarized) that the retrieved bytes are a genuine PDF (3 /Page objects per /Kids [ 15 0 R 1 0 R 4 0 R ]) and independently decompressed every FlateDecode content stream, walking the raw Tj/TJ text-showing operators (and their Tm/TD text-matrix operands, to recover field/note x-y positions) directly — not relying on any summarizer tool, which cannot decode compressed PDF streams. This let every field label, every one of the form's 8 numbered explanatory notes, and each note's exact field attachment be recovered from first principles by comparing label and note-marker coordinates, rather than assumed from the notes' printed order.\n\nModels 25 fields[] across 4 steps mirroring the form's own layout (business/trade details, the individual applicant's particulars, presenter details, and certification), all derived directly from the form; no external secondary source was needed since RBN1's own instructional notes are self-contained. See 'What was confirmed against the source' below for the full field-to-note mapping and 'Scope narrowing and why' for what was intentionally left out."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "businessName",
+      "label": "Business name",
+      "type": "string",
+      "required": true,
+      "description": "The trading name being registered. Per note 1, the Minister for Enterprise, Trade and Employment may (Registration of Business Names Act 1963 s.14) refuse to register any name considered undesirable; if the applicant is the proprietor of a newspaper, the newspaper's title must be given in full.",
+      "sourceRef": "\"Business name\" — note one",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "otherBusinessNames",
+      "label": "Other business name(s) under which this business is conducted (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Any other trading name(s) under which the same business also operates. The form's own general instruction (\"Where 'not applicable', 'nil' or 'none' is appropriate, please state\") implies this line is always answered on the paper form, but since it records a business fact that may genuinely not apply, it is modelled here as optional rather than a mandatory field that only ever holds a placeholder value.",
+      "sourceRef": "\"Other business name(s) under which this business is conducted\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "natureOfBusinessDescription",
+      "label": "Nature of business",
+      "type": "string",
+      "required": true,
+      "description": "Per note 2, a detailed description of the nature of the business is required — simple descriptions such as \"trading\" or \"manufacturing\" alone are explicitly rejected as insufficiently precise.",
+      "sourceRef": "\"Nature of business\" — note two",
+      "validation": { "minLength": 1, "maxLength": 500 }
+    },
+    {
+      "name": "principalPlaceOfBusinessAddress",
+      "label": "Principal place of business",
+      "type": "string",
+      "required": true,
+      "description": "The full postal address, in the State, of the business, per note 3. A Post Office box number or a \"care of\" address is not accepted. Printed on the form as a single ruled multi-line writing area rather than separately labelled address-line/town/county sub-fields (unlike this registry's ie/cro/company-incorporation, whose source form does label those sub-fields separately), so this document follows the source's own single free-text field.",
+      "sourceRef": "\"Principal place of business\" — note three",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "dateOfAdoption",
+      "label": "Date of adoption of business name",
+      "type": "date",
+      "required": true,
+      "description": "The date the business commenced trading, or is due to commence trading, per note 4. Printed on the form as separate Day/Month/Year boxes; modelled here as a single ISO date per this registry's convention.",
+      "sourceRef": "\"Date of adoption of business name\" — note four"
+    },
+    {
+      "name": "applicantSurname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Per note 6 (Registration of Business Names Act 1963 s.2), \"surname\", in the case of a person usually known by a title different from their surname, means that title.",
+      "sourceRef": "Individual — \"Surname\" — note six",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "applicantForenames",
+      "label": "Forename(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Per note 6 (Registration of Business Names Act 1963 s.2), \"forename(s)\" includes any Christian name(s).",
+      "sourceRef": "Individual — \"Forename(s)\" — note six",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "applicantFormerSurnames",
+      "label": "Former surname(s) (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Per note 6, references to a former surname exclude: (1) for a person usually known by a title different from their surname, the name held before the adoption of, or succession to, the title; (2) any former forename or surname changed or disused for 20 years or more; and (3) for a married woman, the surname held before the marriage.",
+      "sourceRef": "Individual — \"Former surname(s)\" — note six",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "applicantFormerForenames",
+      "label": "Former forename(s) (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Subject to the same note 6 exclusions as applicantFormerSurnames.",
+      "sourceRef": "Individual — \"Former forename(s)\" — note six",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "applicantResidentialAddress",
+      "label": "Residential address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The individual applicant's residential address, given as a single free-text multi-line entry (a ruled writing box on the source form, not separately labelled address-line sub-fields).",
+      "sourceRef": "Individual — \"Residential address\"",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "applicantBusinessOccupation",
+      "label": "Business occupation",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Individual — \"Business occupation\"",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "applicantNationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Individual — \"Nationality\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "applicantDirectorshipCompanyName",
+      "label": "Directorship(s) — company name (where applicable)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Per note 7, insert the company name and number of any company of which the applicant is a director, where applicable. Printed as a multi-line ruled box, allowing more than one directorship to be listed; this document does not model a repeating structure for individual directorship entries (GovSchema v0.3 fields are flat; see GSP-0009).",
+      "sourceRef": "Individual — \"Directorship(s) — Company name\" — note seven",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "applicantDirectorshipCompanyNumber",
+      "label": "Directorship(s) — company number (where applicable)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Per note 7, insert the company number corresponding to applicantDirectorshipCompanyName, where applicable.",
+      "sourceRef": "Individual — \"Company number\" — note seven",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "presenterName",
+      "label": "Presenter details — name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Per note 5, this section must be completed by the person presenting the application form to the Registrar — the individual applicant themself, or a person acting on their behalf.",
+      "sourceRef": "Presenter details — \"Name\" — note five",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "presenterAddress",
+      "label": "Presenter details — address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Presenter details — \"Address\" — note five",
+      "validation": { "minLength": 1, "maxLength": 300 }
+    },
+    {
+      "name": "presenterTelephoneNumber",
+      "label": "Presenter details — telephone number (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Not marked as mandatory by the source; note five only mandates that the section identify the presenter, not that every contact channel be given.",
+      "sourceRef": "Presenter details — \"Telephone number\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "presenterFaxNumber",
+      "label": "Presenter details — fax number (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Presenter details — \"Fax number\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "presenterEmail",
+      "label": "Presenter details — email (optional)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Presenter details — \"Email\"",
+      "validation": { "maxLength": 254 }
+    },
+    {
+      "name": "presenterDxNumber",
+      "label": "Presenter details — DX number (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Per note 5, the DX (document exchange) number and exchange may be given by presenters who are members of a document exchange service.",
+      "sourceRef": "Presenter details — \"DX number\" — note five",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "presenterDxExchange",
+      "label": "Presenter details — DX exchange (optional)",
+      "type": "string",
+      "required": false,
+      "description": "Per note 5, given alongside presenterDxNumber by presenters who are members of a document exchange service.",
+      "sourceRef": "Presenter details — \"DX exchange\" — note five",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "presenterReferenceNumber",
+      "label": "Presenter details — reference number (optional)",
+      "type": "string",
+      "required": false,
+      "description": "A presenter's (e.g. an agent's or firm's) own file/matter reference, not a CRO-issued number.",
+      "sourceRef": "Presenter details — \"Reference number\"",
+      "validation": { "maxLength": 60 }
+    },
+    {
+      "name": "certificationDeclarationConfirmed",
+      "label": "Declaration and signature confirmed",
+      "type": "boolean",
+      "required": true,
+      "description": "Confirms the printed declaration: \"I, the undersigned, hereby apply for registration pursuant to section 4 Registration of Business Names Act 1963, and for that purpose have completed the above form in accordance with the Notes on Completion of Form RBN1.\" Per note 8, this statement must in all cases be signed by the individual applying for registration, and, where the business name has been adopted, must be sent by post or delivered to the Registrar within one month after the adoption of the business name. Records the fact of signature, not the signature image itself, consistent with this registry's convention for wet-signature declarations (cf. ie/cro/company-incorporation's formA1WetSignatureConfirmed).",
+      "sourceRef": "Certification — declaration and signature — note eight"
+    },
+    {
+      "name": "certificationNameInBlockLetters",
+      "label": "Name in block letters or typescript",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The signatory's name, printed in block letters or typescript alongside the signature.",
+      "sourceRef": "Certification — \"Name in block letters or typescript\"",
+      "validation": { "minLength": 1, "maxLength": 160 }
+    },
+    {
+      "name": "certificationDate",
+      "label": "Date of certification",
+      "type": "date",
+      "required": true,
+      "description": "Printed on the form as separate Day/Month/Year boxes; modelled here as a single ISO date per this registry's convention.",
+      "sourceRef": "Certification — \"Date\""
+    }
+  ],
+  "steps": [
+    {
+      "id": "business_details",
+      "title": "Business name and details",
+      "fields": [
+        "businessName", "otherBusinessNames", "natureOfBusinessDescription",
+        "principalPlaceOfBusinessAddress", "dateOfAdoption"
+      ],
+      "next": "applicant"
+    },
+    {
+      "id": "applicant",
+      "title": "Individual applicant's particulars",
+      "fields": [
+        "applicantSurname", "applicantForenames", "applicantFormerSurnames", "applicantFormerForenames",
+        "applicantResidentialAddress", "applicantBusinessOccupation", "applicantNationality",
+        "applicantDirectorshipCompanyName", "applicantDirectorshipCompanyNumber"
+      ],
+      "next": "presenter"
+    },
+    {
+      "id": "presenter",
+      "title": "Presenter details",
+      "fields": [
+        "presenterName", "presenterAddress", "presenterTelephoneNumber", "presenterFaxNumber",
+        "presenterEmail", "presenterDxNumber", "presenterDxExchange", "presenterReferenceNumber"
+      ],
+      "next": "certification"
+    },
+    {
+      "id": "certification",
+      "title": "Certification",
+      "fields": ["certificationDeclarationConfirmed", "certificationNameInBlockLetters", "certificationDate"]
+    }
+  ]
+}
