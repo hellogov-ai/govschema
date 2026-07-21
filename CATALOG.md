@@ -4,7 +4,35 @@
 
 ## Executive Summary
 
-**76 jurisdictions** | **578 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**76 jurisdictions** | **579 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4202, "GovSchema Standard Research"): Latvia's
+> Taxes vertical adds the Declaration DK pielikums**, via
+> `lv/vid/capital-gains-income-declaration-dk-pielikums@1.0.0`, VID's
+> attachment to Declaration DK titled "Informācija par darījumiem, kas
+> uzsākti, bet nav pabeigti vienā taksācijas gadā" (information on
+> transactions begun but not completed within one tax year), filed under
+> the same Cabinet Regulation No. 662, §§58-61. Per the GOV-4169/GOV-4193
+> cycles' own finding, this is authored as its own new top-level schema
+> rather than a version bump of `lv/vid/capital-gains-income-declaration-dk`,
+> since the regulation's own para. 3 lists Declaration DK, this pielikums,
+> and the ienākuma precizēšanas deklarācija GD as three separate documents.
+> Models the pielikums's 2-field identification block (no tax-year field,
+> since this is an annual-only filing per §59), its 6-column/2-row
+> transaction table (no `Kopā` total row), the §61 "Papildu informācija"
+> deferred-income carve-out, and its own attestation/signature block.
+> Confirms the pre-scouted finding that this pielikums's own transaction-
+> type footnote defines six base codes (N/A/C/J/M/K — including K for
+> crypto-asset income, absent from Declaration DK's own footnote 1) plus
+> only the R modifier, with no F/L transitional-provisions modifiers that
+> Declaration DK's own footnote 1 carries. Discloses a second finding: the
+> counterparty-identifier column is explicitly union-typed by the
+> regulation itself (resident personas kods, nonresident personas kods or
+> birth date, or legal-person registration number), modelled as an
+> unconstrained string rather than a fabricated single pattern. See the
+> Taxes vertical section and the Known Gaps section below. The ienākuma
+> precizēšanas deklarācija GD remains open backlog, excluded as a
+> formula-derived recomputation (same reasoning as Annexes D3/D3¹).
 
 > **Update (2026-07-21, GOV-4193, "GovSchema Standard Research"): Latvia's
 > Taxes vertical adds a new top-level document — Declaration DK**, via
@@ -15698,6 +15726,19 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (64/76 jurisdictions — 84%)
 
+> **Update (2026-07-21, GOV-4202, "GovSchema Standard Research"): Latvia
+> adds the Declaration DK pielikums as a further top-level Taxes document**,
+> via `lv/vid/capital-gains-income-declaration-dk-pielikums@1.0.0` — VID's
+> attachment to Declaration DK on transactions begun but not completed
+> within one tax year, under the same Cabinet Regulation No. 662 but filed
+> as its own standalone document (per the regulation's own para. 3), not a
+> version bump of the Declaration DK schema. See the Executive Summary's
+> GOV-4202 update above and the document's own VERIFICATION.md for the full
+> sourcing record, including the disclosed counterparty-identifier
+> union-type finding. Does not change the vertical's numerator/denominator
+> (Latvia already counted at v1.0.0 of the Form D document); the ienākuma
+> precizēšanas deklarācija GD remains open backlog.
+
 > **Update (2026-07-21, GOV-4193, "GovSchema Standard Research"): Latvia
 > adds a new top-level Taxes document**, via
 > `lv/vid/capital-gains-income-declaration-dk@1.0.0` — VID's reporting-period
@@ -19155,6 +19196,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       transactions begun but not completed within one tax year) remains open
       backlog; D3, D3¹, and GD remain excluded for the reasons already
       stated above.
+      **Update (GOV-4202, 2026-07-21): the Declaration DK pielikums is now
+      also authored** as its own new top-level schema,
+      `lv/vid/capital-gains-income-declaration-dk-pielikums` v1.0.0 (not a
+      version bump of the Declaration DK schema, per the same para. 3/
+      GOV-4169 finding) — see the Executive Summary and Taxes vertical
+      updates above. This closes the last LV VID candidate sharing this
+      document family's real-HTML-table-rendering precedent; only the
+      ienākuma precizēšanas deklarācija GD remains open backlog, excluded
+      as a formula-derived recomputation for the reasons already stated
+      above.
     - **Saudi Arabia — screened, dead end across all six verticals this
       cycle (GOV-4121).** DMV (Absher/Muroor), Business Formation (Saudi
       Business Center), Taxes (ZATCA), and Passport (Jawazat) are all
