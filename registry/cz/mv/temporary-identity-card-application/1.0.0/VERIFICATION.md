@@ -93,10 +93,11 @@ same one the prior cycle already screened.
 
 The 46 shared strings split into three groups:
 
-- **16 citizen-fillable fields**, modelled below (surname, given name, date
+- **17 citizen-fillable fields**, modelled below (surname, given name, date
   of birth, sex, birth number, citizenship, place of birth, a 7-part
   permanent-address block, marital status/partnership, and the authorized
-  representative's name).
+  representative's surname and given name(s) — two separate labelled blanks
+  on the source, not a single combined name field).
 - **6 documents**, modelled under `documents[]` (2 photographs, 4 alternative
   identity/citizenship supporting documents, and the form's own accuracy
   declaration as an attestation).
@@ -191,8 +192,9 @@ pattern for staff-filled fields:
 8 fixtures are committed under
 `conformance/cz/mv/temporary-identity-card-application/1.0.0/`: 2 valid
 submissions (a minimal filing with only the 11 required fields, and a fuller
-filing populating every optional field including `maritalStatus` and
-`representativeName`) and 6 mutation fixtures (each expected to fail
+filing populating every optional field including `maritalStatus`,
+`representativeLastName`, and `representativeFirstNames`) and 6 mutation
+fixtures (each expected to fail
 validation with exactly 1 error): a missing required `surname`, an invalid
 `sex` enum value, an invalid `citizenship` enum value, an invalid
 `birthNumber` pattern (14 digits), an invalid `permanentAddressPostalCode`
