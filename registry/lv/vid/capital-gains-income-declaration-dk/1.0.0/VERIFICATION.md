@@ -11,7 +11,7 @@ states the current verification claim honestly.
 - **`verification.method`:** `manual-source-review-v1`
 - **`verification.lastVerifiedAt`:** `2026-07-21`
 
-Derived directly from the regulation's own printed Annex 1 template and
+Derived directly from the regulation's own printed Annex 3 template and
 completion instructions (§§3, 54-59). Not yet cross-checked against VID's own
 live EDS (Elektroniskā deklarēšanas sistēma) online-filing screens for this
 specific declaration — see "Path to a `verified` claim" below.
@@ -46,7 +46,7 @@ regulation text.
 
 Not a summarizer tool: the raw HTML was searched directly for the paragraph
 anchors governing Declaration DK (`data-num="54"` through `data-num="59"`) and
-for the rendered Annex 1 `<TABLE>` markup itself. The table's raw `<TR>`/`<TD>`
+for the rendered Annex 3 `<TABLE>` markup itself. The table's raw `<TR>`/`<TD>`
 structure was walked directly (not tag-stripped prose) to recover the exact
 row/column layout:
 
