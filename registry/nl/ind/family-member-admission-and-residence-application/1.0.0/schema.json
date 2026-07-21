@@ -1,0 +1,903 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "nl/ind/family-member-admission-and-residence-application",
+  "version": "1.0.0",
+  "title": "Netherlands Admission and Residence to Stay with a Family Member (MVV Entry Visa + Residence Permit), Form 9511",
+  "description": "Apply for admission and residence in the Netherlands to stay with a family member (the sponsor), via the Immigration and Naturalisation Service's (IND) Form 9511, 'Application for admission and residence 'to stay with a family member' (foreign national)'. This is the family-reunification route to a provisional residence visa (MVV, a Type D national entry visa) and the follow-on ordinary residence permit: a foreign national aged 12 or older, staying outside the Netherlands, applies at a Dutch embassy or consulate in their country of origin or continuous residence to join a sponsor who is married to, in a registered partnership with, or the unmarried partner of the applicant, or is the sponsor's (or the sponsor's spouse's/partner's) minor child. The embassy/consulate registers the application and issues a V-number; the applicant then completes and returns this form, with means of evidence and the civic-integration-examination-abroad and tuberculosis-test declarations, to the IND within three weeks. This document models the form's own field set: the applicant's core identity/travel-document data, the minor-applicant legal-representative branch, the sponsor's situation and (if already resident in the Netherlands) their own identity/residence-status data, the civic integration exam and TB test declarations, the means-of-evidence relationship classifier and its branching document requirements, the post-approval MVV collection details, and signing. The harmonised Schengen short-stay (C-visa) route for the Netherlands is a confirmed dead end for this registry (consular.mfaservices.nl is account-gated); this document is unrelated to that route. It does not model the 'Notification form for family members and relatives' (used after admission to report a change in circumstances), the appendices this form's own means-of-evidence section references by name (e.g. 'Declaration by sponsor (family and relatives)', 'Antecedents certificate', 'Declaration of relationship', 'Questionnaire for residence with partner', 'Certificate of non-impediment', 'Civic integration examination abroad') as separate schema documents, or the Basisregistratie Personen (BRP) municipal-registration step that follows a granted application. It does not submit the application; the live ind.nl source is always authoritative — see VERIFICATION.md.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "NL",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Immigration and Naturalisation Service (Immigratie- en Naturalisatiedienst)",
+    "abbreviation": "IND",
+    "url": "https://ind.nl"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://ind.nl/en/forms/9511.pdf",
+    "retrievedAt": "2026-07-21",
+    "documentRef": "Form 9511 (edition 2025/8), 'Application for admission and residence 'to stay with a family member' (foreign national)', published bilingually with an English-language edition on ind.nl/en/forms"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-21",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-01",
+    "notes": "Closes the Netherlands' last open vertical gap (Visa), the pre-scouted, ready-to-author backlog candidate the GOV-4092/GOV-4100 cycles banked after screening the harmonised Schengen short-stay route as a confirmed dead end. Fetched ind.nl/en/forms/9511.pdf fresh (HTTP 200, 397,176 bytes, 10 pages). The PDF carries no AcroForm/XFA fields (a plain printed-form text layer, confirmed via a raw byte scan for the /AcroForm marker), so all fields were reconstructed from the PDF's own text-layer glyph x/y coordinates via pdfjs-dist, including recovering the hierarchical structure of the 3.11 sponsor residence-status checklist (a top-level checkbox column at x=218 with an indented sub-choice column at x=254 nested under 'Residence Permit, namely.') that a naive line-by-line read would have flattened into one list. Modelled from a single source copy only (ind.nl's own canonical hosting); no independent byte-for-byte mirror was located and cross-checked this cycle, unlike several other registry documents that confirm a form via two independent hosts. Status remains 'draft' pending a field-by-field cross-check against a second independently hosted mirror of the same form. See VERIFICATION.md."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-21"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "vNumber",
+      "label": "V-number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Assigned by the embassy/consulate employee when registering the application at the appointment (see the form's own information box, filled in by embassy/consulate staff, which this document does not otherwise model). It is imperative this number is included; without it, the application cannot be processed.",
+      "sourceRef": "Form 9511 — Section 1.1",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "citizenServiceNumber",
+      "label": "Dutch Citizen service number (BSN), if applicable",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The Burgerservicenummer (BSN) is a unique number for everyone who has dealings with the Dutch government; an applicant with no prior dealings will not yet have one.",
+      "sourceRef": "Form 9511 — Section 1.2",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "surname",
+      "label": "Surname (as stated in the passport)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 9511 — Section 1.3",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "firstNames",
+      "label": "First names (as stated in the passport)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 9511 — Section 1.3",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form 9511 — Section 1.4",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form 9511 — Section 1.5"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 9511 — Section 1.6",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of birth (as stated in the passport)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 9511 — Section 1.7",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "nationalityAtBirth",
+      "label": "Nationality at birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 9511 — Section 1.8",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "currentNationality",
+      "label": "Current nationality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 9511 — Section 1.9",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "civilStatus",
+      "label": "Civil status",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form 9511 — Section 1.10",
+      "validation": {
+        "enum": ["unmarried", "married", "registered_partnership", "divorced", "widowed"]
+      },
+      "description": "'unmarried' corresponds to the form's 'unmarried (single or living together)' option."
+    },
+    {
+      "name": "homeAddressStreet",
+      "label": "Home address — street and number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 9511 — Section 1.11",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "homeAddressPostcode",
+      "label": "Home address — postcode",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 9511 — Section 1.11",
+      "validation": { "minLength": 1, "maxLength": 20 }
+    },
+    {
+      "name": "homeAddressTown",
+      "label": "Home address — town",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 9511 — Section 1.11",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "homeAddressCountry",
+      "label": "Home address — country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 9511 — Section 1.11",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "telephoneNumber",
+      "label": "Telephone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 9511 — Section 1.12",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "email",
+      "label": "E-mail",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form 9511 — Section 1.13",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "travelDocumentType",
+      "label": "Type of travel document",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form 9511 — Section 1.14",
+      "validation": {
+        "enum": ["national_passport", "diplomatic_passport", "service_passport", "official_passport", "special_passport", "other"]
+      }
+    },
+    {
+      "name": "otherTravelDocumentDetails",
+      "label": "Other type of travel document, namely",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "travelDocumentType", "equals": "other" },
+      "sourceRef": "Form 9511 — Section 1.14",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "travelDocumentNumber",
+      "label": "Travel document number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form 9511 — Section 1.15",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "travelDocumentDateOfIssue",
+      "label": "Travel document — date of issue",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form 9511 — Section 1.15"
+    },
+    {
+      "name": "travelDocumentValidUntil",
+      "label": "Travel document — valid until",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form 9511 — Section 1.15"
+    },
+    {
+      "name": "travelDocumentIssuedBy",
+      "label": "Travel document — issued by",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 9511 — Section 1.15",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "applicantIsMinor",
+      "label": "Is the applicant under 18 years of age?",
+      "type": "boolean",
+      "required": true,
+      "description": "Gates fields 1.16-1.18. The source form has no separate checkbox for this; it is implied by the applicant's date of birth at the time of application, under the heading 'Only if the applicant is under 18 years of age (1.16 to 1.18)'. Modelled as an explicit boolean, the same treatment nl/rvig/passport-application uses for its own applicantIsMinor gate, since GovSchema's requiredWhen grammar has no age-computation operator.",
+      "sourceRef": "Form 9511 — heading above Section 1.16"
+    },
+    {
+      "name": "legalRepresentativeSurname",
+      "label": "Name of legal representative of the applicant (parent or guardian) — surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form 9511 — Section 1.16",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "legalRepresentativeFirstNames",
+      "label": "Name of legal representative of the applicant (parent or guardian) — first names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form 9511 — Section 1.16",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "legalRepresentativeAddressStreet",
+      "label": "Address of legal representative — street and number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form 9511 — Section 1.17",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "legalRepresentativeAddressPostcode",
+      "label": "Address of legal representative — postcode",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form 9511 — Section 1.17",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "legalRepresentativeAddressTown",
+      "label": "Address of legal representative — town",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form 9511 — Section 1.17",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "legalRepresentativeAddressCountry",
+      "label": "Address of legal representative — country",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form 9511 — Section 1.17",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "legalRepresentativeNationality",
+      "label": "Nationality of legal representative",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form 9511 — Section 1.18",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sponsorAlreadyInNetherlands",
+      "label": "Does the family member you want to stay with already live in the Netherlands?",
+      "type": "boolean",
+      "required": true,
+      "description": "true routes to Section 3 (sponsor's own identity/residence-status data). false means the sponsor applies for admission and residence at the same time as the applicant, and Section 3 is skipped.",
+      "sourceRef": "Form 9511 — Section 2"
+    },
+    {
+      "name": "sponsorVNumber",
+      "label": "V-number of your sponsor",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.1",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "sponsorCitizenServiceNumber",
+      "label": "Dutch Citizen service number of your sponsor, if applicable",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "visibleWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.2",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "sponsorSurname",
+      "label": "Name of your sponsor (as stated in the passport) — surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.3",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sponsorFirstNames",
+      "label": "Name of your sponsor (as stated in the passport) — first names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.3",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sponsorSex",
+      "label": "Sex of your sponsor",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.4",
+      "validation": { "enum": ["male", "female"] }
+    },
+    {
+      "name": "sponsorDateOfBirth",
+      "label": "Date of birth of your sponsor",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.5"
+    },
+    {
+      "name": "sponsorPlaceOfBirth",
+      "label": "Place of birth of your sponsor",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.6",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sponsorCountryOfBirth",
+      "label": "Country of birth of your sponsor (as stated in the passport)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.7",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sponsorNationalityAtBirth",
+      "label": "Nationality at birth of your sponsor",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.8",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sponsorCurrentNationality",
+      "label": "Current nationality of your sponsor",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.9",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sponsorCivilStatus",
+      "label": "Civil status of your sponsor",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.10",
+      "validation": {
+        "enum": ["unmarried", "married", "registered_partnership", "divorced", "widowed"]
+      }
+    },
+    {
+      "name": "sponsorResidenceStatus",
+      "label": "Residence status of your sponsor",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "description": "The source form prints this as a two-level checklist: five top-level checkboxes, one of which ('Residence Permit, namely.') has its own indented sub-choice of four (see sponsorResidencePermitType) — recovered from the PDF's own glyph x-coordinates (top-level boxes at x=218, sub-choice boxes indented to x=254).",
+      "sourceRef": "Form 9511 — Section 3.11",
+      "validation": {
+        "enum": ["dutch_nationality", "privileged", "residence_permit", "waiting_for_residence_permit_decision", "none"]
+      }
+    },
+    {
+      "name": "sponsorResidencePermitType",
+      "label": "Sponsor's residence permit, namely",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "sponsorResidenceStatus", "equals": "residence_permit" },
+      "sourceRef": "Form 9511 — Section 3.11, indented sub-choice under 'Residence Permit, namely.'",
+      "validation": {
+        "enum": ["paid_employment", "study", "asylum", "other"]
+      }
+    },
+    {
+      "name": "sponsorAddressStreet",
+      "label": "Address of the sponsor in the Netherlands — street and number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.12",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "sponsorAddressPostcode",
+      "label": "Address of the sponsor in the Netherlands — postcode",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.12",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "sponsorAddressTown",
+      "label": "Address of the sponsor in the Netherlands — town",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.12",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "sponsorTelephoneNumber",
+      "label": "Telephone number of your sponsor",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.13",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "sponsorEmail",
+      "label": "E-mail of your sponsor",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "sourceRef": "Form 9511 — Section 3.14",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "civicIntegrationExamStatus",
+      "label": "Civic integration examination abroad — applicable situation",
+      "type": "enum",
+      "required": true,
+      "description": "passed_exam = has passed all parts and the passed examination is still valid; enclose the results issued by the Education Executive Agency (DUO). exempt = is exempt from the examination; enclose the 'Civic integration examination abroad' appendix and proof of the exemption qualification. wants_exemption = wants to obtain an exemption; enclose the same appendix and the proof required to obtain one.",
+      "sourceRef": "Form 9511 — Section 5",
+      "validation": { "enum": ["passed_exam", "exempt", "wants_exemption"] }
+    },
+    {
+      "name": "tbTestDeclaration",
+      "label": "Tuberculosis (TB) test declaration",
+      "type": "enum",
+      "required": true,
+      "description": "agrees_to_tb_test = declares willingness to cooperate in a TB test and any treatment, and to undergo the test within three months of receiving the residence permit. exempt_nationality = does not need a TB test as a national of a country listed in the form's own exemption appendix.",
+      "sourceRef": "Form 9511 — Sections 6-7",
+      "validation": { "enum": ["agrees_to_tb_test", "exempt_nationality"] }
+    },
+    {
+      "name": "relationshipToSponsor",
+      "label": "Relationship to the sponsor (means-of-evidence category)",
+      "type": "enum",
+      "required": true,
+      "description": "The form's Section 7 'Means of evidence' presents these three relationship categories as the applicant's own applicable-situation checklist, each with its own distinct set of required supporting documents — see documents[] entries gated on this field. The bracketed codes in the source ('320-340', '322-342', '326') are internal form/procedure codes, not modelled as data.",
+      "sourceRef": "Form 9511 — Section 7",
+      "validation": {
+        "enum": ["spouse_or_registered_partner", "unmarried_partner", "minor_child"]
+      }
+    },
+    {
+      "name": "otherParentRemainsInCountryOfOrigin",
+      "label": "For a minor-child applicant: does your other parent who also has custody remain in the country of origin?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "relationshipToSponsor", "equals": "minor_child" },
+      "description": "Gates the Declaration of Consent from the left-behind parent and a copy of that parent's identity document (see documents[]).",
+      "sourceRef": "Form 9511 — Section 7, minor-child means-of-evidence sub-block"
+    },
+    {
+      "name": "communicationConsent",
+      "label": "Declaration of consent to e-mail communication with the IND",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": false },
+      "description": "consent_email = agrees to e-mail communication (via Zivver) using the address given in section 1.13, which the applicant accesses regularly. consent_postal = does not agree; correspondence is sent to the home address given in section 1.11. Only asked when the sponsor does not already live in the Netherlands, per the section's own heading; when the sponsor already resides in the Netherlands, the IND corresponds with the sponsor instead (Section 10).",
+      "sourceRef": "Form 9511 — Section 9",
+      "validation": { "enum": ["consent_email", "consent_postal"] }
+    },
+    {
+      "name": "intendedDepartureDate",
+      "label": "Intended date of departure to the Netherlands",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form 9511 — Section 11.1"
+    },
+    {
+      "name": "residencePermitCollectionLocation",
+      "label": "Where you will collect the residence permit",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form 9511 — Section 11.2",
+      "validation": {
+        "enum": ["amsterdam", "goes", "s_hertogenbosch", "den_haag", "maastricht", "zwolle"]
+      },
+      "description": "'s_hertogenbosch' corresponds to the form's \"'s-Hertogenbosch (Den Bosch)\"."
+    },
+    {
+      "name": "appendicesCount",
+      "label": "Number of appendices/documents in evidence submitted with this form",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Form 9511 — Section 13.1",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "signatoryName",
+      "label": "Name (of signatory)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The applicant, or (for a minor applicant) the legal representative, per the signing section's own attestation statements.",
+      "sourceRef": "Form 9511 — Section 13.2",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "signaturePlace",
+      "label": "Place of signing",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form 9511 — Section 13.3",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "signatureDate",
+      "label": "Date of signing",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form 9511 — Section 13.3"
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "travelDocumentValidAfterIssue",
+      "compare": {
+        "field": "travelDocumentValidUntil",
+        "operator": "greaterThan",
+        "compareTo": "travelDocumentDateOfIssue"
+      }
+    },
+    {
+      "id": "departureDateNotBeforeSignatureDate",
+      "compare": {
+        "field": "intendedDepartureDate",
+        "operator": "greaterThanOrEqual",
+        "compareTo": "signatureDate"
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantPassportPhoto",
+      "label": "Passport photo, 35 x 45 mm",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form 9511 — page 1 photo box, 'Passport photo size 35 x 45 mm (width x height)'"
+    },
+    {
+      "id": "applicantPassportCopy",
+      "label": "Copy of the applicant's passport, including all pages with travel stamps",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form 9511 — Section 4, 'A copy of your passport... Make copies of all the pages with travel stamps as well. Do not copy empty pages.' If the applicant is under 18 and has no own passport, a copy of the parent's passport in which the applicant is registered is substituted."
+    },
+    {
+      "id": "sponsorIdentityDocumentCopy",
+      "label": "Copy of the sponsor's identity document or Dutch residence permit",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "sponsorAlreadyInNetherlands", "equals": true },
+      "belongsTo": "responsible-party",
+      "sourceRef": "Form 9511 — Section 4, 'copy of the page with identity details of the passport or identity card of the sponsor... or a copy of the front and back of a valid Dutch residence permit'"
+    },
+    {
+      "id": "civicIntegrationExamResults",
+      "label": "Civic integration examination abroad results (Education Executive Agency, DUO)",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "civicIntegrationExamStatus", "equals": "passed_exam" },
+      "belongsTo": "applicant",
+      "sourceRef": "Form 9511 — Section 5"
+    },
+    {
+      "id": "civicIntegrationExemptionProof",
+      "label": "'Civic integration examination abroad' appendix and exemption proof",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "any": [
+        { "field": "civicIntegrationExamStatus", "equals": "exempt" },
+        { "field": "civicIntegrationExamStatus", "equals": "wants_exemption" }
+      ] },
+      "belongsTo": "applicant",
+      "sourceRef": "Form 9511 — Section 5"
+    },
+    {
+      "id": "sponsorIncomeEvidence",
+      "label": "Means of evidence of the sponsor's income",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "responsible-party",
+      "sourceRef": "Form 9511 — Section 7, required under all three relationship-to-sponsor branches (per the form's own Appendix 'Proof of income')"
+    },
+    {
+      "id": "antecedentsCertificate",
+      "label": "Signed and completed 'Antecedents certificate' appendix",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "any": [
+        { "field": "relationshipToSponsor", "equals": "spouse_or_registered_partner" },
+        { "field": "relationshipToSponsor", "equals": "unmarried_partner" }
+      ] },
+      "belongsTo": "applicant",
+      "sourceRef": "Form 9511 — Section 7. For a minor-child applicant, only required if the applicant is 12 years of age or older — not separately encoded as a gate here."
+    },
+    {
+      "id": "declarationBySponsorAppendix",
+      "label": "Completed and signed 'Declaration by sponsor (family and relatives)' appendix",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "responsible-party",
+      "sourceRef": "Form 9511 — Section 7, required under all three relationship-to-sponsor branches"
+    },
+    {
+      "id": "marriageCertificate",
+      "label": "Copy of the marriage certificate",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "all": [
+        { "field": "relationshipToSponsor", "equals": "spouse_or_registered_partner" },
+        { "field": "civilStatus", "equals": "married" }
+      ] },
+      "belongsTo": "applicant",
+      "sourceRef": "Form 9511 — Section 7, 'If this involves a marriage, then you must also submit: a copy of the marriage certificate.'"
+    },
+    {
+      "id": "registeredPartnershipDeed",
+      "label": "Copy of the deed of registered partnership",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "all": [
+        { "field": "relationshipToSponsor", "equals": "spouse_or_registered_partner" },
+        { "field": "civilStatus", "equals": "registered_partnership" }
+      ] },
+      "belongsTo": "applicant",
+      "sourceRef": "Form 9511 — Section 7, 'If this involves a registered partnership, then you should also submit: a copy of the deed of registered partnership.'"
+    },
+    {
+      "id": "relationshipDeclarationAppendix",
+      "label": "'Declaration of relationship' appendix, completed and signed by applicant and sponsor",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "relationshipToSponsor", "equals": "unmarried_partner" },
+      "belongsTo": "applicant",
+      "sourceRef": "Form 9511 — Section 7"
+    },
+    {
+      "id": "residenceWithPartnerQuestionnaire",
+      "label": "'Questionnaire for residence with partner' appendix, completed and signed by the sponsor",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "relationshipToSponsor", "equals": "unmarried_partner" },
+      "belongsTo": "responsible-party",
+      "sourceRef": "Form 9511 — Section 7"
+    },
+    {
+      "id": "unmarriedStatusDeclarationApplicant",
+      "label": "Applicant's unmarried status declaration",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "relationshipToSponsor", "equals": "unmarried_partner" },
+      "belongsTo": "applicant",
+      "freshness": { "issuedWithin": "P6M" },
+      "sourceRef": "Form 9511 — Section 7, from the country of origin (plus the country of continuous residence too, if different)"
+    },
+    {
+      "id": "unmarriedStatusDeclarationSponsor",
+      "label": "Sponsor's unmarried status declaration",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "relationshipToSponsor", "equals": "unmarried_partner" },
+      "belongsTo": "responsible-party",
+      "freshness": { "issuedWithin": "P6M" },
+      "sourceRef": "Form 9511 — Section 7. Not needed if the sponsor has Dutch nationality, a permanent residence permit, or asylum residence — not separately encoded as a gate here."
+    },
+    {
+      "id": "birthCertificateOrFamilialRelationshipEvidence",
+      "label": "Birth certificate, or other evidence of the familial relationship",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "relationshipToSponsor", "equals": "minor_child" },
+      "belongsTo": "applicant",
+      "sourceRef": "Form 9511 — Section 7"
+    },
+    {
+      "id": "parentalAuthorityEvidence",
+      "label": "Evidence that the sponsor has rightful authority over the applicant",
+      "category": "supporting-evidence",
+      "required": false,
+      "requiredWhen": { "field": "relationshipToSponsor", "equals": "minor_child" },
+      "belongsTo": "responsible-party",
+      "sourceRef": "Form 9511 — Section 7"
+    },
+    {
+      "id": "consentFromLeftBehindParent",
+      "label": "Signed Declaration of Consent from the left-behind parent",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "all": [
+        { "field": "relationshipToSponsor", "equals": "minor_child" },
+        { "field": "otherParentRemainsInCountryOfOrigin", "equals": true }
+      ] },
+      "belongsTo": "dependent",
+      "sourceRef": "Form 9511 — Section 7"
+    },
+    {
+      "id": "leftBehindParentIdCopy",
+      "label": "Copy of the left-behind parent's proof of identity",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "all": [
+        { "field": "relationshipToSponsor", "equals": "minor_child" },
+        { "field": "otherParentRemainsInCountryOfOrigin", "equals": true }
+      ] },
+      "belongsTo": "dependent",
+      "sourceRef": "Form 9511 — Section 7"
+    },
+    {
+      "id": "certificateOfNonImpediment",
+      "label": "'Certificate of non-impediment' appendix, completed and signed",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "relationshipToSponsor", "equals": "minor_child" },
+      "belongsTo": "applicant",
+      "sourceRef": "Form 9511 — Section 7. Only required if the applicant is 15 years old or older — not separately encoded as a gate here."
+    },
+    {
+      "id": "applicationFeePayment",
+      "label": "Proof of payment of the application fee",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form 9511 — Section 8. Paid by bank transfer to the IND's account (IBAN NL31INGB0705005356), using the applicant's V-number as the payment reference; fee amount varies by situation and is not encoded here (see ind.nl 'Fees: Costs of an application'). The application is free of charge for citizens of San Marino and Israel."
+    }
+  ],
+  "steps": [
+    {
+      "id": "applicant_identity",
+      "title": "Your personal details",
+      "fields": [
+        "vNumber", "citizenServiceNumber", "surname", "firstNames", "sex", "dateOfBirth",
+        "placeOfBirth", "countryOfBirth", "nationalityAtBirth", "currentNationality", "civilStatus"
+      ],
+      "next": "contact_and_travel_document"
+    },
+    {
+      "id": "contact_and_travel_document",
+      "title": "Home address, contact details, and travel document",
+      "fields": [
+        "homeAddressStreet", "homeAddressPostcode", "homeAddressTown", "homeAddressCountry",
+        "telephoneNumber", "email", "travelDocumentType", "otherTravelDocumentDetails",
+        "travelDocumentNumber", "travelDocumentDateOfIssue", "travelDocumentValidUntil", "travelDocumentIssuedBy"
+      ],
+      "next": "legal_representative"
+    },
+    {
+      "id": "legal_representative",
+      "title": "Legal representative (minor applicants only)",
+      "fields": [
+        "applicantIsMinor", "legalRepresentativeSurname", "legalRepresentativeFirstNames",
+        "legalRepresentativeAddressStreet", "legalRepresentativeAddressPostcode",
+        "legalRepresentativeAddressTown", "legalRepresentativeAddressCountry", "legalRepresentativeNationality"
+      ],
+      "next": "sponsor_situation"
+    },
+    {
+      "id": "sponsor_situation",
+      "title": "Situation of your sponsor",
+      "fields": ["sponsorAlreadyInNetherlands"],
+      "transitions": [
+        { "to": "sponsor_details", "when": { "field": "sponsorAlreadyInNetherlands", "equals": true } },
+        { "to": "civic_integration_and_tb_test", "when": { "field": "sponsorAlreadyInNetherlands", "equals": false } }
+      ]
+    },
+    {
+      "id": "sponsor_details",
+      "title": "Details of your sponsor in the Netherlands",
+      "fields": [
+        "sponsorVNumber", "sponsorCitizenServiceNumber", "sponsorSurname", "sponsorFirstNames", "sponsorSex",
+        "sponsorDateOfBirth", "sponsorPlaceOfBirth", "sponsorCountryOfBirth", "sponsorNationalityAtBirth",
+        "sponsorCurrentNationality", "sponsorCivilStatus", "sponsorResidenceStatus", "sponsorResidencePermitType",
+        "sponsorAddressStreet", "sponsorAddressPostcode", "sponsorAddressTown", "sponsorTelephoneNumber", "sponsorEmail"
+      ],
+      "next": "civic_integration_and_tb_test"
+    },
+    {
+      "id": "civic_integration_and_tb_test",
+      "title": "Civic integration examination abroad and TB test declaration",
+      "fields": ["civicIntegrationExamStatus", "tbTestDeclaration"],
+      "next": "means_of_evidence"
+    },
+    {
+      "id": "means_of_evidence",
+      "title": "Means of evidence",
+      "fields": ["relationshipToSponsor", "otherParentRemainsInCountryOfOrigin"],
+      "next": "consent_and_collection"
+    },
+    {
+      "id": "consent_and_collection",
+      "title": "Declaration of consent, MVV, and residence permit collection",
+      "fields": ["communicationConsent", "intendedDepartureDate", "residencePermitCollectionLocation"],
+      "next": "signing"
+    },
+    {
+      "id": "signing",
+      "title": "Signing",
+      "fields": ["appendicesCount", "signatoryName", "signaturePlace", "signatureDate"]
+    }
+  ]
+}
