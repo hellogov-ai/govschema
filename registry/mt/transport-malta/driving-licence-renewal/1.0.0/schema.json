@@ -1,0 +1,182 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "mt/transport-malta/driving-licence-renewal",
+  "version": "1.0.0",
+  "title": "Malta Driving Licence Renewal (Form DRV019)",
+  "description": "Transport Malta's (the national authority for land, sea, and air transport regulation) Land Transport Directorate \"Form DRV019 — Driving Licence Renewal Form\" (\"Formola gĦat-Tiġdid tal-Liċenzja tas-Sewqan\", bilingual Maltese/English), filed by a driving-licence holder renewing their Maltese driving licence. Deepens Malta past its four already-published verticals (mt/jobsplus/self-employed-declaration-of-commencement, Business Formation; mt/identita/passport-application, Passport; mt/identita/national-identity-card-application, National ID & Civic Documents; mt/identita/long-stay-visa-application, Visa), opening the DMV vertical (5/6). This document models the applicant's own personal-details update block (name & surname, address, post code, ID Card number, telephone/mobile — filled in, per the form's own printed note, only when these details have changed since the licence was issued, alongside a copy of the ID Card); the renewal channel election (online via licenzji-xufiera.gov.mt, by post, or in person at a Transport Malta office); the applicant's two printed declarations (an undertaking to notify the Authority of any new or worsening medical condition, and a declaration of at least 185 days' Maltese residency in the last calendar year); and the applicant's own signature and accompanying passport-style photograph. It excludes the form's own detailed payment logistics (the bank IBAN/BIC and cheque-payee instructions for postal renewals, and the in-person card-payment note) as back-office/payment-processing detail rather than applicant-supplied form data, and excludes page 2's bilingual Data Protection Privacy Notice, which is informational only with no applicant input (see VERIFICATION.md). Filing this renewal is a driver's own action performed with Transport Malta; this schema does not file the renewal itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by Malta or Transport Malta.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MT",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Transport Malta, Land Transport Directorate",
+    "abbreviation": "Transport Malta",
+    "url": "https://www.transport.gov.mt"
+  },
+  "process": {
+    "type": "renewal",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.transport.gov.mt/include/filestreaming.asp?fileid=5660",
+    "retrievedAt": "2026-07-21",
+    "documentRef": "\"DRV 019 — Driving Licence Renewal Form\" (\"Formola gĦat-Tiġdid tal-Liċenzja tas-Sewqan\", bilingual Maltese/English), Transport Malta, Land Transport Directorate, native (non-AcroForm) flat PDF, 2 pages (page 1 applicant-facing; page 2 a Data Protection Privacy Notice), \"Issue 5\"."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-21",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-21",
+    "notes": "GOV-4239 (\"GovSchema Standard Research\", parent GOV-4237). Closes Malta's only remaining open (non-dead-end) DMV backlog item, per the GOV-4215 scouting cycle and CATALOG.md's Known Gaps section. The live origin `transport.gov.mt` is Cloudflare-JS-challenge-gated on every path attempted, including the file-streaming endpoint itself — confirmed freshly this cycle: a direct `curl` (with a realistic desktop Chrome User-Agent) returns HTTP 403 with `cf-mitigated: challenge`. Retrieved instead via a Wayback Machine snapshot of the live PDF-streaming endpoint, crawled before/without hitting the gate: `http://web.archive.org/web/20250206231949/https://www.transport.gov.mt/include/filestreaming.asp?fileid=5660` — HTTP 200, `Content-Type: application/pdf`, 590,784 bytes, sha256 `31da48262fc544080c6b5f422e8e845debd41eeb0f441402629298a0498b0e5e`, independently re-fetched and re-hashed this cycle (not trusted from the issue's own report alone) — both byte count and hash match exactly. Same Wayback-workaround precedent already used for gov.au sources. Confirmed mechanically: the retrieved bytes begin `%PDF-1.4` and contain zero `/AcroForm`/`/Widget`/`/FT` occurrences — a flat, print-and-fill specimen, not an interactive AcroForm PDF (also confirmed via `page.getAnnotations()` returning 0 entries for both pages, so no field-level metadata exists to consult).\n\nExtraction method: unlike the earlier GOV-4215 scouting cycle's concern that Transport Malta mirrors would need better PDF tooling for a glyph-index/CID font issue, this PDF's own text-showing operators decode cleanly via `pdfjs-dist`'s standard `getTextContent()` API (already vendored at `/tmp/node_modules/pdfjs-dist` from prior cycles) — no custom glyph-index font encoding, no ToUnicode CMap workaround needed. Text was rendered per page, grouped by y-coordinate row and sorted by x-coordinate, to reconstruct each bilingual (Maltese/English) field label and instruction in its printed layout position.\n\nModels 10 `fields[]` across 4 steps plus 2 `documents[]` entries.\n\nFour disclosed source-fidelity findings: (1) The \"Personal Details\" block's own printed note reads, verbatim: \"Fill in only in case of changes in your personal details and send a copy of your ID Card.\" This whole-block conditional (not a printed checkbox) is modelled as a directly-supplied boolean gate, `personalDetailsHaveChanged` — the same convention this registry's own `mt/identita/national-identity-card-application` (`addressHasChanged`) and `mt/identita/passport-application` (`spouseSectionApplies` et al.) each established for a compound/whole-section printed condition — controlling the requiredness of `nameAndSurname`/`address`/`postCode`/`idCardNumber` and the `idCardCopy` document. `telephoneOrMobile` is modelled unconditionally optional regardless of this gate, the same convenience-contact-field treatment this registry's own `mt/identita/national-identity-card-application` gave its equivalent `telephoneNumber`/`mobileNumber` fields. (2) `renewalChannel` (online / by post / in person) is modelled as a required enum field, the same treatment this registry's own `ie/dttas/driving-licence-renewal` gave its structurally identical `applicationChannel` field, even though this form is a flat print specimen rather than an interactive one — the three numbered options are a genuine top-level decision point governing the rest of the renewal, not a printed checkbox. This schema excludes the form's own detailed within-channel payment logistics (the printed cheque-payee name, the two banks' IBAN/BIC pairs for postal renewals, and the in-person card-payment note) as back-office/payment-processing detail rather than a fillable applicant field — none of it is a blank the applicant completes, unlike (for example) `mt/identita/national-identity-card-application`'s own `servizzGovHubLocation` blank line — consistent with this issue's own suggested judgment call and this registry's general convention of excluding office/payment-processing detail. (3) Both printed declaration sentences (\"I declare that if I have a medical condition which has become worse after the licence was issued, or if I develop a new condition, I will inform the Authority immediately\"; \"I declare that I have been a resident of Malta for at least 185 days in the last calendar year\") carry no blank line, checkbox, or yes/no tick-box of their own — unlike this issue's own scouting summary, which described the medical declaration as a \"yes/no + details\" field, the retrieved PDF text contains no details blank and no present-tense disclosure question; the first sentence is a forward-looking commitment to notify the Authority of a *future* change, not a question about a *current* condition. Both are therefore modelled as the applicant's own directly-supplied declaration content — `acknowledgesMedicalConditionNotificationDuty` and `residentInMaltaAtLeast185Days`, respectively — each a required boolean capturing the applicant's declared value, with no separate free-text \"details\" field fabricated against unprinted form content. (4) The \"Affix a clear background coloured photo\" instruction sits well below the Personal Details block (bounded well above it, per this cycle's own y-coordinate layout read) and carries no printed conditional of its own; this issue's own scouting note asserts the photograph is \"only required if personal details have changed since the last licence,\" but that condition appears nowhere in the retrieved PDF text and could not be independently re-confirmed against a live Transport Malta service page this cycle (the domain is Cloudflare-gated on every path, and no matching Wayback snapshot of the specific renewal-guidance page was located within this cycle's search). Per this registry's own established \"disclose rather than fabricate an unprinted field\" convention (see `mt/identita/passport-application`'s own Finding 6, an analogous external-guidance-only condition), the `photograph` document is modelled unconditionally optional rather than gated on `personalDetailsHaveChanged`, with this external claim disclosed here as informational context only.\n\n2 valid mock scenarios (an address/ID-card-number change requiring a photo and ID Card copy, renewing online, both declarations true; a straightforward no-change renewal by post, no photo submitted, both declarations true) plus 8 mutation-control fixtures (a missing statically-required field, a missing `nameAndSurname` while `personalDetailsHaveChanged` is true, a missing `idCardCopy` document while `personalDetailsHaveChanged` is true, an invalid `renewalChannel` enum value, a missing `residentInMaltaAtLeast185Days`, a missing `acknowledgesMedicalConditionNotificationDuty`, a missing `signature`, and an unknown top-level field) are committed under `conformance/mt/transport-malta/driving-licence-renewal/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own `fields[]`/`documents[]`, discarded after use, not committed) ran all 10: both valid scenarios at 0 errors, all 8 mutation controls each raising exactly 1 error, and confirmed every `requiredWhen` field/document reference resolves (0 dangling references). Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-21"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "personal_details",
+      "title": "Personal Details",
+      "fields": ["personalDetailsHaveChanged", "nameAndSurname", "address", "postCode", "idCardNumber", "telephoneOrMobile"],
+      "next": "renewal_channel"
+    },
+    {
+      "id": "renewal_channel",
+      "title": "Driving Licence Renewal Method",
+      "fields": ["renewalChannel"],
+      "next": "declarations"
+    },
+    {
+      "id": "declarations",
+      "title": "Declarations",
+      "fields": ["acknowledgesMedicalConditionNotificationDuty", "residentInMaltaAtLeast185Days"],
+      "next": "signature_and_photo"
+    },
+    {
+      "id": "signature_and_photo",
+      "title": "Signature and Photograph",
+      "fields": ["signature"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "personalDetailsHaveChanged",
+      "label": "This renewal reflects a change in your personal details",
+      "type": "boolean",
+      "required": true,
+      "description": "Not a printed checkbox. The Personal Details block's own heading note reads, verbatim: \"Fill in only in case of changes in your personal details and send a copy of your ID Card.\" Modelled as this directly-supplied boolean gate, controlling the requiredness of `nameAndSurname`/`address`/`postCode`/`idCardNumber` and the `idCardCopy` document — the same convention this registry's own `mt/identita/national-identity-card-application` (`addressHasChanged`) established for an analogous whole-section printed condition.",
+      "sourceRef": "Page 1 — \"Dettalji Personali ... Imla biss f'każ ta' tibdil fid-dettalji tiegħek u ibgħat kopja tal-karta tal-identità\" / \"Personal Details Fill in only in case of changes in your personal details and send a copy of your ID Card\""
+    },
+    {
+      "name": "nameAndSurname",
+      "label": "Name & Surname",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "personalDetailsHaveChanged", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Page 1, Personal Details — \"Isem u Kunjom\" / \"Name & Surname\""
+    },
+    {
+      "name": "address",
+      "label": "Address",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "personalDetailsHaveChanged", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Page 1, Personal Details — \"Indirizz\" / \"Address\""
+    },
+    {
+      "name": "postCode",
+      "label": "Post Code",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "personalDetailsHaveChanged", "equals": true },
+      "sourceRef": "Page 1, Personal Details — \"Kodiċi Postali\" / \"Post Code\""
+    },
+    {
+      "name": "idCardNumber",
+      "label": "ID Card Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "personalDetailsHaveChanged", "equals": true },
+      "classification": "pii",
+      "sourceRef": "Page 1, Personal Details — \"Numru tal-Karta tal-Identità\" / \"ID Card Number\""
+    },
+    {
+      "name": "telephoneOrMobile",
+      "label": "Telephone/Mobile",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Modelled unconditionally optional regardless of `personalDetailsHaveChanged`, the same convenience-contact-field treatment this registry's own `mt/identita/national-identity-card-application` gave its equivalent `telephoneNumber`/`mobileNumber` fields.",
+      "sourceRef": "Page 1, Personal Details — \"Telefon/Mobile\" / \"Telephone/Mobile\""
+    },
+    {
+      "name": "renewalChannel",
+      "label": "How are you renewing?",
+      "type": "enum",
+      "required": true,
+      "description": "The form's own three numbered options for effecting the renewal. `ONLINE` renews through www.licenzji-xufiera.gov.mt using an e-ID account or the ID Card number and document number, with the Medical Certificate and payment also processed through that same site. `POST` sends the required documentation together with payment (cash not accepted). `IN_PERSON` visits a Transport Malta office (Malta Transport Centre, Pantar Road, Ħal Lija; A3 Towers, Arcade Street, Paola; or the Gozo Licensing Office, Victoria). This schema excludes the form's own detailed within-channel payment logistics (bank IBAN/BIC, cheque payee, in-person card payment) as back-office/payment-processing detail rather than a fillable applicant field — see this schema's own `verification.notes`.",
+      "sourceRef": "Page 1 — \"Tiġdid tal-Liċenzja tas-sewqan jista' jsir billi tagħżel WAĦDA minn dawn\" / \"Driving Licence Renewals may be effected by choosing ONE of the below options\": \"1. online...\"; \"2. by sending the necessary documentation together with the payment by post\"; \"3. by visiting one of our offices...\"",
+      "validation": {
+        "enum": ["ONLINE", "POST", "IN_PERSON"]
+      }
+    },
+    {
+      "name": "acknowledgesMedicalConditionNotificationDuty",
+      "label": "Undertaking to notify the Authority of a new or worsening medical condition",
+      "type": "boolean",
+      "required": true,
+      "description": "The applicant's own directly-supplied declaration content, not a yes/no disclosure of a current condition: the printed sentence is a forward-looking commitment to notify the Authority of a *future* change, with no blank line, checkbox, or \"give details\" field of its own. See this schema's own `verification.notes` for the disclosed distinction from a present-tense disclosure question.",
+      "sourceRef": "Page 1 — \"Niddikjara li jekk ikolli xi kundizzjoni medika li tkun iggravat wara li ħarġet din il-liċenzja jew tkun żviluppatli xi kundizzjoni ġdida, irrid ninforma lill-Awtorità minnufih\" / \"I declare that if I have a medical condition which has become worse after the licence was issued, or if I develop a new condition, I will inform the Authority immediately\""
+    },
+    {
+      "name": "residentInMaltaAtLeast185Days",
+      "label": "Declaration of Maltese residency (at least 185 days in the last calendar year)",
+      "type": "boolean",
+      "required": true,
+      "description": "The applicant's own directly-supplied declaration content, affirming or denying the printed residency statement. No printed checkbox or blank line accompanies this sentence either.",
+      "sourceRef": "Page 1 — \"Jien niddikjara li ilni residenti f'Malta ghal mhux anqas minn 185 ġurnata fl-aħħar sena kalendarja\" / \"I declare that I have been a resident of Malta for at least 185 days in the last calendar year\""
+    },
+    {
+      "name": "signature",
+      "label": "Applicant's Signature",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Printed instruction directs dark ink within the signature box.",
+      "sourceRef": "Page 1 — \"Jekk jogħġbok iffirma b'linka skura fil-kaxxa\" / \"Please sign in dark ink within the box\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "idCardCopy",
+      "label": "Copy of Identity Card",
+      "category": "identity-document",
+      "required": false,
+      "requiredWhen": { "field": "personalDetailsHaveChanged", "equals": true },
+      "belongsTo": "applicant",
+      "sourceRef": "Page 1, Personal Details heading note — \"and send a copy of your ID Card\""
+    },
+    {
+      "id": "photograph",
+      "label": "Passport-style colour photograph (clear/light background)",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "handling": "Modelled unconditionally optional rather than gated on `personalDetailsHaveChanged`: the printed instruction carries no conditional of its own, and an external claim that this photograph is required only when personal details have changed could not be independently re-confirmed this cycle (transport.gov.mt is Cloudflare-gated on every path, and no matching Wayback snapshot of the specific renewal-guidance page was located). Disclosed as informational context rather than encoded as a `requiredWhen` tie — see this schema's own `verification.notes`.",
+      "sourceRef": "Page 1 — \"Waħħal ritratt bil-kulur fuq sfond ċar\" / \"Affix a clear background coloured photo\""
+    }
+  ]
+}
