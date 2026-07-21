@@ -4,7 +4,40 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **564 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **565 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4100, "GovSchema Standard Research"): Austria
+> closes to 6 of 6 verticals**, via `at/bmi/driving-licence-application` —
+> the Bundesministerium für Inneres' (BMI) "Führerscheinantrag" (Anlage 3 to
+> the Führerscheingesetz-Durchführungsverordnung, BGBl. II Nr. 472/2012), a
+> multi-purpose driving-licence service form covering duplicate issuance,
+> exchange of a foreign/military licence, code-95/96/111 entry, reinstatement
+> or reissuance of entitlement, and renunciation — not first-time issuance (a
+> driving-school-mediated process with no standalone specimen form). This was
+> the last of Austria's two pre-scouted, ready-to-author backlog candidates
+> the GOV-4092 cycle had banked (the other, Netherlands Visa, remains open —
+> see the Known Gaps section below). Fetched the RIS legal-gazette-hosted
+> specimen fresh (HTTP 200, 612,300 bytes) and cross-checked against the
+> BMEIA mirror the prior cycle had flagged (HTTP 200, 114,352 bytes) — the
+> two are not byte-identical as that note suggested, but their extracted text
+> layers match string-for-string once the RIS copy's own gazette-citation/
+> watermark lines are excluded, confirming the same underlying form. The
+> specimen carries zero AcroForm widgets (a flat print-and-fill form, unlike
+> the sibling National ID schema's fillable AcroForm); all 63 applicant-
+> facing fields were reconstructed from the PDF's own text-layer glyph x/y
+> coordinates, with checkbox positions recovered via a pixel-level scan of a
+> rendered raster after this session's renderer failed to rasterize the
+> embedded vector text. Discloses one genuine unresolved ambiguity: a
+> licence-class checkbox printed "BV" between "B" and "C1" in the 20-entry
+> class checklist does not correspond to any class this cycle could find a
+> citation for in the Führerscheingesetz, and is modelled as printed rather
+> than glossed. Numerator changes from 564 to 565 documents. Both validators
+> pass at 565/565; 9 conformance fixtures (2 valid + 7 mutation-control)
+> checked against an ad-hoc ajv schema built from the document's own field
+> constraints, including its `requiredWhen` and `exclusivityGroups` rules.
+> **This closes Austria's DMV vertical, giving Austria all 6 of its
+> verticals.** See the DMV vertical section below and the document's own
+> VERIFICATION.md for the full record.
 
 > **Update (2026-07-21, GOV-4092/GOV-4094, "GovSchema Standard Research"):
 > Czech Republic closes to 6 of 6 verticals**, via
@@ -13621,7 +13654,18 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (56/73 jurisdictions — 77%)
+### DMV — Vehicle Registration, Licensing, Permits (57/73 jurisdictions — 78%)
+
+> **Update (2026-07-21, GOV-4100, "GovSchema Standard Research"): Austria's
+> DMV vertical opens, closing Austria to full 6/6 coverage**, via
+> `at/bmi/driving-licence-application` — the Bundesministerium für Inneres'
+> "Führerscheinantrag" (Anlage 3 to the Führerscheingesetz-
+> Durchführungsverordnung, BGBl. II Nr. 472/2012), a multi-purpose
+> driving-licence duplicate/exchange/code-entry/reinstatement/renunciation
+> service form. See the Executive Summary's GOV-4100 update above for the
+> full sourcing record, field/document counts, and disclosed judgment calls
+> (notably the unresolved "BV" licence-class token). Numerator updated from
+> 56 to 57.
 
 > **Update (2026-07-16, GOV-3403, "GovSchema Standard Research"): Mongolia's
 > DMV vertical opens**, via `mn/atunt/vehicle-plate-number-reservation` — the
@@ -18432,7 +18476,7 @@ now closed.
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **AM** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
-| **AT** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| **AT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -18517,18 +18561,8 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Genuinely open, well-sourced candidates
 
-0. **Pre-scouted single-vertical-gap candidates banked this cycle (GOV-4092,
-   2026-07-21), not yet authored:**
-   - **Austria DMV** — Führerscheinantrag (Anlage 3 to the
-     Führerscheingesetz-Durchführungsverordnung, BGBl. II Nr. 472/2012),
-     hosted both on Austria's official legal-gazette system
-     (`ris.bka.gv.at/Dokumente/Bundesnormen/NOR40146673/II_472_2012_Anlage_3.pdf`)
-     and mirrored by the Foreign Ministry
-     (`bmeia.gv.at/fileadmin/user_upload/Allgemein/Formulare/FormularFuehrerscheinantrag.pdf`).
-     Covers duplicate issuance, exchange of a foreign licence, code entry,
-     reinstatement, and surrender — not first-time issuance (a
-     driving-school-mediated process with no standalone PDF). Flat 2-page
-     form, ~35-45 fields including a ~20-box licence-class checklist.
+0. **Pre-scouted single-vertical-gap candidate banked in a prior cycle
+   (GOV-4092, 2026-07-21), not yet authored:**
    - **Netherlands Visa** — IND form 9511
      (`ind.nl/en/forms/9511.pdf`, "Application for admission and residence
      'to stay with a family member'"), the MVV (Type D entry visa) plus
@@ -18536,9 +18570,10 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
      conditional branches (minor legal-representative, sponsor-abroad vs.
      sponsor-in-NL). The harmonized Schengen short-stay (C-visa) route for
      NL is a confirmed dead end (`consular.mfaservices.nl`, account-gated).
-   - Both were verified reachable without login this cycle; Czech National
-     ID (see below) was picked instead for its smaller size and because it
-     closes a jurisdiction to 6/6. Left as ready-to-author backlog.
+     Verified reachable without login. Left as ready-to-author backlog.
+   - **Update (GOV-4100):** the sibling Austria DMV candidate this same
+     item had banked is now authored — see the Executive Summary update
+     above (`at/bmi/driving-licence-application`) — closing Austria to 6/6.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
