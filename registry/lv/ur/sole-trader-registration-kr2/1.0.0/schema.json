@@ -1,0 +1,945 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "lv/ur/sole-trader-registration-kr2",
+  "version": "1.0.0",
+  "title": "Latvia Sole-Trader (Individual Merchant) Registration (Form KR2)",
+  "description": "The Register of Enterprises' (Uzņēmumu reģistrs, UR) Form KR2 application for the entry of an individual merchant (individuālais komersants, Latvia's sole-trader form) into the Commercial Register (\"Pieteikums individuālā komersanta ierakstīšanai komercreģistrā\"). Opens Latvia as the registry's 75th jurisdiction (Business Formation, 1 of 6 verticals). This document models the individual merchant's own identity (a Latvian personal code, or for a person with none, date of birth, address, and identity-document details); the trade name (firma); the legal address decomposed to Latvia's own novads/pilsēta/pagasts/ciems address hierarchy plus a State Address Register cadastral designation; an optional micro-enterprise tax-payer status opt-in with its own attestation; an optional custodian/guardian block; an optional block for a representative signing on the merchant's behalf (reusing the same identity-block shape as the merchant's own); a free-text attached-documents list; contact information and a decision-notification-method choice; up to two signatures; and state-fee payment details. It excludes nothing beyond the applicant-facing fields themselves — the source form carries no separate clerk-only or \"for official use\" block. Filing occurs either on paper or through the Register of Enterprises' own service portal (registrs.ur.gov.lv); this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Latvia or its Register of Enterprises.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "LV",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Register of Enterprises of the Republic of Latvia",
+    "abbreviation": "UR",
+    "url": "https://www.ur.gov.lv"
+  },
+  "process": {
+    "type": "registration",
+    "language": "lv"
+  },
+  "source": {
+    "url": "https://apraksti.ur.gov.lv/lv/KR2%20veidlapa",
+    "retrievedAt": "2026-07-21",
+    "documentRef": "\"KR2. VEIDLAPA — Pieteikums individuālā komersanta ierakstīšanai komercreģistrā\", native .docx, docProps last-modified 2025-10-06"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-21",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-21",
+    "notes": "GOV-4129 (child of GOV-4128, \"GovSchema Standard Research\"). Latvia's Business Formation\nvertical — the Register of Enterprises' (Uzņēmumu reģistrs) Form KR2 sole-trader registration form — was banked\nas a pre-scouted, ready-to-author candidate in the prior cycle (GOV-4121/GOV-4124, which opened Cyprus instead)\nafter Latvia's other five verticals were screened and found weaker: DMV (CSDD) is fully e.csdd.lv-login-gated\nwith no downloadable form; Visa is a confirmed duplicate of the EU-harmonized Schengen template already modelled\nelsewhere in this registry; Passport and National ID (PMLP) are both in-person-appointment-only, with only a\nstale 2017 third-party-hosted specimen found for either.\n\nRe-fetched `https://apraksti.ur.gov.lv/lv/KR2%20veidlapa` fresh this cycle with a plain `curl` request (no\nUser-Agent gating, no login, no CAPTCHA): HTTP 200, `Content-Type:\napplication/vnd.openxmlformats-officedocument.wordprocessingml.document`, `Content-Length: 47737`, served by a\nDrupal 11 site (`x-generator: Drupal 11`). This is a native, unauthenticated `.docx` (Word Open XML), not a PDF —\n`docProps/core.xml` records `dcterms:modified` of 2025-10-06T13:57:00Z, matching the pre-scouted estimate.\nsha256: `9073145e1ba75a2bd51c90b6cb6d4af51c1d6d18666383a9eac6fc838f326595`.\n\n## Structure of the source\n\nThe `.docx` carries no Word content-control (`w:sdt`) fields — every checkbox on the form is instead a literal\nWingdings glyph run (`<w:sym w:font=\"Wingdings\" w:char=\"...\"/>`) embedded directly in the text flow: `F0FD`\n(three occurrences) marks an \"Atzīmēt\" (\"Mark\") instruction immediately preceding one or more selectable options,\nand `F0A8` (five occurrences) is the empty checkbox glyph for each individual option — four real checkboxes\n(custodian/guardian in Section 5; mail/email notification in Section 6) plus one decorative use directly before\nthe \"Apliecinājums\" sub-heading in Section 4 that is not itself a fillable option. All ten of the form's own\nnumbered sections were extracted from `word/document.xml`'s own paragraph/table-row structure (not OCR — this is\na born-digital document with a full, clean text layer), and every field below was verified against the raw XML,\nnot just the flattened text dump.\n\nThree repeated identity sub-blocks — the individual merchant (Section 1), the appointed guardian (Section 5),\nand the person signing on the merchant's behalf (Section 6) — each print the same two-header pattern\n(\"Personas, kurai Latvijas Republikā ir piešķirts personas kods\" vs. \"...nav piešķirts\") with no checkbox\ndistinguishing them; each is modelled with an invented `hasLatvianPersonalCode`-style gating boolean, the same\nconvention this registry uses elsewhere (e.g. `applicantIsMinor` in `cy/crmd/passport-application`) when a form\ndraws its own either/or line without a checkbox to encode it.\n\n## Disclosed source-fidelity findings\n\n1. **A structural asymmetry between the three identity sub-blocks.** Sections 1 and 5 both print an \"Adrese, kurā\n   persona ir sasniedzama\" row under their \"has a Latvian personal code\" sub-header (with a \"not obligatory\n   unless no registered address\" carve-out); Section 6's equivalent sub-header has no such address row at all —\n   only \"Personas kods.\" Modelled as printed (`signerHasLatvianPersonalCode` gates only `signerPersonalCode`,\n   with no `signerAddress` counterpart), rather than assuming the omission was an oversight.\n2. **The address-hierarchy rows in Section 3 (Novads/Novada pilsēta-pagasts/Pilsēta/Ciems) carry no per-row\n   conditional marker.** Latvia's own administrative structure means only a subset of these rows applies to any\n   one address (an independent city address uses \"Pilsēta\" alone; a rural address uses \"Novads\" plus \"Ciems\";\n   etc.), but the form gives no field-level signal distinguishing which combination is in play. All four are\n   modelled unconditionally optional, and the ambiguity is disclosed on each field rather than guessed at.\n3. **Two distinct \"not obligatory\" carve-outs coexist for the same underlying concept.** The \"has personal code\"\n   address row (Sections 1 and 5) carries an explicit conditional carve-out (\"not obligatory unless no registered\n   address\"); the \"no personal code\" address row immediately below it carries none. Modelled as two separate\n   fields (`address`/`guardianAddress` vs. `foreignAddress`/`guardianForeignAddress`) rather than one shared field,\n   to avoid collapsing two differently-conditioned rows into a single requiredness rule.\n4. **Section 10 (state-fee payment) is entirely conditionally skippable, with no field to gate on.** Its own\n   header states the section is not filled in when the application is submitted via the Register of Enterprises'\n   service portal (fee payable only through the portal) or when a separate payment-confirming document is\n   attached — neither condition corresponds to a field anywhere on the form. Every Section 10 field is modelled\n   unconditionally optional; the natural-person/legal-person payer split still uses an invented gating boolean\n   (`stateFeePayerIsLegalPerson`, itself optional) mirroring the personal-code either/or convention.\n5. **Section 9's two signature slots carry no role label.** Both are printed identically (\"Vārds,\" \"Uzvārds,\"\n   \"Personas kods (ja nav personas koda, dzimšanas datums),\" \"Paraksts*,\" \"Datums*\") with nothing distinguishing\n   whether the individual merchant, a guardian, or a representative belongs in the first slot versus the second —\n   disclosed on `signatory2*` rather than guessed at.\n6. **Section 4's confirmation text has no individual checkboxes of its own.** The \"Apliecinājums\" sub-heading is\n   preceded by a decorative Wingdings glyph (the fifth `F0A8` occurrence, distinct from the four real checkboxes\n   above), but the three \"Apliecinu, ka:\" bullet points beneath it are plain attestation text with no per-bullet\n   checkbox — modelled as one combined `documents[]` attestation statement (`microEnterpriseTaxStatusAttestation`)\n   rather than three separate boolean fields.\n\n## Conformance\n\n2 valid mock scenarios and 8 mutation-control fixtures committed under\n`conformance/lv/ur/sole-trader-registration-kr2/1.0.0/`. An ephemeral, from-scratch mock validator (deriving\nrequired/`requiredWhen`/`exclusivityGroups` rules directly from this schema's own `fields[]`/`documents[]`, not\ncommitted) ran all 10 fixtures: both valid scenarios at 0 errors, all 8 mutation controls each raising exactly 1\nerror, and confirmed every `requiredWhen` field reference resolves (0 dangling references).\n\n`node tools/validate.mjs` and `node tools/validate-ajv.mjs` both pass at 569/569 for the full registry,\nindividually and as part of the full run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-21"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "givenName",
+      "label": "Vārds",
+      "type": "string",
+      "required": true,
+      "description": "The individual merchant's (applicant's) given name.",
+      "sourceRef": "Section 1, \"Individuālais komersants\" — \"Vārds\"",
+      "classification": "pii"
+    },
+    {
+      "name": "surname",
+      "label": "Uzvārds",
+      "type": "string",
+      "required": true,
+      "description": "The individual merchant's surname.",
+      "sourceRef": "Section 1 — \"Uzvārds\"",
+      "classification": "pii"
+    },
+    {
+      "name": "hasLatvianPersonalCode",
+      "label": "Personas, kurai Latvijas Republikā ir piešķirts personas kods",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the individual merchant has been assigned a personal code (personas kods) in the Republic of Latvia. Not itself a printed checkbox — the form instead prints two alternate sub-headers (\"Personas, kurai Latvijas Republikā ir piešķirts personas kods\" vs. \"...nav piešķirts\") that gate two mutually exclusive field blocks. Modelled explicitly here, the same convention this registry uses when a form draws its own either/or line with no checkbox (e.g. `applicantIsMinor` in `cy/crmd/passport-application`).",
+      "sourceRef": "Section 1 — sub-header pair"
+    },
+    {
+      "name": "personalCode",
+      "label": "Personas kods",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLatvianPersonalCode",
+        "equals": true
+      },
+      "description": "The individual merchant's Latvian personal code (personas kods), format DDMMYY-XXXXX.",
+      "sourceRef": "Section 1, \"Personas, kurai...ir piešķirts personas kods\" block — \"Personas kods\"",
+      "validation": {
+        "pattern": "^\\d{6}-\\d{5}$"
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "address",
+      "label": "Adrese, kurā persona ir sasniedzama",
+      "type": "string",
+      "required": false,
+      "description": "Address at which the individual merchant can be reached. The source form marks this \"not obligatorily required, except if the person has no registered address\" — i.e. required in practice only for a personal-code holder with no address of record in the Population Register, a condition with no corresponding field on the form. Left unconditionally optional rather than encoded.",
+      "sourceRef": "Section 1, \"Personas, kurai...ir piešķirts personas kods\" block — \"Adrese, kurā persona ir sasniedzama (nav norādāma obligāti, izņemot, ja personai nav reģistrēta adrese)\"",
+      "classification": "pii"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Dzimšanas datums",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLatvianPersonalCode",
+        "equals": false
+      },
+      "description": "The individual merchant's date of birth, required only for a person with no Latvian personal code.",
+      "sourceRef": "Section 1, \"Personas, kurai...nav piešķirts personas kods\" block — \"Dzimšanas datums (diena/mēnesis/gads)\"",
+      "classification": "pii"
+    },
+    {
+      "name": "foreignAddress",
+      "label": "Adrese, kurā persona ir sasniedzama",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLatvianPersonalCode",
+        "equals": false
+      },
+      "description": "Address at which the individual merchant can be reached, for a person with no Latvian personal code. Unlike `address` above, this row carries no \"not obligatory\" carve-out.",
+      "sourceRef": "Section 1, \"Personas, kurai...nav piešķirts personas kods\" block — \"Adrese, kurā persona ir sasniedzama\"",
+      "classification": "pii"
+    },
+    {
+      "name": "identityDocumentType",
+      "label": "Dokumenta veids",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLatvianPersonalCode",
+        "equals": false
+      },
+      "description": "The type of identity document held by the individual merchant (e.g. passport, national ID card), free text as the form provides no enumerated checkbox list.",
+      "sourceRef": "Section 1, \"Personu apliecinoša dokumenta dati\" — \"Dokumenta veids\""
+    },
+    {
+      "name": "identityDocumentNumber",
+      "label": "Dokumenta nr.",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLatvianPersonalCode",
+        "equals": false
+      },
+      "description": "The individual merchant's identity document number.",
+      "sourceRef": "Section 1, \"Personu apliecinoša dokumenta dati\" — \"Dokumenta nr.\"",
+      "classification": "pii"
+    },
+    {
+      "name": "identityDocumentIssueDate",
+      "label": "Izdošanas datums",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLatvianPersonalCode",
+        "equals": false
+      },
+      "description": "Date the individual merchant's identity document was issued.",
+      "sourceRef": "Section 1, \"Personu apliecinoša dokumenta dati\" — \"Izdošanas datums (diena/mēnesis/gads)\""
+    },
+    {
+      "name": "identityDocumentIssuingCountry",
+      "label": "Izdevējs — Valsts",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLatvianPersonalCode",
+        "equals": false
+      },
+      "description": "Country that issued the individual merchant's identity document.",
+      "sourceRef": "Section 1, \"Personu apliecinoša dokumenta dati\", \"Izdevējs\" — \"Valsts\""
+    },
+    {
+      "name": "identityDocumentIssuingInstitution",
+      "label": "Izdevējs — Institūcija",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLatvianPersonalCode",
+        "equals": false
+      },
+      "description": "Institution that issued the individual merchant's identity document.",
+      "sourceRef": "Section 1, \"Personu apliecinoša dokumenta dati\", \"Izdevējs\" — \"Institūcija\""
+    },
+    {
+      "name": "businessName",
+      "label": "Firma",
+      "type": "string",
+      "required": true,
+      "description": "The individual merchant's trade name (firma) under which the business will be entered into the Commercial Register.",
+      "sourceRef": "Section 2, \"Firma\""
+    },
+    {
+      "name": "legalAddressNovads",
+      "label": "Novads",
+      "type": "string",
+      "required": false,
+      "description": "Municipality (novads) of the legal address, per Latvia's State Address Register (Valsts adrešu reģistrs). Latvia's address hierarchy means only a subset of the Novads/Novada pilsēta-pagasts/Pilsēta/Ciems rows apply to any one address depending on whether it is an independent city, a novads town/parish, or a rural village — the form gives no per-row conditional marker distinguishing which combination applies, so all four are modelled unconditionally optional.",
+      "sourceRef": "Section 3, \"Juridiskā adrese\" — \"Novads\""
+    },
+    {
+      "name": "legalAddressNovadaPilsetaOrPagasts",
+      "label": "Novada pilsēta/pagasts",
+      "type": "string",
+      "required": false,
+      "description": "Town or parish (pilsēta/pagasts) within the novads, of the legal address. See `legalAddressNovads` for the disclosed address-hierarchy ambiguity shared by this row.",
+      "sourceRef": "Section 3 — \"Novada pilsēta/pagasts\""
+    },
+    {
+      "name": "legalAddressPilseta",
+      "label": "Pilsēta",
+      "type": "string",
+      "required": false,
+      "description": "City (pilsēta) of the legal address, for an address in an independent republican city rather than a novads. See `legalAddressNovads` for the disclosed address-hierarchy ambiguity shared by this row.",
+      "sourceRef": "Section 3 — \"Pilsēta\""
+    },
+    {
+      "name": "legalAddressCiems",
+      "label": "Ciems",
+      "type": "string",
+      "required": false,
+      "description": "Village (ciems) of the legal address, for a rural address within a pagasts. See `legalAddressNovads` for the disclosed address-hierarchy ambiguity shared by this row.",
+      "sourceRef": "Section 3 — \"Ciems\""
+    },
+    {
+      "name": "legalAddressStreetName",
+      "label": "Ielas nosaukums",
+      "type": "string",
+      "required": false,
+      "description": "Street name of the legal address, where the address is street-based.",
+      "sourceRef": "Section 3 — \"Ielas nosaukums\""
+    },
+    {
+      "name": "legalAddressHouseNameOrNumber",
+      "label": "Mājas nosaukums/mājas nr., korpuss",
+      "type": "string",
+      "required": false,
+      "description": "House name (for a rural farmstead-style address) or house number and building/block (korpuss), for a street-based address.",
+      "sourceRef": "Section 3 — \"Mājas nosaukums/ mājas nr., korpuss\""
+    },
+    {
+      "name": "legalAddressApartmentNumber",
+      "label": "Dzīvokļa numurs",
+      "type": "string",
+      "required": false,
+      "description": "Apartment number of the legal address, where applicable.",
+      "sourceRef": "Section 3 — \"Dzīvokļa numurs\""
+    },
+    {
+      "name": "legalAddressPostalCode",
+      "label": "Pasta indekss LV-",
+      "type": "string",
+      "required": true,
+      "description": "Four-digit Latvian postal code of the legal address. \"LV-\" is the form's own printed static prefix; only the four digits following it are entered in the blank cell.",
+      "sourceRef": "Section 3 — \"Pasta indekss LV -\"",
+      "validation": {
+        "pattern": "^\\d{4}$"
+      }
+    },
+    {
+      "name": "legalAddressCadastralDesignation",
+      "label": "Nekustamā īpašuma objekta (ēkas, dzīvokļa īpašuma vai telpas) kadastra apzīmējums",
+      "type": "string",
+      "required": false,
+      "description": "Cadastral designation of the real-estate object (building, apartment property, or premises) at the legal address — 14 digits for a building, 17 digits for an apartment property or premises, per the form's own footnotes. Left optional: the form marks no explicit requiredness for this row, and not every legal-address arrangement (e.g. a leased space) may have its own distinct cadastral designation to cite.",
+      "sourceRef": "Section 3 — \"Nekustamā īpašuma objekta (ēkas*, dzīvokļa īpašuma vai telpas**) kadastra apzīmējums\"",
+      "validation": {
+        "pattern": "^(\\d{14}|\\d{17})$"
+      }
+    },
+    {
+      "name": "microEnterpriseTaxStatusRequested",
+      "label": "Atzīmēt, ja individuālais komersants piesakās mikrouzņēmumu nodokļa maksātāja statusa iegūšanai",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the individual merchant is applying, on this same form, for micro-enterprise tax payer status. Absent/false means status is not being requested.",
+      "sourceRef": "Section 4, \"Mikrouzņēmumu nodokļa maksātāja statuss\" — checkbox row"
+    },
+    {
+      "name": "custodianAppointed",
+      "label": "ja individuālajam komersantam ir iecelts aizgādnis",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether a custodian (aizgādnis) has been appointed for the individual merchant. Per the form's own note, no further information about the custodian needs to be provided when this box is marked.",
+      "sourceRef": "Section 5, \"Atzīmēt\" checkbox row, first option"
+    },
+    {
+      "name": "guardianAppointed",
+      "label": "ja individuālajam komersantam ir iecelts aizbildnis un norādīt ziņas par aizbildni",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether a guardian (aizbildnis) has been appointed for the individual merchant. When marked, the guardian's own identity details below become required.",
+      "sourceRef": "Section 5, \"Atzīmēt\" checkbox row, second option"
+    },
+    {
+      "name": "guardianGivenName",
+      "label": "Vārds",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "guardianAppointed",
+        "equals": true
+      },
+      "description": "The appointed guardian's given name.",
+      "sourceRef": "Section 5, guardian identity block — \"Vārds\"",
+      "classification": "pii"
+    },
+    {
+      "name": "guardianSurname",
+      "label": "Uzvārds",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "guardianAppointed",
+        "equals": true
+      },
+      "description": "The appointed guardian's surname.",
+      "sourceRef": "Section 5, guardian identity block — \"Uzvārds\"",
+      "classification": "pii"
+    },
+    {
+      "name": "guardianHasLatvianPersonalCode",
+      "label": "Personas, kurai Latvijas Republikā ir piešķirts personas kods",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "guardianAppointed",
+        "equals": true
+      },
+      "description": "Whether the appointed guardian has a Latvian personal code. Invented gating field mirroring `hasLatvianPersonalCode` above, for the same reason: the form draws this either/or line with two sub-headers and no checkbox.",
+      "sourceRef": "Section 5, guardian identity block — sub-header pair"
+    },
+    {
+      "name": "guardianPersonalCode",
+      "label": "Personas kods",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "guardianAppointed",
+            "equals": true
+          },
+          {
+            "field": "guardianHasLatvianPersonalCode",
+            "equals": true
+          }
+        ]
+      },
+      "description": "The appointed guardian's Latvian personal code.",
+      "sourceRef": "Section 5, guardian identity block, \"...ir piešķirts personas kods\" — \"Personas kods\"",
+      "validation": {
+        "pattern": "^\\d{6}-\\d{5}$"
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "guardianAddress",
+      "label": "Adrese, kurā persona ir sasniedzama",
+      "type": "string",
+      "required": false,
+      "description": "Address at which the appointed guardian can be reached. Carries the same \"not obligatory unless no registered address\" carve-out as `address` above.",
+      "sourceRef": "Section 5, guardian identity block, \"...ir piešķirts personas kods\" — \"Adrese, kurā persona ir sasniedzama (nav norādāma obligāti, izņemot, ja personai nav reģistrēta adrese)\"",
+      "classification": "pii"
+    },
+    {
+      "name": "guardianDateOfBirth",
+      "label": "Dzimšanas datums",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "guardianAppointed",
+            "equals": true
+          },
+          {
+            "field": "guardianHasLatvianPersonalCode",
+            "equals": false
+          }
+        ]
+      },
+      "description": "The appointed guardian's date of birth, required only for a guardian with no Latvian personal code.",
+      "sourceRef": "Section 5, guardian identity block, \"...nav piešķirts personas kods\" — \"Dzimšanas datums (diena/mēnesis/gads)\"",
+      "classification": "pii"
+    },
+    {
+      "name": "guardianForeignAddress",
+      "label": "Adrese, kurā persona ir sasniedzama",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "guardianAppointed",
+            "equals": true
+          },
+          {
+            "field": "guardianHasLatvianPersonalCode",
+            "equals": false
+          }
+        ]
+      },
+      "description": "Address at which the appointed guardian can be reached, for a guardian with no Latvian personal code. No \"not obligatory\" carve-out on this row.",
+      "sourceRef": "Section 5, guardian identity block, \"...nav piešķirts personas kods\" — \"Adrese, kurā persona ir sasniedzama\"",
+      "classification": "pii"
+    },
+    {
+      "name": "guardianIdentityDocumentType",
+      "label": "Dokumenta veids",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "guardianAppointed",
+            "equals": true
+          },
+          {
+            "field": "guardianHasLatvianPersonalCode",
+            "equals": false
+          }
+        ]
+      },
+      "description": "Type of identity document held by the appointed guardian.",
+      "sourceRef": "Section 5, guardian identity block, \"Personu apliecinoša dokumenta dati\" — \"Dokumenta veids\""
+    },
+    {
+      "name": "guardianIdentityDocumentNumber",
+      "label": "Dokumenta nr.",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "guardianAppointed",
+            "equals": true
+          },
+          {
+            "field": "guardianHasLatvianPersonalCode",
+            "equals": false
+          }
+        ]
+      },
+      "description": "The appointed guardian's identity document number.",
+      "sourceRef": "Section 5, guardian identity block, \"Personu apliecinoša dokumenta dati\" — \"Dokumenta nr.\"",
+      "classification": "pii"
+    },
+    {
+      "name": "guardianIdentityDocumentIssueDate",
+      "label": "Izdošanas datums",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "guardianAppointed",
+            "equals": true
+          },
+          {
+            "field": "guardianHasLatvianPersonalCode",
+            "equals": false
+          }
+        ]
+      },
+      "description": "Date the appointed guardian's identity document was issued.",
+      "sourceRef": "Section 5, guardian identity block, \"Personu apliecinoša dokumenta dati\" — \"Izdošanas datums (diena/mēnesis/gads)\""
+    },
+    {
+      "name": "guardianIdentityDocumentIssuingCountry",
+      "label": "Izdevējs — Valsts",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "guardianAppointed",
+            "equals": true
+          },
+          {
+            "field": "guardianHasLatvianPersonalCode",
+            "equals": false
+          }
+        ]
+      },
+      "description": "Country that issued the appointed guardian's identity document.",
+      "sourceRef": "Section 5, guardian identity block, \"Izdevējs\" — \"Valsts\""
+    },
+    {
+      "name": "guardianIdentityDocumentIssuingInstitution",
+      "label": "Izdevējs — Institūcija",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "guardianAppointed",
+            "equals": true
+          },
+          {
+            "field": "guardianHasLatvianPersonalCode",
+            "equals": false
+          }
+        ]
+      },
+      "description": "Institution that issued the appointed guardian's identity document.",
+      "sourceRef": "Section 5, guardian identity block, \"Izdevējs\" — \"Institūcija\""
+    },
+    {
+      "name": "signerGivenName",
+      "label": "Vārds",
+      "type": "string",
+      "required": false,
+      "description": "Given name of the person signing the application on the individual merchant's behalf. This section is filled in only if someone other than the individual merchant signs, and the form's own note says it does not need to be filled in when Section 5 already names a guardian.",
+      "sourceRef": "Section 6, \"Persona, kura paraksta pieteikumu\" — \"Vārds\"",
+      "classification": "pii"
+    },
+    {
+      "name": "signerSurname",
+      "label": "Uzvārds",
+      "type": "string",
+      "required": false,
+      "description": "Surname of the person signing on the individual merchant's behalf.",
+      "sourceRef": "Section 6 — \"Uzvārds\"",
+      "classification": "pii"
+    },
+    {
+      "name": "signerHasLatvianPersonalCode",
+      "label": "Personas, kurai Latvijas Republikā ir piešķirts personas kods",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the signer has a Latvian personal code. Invented gating field, same convention as `hasLatvianPersonalCode`/`guardianHasLatvianPersonalCode` above. Unlike those two blocks, this block's \"has personal code\" sub-header has no accompanying address row on the form — a genuine structural asymmetry, disclosed rather than modelled around.",
+      "sourceRef": "Section 6, signer identity block — sub-header pair"
+    },
+    {
+      "name": "signerPersonalCode",
+      "label": "Personas kods",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "signerHasLatvianPersonalCode",
+        "equals": true
+      },
+      "description": "The signer's Latvian personal code.",
+      "sourceRef": "Section 6, signer identity block, \"...ir piešķirts personas kods\" — \"Personas kods\"",
+      "validation": {
+        "pattern": "^\\d{6}-\\d{5}$"
+      },
+      "classification": "pii"
+    },
+    {
+      "name": "signerDateOfBirth",
+      "label": "Dzimšanas datums",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "signerHasLatvianPersonalCode",
+        "equals": false
+      },
+      "description": "The signer's date of birth, required only for a signer with no Latvian personal code.",
+      "sourceRef": "Section 6, signer identity block, \"...nav piešķirts personas kods\" — \"Dzimšanas datums (diena/mēnesis/gads)\"",
+      "classification": "pii"
+    },
+    {
+      "name": "signerForeignAddress",
+      "label": "Adrese, kurā persona ir sasniedzama",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "signerHasLatvianPersonalCode",
+        "equals": false
+      },
+      "description": "Address at which the signer can be reached, for a signer with no Latvian personal code.",
+      "sourceRef": "Section 6, signer identity block, \"...nav piešķirts personas kods\" — \"Adrese, kurā persona ir sasniedzama\"",
+      "classification": "pii"
+    },
+    {
+      "name": "signerIdentityDocumentType",
+      "label": "Dokumenta veids",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "signerHasLatvianPersonalCode",
+        "equals": false
+      },
+      "description": "Type of identity document held by the signer.",
+      "sourceRef": "Section 6, signer identity block, \"Personu apliecinoša dokumenta dati\" — \"Dokumenta veids\""
+    },
+    {
+      "name": "signerIdentityDocumentNumber",
+      "label": "Dokumenta nr.",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "signerHasLatvianPersonalCode",
+        "equals": false
+      },
+      "description": "The signer's identity document number.",
+      "sourceRef": "Section 6, signer identity block, \"Personu apliecinoša dokumenta dati\" — \"Dokumenta nr.\"",
+      "classification": "pii"
+    },
+    {
+      "name": "signerIdentityDocumentIssueDate",
+      "label": "Izdošanas datums",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "signerHasLatvianPersonalCode",
+        "equals": false
+      },
+      "description": "Date the signer's identity document was issued.",
+      "sourceRef": "Section 6, signer identity block, \"Personu apliecinoša dokumenta dati\" — \"Izdošanas datums (diena/mēnesis/gads)\""
+    },
+    {
+      "name": "signerIdentityDocumentIssuingCountry",
+      "label": "Izdevējs — Valsts",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "signerHasLatvianPersonalCode",
+        "equals": false
+      },
+      "description": "Country that issued the signer's identity document.",
+      "sourceRef": "Section 6, signer identity block, \"Izdevējs\" — \"Valsts\""
+    },
+    {
+      "name": "signerIdentityDocumentIssuingInstitution",
+      "label": "Izdevējs — Institūcija",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "signerHasLatvianPersonalCode",
+        "equals": false
+      },
+      "description": "Institution that issued the signer's identity document.",
+      "sourceRef": "Section 6, signer identity block, \"Izdevējs\" — \"Institūcija\""
+    },
+    {
+      "name": "signerLegalBasisForRepresentation",
+      "label": "Uz kāda tiesiska pamata persona pārstāv dibinātāju",
+      "type": "string",
+      "required": false,
+      "description": "The legal basis on which the signer represents the founder (individual merchant), e.g. a power of attorney.",
+      "sourceRef": "Section 6 — \"Uz kāda tiesiska pamata persona pārstāv dibinātāju\""
+    },
+    {
+      "name": "attachedDocumentsList",
+      "label": "Pievienotie dokumenti (jānorāda dokuments, eksemplāru skaits, lapu skaits)",
+      "type": "string",
+      "required": false,
+      "description": "Free-text list of documents attached to this application, each with its number of copies and number of pages, as instructed. The source provides a single blank area rather than a structured table with separate document/copies/pages columns, so this is modelled as one free-text field rather than a `documents[]` checklist.",
+      "sourceRef": "Section 7, \"Pievienotie dokumenti\""
+    },
+    {
+      "name": "notifyByMail",
+      "label": "Nosūtot pa pastu uz juridisko adresi",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the state notary's decision should be sent by post to the legal address, applicable only if no official electronic address (e-adrese) is activated (in which case the decision is sent there automatically instead).",
+      "sourceRef": "Section 8, \"Atzīmēt\" checkbox row, first option"
+    },
+    {
+      "name": "notifyByEmail",
+      "label": "Nosūtot elektronisko dokumentu uz e-pasta adresi",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the state notary's decision should be sent as an electronic document, signed with a secure electronic signature and timestamp, to an e-mail address.",
+      "sourceRef": "Section 8, \"Atzīmēt\" checkbox row, second option"
+    },
+    {
+      "name": "decisionNotificationEmailAddress",
+      "label": "(norādīt e-pasta adresi)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "notifyByEmail",
+        "equals": true
+      },
+      "description": "E-mail address the state notary's decision is sent to, when `notifyByEmail` is selected.",
+      "sourceRef": "Section 8, second checkbox option — \"(norādīt e-pasta adresi)\"",
+      "classification": "pii"
+    },
+    {
+      "name": "contactEmailAddress",
+      "label": "E-pasta adrese",
+      "type": "string",
+      "required": false,
+      "description": "General contact e-mail address for correspondence, separate from `decisionNotificationEmailAddress`. Explicitly marked not obligatory on the form.",
+      "sourceRef": "Section 8, \"Kontaktinformācija saziņai (informācija nav norādāma obligāti)\" — \"E-pasta adrese\"",
+      "classification": "pii"
+    },
+    {
+      "name": "contactPhoneNumber",
+      "label": "Tālruņa numurs",
+      "type": "string",
+      "required": false,
+      "description": "General contact telephone number. Explicitly marked not obligatory on the form.",
+      "sourceRef": "Section 8, \"Kontaktinformācija saziņai (informācija nav norādāma obligāti)\" — \"Tālruņa numurs\"",
+      "classification": "pii"
+    },
+    {
+      "name": "signatory1Name",
+      "label": "Vārds",
+      "type": "string",
+      "required": true,
+      "description": "Given name of the first signatory to the application.",
+      "sourceRef": "Section 9, \"Paraksti\", first signature block — \"Vārds\"",
+      "classification": "pii"
+    },
+    {
+      "name": "signatory1Surname",
+      "label": "Uzvārds",
+      "type": "string",
+      "required": true,
+      "description": "Surname of the first signatory.",
+      "sourceRef": "Section 9, first signature block — \"Uzvārds\"",
+      "classification": "pii"
+    },
+    {
+      "name": "signatory1PersonalCodeOrDateOfBirth",
+      "label": "Personas kods (ja nav personas koda, dzimšanas datums)",
+      "type": "string",
+      "required": true,
+      "description": "The first signatory's Latvian personal code, or date of birth if they have no personal code.",
+      "sourceRef": "Section 9, first signature block — \"Personas kods (ja nav personas koda, dzimšanas datums)\"",
+      "classification": "pii"
+    },
+    {
+      "name": "signatory1Signature",
+      "label": "Paraksts*",
+      "type": "string",
+      "required": true,
+      "description": "The first signatory's printed name, standing in for their physical or electronic signature. The form's own footnote (marked with an asterisk) says this does not need to be filled in when the document is signed with a secure electronic signature bearing a qualified timestamp — a condition with no corresponding field on the form, disclosed rather than encoded.",
+      "sourceRef": "Section 9, first signature block — \"Paraksts*\"",
+      "classification": "pii"
+    },
+    {
+      "name": "signatory1Date",
+      "label": "Datums*",
+      "type": "date",
+      "required": true,
+      "description": "Date the first signatory signed the application. The form's own footnote (marked with an asterisk) says this does not need to be filled in when the document is signed with a secure electronic signature bearing a qualified timestamp — a condition with no corresponding field on the form, disclosed rather than encoded.",
+      "sourceRef": "Section 9, first signature block — \"Datums*\""
+    },
+    {
+      "name": "signatory2Name",
+      "label": "Vārds",
+      "type": "string",
+      "required": false,
+      "description": "Given name of a second signatory to the application, where the form's own two generic signature slots are both used. The form does not label which role (the individual merchant, a guardian, or a representative) belongs in each of its two slots — a genuine ambiguity, disclosed rather than resolved.",
+      "sourceRef": "Section 9, second signature block — \"Vārds\"",
+      "classification": "pii"
+    },
+    {
+      "name": "signatory2Surname",
+      "label": "Uzvārds",
+      "type": "string",
+      "required": false,
+      "description": "Surname of the second signatory.",
+      "sourceRef": "Section 9, second signature block — \"Uzvārds\"",
+      "classification": "pii"
+    },
+    {
+      "name": "signatory2PersonalCodeOrDateOfBirth",
+      "label": "Personas kods (ja nav personas koda, dzimšanas datums)",
+      "type": "string",
+      "required": false,
+      "description": "The second signatory's Latvian personal code, or date of birth if they have no personal code.",
+      "sourceRef": "Section 9, second signature block — \"Personas kods (ja nav personas koda, dzimšanas datums)\"",
+      "classification": "pii"
+    },
+    {
+      "name": "signatory2Signature",
+      "label": "Paraksts*",
+      "type": "string",
+      "required": false,
+      "description": "The second signatory's printed name, standing in for their physical or electronic signature. The form's own footnote (marked with an asterisk) says this does not need to be filled in when the document is signed with a secure electronic signature bearing a qualified timestamp — a condition with no corresponding field on the form, disclosed rather than encoded.",
+      "sourceRef": "Section 9, second signature block — \"Paraksts*\"",
+      "classification": "pii"
+    },
+    {
+      "name": "signatory2Date",
+      "label": "Datums*",
+      "type": "date",
+      "required": false,
+      "description": "Date the second signatory signed the application. The form's own footnote (marked with an asterisk) says this does not need to be filled in when the document is signed with a secure electronic signature bearing a qualified timestamp — a condition with no corresponding field on the form, disclosed rather than encoded.",
+      "sourceRef": "Section 9, second signature block — \"Datums*\""
+    },
+    {
+      "name": "stateFeePayerIsLegalPerson",
+      "label": "Juridiska persona",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the state-fee payer is a legal person (Juridiska persona) rather than a natural person (Fiziska persona). Not itself a printed field — the form prints these as two alternate payer-identity sub-blocks, the same either/or convention as `hasLatvianPersonalCode` above. The form's own header says the whole of Section 10 is not filled in when the application is submitted via the Register of Enterprises' service portal (where the fee is payable only through the portal) or when a payment-confirming document is attached separately — a condition with no corresponding field on the form, so every Section 10 field is modelled unconditionally optional rather than encoded.",
+      "sourceRef": "Section 10, \"Informācija par maksātāju\" — sub-header pair"
+    },
+    {
+      "name": "stateFeePayerName",
+      "label": "Vārds",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "stateFeePayerIsLegalPerson",
+        "equals": false
+      },
+      "description": "Given name of the state-fee payer, when the payer is a natural person.",
+      "sourceRef": "Section 10, \"Fiziska persona\" block — \"Vārds\"",
+      "classification": "pii"
+    },
+    {
+      "name": "stateFeePayerSurname",
+      "label": "Uzvārds",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "stateFeePayerIsLegalPerson",
+        "equals": false
+      },
+      "description": "Surname of the state-fee payer, when the payer is a natural person.",
+      "sourceRef": "Section 10, \"Fiziska persona\" block — \"Uzvārds\"",
+      "classification": "pii"
+    },
+    {
+      "name": "stateFeePayerPersonalCodeOrDateOfBirth",
+      "label": "Personas kods (ja nav personas koda, norāda dzimšanas datumu, mēnesi, gadu)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "stateFeePayerIsLegalPerson",
+        "equals": false
+      },
+      "description": "The natural-person state-fee payer's Latvian personal code, or date of birth if they have no personal code.",
+      "sourceRef": "Section 10, \"Fiziska persona\" block — \"Personas kods (ja nav personas koda, norāda dzimšanas datumu, mēnesi, gadu)\"",
+      "classification": "pii"
+    },
+    {
+      "name": "stateFeePayerRegistrationNumber",
+      "label": "Reģistrācijas numurs",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "stateFeePayerIsLegalPerson",
+        "equals": true
+      },
+      "description": "Registration number of the state-fee payer, when the payer is a legal person.",
+      "sourceRef": "Section 10, \"Juridiska persona\" block — \"Reģistrācijas numurs\""
+    },
+    {
+      "name": "stateFeePayerLegalPersonName",
+      "label": "Nosaukums",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "stateFeePayerIsLegalPerson",
+        "equals": true
+      },
+      "description": "Name of the state-fee payer, when the payer is a legal person.",
+      "sourceRef": "Section 10, \"Juridiska persona\" block — \"Nosaukums\""
+    },
+    {
+      "name": "paymentDate",
+      "label": "Maksājuma datums",
+      "type": "date",
+      "required": false,
+      "description": "Date the state fee was paid. The form's own header says the whole of Section 10 is not filled in when the application is submitted via the Register of Enterprises' service portal (where the fee is payable only through the portal) or when a payment-confirming document is attached separately — a condition with no corresponding field on the form, so every Section 10 field is modelled unconditionally optional rather than encoded.",
+      "sourceRef": "Section 10, \"Informācija par maksājuma dokumentu\" — \"Maksājuma datums (diena/mēnesis/gads)\""
+    },
+    {
+      "name": "paymentDocumentNumber",
+      "label": "Maksājuma dokumenta Nr.",
+      "type": "string",
+      "required": false,
+      "description": "Number of the payment document, if any. Explicitly marked not obligatory on the form. The form's own header says the whole of Section 10 is not filled in when the application is submitted via the Register of Enterprises' service portal (where the fee is payable only through the portal) or when a payment-confirming document is attached separately — a condition with no corresponding field on the form, so every Section 10 field is modelled unconditionally optional rather than encoded.",
+      "sourceRef": "Section 10 — \"Maksājuma dokumenta Nr. (Informācija nav norādāma obligāti)\""
+    },
+    {
+      "name": "paidAmount",
+      "label": "Apmaksātā summa",
+      "type": "number",
+      "required": false,
+      "description": "Amount of the state fee paid, in euro. The form's own header says the whole of Section 10 is not filled in when the application is submitted via the Register of Enterprises' service portal (where the fee is payable only through the portal) or when a payment-confirming document is attached separately — a condition with no corresponding field on the form, so every Section 10 field is modelled unconditionally optional rather than encoded.",
+      "sourceRef": "Section 10 — \"Apmaksātā summa ... EUR\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "paymentReferenceNumber",
+      "label": "Maksājuma references Nr.",
+      "type": "string",
+      "required": false,
+      "description": "Payment reference number, if any. Explicitly marked not obligatory on the form. The form's own header says the whole of Section 10 is not filled in when the application is submitted via the Register of Enterprises' service portal (where the fee is payable only through the portal) or when a payment-confirming document is attached separately — a condition with no corresponding field on the form, so every Section 10 field is modelled unconditionally optional rather than encoded.",
+      "sourceRef": "Section 10 — \"Maksājuma references Nr. (Informācija nav norādāma obligāti)\""
+    },
+    {
+      "name": "paymentServiceProviderName",
+      "label": "Maksājumu pakalpojuma sniedzēja nosaukums",
+      "type": "string",
+      "required": false,
+      "description": "Name of the payment service provider (e.g. a bank), if any. Explicitly marked not obligatory on the form. The form's own header says the whole of Section 10 is not filled in when the application is submitted via the Register of Enterprises' service portal (where the fee is payable only through the portal) or when a payment-confirming document is attached separately — a condition with no corresponding field on the form, so every Section 10 field is modelled unconditionally optional rather than encoded.",
+      "sourceRef": "Section 10 — \"Maksājumu pakalpojuma sniedzēja nosaukums (banka u.c.) (informācija nav norādāma obligāti)\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "legalAddressAttestation",
+      "label": "Confirmation of reachability and lawful basis at the legal address",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Apliecinu(-ām), ka tiesību subjekts ir sasniedzams un tam ir tiesisks pamats atrasties norādītajā juridiskajā adresē.",
+      "sourceRef": "Section 3, closing attestation line beneath the address table"
+    },
+    {
+      "id": "microEnterpriseTaxStatusAttestation",
+      "label": "Confirmation of micro-enterprise tax payer eligibility",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": {
+        "field": "microEnterpriseTaxStatusRequested",
+        "equals": true
+      },
+      "belongsTo": "applicant",
+      "statement": "Apliecinu, ka: individuālais komersants nav mikrouzņēmuma nodokļa maksātājs un iedzīvotāju ienākuma nodokļa maksātājs no saimnieciskās darbības; paredzamais apgrozījums pārskata gadā, kas atbilst mikrouzņēmumu nodokļa taksācijas periodam, nepārsniegs pievienotās vērtības nodokļa reģistrācijas slieksni un netiek plānots kļūt par pievienotās vērtības nodokļa maksātāju līdz pievienotās vērtības nodokļa reģistrācijas slieksnim; mikrouzņēmums vēlas maksāt mikrouzņēmumu nodokli.",
+      "sourceRef": "Section 4, \"Apliecinājums\" block beneath the opt-in checkbox"
+    }
+  ],
+  "exclusivityGroups": [
+    {
+      "id": "guardianship_type",
+      "fields": [
+        "custodianAppointed",
+        "guardianAppointed"
+      ]
+    },
+    {
+      "id": "decision_notification_method",
+      "fields": [
+        "notifyByMail",
+        "notifyByEmail"
+      ]
+    }
+  ]
+}
