@@ -4,7 +4,26 @@
 
 ## Executive Summary
 
-**76 jurisdictions** | **575 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**76 jurisdictions** | **576 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4184, "GovSchema Standard Research"): Latvia's
+> Taxes vertical deepens further — Annex D4**, via
+> `lv/vid/annual-income-tax-declaration-form-d@1.4.0` (MINOR/additive bump
+> from v1.3.0), adding Annex D4 ("Attaisnotie izdevumi par izglītību,
+> ārstnieciskajiem pakalpojumiem, ziedojumiem un dāvinājumiem" — deductible
+> expenses for education, medical services, donations and gifts). This was
+> this document's own standing Known Gaps entry's explicitly named "single
+> most likely next candidate" after Annex D1¹ (v1.3.0, GOV-4163) — same
+> real-`<TABLE>` rendering as D1/D2/D1¹/D2¹, sourced from the identical
+> likumi.lv page 302688 (byte-identical, 365,651 bytes, re-confirmed this
+> cycle). Adds a new `deductible_expenses` step (38 new fields: 2 current-
+> year entry rows, this-year totals, 3 prior-year carry-forward rows, a
+> grand total, and a family-member section) and 5 new
+> `crossFieldValidation` rules (capped-value-cannot-exceed-uncapped-total
+> inequalities). Total field count: 307 → 345; total `crossFieldValidation`
+> rule count: 28 → 33. Annexes D3, D3¹, DK, the DK pielikums, and GD remain
+> open backlog — see the Known Gaps section below. Delegated via child issue
+> GOV-4186; PR pending review-gate merge.
 
 > **Update (2026-07-21, GOV-4178, "GovSchema Standard Research"): Ireland's
 > Business Formation vertical gains a companion sole-trader schema — RBN1**,
@@ -15650,6 +15669,16 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (64/76 jurisdictions — 84%)
 
+> **Update (2026-07-21, GOV-4184, "GovSchema Standard Research"): Latvia's
+> Taxes vertical deepens further**, via
+> `lv/vid/annual-income-tax-declaration-form-d@1.4.0` — adds Annex D4
+> (deductible expenses for education, medical services, donations and
+> gifts) as a new step, a MINOR/additive version bump from v1.3.0
+> (GOV-4163, Annex D1¹). See the Executive Summary's GOV-4184 update above
+> and the document's own VERIFICATION.md for the full sourcing record. Does
+> not change the vertical's numerator/denominator (Latvia already counted
+> at v1.0.0); D3, D3¹, DK, the DK pielikums, and GD remain open backlog.
+
 > **Update (2026-07-21, GOV-4163, "GovSchema Standard Research"): Latvia's
 > Taxes vertical deepens further**, via
 > `lv/vid/annual-income-tax-declaration-form-d@1.3.0` — adds Annex D1¹
@@ -19065,6 +19094,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       a second, structurally distinct candidate (its own top-level schema,
       not a Form D version bump). Not authored this cycle — Malta (below)
       was chosen instead, since it opens a brand-new jurisdiction outright.
+      **Update (GOV-4184, 2026-07-21): Annex D4 (deductible expenses for
+      education, medical services, donations and gifts) is now also
+      authored**, bumping the document to v1.4.0 (MINOR/additive) — see the
+      Executive Summary and Taxes vertical updates above. Annex D4 is
+      closed; Annexes D3, D3¹, DK, the DK pielikums, and GD remain open
+      backlog. The DK pielikums is the only remaining candidate sharing
+      this document's real-HTML-table-rendering precedent, but as its own
+      top-level schema/track rather than a further version bump of this
+      document (per the GOV-4169 re-examination's own finding); D3/D3¹/GD
+      remain excluded for the reasons already stated above.
     - **Saudi Arabia — screened, dead end across all six verticals this
       cycle (GOV-4121).** DMV (Absher/Muroor), Business Formation (Saudi
       Business Center), Taxes (ZATCA), and Passport (Jawazat) are all
