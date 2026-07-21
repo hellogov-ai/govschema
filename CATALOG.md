@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**76 jurisdictions** | **576 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**76 jurisdictions** | **578 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4193, "GovSchema Standard Research"): Latvia's
+> Taxes vertical adds a new top-level document — Declaration DK**, via
+> `lv/vid/capital-gains-income-declaration-dk@1.0.0`, the State Revenue
+> Service's (VID) reporting-period declaration on capital gains income
+> (pārskata perioda deklarācija par ienākumu no kapitāla pieauguma), filed
+> under the same Cabinet Regulation No. 662 as `lv/vid/annual-income-tax-
+> declaration-form-d` but as its own standalone filing rather than a
+> numbered Form D pielikums, per the regulation's own para. 3 (which lists
+> Declaration DK, the Declaration DK pielikums, and the ienākuma precizēšanas
+> deklarācija GD as three separate "deklarācija par ienākumu no kapitāla
+> pieauguma" documents). This was the single most likely next LV VID
+> candidate flagged by the GOV-4169/GOV-4184 cycles' own re-examination
+> ("viable, same class as D1/D2/D1¹/D2¹/D4 ... but as its own schema/track").
+> Models Declaration DK's two sections: regular capital-asset transactions
+> (2 entries + totals) and a fully parallel, separately-completed
+> "Ienākumi no darījumiem ar kriptoaktīviem" (income from crypto-asset
+> transactions) section (2 entries + its own independently-floored totals)
+> — a genuine structural first for this registry's LV VID documents, since
+> no annex authored so far has a second, independently-totalled parallel
+> table on the same document. One source ambiguity is disclosed: footnote 1's
+> income-type code F ("ieraksta kodu F", enter code F) uses a different verb
+> than the R/L modifiers ("pievieno kodu", append code), leaving unclear
+> whether F stands alone or combines with the base code — modelled as a
+> permissive union pattern rather than silently resolved. See the Taxes
+> vertical section and the Known Gaps section below. The Declaration DK
+> pielikums (its own top-level schema/track, per the GOV-4169 finding) and
+> the ienākuma precizēšanas deklarācija GD (excluded as a formula-derived
+> recomputation) remain open backlog.
 
 > **Update (2026-07-21, GOV-4184, "GovSchema Standard Research"): Latvia's
 > Taxes vertical deepens further — Annex D4**, via
@@ -15669,6 +15698,19 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (64/76 jurisdictions — 84%)
 
+> **Update (2026-07-21, GOV-4193, "GovSchema Standard Research"): Latvia
+> adds a new top-level Taxes document**, via
+> `lv/vid/capital-gains-income-declaration-dk@1.0.0` — VID's reporting-period
+> declaration on capital gains income (Declaration DK), under the same
+> Cabinet Regulation No. 662 as `lv/vid/annual-income-tax-declaration-form-d`
+> but filed as its own standalone document (per the regulation's own para. 3),
+> not a further Form D annex. See the Executive Summary's GOV-4193 update
+> above and the document's own VERIFICATION.md for the full sourcing record,
+> including the disclosed income-type-code (F modifier) ambiguity. Does not
+> change the vertical's numerator/denominator (Latvia already counted at
+> v1.0.0 of the Form D document); the Declaration DK pielikums and the
+> ienākuma precizēšanas deklarācija GD remain open backlog.
+
 > **Update (2026-07-21, GOV-4184, "GovSchema Standard Research"): Latvia's
 > Taxes vertical deepens further**, via
 > `lv/vid/annual-income-tax-declaration-form-d@1.4.0` — adds Annex D4
@@ -19104,6 +19146,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       top-level schema/track rather than a further version bump of this
       document (per the GOV-4169 re-examination's own finding); D3/D3¹/GD
       remain excluded for the reasons already stated above.
+      **Update (GOV-4193, 2026-07-21): Declaration DK is now authored** as
+      its own new top-level schema, `lv/vid/capital-gains-income-declaration-dk`
+      v1.0.0 (not a Form D annex version bump, per the regulation's own para.
+      3 and the GOV-4169 finding) — see the Executive Summary and Taxes
+      vertical updates above. The Declaration DK pielikums (its own further
+      top-level schema/track, a genuinely different 6-column table on
+      transactions begun but not completed within one tax year) remains open
+      backlog; D3, D3¹, and GD remain excluded for the reasons already
+      stated above.
     - **Saudi Arabia — screened, dead end across all six verticals this
       cycle (GOV-4121).** DMV (Absher/Muroor), Business Formation (Saudi
       Business Center), Taxes (ZATCA), and Passport (Jawazat) are all
