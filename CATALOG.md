@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**75 jurisdictions** | **571 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**75 jurisdictions** | **572 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4154, "GovSchema Standard Research"): Latvia's
+> Taxes vertical deepens further — Annex D2¹ (seafarer foreign-sourced
+> income) added**, via `lv/vid/annual-income-tax-declaration-form-d@1.2.0`
+> (v1.1.0, GOV-4144, added Annex D2; v1.0.0, GOV-4138, opened the vertical
+> with Form D plus Annex D1). Picked Annex D2¹ over the only other
+> v1.1.0-flagged candidate, D1¹, because D2¹'s own instructional paragraph
+> (§ 20) is a single self-contained provision with a fully worked formula
+> chain across all 8 columns, giving the same independent formula
+> cross-check D1 and D2 both had. Re-fetched `likumi.lv` directly: HTTP 200,
+> 365,651 bytes, the same byte count v1.0.0 and v1.1.0 both recorded. A
+> MINOR, additive version bump — 40 new optional fields in a new
+> `seafarer_foreign_income` step (191 → 231 fields total), plus updated
+> formula descriptions on the 2 existing Form D summary rows that reference
+> Annex D2¹. Discloses 5 source-fidelity findings, including that the
+> annex's own taxable-income column is a notional minimum-wage-based
+> computation with no arithmetic link back to the seafarer's actual gross
+> income (unlike every other income table in this document), that the
+> annex's own "Kopā" totals row omits a box for total foreign tax paid
+> (unlike Annex D2's own Kopā row), and that the tax-rate column is again a
+> 0–1 decimal fraction rather than a 0–100 percentage. See the document's
+> own VERIFICATION.md for the full record. Annexes D1¹, D3, D3¹, D4, DK, the
+> DK annex, and GD remain open backlog, with D1¹ now the single most likely
+> next candidate. Numerator/denominator unchanged (64/75); document count
+> 571 → 572.
 
 > **Update (2026-07-21, GOV-4144, "GovSchema Standard Research"): Latvia's
 > Taxes vertical deepens — Annex D2 (foreign-sourced income) added**, via
@@ -15513,6 +15538,16 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (64/75 jurisdictions — 85%)
 
+> **Update (2026-07-21, GOV-4154, "GovSchema Standard Research"): Latvia's
+> Taxes vertical deepens further**, via
+> `lv/vid/annual-income-tax-declaration-form-d@1.2.0` — adds Annex D2¹
+> (seafarer foreign-sourced income) as a new step, a MINOR/additive version
+> bump from v1.1.0 (GOV-4144, Annex D2). See the Executive Summary's
+> GOV-4154 update above and the document's own VERIFICATION.md for the full
+> sourcing record. Does not change the vertical's numerator/denominator
+> (Latvia already counted at v1.0.0); D1¹, D3, D3¹, D4, DK, and GD remain
+> open backlog, with D1¹ now the single most likely next candidate.
+
 > **Update (2026-07-21, GOV-4144, "GovSchema Standard Research"): Latvia's
 > Taxes vertical deepens**, via
 > `lv/vid/annual-income-tax-declaration-form-d@1.1.0` — adds Annex D2
@@ -18868,6 +18903,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       D1¹, D2¹, D3, D3¹, D4, DK, the DK annex, and GD remain open backlog;
       D2¹ (seafarer foreign income) and D1¹ are the two most likely next
       candidates, since both share Annex D2's real-HTML-table rendering.
+      **Update (GOV-4154, 2026-07-21): Annex D2¹ (seafarer foreign-sourced
+      income) is now also authored**, bumping the document to v1.2.0
+      (MINOR/additive) — see the Executive Summary and Taxes vertical
+      updates above. Annexes D1¹, D3, D3¹, D4, DK, the DK annex, and GD
+      remain open backlog; D1¹ is now the single most likely next
+      candidate, since it shares Annex D1's and Annex D2's real-HTML-table
+      rendering.
     - **Saudi Arabia — screened, dead end across all six verticals this
       cycle (GOV-4121).** DMV (Absher/Muroor), Business Formation (Saudi
       Business Center), Taxes (ZATCA), and Passport (Jawazat) are all
