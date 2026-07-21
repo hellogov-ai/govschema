@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**76 jurisdictions** | **580 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**76 jurisdictions** | **581 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4217, "GovSchema Standard Research"): Malta's
+> Passport vertical opens (2/6)**, via
+> `mt/identita/passport-application@1.0.0` — Identità's (Malta's national
+> Agency for identity documents, passports, visas, expatriates and the
+> Public Registry) "Form A — Application for a Maltese Passport", filed in
+> person at the Passport Office by a Maltese citizen (or their parent/tutor,
+> for a minor applicant) applying for a first passport, renewing an
+> expiring one, or replacing a lost/stolen/damaged one. Deepens Malta past
+> its first published schema (`mt/jobsplus/self-employed-declaration-of-commencement`,
+> GOV-4172, Business Formation). Fetched `identita.gov.mt/form-a/` directly
+> (a 301 redirect to the underlying `wp-content/uploads` asset) with a
+> realistic desktop Chrome User-Agent: HTTP 200, `application/pdf`,
+> 621,516 bytes — byte-identical to the count in the issue's own scouting
+> description — sha256
+> `61f2a8860f0cfaa3d5a0f4c096b8549fa2b837e90b4fdb565e3fb70e2cabeb5d`, no
+> login/CAPTCHA/Cloudflare gate. Confirmed mechanically: a genuine
+> `%PDF-1.4` flat, non-AcroForm, non-`/Widget` 8-page specimen whose text
+> operators use a custom glyph-index font encoding (unreadable via a raw
+> `zlib`-stream/paren-regex read) — resolved this cycle not via a
+> rendered-page-image visual read but by running `pdfjs-dist`'s real
+> text-layer extraction through the PDF's own embedded `ToUnicode` CMaps
+> (present for all 6 of its Type0/Identity-H font resources), recovering
+> clean, position-tagged Unicode text directly from the PDF's own
+> glyph-to-Unicode mapping. Models 80 fields across 10 steps mirroring the
+> form's own numbered sections (Applicant's Details; Parents' Details;
+> Details of Spouse/Partner; Details of Parents of Spouse/Partner; Details
+> of Citizenship; Previous Passport; Parent's/Tutor's Consent; Declaration
+> of Recommender; Seeing AI on Passport; Declaration by the Applicant) plus
+> 8 `documents[]` entries. Discloses 7 source-fidelity findings, most
+> notably that this form's own asterisk usage flags checkbox-style fields
+> rather than required ones (unlike its sibling `mt/jobsplus` schema, whose
+> asterisk convention does mean mandatory), and that three of the form's
+> own compound eligibility notes (spouse details, citizenship-acquisition
+> route, minor-applicant consent) are each modelled as directly-supplied
+> boolean gates — not printed checkboxes — following the same convention
+> `cy/crmd/passport-application`'s own `applicantIsMinor` established. See
+> the document's own VERIFICATION.md for the full record. Malta's remaining
+> four verticals (DMV, Visa, Taxes, National ID) are open, unscreened
+> backlog candidates for a future cycle. Numerator/denominator unchanged at
+> 76 (deepens an existing jurisdiction); document count 580 → 581.
 
 > **Update (2026-07-21, GOV-4208, "GovSchema Standard Research"): Cyprus
 > gains a Business Formation schema**, via
@@ -13550,7 +13591,15 @@
 
 ## By Vertical
 
-### Passport (51/76 jurisdictions — 67%)
+### Passport (52/76 jurisdictions — 68%)
+
+> **Update (2026-07-21, GOV-4217, "GovSchema Standard Research"): Malta
+> opens this vertical (2/6 for the jurisdiction)**, via
+> `mt/identita/passport-application@1.0.0` — Identità's "Form A —
+> Application for a Maltese Passport". See the Executive Summary's
+> GOV-4217 update above for the full sourcing record, the `pdfjs-dist`
+> ToUnicode-CMap extraction technique used on this glyph-index-encoded
+> flat PDF, and the seven disclosed source-fidelity findings.
 
 > **Update (2026-07-21, GOV-4121, "GovSchema Standard Research"): Cyprus
 > opens as the registry's 74th jurisdiction via this vertical**, via
