@@ -4,7 +4,40 @@
 
 ## Executive Summary
 
-**73 jurisdictions** | **565 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**73 jurisdictions** | **566 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-21, GOV-4107, "GovSchema Standard Research"): the
+> Netherlands closes to 6 of 6 verticals**, via
+> `nl/ind/family-member-admission-and-residence-application` — the
+> Immigration and Naturalisation Service's (IND) Form 9511, "Application for
+> admission and residence 'to stay with a family member' (foreign national)",
+> the family-reunification route to a provisional residence visa (MVV, a
+> Type D national entry visa) plus the follow-on ordinary residence permit.
+> This was the pre-scouted, ready-to-author backlog candidate the GOV-4092/
+> GOV-4100 cycles banked (the sibling Austria DMV candidate that same item
+> flagged was authored the same day — see the update immediately below).
+> Fetched `ind.nl/en/forms/9511.pdf` fresh (HTTP 200, 397,176 bytes, 10
+> pages); a flat, non-AcroForm PDF, all 64 applicant-facing fields and 20
+> conditional `documents[]` entries were reconstructed from the PDF's own
+> text-layer glyph x/y coordinates via `pdfjs-dist`. A genuine structural
+> finding: Section 3.11's sponsor residence-status checklist is a two-level
+> hierarchy — a 5-item top-level checkbox column with an indented 4-item
+> sub-choice nested under "Residence Permit, namely." — recovered only by
+> reading each glyph's own x-position rather than a naive line-by-line text
+> read, and modelled as an enum field (`sponsorResidenceStatus`) plus a
+> conditional child enum (`sponsorResidencePermitType`). Also discloses one
+> genuine, intentionally-unencoded spec-vocabulary gap: two of the form's
+> means-of-evidence documents are conditioned on the applicant's age at
+> signing (12+ and 15+ respectively), which the current `requiredWhen`
+> grammar cannot express against `dateOfBirth` directly — the same class of
+> gap GOV-4037 disclosed for a stated multiplication formula. Numerator
+> changes from 565 to 566 documents. Both validators pass at 566/566; 4
+> conformance scenarios (3 valid branch-covering + 1 negative control)
+> checked against an ad-hoc evaluator built from the document's own field
+> constraints, including its `requiredWhen`, `documents[].requiredWhen`, and
+> `crossFieldValidation` rules. **This closes the Netherlands' Visa vertical,
+> giving the Netherlands all 6 of its verticals.** See the Visa vertical
+> section below and the document's own VERIFICATION.md for the full record.
 
 > **Update (2026-07-21, GOV-4100, "GovSchema Standard Research"): Austria
 > closes to 6 of 6 verticals**, via `at/bmi/driving-licence-application` —
@@ -17048,7 +17081,13 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (61/73 jurisdictions — 84%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (62/73 jurisdictions — 85%)
+
+> **Update (2026-07-21, GOV-4107, "GovSchema Standard Research"): the
+> Netherlands' Visa vertical opens**, via
+> `nl/ind/family-member-admission-and-residence-application` — see the
+> Executive Summary update above for the full sourcing record. Per the
+> registry's by-jurisdiction table, the Visa numerator moves to 62/73.
 
 > **Update (2026-07-17, GOV-3523, "GovSchema Standard Research"): Ukraine's
 > Visa vertical opens (2/6)**, via `ua/mfa/visa-application-form` — see the
@@ -17700,9 +17739,20 @@ applicant acting as their own visa's Titular Principal (directly or through
 an apoderado) — see the Executive Summary update above and the document's own
 VERIFICATION.md for the full candidate record and scope disclosures.
 
-**Three confirmed, previously-researched dead ends — not open work:**
+**Update (GOV-4107, 2026-07-21): the Netherlands' Visa gap is now closed**,
+via `nl/ind/family-member-admission-and-residence-application` (IND Form
+9511) — see the Executive Summary update above. The short-stay Schengen
+route remains modelled once for the bloc via
+`fr/france-visas/schengen-visa-application`; the long-stay Dutch national
+visa (MVV) process is genuinely fragmented across 200+ purpose-specific
+application variants (see GOV-777/GOV-859 research) and this document only
+closes the "family member" purpose lane, the one variant with a single
+well-bounded, unauthenticated source form — the other 199+ purpose variants
+remain out of scope for any future cycle wanting to expand NL's Visa
+coverage further.
 
-- **NL:** no Dutch-specific entry-visa schema. Netherlands participates in the Schengen area; short-stay visas are modelled once for the bloc via `fr/france-visas/schengen-visa-application`. A Dutch national long-stay visa (MVV) process exists but is fragmented across 200+ purpose-specific application variants with no single well-bounded source form (see GOV-777/GOV-859 research).
+**Two confirmed, previously-researched dead ends — not open work:**
+
 - **ZA:** Home Affairs' eHomeAffairs visa portal is reCAPTCHA- and
   nationality-gated for unauthenticated/programmatic access, confirmed via a
   live-rendered walkthrough as recently as this same day (GOV-1225,
@@ -18522,7 +18572,7 @@ now closed.
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **NL** | 8 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **NL** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NO** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NP** | 4 | ✓ | ✗ | ✓ | ✗ | ✓ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -18561,16 +18611,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Genuinely open, well-sourced candidates
 
-0. **Pre-scouted single-vertical-gap candidate banked in a prior cycle
-   (GOV-4092, 2026-07-21), not yet authored:**
+0. **Pre-scouted single-vertical-gap candidates banked in a prior cycle
+   (GOV-4092, 2026-07-21) — both now authored, item fully closed:**
    - **Netherlands Visa** — IND form 9511
      (`ind.nl/en/forms/9511.pdf`, "Application for admission and residence
      'to stay with a family member'"), the MVV (Type D entry visa) plus
-     follow-on residence permit application. ~50-60 numbered fields with
-     conditional branches (minor legal-representative, sponsor-abroad vs.
-     sponsor-in-NL). The harmonized Schengen short-stay (C-visa) route for
-     NL is a confirmed dead end (`consular.mfaservices.nl`, account-gated).
-     Verified reachable without login. Left as ready-to-author backlog.
+     follow-on residence permit application. **Update (GOV-4107, 2026-07-21):
+     now authored** as `nl/ind/family-member-admission-and-residence-application`
+     — see the Executive Summary update above. Closes the Netherlands to
+     6/6 verticals.
    - **Update (GOV-4100):** the sibling Austria DMV candidate this same
      item had banked is now authored — see the Executive Summary update
      above (`at/bmi/driving-licence-application`) — closing Austria to 6/6.
