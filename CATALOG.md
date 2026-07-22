@@ -4,7 +4,40 @@
 
 ## Executive Summary
 
-**78 jurisdictions** | **594 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**79 jurisdictions** | **595 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4300, "GovSchema Standard Research"): Albania
+> opens as the registry's 79th jurisdiction — Taxes (1 of 6)**, via
+> `al/dpt/individual-annual-income-declaration@1.0.0` — the General Directorate
+> of Taxation's (Drejtoria e Përgjithshme e Tatimeve, DPT) "Deklarata
+> Individuale Vjetore e të Ardhurave" (Annual Individual Income Declaration,
+> Form D1). This was the GOV-4271-cycle-banked "Albania" STRONG candidate
+> (see the Known Gaps section below); unlike this registry's usual direct-
+> government-PDF sourcing, `tatime.gov.al` itself hosts only prose guidance
+> pages and an e-filing portal for this declaration, with no independently
+> reachable static blank-form PDF this cycle (a previously search-indexed
+> `shkarko.php?id=8925` link to the founding ministerial instruction returned
+> HTTP 200 with 0 bytes). A complete field-by-field specimen of Form D1 was
+> instead found hosted, unauthenticated, by an Albanian tax-advisory firm
+> (`alprofitconsult.al`, last modified 2022-10-09); this cycle cross-
+> corroborated the specimen's box numbering against `tatime.gov.al`'s own
+> live guide page, fetched fresh this same cycle, which independently
+> cross-references box 4 and box 22 in a way that matches the specimen's
+> layout exactly — see the document's own VERIFICATION.md for the full,
+> disclosed provenance chain. Models 54 fields across 7 steps (Declaration
+> Type and Tax Period; Identifying Data; Additional Individual Data; Gross
+> Income; Deductible Expenses; Taxes Paid During the Tax Period;
+> Declaration). Every printed formula/subtotal/rate-table box (including the
+> employment-tax bracket calculation and the final balance-due/refund lines)
+> is excluded per this registry's standing closed decision to defer
+> calculated/derived fields (GSP-0013 §7 / GOV-302 founder ruling). Albania's
+> other five verticals (DMV, Business Formation, Visa, Passport, National ID)
+> remain confirmed dead ends per the GOV-4271 screening pass, each routing
+> exclusively through the login-gated e-Albania SSO portal or in-person
+> kiosks. `nextReviewBy` is set to 3 months (rather than this registry's more
+> typical 6) given the non-standard sourcing chain and Albania's 2024 income-
+> tax-law overhaul (Law No. 29/2023). See the document's own VERIFICATION.md
+> for the full sourcing record and 9 disclosed findings.
 
 > **Update (2026-07-22, GOV-4293, "GovSchema Standard Research"): Panama
 > opens as the registry's 78th jurisdiction — Visa (1 of 6)**, via
@@ -16194,7 +16227,15 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (65/78 jurisdictions — 83%)
+### Taxes — Income Tax Return, Tax Filing (66/79 jurisdictions — 84%)
+
+> **Update (2026-07-22, GOV-4300, "GovSchema Standard Research"): Albania
+> opens as the registry's 79th jurisdiction via this vertical (1/6)**, via
+> `al/dpt/individual-annual-income-declaration@1.0.0` — see the Executive
+> Summary update above for the full sourcing record, including the
+> disclosed, non-standard provenance chain (a third-party-hosted specimen
+> cross-corroborated against a live `tatime.gov.al` guide page) and the
+> document's own VERIFICATION.md.
 
 > **Update (2026-07-22, GOV-4287, "GovSchema Standard Research"): Zambia
 > opens this vertical (3/6 for the jurisdiction)**, via
@@ -19544,6 +19585,7 @@ now closed.
 | Jurisdiction | Schemas (top-level dirs) | Passport | DMV | Business | Taxes | Visa | National ID |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **AE** | 6 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **AL** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **AM** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -19919,7 +19961,8 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     Zambia Business Formation, Passport, and Taxes now all authored
     (Passport via GOV-4278, Taxes via GOV-4287, closing Zambia's disclosed
     backlog from this entry), Panama Visa now also authored (GOV-4293),
-    Albania screened but not authored:**
+    Albania Taxes now also authored (GOV-4300), opening Albania as the
+    registry's 79th jurisdiction — item fully closed:**
     - **Zambia Passport** — authored (GOV-4278), see
       `zm/dnrpc/passport-application@1.0.0` and the Executive Summary's
       GOV-4278 update above.
@@ -19955,9 +19998,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       candidate found — DMV, Business Formation, Visa, Passport, and
       National ID all route exclusively through the login-gated
       e-Albania SSO portal or in-person kiosks, with no statically
-      reachable form document. Not authored this cycle; left as open
-      backlog for a future new-jurisdiction cycle (would open Albania as
-      a new jurisdiction via Taxes).
+      reachable form document. **Update (GOV-4300, 2026-07-22): now
+      authored** as `al/dpt/individual-annual-income-declaration@1.0.0` —
+      see the Executive Summary and Taxes vertical updates above. Opens
+      Albania as the registry's 79th jurisdiction (1/6), via a disclosed,
+      non-standard provenance chain (`tatime.gov.al` itself hosts no
+      static blank-form PDF; a third-party specimen was cross-corroborated
+      against a live `tatime.gov.al` guide page — see the document's own
+      VERIFICATION.md). Albania's other five verticals (DMV, Business
+      Formation, Visa, Passport, National ID) remain confirmed dead ends
+      per this same GOV-4271 screening pass.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
