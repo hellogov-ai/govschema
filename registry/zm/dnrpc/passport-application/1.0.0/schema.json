@@ -1,0 +1,1394 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "zm/dnrpc/passport-application",
+  "version": "1.0.0",
+  "title": "Zambia Application for a Passport for Persons Over Sixteen Years of Age (Form A with Form N)",
+  "description": "The Department of National Registration, Passport and Citizenship's (DNRPC, under the Ministry of Home Affairs, whose letterhead Form N carries) \"Form A\" application for a Zambian passport for applicants over sixteen years of age, combined with its mandatory companion \"Form N\" (Affidavit of Birth), distributed as a single PDF via the Ministry of Foreign Affairs and International Cooperation's (MOFAIC) Diaspora Portal for Zambians abroad. Opens Zambia's Passport vertical (2/6 — Business Formation already published via zm/pacra/company-incorporation). Models the applicant's personal details and description (Section 1, always required); the Married Women section covering husband's particulars (Section 2, gated on a directly-supplied `isMarriedWoman` boolean since the form itself states this section applies only to \"those to whom it applies\"); National Status (Section 3, always required); the Born-Outside-Zambia section (Section 4, gated on `bornOutsideZambia`); Travel Details, Declaration, and Recommender (Sections 5-7, always required per the form's own Note 1); the Lost Passport Particulars section (Section 8, gated on `hasLostPreviousPassport`, per the Section 6 note directing lost-passport applicants to cross out declaration points A/C and complete Section 8); free-form Supplementary Information (Section 9); the Parent/Legal Guardian's Consent section (Section 10, gated on `applicantIsMinor` being true and `maritalStatus` not equalling MARRIED, per Note 4(f)'s stated exception for married minors); and the mandatory Form N Affidavit of Birth (required of all applicants per Note 4(h)), including the applicant's own genealogy, village/tribe/chief/district particulars, schools attended, and parents' particulars. This schema does not file the application itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Zambia, its Ministry of Home Affairs, its Department of National Registration, Passport and Citizenship, or its Ministry of Foreign Affairs and International Cooperation.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ZM",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of National Registration, Passport and Citizenship",
+    "abbreviation": "DNRPC",
+    "url": "https://www.mofaic.gov.zm/diasporaportal/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.mofaic.gov.zm/diasporaportal/wp-content/uploads/2025/09/PASSPORT-FORM-A-WITH-FORM-N.pdf",
+    "retrievedAt": "2026-07-22",
+    "documentRef": "\"Form 'A' — Application for a Zambian Passport for Persons Over Sixteen Years of Age\", combined in one PDF with its mandatory companion \"Form N — Affidavit of Birth\" (Ministry of Home Affairs, Department of National Registration, Passport and Citizenship letterhead), 5 pages, native (searchable-text) PDF."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-22",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-22",
+    "notes": "GOV-4278 (\"GovSchema Standard Research\"). ## Candidate selection\n\nGOV-4278 (\"GovSchema Standard Research\", 2026-07-22). The GOV-4271 cycle\n(opening Zambia as the registry's 77th jurisdiction via\n`zm/pacra/company-incorporation@1.0.0`, Business Formation) banked Zambia's\nPassport candidate as pre-scouted, disclosed STRONG backlog: a Ministry of\nForeign Affairs and International Cooperation (MOFAIC) Diaspora Portal PDF,\n`PASSPORT-FORM-A-WITH-FORM-N.pdf`. This cycle authors that candidate,\nopening Zambia's Passport vertical (2 of 6). Zambia's Taxes candidate (ZRA's\n19-page Individual Income Tax Return, Form ITF 46_1 V001) remains open\nbacklog for a future cycle, left unauthored this cycle in favor of this\nsmaller-scope Passport candidate, per the GOV-4271 cycle's own disclosed\nsize comparison.\n\n## Reaching the live source\n\nFetched\n`https://www.mofaic.gov.zm/diasporaportal/wp-content/uploads/2025/09/PASSPORT-FORM-A-WITH-FORM-N.pdf`\ndirectly:\n\n- HTTP 200, `Content-Type: application/pdf`, 2,526,667 bytes.\n- No login, CAPTCHA, or WAF gate blocks reaching or reading this file —\n  confirmed via a plain unauthenticated `curl` request with no session/cookie\n  state (only a TLS certificate-verification bypass was needed to reach the\n  host from this session's network egress; the certificate itself is not\n  otherwise implicated in this finding).\n- sha256 `6f581eb23e4fc6d51c02cd8fb51088958f6a7df93aea80ea9526a036bbc94d80`.\n- PDF header `%PDF-1.5` at byte 0, 5 `/Type/Page` objects — a genuine\n  native (searchable-text) PDF, not a scanned image.\n- Cross-corroborated via web search: the same file is independently listed\n  on MOFAIC's own Diaspora Portal \"Documents\" index page\n  (`https://www.mofaic.gov.zm/diasporaportal/?page_id=1271`), confirming it\n  is the standard, currently-published form rather than a stale or\n  third-party mirror.\n\n## Extraction method\n\nExtracted with `pdfjs-dist` (vendored from an existing session scratch\ninstall at `/tmp/gov3030/node_modules`, plus its own `canvas` peer dependency\ncopied in from `/tmp/gov3216/node_modules/canvas` for page rendering),\nreading each text item's raw string and its `transform` x/y position, and\nseparately rendering each of the 5 pages to a PNG at 2x scale via\n`node-canvas` to visually confirm true table/column layout (the raw\ntext-position extraction alone under-represents this form's dense\nmulti-column, ruled-table structure). All 5 pages visually inspected as\nrendered images before finalizing the field list.\n\n## Document structure\n\nThe PDF is two documents stapled into one file:\n\n- **Pages 1-4: Form 'A'** — \"APPLICATION FOR A ZAMBIAN PASSPORT FOR PERSONS\n  OVER SIXTEEN YEARS OF AGE\" (a separate Form 'B' covers applicants under\n  16, per page 1's own Note 1 — out of scope for this schema). Page 1 is\n  pure instructions/notes; pages 2-4 carry the numbered Sections 1-10.\n- **Page 5: Form N** — \"AFFIDAVIT OF BIRTH\", Ministry of Home Affairs,\n  Department of National Registration, Passport and Citizenship (DNRPC)\n  letterhead. Note 4(h) on page 1 states \"All applicants must attach duly\n  completed sworn birth affidavit using from N\" — Form N is mandatory for\n  every applicant, not a conditional attachment, which is why this schema\n  models it as an always-required step rather than gating it.\n\nPage 1's own Note 1 states which of Form A's ten numbered sections are\nuniversal versus conditional: \"Section 1,3,5,6 and 7 of this form must be\ncompleted in english by all applications for new passports and renewals,\nsection 2 and 4 must also be completed by those to whom these sections\napply\" — directly justifying this schema's step-level required/conditional\nsplit for Sections 1-4 (Section 2's own header, \"MARRIED WOMEN... applying\nmust complete this section\", and Section 4's own header, \"TO BE COMPLETED\nBY ALL PERSONS BORN OUTSIDE ZAMBIA\", corroborate the same split). Sections\n8, 9, and 10 are not covered by this note; their own conditionality is\ninferred from their own printed headers/notes (see Disclosed findings\nbelow).\n\n## Disclosed findings and interpretation choices\n\n1. **Four directly-supplied, unprinted boolean eligibility gates.** None of\n   `isMarriedWoman`, `bornOutsideZambia`, `hasLostPreviousPassport`, or\n   `applicantIsMinor` is a printed checkbox — each is inferred from a\n   section header or note stating the section's own applicability (see\n   Document structure above, and Note 4(f) — \"Children under 18 years of\n   age may not be granted passports without the written consent of the\n   legal guardian, or parent, except where the person under 18 is married\"\n   — for `applicantIsMinor`). This is the same convention this registry's\n   Ethiopia (`residesAbroad`), Malta, and Cyprus passport schemas use for\n   their own unprinted section-applicability conditions.\n2. **Guardian consent (Section 10) uses a compound `requiredWhen`.** Gated\n   on `{ all: [{ field: \"applicantIsMinor\", equals: true }, { field:\n   \"maritalStatus\", notEquals: \"MARRIED\" }] }`, directly encoding Note\n   4(f)'s stated married-minor exception rather than gating on\n   `applicantIsMinor` alone.\n3. **Two nested nested-conditions.** `husbandFatherPlaceDateOfBirth`\n   (Section 2) requires both `isMarriedWoman` and a second, section-local\n   gate `husbandBornOutsideZambia` (itself only meaningful when\n   `isMarriedWoman` is true); `consulateNameAndPlace`/\n   `consulateRegistrationDate` (Section 4(a)) require both `bornOutsideZambia`\n   and `birthRegisteredAtConsulateAbroad`. `parentRegistrationCertNo`/\n   `parentRegistrationPlaceDateOfIssue` (Section 4(a)) require both\n   `bornOutsideZambia` and `nationalStatusOfParent` equalling\n   `REGISTRATION` (reusing Section 1's own parent-citizenship-basis field\n   rather than introducing a duplicate).\n4. **`sponsoringGovernmentDepartment` and\n   `previousPassportOrTravelDocumentNumber` are bare-optional, not gated.**\n   Section 5 prints \"If sponsored by a Government state name of Department\"\n   and Section 6's Declaration point C prints \"...other than passport or\n   travel document No..............which is now attached...\" — both are\n   free-standing conditional instructions with no separate printed\n   yes/no checkbox to gate on, so both are modelled `required: false` with\n   no `requiredWhen`, the same disclosed no-printed-signal treatment this\n   registry's Ethiopia passport schema (`et/ics/passport-application`) uses\n   for its own analogous fields.\n5. **`affidavitKnowledgeBasis` requiredWhen `affidavitHasBirthCertificate`\n   equals `false`.** Form N always prints \"8. My knowledge of the details\n   of my birth is based on....\" directly beneath question 7's \"I am\n   in/not in possession of a Birth Certificate...\", with no explicit\n   conditional connecting the two — modelled as a disclosed interpretation\n   choice (a birth-certificate holder has an obvious, unstated basis; an\n   applicant without one is the case the question is actually aimed at).\n6. **Form N's three school rows (Primary/Secondary/Post Secondary), each\n   with a Name/From/To triple, are all left bare-optional.** Not every\n   applicant reaches post-secondary education, and the form prints no\n   conditional signal (e.g., a \"did you attend?\" checkbox) tying the\n   From/To date columns to whether a row is filled in.\n7. **`title` and `maritalStatus` are modelled as closed enums reflecting\n   the form's own printed delete-non-applicable option lists** (Dr/Mr/Mrs/\n   Miss; Single/Married/Widowed/(Divorced)), matching this registry's\n   established convention for \"cross out words which do not apply\" fields\n   over free-text.\n8. **The DNRPC has no independent website.** Form N's own letterhead names\n   \"MINISTRY OF HOME AFFAIRS, DEPARTMENT OF NATIONAL REGISTRATION, PASSPORT\n   AND CITIZENSHIP\" as the issuing authority, but a web search for an\n   official DNRPC domain returned only a Facebook page and third-party\n   citations — no dedicated department website. `authority.url` is set to\n   the MOFAIC Diaspora Portal (`https://www.mofaic.gov.zm/diasporaportal/`),\n   the live government site that hosts and distributes this form, per the\n   same convention this registry uses when an issuing agency has no\n   dedicated web presence of its own.\n9. **Excluded as official/witness-only fields, not applicant-supplied\n   data:** the page 1 \"File No.\" box and \"Stocked by CPO\" circle, page 3's\n   \"FOR OFFICIAL USE ONLY / DOCUMENTS PRODUCED TO BE NOTED HERE\" checklist\n   table, page 4's \"FOR OFFICIAL USE ONLY / Amount of fee paid\" box, and\n   Form N's \"Commissioner for Oaths\" signature line — none of these are\n   values the applicant supplies.\n\n## Scope\n\nModels 117 `fields[]` across 13 steps (Eligibility Gates; Section 1\nPersonal Details; Section 1 Personal Description; Section 2 Married Women;\nSection 3 National Status; Section 4 Born Outside Zambia; Section 5 Travel\nDetails; Section 6 Declaration; Section 7 Recommender; Section 8 Lost\nPassport Particulars; Section 9 Supplementary Information; Section 10\nParent of Legal Guardian's Consent; Form N Affidavit of Birth). 3 valid\nmock scenarios (a single adult applicant with no conditional sections\ntriggered; a married woman born outside Zambia whose husband was also born\noutside Zambia and whose birth was registered at a consulate abroad,\nexercising every nested `requiredWhen` branch; a minor applicant with a\nlost previous passport reported to the police, requiring guardian consent)\nplus 11 mutation-control fixtures (one missing statically-required field,\nseven missing individual `requiredWhen`-true fields spanning every\nconditional family including both nested-condition pairs, an invalid enum\nvalue, and an unknown top-level field) are committed under\n`conformance/zm/dnrpc/passport-application/1.0.0/`.\n\nAn ephemeral, from-scratch conformance checker (deriving required/\nrequiredWhen rules directly from this schema's own `fields[]`, discarded\nafter use, not committed) ran all 14 fixtures: all 3 valid scenarios at 0\nerrors, all 11 mutation controls each raising exactly 1 error, and\nconfirmed every `requiredWhen` field reference resolves (0 dangling\nreferences). Validated clean with `node tools/validate.mjs` and\n`node tools/validate-ajv.mjs`, individually and as part of the full\nregistry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-22"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "eligibility_gates",
+      "title": "Eligibility Gates",
+      "fields": [
+        "isMarriedWoman",
+        "bornOutsideZambia",
+        "hasLostPreviousPassport",
+        "applicantIsMinor"
+      ],
+      "next": "personal_details"
+    },
+    {
+      "id": "personal_details",
+      "title": "Section 1: Personal Details",
+      "fields": [
+        "title",
+        "surname",
+        "otherNames",
+        "ageLastBirthday",
+        "dateOfBirth",
+        "placeCountryOfBirth",
+        "maritalStatus",
+        "maidenSurname",
+        "nameChanged",
+        "originalName",
+        "presentAddress",
+        "usualPlaceOfResidence",
+        "placeCountryOfBirthOfParent",
+        "nationalStatusOfParent"
+      ],
+      "next": "personal_description"
+    },
+    {
+      "id": "personal_description",
+      "title": "Section 1: Personal Description",
+      "fields": [
+        "professionOrOccupation",
+        "residenceCountry",
+        "heightMeters",
+        "heightCentimeters",
+        "colourOfEyes",
+        "colourOfHair",
+        "specialPeculiarities"
+      ],
+      "next": "married_women_details"
+    },
+    {
+      "id": "married_women_details",
+      "title": "Section 2: Married Women",
+      "fields": [
+        "placeOfMarriage",
+        "dateOfMarriage",
+        "husbandNationality",
+        "marriedMoreThanOnce",
+        "husbandSurnameOtherNames",
+        "husbandPlaceCountryOfBirth",
+        "husbandBornOutsideZambia",
+        "husbandFatherPlaceDateOfBirth"
+      ],
+      "next": "national_status"
+    },
+    {
+      "id": "national_status",
+      "title": "Section 3: National Status",
+      "fields": [
+        "citizenshipBasis",
+        "nrcOrCertificateNo",
+        "nrcOrCertificateDateOfIssue",
+        "nrcOrCertificatePlaceOfIssue"
+      ],
+      "next": "born_outside_zambia"
+    },
+    {
+      "id": "born_outside_zambia",
+      "title": "Section 4: Born Outside Zambia",
+      "fields": [
+        "parentRegistrationCertNo",
+        "parentRegistrationPlaceDateOfIssue",
+        "birthRegisteredAtConsulateAbroad",
+        "consulateNameAndPlace",
+        "consulateRegistrationDate"
+      ],
+      "next": "travel_details"
+    },
+    {
+      "id": "travel_details",
+      "title": "Section 5: Travel Details",
+      "fields": [
+        "destinationCountries",
+        "purposeOfTravel",
+        "proposedDateOfTravel",
+        "sponsoringGovernmentDepartment"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Section 6: Declaration",
+      "fields": [
+        "previousPassportOrTravelDocumentNumber",
+        "applicantSignature",
+        "applicantDeclarationDate"
+      ],
+      "next": "recommender"
+    },
+    {
+      "id": "recommender",
+      "title": "Section 7: Recommender",
+      "fields": [
+        "recommenderYearsKnown",
+        "recommenderSignature",
+        "recommenderDate",
+        "recommenderName",
+        "recommenderNrcNo",
+        "recommenderPlaceOfIssue",
+        "recommenderDateOfIssue",
+        "recommenderProfession",
+        "recommenderAddress"
+      ],
+      "next": "lost_passport_particulars"
+    },
+    {
+      "id": "lost_passport_particulars",
+      "title": "Section 8: Particulars of Previous Passport Lost or Unavailable",
+      "fields": [
+        "lostPassportNumber",
+        "lostPassportIssuedAt",
+        "lostPassportIssuedOn",
+        "lostPassportBearerName",
+        "lostPassportLossCircumstances",
+        "lostPassportPlaceDateOfLoss",
+        "lostPassportMeasuresTaken",
+        "lostPassportReportedToPolice",
+        "lostPassportPoliceReportWhereWhen",
+        "lostPassportCertificationSignature",
+        "lostPassportCertificationDate"
+      ],
+      "next": "supplementary_information"
+    },
+    {
+      "id": "supplementary_information",
+      "title": "Section 9: Supplementary Information",
+      "fields": [
+        "supplementaryInformation"
+      ],
+      "next": "guardian_consent"
+    },
+    {
+      "id": "guardian_consent",
+      "title": "Section 10: Parent of Legal Guardian's Consent",
+      "fields": [
+        "guardianFullName",
+        "guardianAddress",
+        "guardianConsentChildFullNames",
+        "guardianSignature",
+        "guardianConsentDate",
+        "guardianRelationshipToApplicant"
+      ],
+      "next": "affidavit_of_birth"
+    },
+    {
+      "id": "affidavit_of_birth",
+      "title": "Form N: Affidavit of Birth",
+      "fields": [
+        "affidavitFullName",
+        "affidavitNationalStatus",
+        "affidavitOccupation",
+        "affidavitPostalAddress",
+        "affidavitResidentialAddress",
+        "affidavitDateOfBirth",
+        "affidavitVillageOrTownOfBirth",
+        "affidavitNrcNo",
+        "affidavitNrcIssuedPlace",
+        "affidavitNrcIssuedDate",
+        "affidavitVillage",
+        "affidavitTribe",
+        "affidavitChief",
+        "affidavitDistrict",
+        "affidavitCountry",
+        "primarySchoolName",
+        "primarySchoolFrom",
+        "primarySchoolTo",
+        "secondarySchoolName",
+        "secondarySchoolFrom",
+        "secondarySchoolTo",
+        "postSecondarySchoolName",
+        "postSecondarySchoolFrom",
+        "postSecondarySchoolTo",
+        "affidavitFatherFullName",
+        "affidavitFatherNrcNo",
+        "affidavitFatherVillageOrTown",
+        "affidavitFatherTribe",
+        "affidavitFatherChief",
+        "affidavitFatherDistrict",
+        "affidavitFatherCountry",
+        "affidavitMotherFullName",
+        "affidavitMotherNrcNo",
+        "affidavitMotherVillageOrTown",
+        "affidavitMotherTribe",
+        "affidavitMotherChief",
+        "affidavitMotherDistrict",
+        "affidavitMotherCountry",
+        "affidavitHasBirthCertificate",
+        "affidavitKnowledgeBasis",
+        "affidavitSwornDate"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "isMarriedWoman",
+      "label": "Applicant is a married, widowed, or divorced woman",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Not a printed checkbox. Section 2's own header reads \"MARRIED WOMEN (Including widows and divorced women) applying must complete this section\", and the form's Note 1 (page 1) states section 2 \"must also be completed by those to whom [it applies]\" — this directly-supplied boolean gates Section 2, the same unprinted-condition convention this registry's Ethiopia/Malta/Cyprus passport schemas use for their own section-applicability gates.",
+      "sourceRef": "Form A, page 2, Section 2 header"
+    },
+    {
+      "name": "bornOutsideZambia",
+      "label": "Applicant was born outside Zambia",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Not a printed checkbox. Section 4's own header reads \"TO BE COMPLETED BY ALL PERSONS BORN OUTSIDE ZAMBIA\" — this directly-supplied boolean gates Section 4.",
+      "sourceRef": "Form A, page 2, Section 4 header"
+    },
+    {
+      "name": "hasLostPreviousPassport",
+      "label": "A previous passport has been lost or is otherwise unavailable",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Not a printed checkbox. Section 6's own note reads \"NOTE - If you had a passport which has been lost, cross out A and C and complete Section 8\" — this directly-supplied boolean gates Section 8 (Particulars of Previous Passport Which Has Been Lost).",
+      "sourceRef": "Form A, page 3, Section 6 note; Section 8 header"
+    },
+    {
+      "name": "applicantIsMinor",
+      "label": "Applicant is under 18 years of age",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Not a printed checkbox. Note 4(f) (page 1) reads \"Children under 18 years of age may not be granted passports without the written consent of the legal guardian, or parent, except where the person under 18 is married\" — this directly-supplied boolean, together with `maritalStatus`, gates Section 10 (Parent of Legal Guardian's Consent). This form is titled \"APPLICATION FOR A ZAMBIAN PASSPORT FOR PERSONS OVER SIXTEEN YEARS OF AGE\" (Note 1 states a separate Form 'B' covers applicants under 16), so this boolean is only ever relevant to the 16-17 age band.",
+      "sourceRef": "Form A, page 1, Note 4(f); page 4, Section 10"
+    },
+    {
+      "name": "title",
+      "label": "Title",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "DR",
+          "MR",
+          "MRS",
+          "MISS"
+        ]
+      },
+      "sourceRef": "Form A, page 2, Section 1 — \"(Dr/Mr/Mrs/Miss)\""
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 2, Section 1 — \"Surname (IN BLOCK CAPITALS)\""
+    },
+    {
+      "name": "otherNames",
+      "label": "Other names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 2, Section 1 — \"Other Names (IN FULL BLOCK CAPITALS)\""
+    },
+    {
+      "name": "ageLastBirthday",
+      "label": "Age last birthday",
+      "type": "integer",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 2, Section 1 — \"Age last birthday\""
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 2, Section 1 — \"Date of Birth (Country)\""
+    },
+    {
+      "name": "placeCountryOfBirth",
+      "label": "Place and country of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 2, Section 1 — \"Place and Country of birth\""
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "SINGLE",
+          "MARRIED",
+          "WIDOWED",
+          "DIVORCED"
+        ]
+      },
+      "description": "Printed as \"Single, Married, Widowed, (Divorced)\" with an instruction to cross out words which do not apply — modelled as an enum of the four printed options.",
+      "sourceRef": "Form A, page 2, Section 1 — \"Marital Status\""
+    },
+    {
+      "name": "maidenSurname",
+      "label": "Maiden surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "isMarriedWoman",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 2, Section 1 — \"Maiden Surname: (if applicant is a woman who is or has been married)\""
+    },
+    {
+      "name": "nameChanged",
+      "label": "Has name been changed (otherwise than by marriage)?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form A, page 2, Section 1 — \"Has name been changed? (otherwise than by marriage) Yes/No\""
+    },
+    {
+      "name": "originalName",
+      "label": "Original name (if name changed)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "nameChanged",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 2, Section 1 — \"If so, state original name (see NOTE 4 (g))\""
+    },
+    {
+      "name": "presentAddress",
+      "label": "Present address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 2, Section 1 — \"Present address (IN BLOCK CAPITALS)\""
+    },
+    {
+      "name": "usualPlaceOfResidence",
+      "label": "Usual place of residence",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 2, Section 1 — \"Usual place of residence (IN BLOCK CAPITALS)\""
+    },
+    {
+      "name": "placeCountryOfBirthOfParent",
+      "label": "Place and country of birth of parent",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form A, page 2, Section 1 — \"Place and Country of birth of Parent\""
+    },
+    {
+      "name": "nationalStatusOfParent",
+      "label": "National status of parent — citizen of the Republic of Zambia by",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "BIRTH",
+          "REGISTRATION"
+        ]
+      },
+      "description": "Printed as \"Citizen of the Republic of Zambia by birth/registration\" with an instruction to delete words which do not apply — modelled as an enum of the two printed options. Section 4(a)'s registration-certificate fields are gated on this field equalling REGISTRATION.",
+      "sourceRef": "Form A, page 2, Section 1 — \"National status of parent\" (see NOTE 4b)"
+    },
+    {
+      "name": "professionOrOccupation",
+      "label": "Profession or occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form A, page 2, Personal Description — \"Profession or Occupation\""
+    },
+    {
+      "name": "residenceCountry",
+      "label": "Residence (country)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form A, page 2, Personal Description — \"Residence (Country)\""
+    },
+    {
+      "name": "heightMeters",
+      "label": "Height — metres",
+      "type": "integer",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 2, Personal Description — \"Height ... m ... cm\""
+    },
+    {
+      "name": "heightCentimeters",
+      "label": "Height — centimetres",
+      "type": "integer",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 2, Personal Description — \"Height ... m ... cm\""
+    },
+    {
+      "name": "colourOfEyes",
+      "label": "Colour of eyes",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 2, Personal Description — \"Colour of eyes\""
+    },
+    {
+      "name": "colourOfHair",
+      "label": "Colour of hair",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 2, Personal Description — \"Colour of hair\""
+    },
+    {
+      "name": "specialPeculiarities",
+      "label": "Special peculiarities",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form A, page 2, Personal Description — \"Special Perculiarities\""
+    },
+    {
+      "name": "placeOfMarriage",
+      "label": "Place of marriage",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "isMarriedWoman",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 2, Section 2 — \"Place of Marriage\""
+    },
+    {
+      "name": "dateOfMarriage",
+      "label": "Date of marriage",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "isMarriedWoman",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 2, Section 2 — \"Date of Marriage\""
+    },
+    {
+      "name": "husbandNationality",
+      "label": "Husband's (or late or former husband's) nationality",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "isMarriedWoman",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 2, Section 2 — \"Husband's (or late or former husband's) nationality\""
+    },
+    {
+      "name": "marriedMoreThanOnce",
+      "label": "Married more than once?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "isMarriedWoman",
+        "equals": true
+      },
+      "description": "If true, the form directs \"details of former marriage(s) must be given on section 9\" — this schema's `supplementaryInformation` field.",
+      "sourceRef": "Form A, page 2, Section 2 — \"State whether married more than once....If answer is 'Yes' details of former marriage(s) must be given on section 9\""
+    },
+    {
+      "name": "husbandSurnameOtherNames",
+      "label": "Husband's surname and full other names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "isMarriedWoman",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 2, Section 2, \"Particulars of husband\" — \"Surname and full other names\""
+    },
+    {
+      "name": "husbandPlaceCountryOfBirth",
+      "label": "Place and country of birth of husband",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "isMarriedWoman",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 2, Section 2, \"Particulars of husband\" — \"Place and country of birth\""
+    },
+    {
+      "name": "husbandBornOutsideZambia",
+      "label": "Husband was born outside Zambia",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "isMarriedWoman",
+        "equals": true
+      },
+      "fieldRole": "eligibility",
+      "description": "Not a printed checkbox. Gates `husbandFatherPlaceDateOfBirth`, which the form prints only as \"If husband was born outside Zambia give place and date of his father's birth\" with no checkbox of its own.",
+      "sourceRef": "Form A, page 2, Section 2, \"Particulars of husband\" — \"If husband was born outside Zambia give place and date of his father's birth\""
+    },
+    {
+      "name": "husbandFatherPlaceDateOfBirth",
+      "label": "Place and date of husband's father's birth",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "isMarriedWoman",
+            "equals": true
+          },
+          {
+            "field": "husbandBornOutsideZambia",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "Form A, page 2, Section 2, \"Particulars of husband\" — \"If husband was born outside Zambia give place and date of his father's birth\""
+    },
+    {
+      "name": "citizenshipBasis",
+      "label": "Citizen of Zambia by",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "BIRTH",
+          "DESCENT",
+          "REGISTRATION_OR_NATURALISATION",
+          "BESTAWAL"
+        ]
+      },
+      "description": "Printed as four options with an instruction to delete whichever is not applicable: \"(i) Citizen of Zambia by *birth. (ii) Citizen of Zambia by *descent. (iii) Citizen of Zambia by *registration or naturalisation. (iv) Bestawal.\"",
+      "sourceRef": "Form A, page 2, Section 3 — \"NATIONAL STATUS\""
+    },
+    {
+      "name": "nrcOrCertificateNo",
+      "label": "NRC / Certificate number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 2, Section 3 — \"NRC /Certificate No\""
+    },
+    {
+      "name": "nrcOrCertificateDateOfIssue",
+      "label": "NRC / Certificate — date of issue",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form A, page 2, Section 3 — \"Date of Issue\""
+    },
+    {
+      "name": "nrcOrCertificatePlaceOfIssue",
+      "label": "NRC / Certificate — place of issue",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form A, page 2, Section 3 — \"Place of Issue\""
+    },
+    {
+      "name": "parentRegistrationCertNo",
+      "label": "Number of parent's registration certificate",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "bornOutsideZambia",
+            "equals": true
+          },
+          {
+            "field": "nationalStatusOfParent",
+            "equals": "REGISTRATION"
+          }
+        ]
+      },
+      "sourceRef": "Form A, page 2, Section 4(a) — \"If parent is a citizen of Zambia by registration, state: (i) No. of his registration certificate\""
+    },
+    {
+      "name": "parentRegistrationPlaceDateOfIssue",
+      "label": "Place and date of issue of parent's registration certificate",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "bornOutsideZambia",
+            "equals": true
+          },
+          {
+            "field": "nationalStatusOfParent",
+            "equals": "REGISTRATION"
+          }
+        ]
+      },
+      "sourceRef": "Form A, page 2, Section 4(a) — \"(ii) Place and date of issue\""
+    },
+    {
+      "name": "birthRegisteredAtConsulateAbroad",
+      "label": "Applicant's birth was registered at a Zambia (or Commonwealth) Consulate abroad",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "bornOutsideZambia",
+        "equals": true
+      },
+      "fieldRole": "eligibility",
+      "sourceRef": "Form A, page 2, Section 4(a) — \"If applicant's birth was registered at a Zambia Consulate abroad, or other Commonwealth Consulate abroad acting on behalf of Zambia state:\""
+    },
+    {
+      "name": "consulateNameAndPlace",
+      "label": "Name and place of registering consulate",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "bornOutsideZambia",
+            "equals": true
+          },
+          {
+            "field": "birthRegisteredAtConsulateAbroad",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "Form A, page 2, Section 4(a) — \"(i) Name and Place of such Consulate\""
+    },
+    {
+      "name": "consulateRegistrationDate",
+      "label": "Date of consulate registration",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "bornOutsideZambia",
+            "equals": true
+          },
+          {
+            "field": "birthRegisteredAtConsulateAbroad",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "Form A, page 2, Section 4(a) — \"(ii) Date of such registration\""
+    },
+    {
+      "name": "destinationCountries",
+      "label": "Countries passport is required for travel to",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form A, page 3, Section 5 — \"PASSPORT REQUIRED FOR TRAVEL TO THE FOLLOWING COUNTRIES\""
+    },
+    {
+      "name": "purposeOfTravel",
+      "label": "Purpose of travel",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form A, page 3, Section 5 — \"Purpose of travel\""
+    },
+    {
+      "name": "proposedDateOfTravel",
+      "label": "Proposed date of travel",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form A, page 3, Section 5 — \"Proposed date of travel\""
+    },
+    {
+      "name": "sponsoringGovernmentDepartment",
+      "label": "Sponsoring government department (if applicable)",
+      "type": "string",
+      "required": false,
+      "description": "The form prints no checkbox tying this field to any other; it reads only \"If sponsored by a Government state name of Department\" as a free-standing conditional instruction, so it is modelled bare-optional rather than a fabricated boolean gate — the same disclosed no-printed-signal treatment this registry's Ethiopia passport schema (et/ics/passport-application) uses for its own analogous ungated optional fields.",
+      "sourceRef": "Form A, page 3, Section 5 — \"If sponsored by a Government state name of Department\""
+    },
+    {
+      "name": "previousPassportOrTravelDocumentNumber",
+      "label": "Number of previous passport or travel document not surrendered (if any)",
+      "type": "string",
+      "required": false,
+      "description": "Declaration point C reads \"that all previous passports granted to me have been surrendered, other than passport or travel document No..............which is now attached\" — this blank is the only applicant-supplied value within the Section 6 declaration text itself (points A/B/C are otherwise fixed boilerplate the applicant swears to or strikes out). Modelled bare-optional since the form gives no separate printed yes/no signal distinguishing \"nothing attached\" from \"this document is attached\".",
+      "sourceRef": "Form A, page 3, Section 6, Declaration point C"
+    },
+    {
+      "name": "applicantSignature",
+      "label": "Applicant's signature",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 3, Section 6 — \"Signature....Date:....\""
+    },
+    {
+      "name": "applicantDeclarationDate",
+      "label": "Date of declaration",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form A, page 3, Section 6 — \"Signature....Date:....\""
+    },
+    {
+      "name": "recommenderYearsKnown",
+      "label": "Years applicant has been known to the recommender",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Form A, page 3, Section 7 — \"I certify that the applicant has been known personally to me for.....Years\""
+    },
+    {
+      "name": "recommenderSignature",
+      "label": "Recommender's signature",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 3, Section 7 — \"Signature....\""
+    },
+    {
+      "name": "recommenderDate",
+      "label": "Date (recommender)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form A, page 3, Section 7 — \"Date:....\""
+    },
+    {
+      "name": "recommenderName",
+      "label": "Recommender's name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 3, Section 7 — \"Name....\""
+    },
+    {
+      "name": "recommenderNrcNo",
+      "label": "Recommender's NRC number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 3, Section 7 — \"N.R.C No....\""
+    },
+    {
+      "name": "recommenderPlaceOfIssue",
+      "label": "Recommender's NRC — place of issue",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form A, page 3, Section 7 — \"Place of Issue....\""
+    },
+    {
+      "name": "recommenderDateOfIssue",
+      "label": "Recommender's NRC — date of issue",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form A, page 3, Section 7 — \"Date of Issue....\""
+    },
+    {
+      "name": "recommenderProfession",
+      "label": "Recommender's profession",
+      "type": "string",
+      "required": true,
+      "description": "Note 2 (page 1) requires the recommender be \"a Minister of Religion Medical or Legal Practitioner Established Senior Civil Servant, Senior Bank official, or any Zambian subject of similar standing who has been personally acquainted with the applicant for at least two years. A member of the applicant's family is not acceptable as a recommender.\"",
+      "sourceRef": "Form A, page 3, Section 7 — \"Profession see NOTE 2 on page 1)....\""
+    },
+    {
+      "name": "recommenderAddress",
+      "label": "Recommender's address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form A, page 3, Section 7 — \"Address....\""
+    },
+    {
+      "name": "lostPassportNumber",
+      "label": "Lost/unavailable passport number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLostPreviousPassport",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 4, Section 8 — \"Passport No....issued at....on....\""
+    },
+    {
+      "name": "lostPassportIssuedAt",
+      "label": "Lost passport — place of issue",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLostPreviousPassport",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 4, Section 8 — \"Passport No....issued at....on....\""
+    },
+    {
+      "name": "lostPassportIssuedOn",
+      "label": "Lost passport — date of issue",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLostPreviousPassport",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 4, Section 8 — \"Passport No....issued at....on....\""
+    },
+    {
+      "name": "lostPassportBearerName",
+      "label": "Bearer's name at time of issue",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "hasLostPreviousPassport",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 4, Section 8 — \"Bearers name at time of issue\""
+    },
+    {
+      "name": "lostPassportLossCircumstances",
+      "label": "Circumstances of loss or destruction / other reasons for non-availability",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLostPreviousPassport",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 4, Section 8 — \"Circumstances in which passport was lost or destroyed, or other reasons for its non availability\""
+    },
+    {
+      "name": "lostPassportPlaceDateOfLoss",
+      "label": "Place and date of loss",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLostPreviousPassport",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 4, Section 8 — \"Place and date of loss\""
+    },
+    {
+      "name": "lostPassportMeasuresTaken",
+      "label": "Measures taken at the time of reporting the loss",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLostPreviousPassport",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 4, Section 8 — \"What measures were taken at the time of reporting the loss?\""
+    },
+    {
+      "name": "lostPassportReportedToPolice",
+      "label": "Loss reported to the Police?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLostPreviousPassport",
+        "equals": true
+      },
+      "fieldRole": "eligibility",
+      "sourceRef": "Form A, page 4, Section 8 — \"Has loss been reported to the Police?\""
+    },
+    {
+      "name": "lostPassportPoliceReportWhereWhen",
+      "label": "Where and when loss was reported to the Police",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "hasLostPreviousPassport",
+            "equals": true
+          },
+          {
+            "field": "lostPassportReportedToPolice",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "Form A, page 4, Section 8 — \"If so, state where and when\""
+    },
+    {
+      "name": "lostPassportCertificationSignature",
+      "label": "Signature certifying the Section 8 particulars",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "hasLostPreviousPassport",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 4, Section 8 — \"Signed:....\""
+    },
+    {
+      "name": "lostPassportCertificationDate",
+      "label": "Date of Section 8 certification",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "hasLostPreviousPassport",
+        "equals": true
+      },
+      "sourceRef": "Form A, page 4, Section 8 — \"Date:....\""
+    },
+    {
+      "name": "supplementaryInformation",
+      "label": "Supplementary information",
+      "type": "string",
+      "required": false,
+      "description": "Free-form catch-all the form itself points to from Section 2 (\"details of former marriage(s) must be given on section 9\") and Section 2's husband-descent note (\"details of his descent must be given on section 9\"); left optional since it is only ever conditionally relevant and the form gives it no independent applicability signal.",
+      "sourceRef": "Form A, page 4, Section 9 — \"SUPPLEMENTARY INFORMATION\""
+    },
+    {
+      "name": "guardianFullName",
+      "label": "Guardian's / parent's full name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "applicantIsMinor",
+            "equals": true
+          },
+          {
+            "field": "maritalStatus",
+            "notEquals": "MARRIED"
+          }
+        ]
+      },
+      "sourceRef": "Form A, page 4, Section 10 — \"I, (FULL NAME)....\""
+    },
+    {
+      "name": "guardianAddress",
+      "label": "Guardian's / parent's address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "applicantIsMinor",
+            "equals": true
+          },
+          {
+            "field": "maritalStatus",
+            "notEquals": "MARRIED"
+          }
+        ]
+      },
+      "sourceRef": "Form A, page 4, Section 10 — \"residing at....\""
+    },
+    {
+      "name": "guardianConsentChildFullNames",
+      "label": "Full name(s) of the child/children the consent covers",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "applicantIsMinor",
+            "equals": true
+          },
+          {
+            "field": "maritalStatus",
+            "notEquals": "MARRIED"
+          }
+        ]
+      },
+      "sourceRef": "Form A, page 4, Section 10 — \"the legal guadian of (Full Name(s))....\""
+    },
+    {
+      "name": "guardianSignature",
+      "label": "Guardian's / parent's signature",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "applicantIsMinor",
+            "equals": true
+          },
+          {
+            "field": "maritalStatus",
+            "notEquals": "MARRIED"
+          }
+        ]
+      },
+      "sourceRef": "Form A, page 4, Section 10 — \"Signature:....\""
+    },
+    {
+      "name": "guardianConsentDate",
+      "label": "Date of guardian consent",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "applicantIsMinor",
+            "equals": true
+          },
+          {
+            "field": "maritalStatus",
+            "notEquals": "MARRIED"
+          }
+        ]
+      },
+      "sourceRef": "Form A, page 4, Section 10 — \"Date:....\""
+    },
+    {
+      "name": "guardianRelationshipToApplicant",
+      "label": "Relationship of guardian to applicant",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "applicantIsMinor",
+            "equals": true
+          },
+          {
+            "field": "maritalStatus",
+            "notEquals": "MARRIED"
+          }
+        ]
+      },
+      "sourceRef": "Form A, page 4, Section 10 — \"Relationship to child (Applicant)....(see NOTE 4 (f))\""
+    },
+    {
+      "name": "affidavitFullName",
+      "label": "Full names (affidavit)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form N — \"I, (full names)....make oath and say that: 1. My name is (full names)....\""
+    },
+    {
+      "name": "affidavitNationalStatus",
+      "label": "National status (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"2. I am a (give national status)....\""
+    },
+    {
+      "name": "affidavitOccupation",
+      "label": "Occupation (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"3. I am employed as a (give occupation)....\""
+    },
+    {
+      "name": "affidavitPostalAddress",
+      "label": "Postal address (affidavit)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form N — \"4. At (Postal address)....\""
+    },
+    {
+      "name": "affidavitResidentialAddress",
+      "label": "Residential address (affidavit)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form N — \"5. I reside at (residential address)....\""
+    },
+    {
+      "name": "affidavitDateOfBirth",
+      "label": "Date of birth (affidavit)",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form N — \"6.(a) I was born on....\""
+    },
+    {
+      "name": "affidavitVillageOrTownOfBirth",
+      "label": "Village/Town of birth (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"6.(a) ... in/at Village/Town....\""
+    },
+    {
+      "name": "affidavitNrcNo",
+      "label": "NRC number (affidavit)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form N — \"My N.R.C No. being:....\""
+    },
+    {
+      "name": "affidavitNrcIssuedPlace",
+      "label": "NRC — place of issue (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"issued at............Date:....\""
+    },
+    {
+      "name": "affidavitNrcIssuedDate",
+      "label": "NRC — date of issue (affidavit)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form N — \"issued at............Date:....\""
+    },
+    {
+      "name": "affidavitVillage",
+      "label": "Village (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"6.(b) My Village being:....\""
+    },
+    {
+      "name": "affidavitTribe",
+      "label": "Tribe (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"Tribe....\""
+    },
+    {
+      "name": "affidavitChief",
+      "label": "Chief (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"Chief....\""
+    },
+    {
+      "name": "affidavitDistrict",
+      "label": "District (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"District....\""
+    },
+    {
+      "name": "affidavitCountry",
+      "label": "Country (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"Country:....\""
+    },
+    {
+      "name": "primarySchoolName",
+      "label": "Primary school attended — name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form N, \"SCHOOLS ATTENDED\" table — \"Primary:\" row, \"SCHOOL\" column"
+    },
+    {
+      "name": "primarySchoolFrom",
+      "label": "Primary school attended — from",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form N, \"SCHOOLS ATTENDED\" table — \"Primary:\" row, \"From\" column"
+    },
+    {
+      "name": "primarySchoolTo",
+      "label": "Primary school attended — to",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form N, \"SCHOOLS ATTENDED\" table — \"Primary:\" row, \"To\" column"
+    },
+    {
+      "name": "secondarySchoolName",
+      "label": "Secondary school attended — name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form N, \"SCHOOLS ATTENDED\" table — \"Secondary:\" row, \"SCHOOL\" column"
+    },
+    {
+      "name": "secondarySchoolFrom",
+      "label": "Secondary school attended — from",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form N, \"SCHOOLS ATTENDED\" table — \"Secondary:\" row, \"From\" column"
+    },
+    {
+      "name": "secondarySchoolTo",
+      "label": "Secondary school attended — to",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form N, \"SCHOOLS ATTENDED\" table — \"Secondary:\" row, \"To\" column"
+    },
+    {
+      "name": "postSecondarySchoolName",
+      "label": "Post Secondary school attended — name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form N, \"SCHOOLS ATTENDED\" table — \"Post Secondary:\" row, \"SCHOOL\" column"
+    },
+    {
+      "name": "postSecondarySchoolFrom",
+      "label": "Post Secondary school attended — from",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form N, \"SCHOOLS ATTENDED\" table — \"Post Secondary:\" row, \"From\" column"
+    },
+    {
+      "name": "postSecondarySchoolTo",
+      "label": "Post Secondary school attended — to",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form N, \"SCHOOLS ATTENDED\" table — \"Post Secondary:\" row, \"To\" column"
+    },
+    {
+      "name": "affidavitFatherFullName",
+      "label": "Father's full name (affidavit)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form N — \"(c) My father being named....\""
+    },
+    {
+      "name": "affidavitFatherNrcNo",
+      "label": "Father's NRC number (affidavit)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form N — \"Holder of N.R.C No.:....\" (father row)"
+    },
+    {
+      "name": "affidavitFatherVillageOrTown",
+      "label": "Father's Village/Town (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"Village/Town....\" (father row)"
+    },
+    {
+      "name": "affidavitFatherTribe",
+      "label": "Father's Tribe (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"Tribe:....\" (father row)"
+    },
+    {
+      "name": "affidavitFatherChief",
+      "label": "Father's Chief (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"Chief....\" (father row)"
+    },
+    {
+      "name": "affidavitFatherDistrict",
+      "label": "Father's District (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"District....\" (father row)"
+    },
+    {
+      "name": "affidavitFatherCountry",
+      "label": "Father's Country (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"Country....\" (father row)"
+    },
+    {
+      "name": "affidavitMotherFullName",
+      "label": "Mother's full name (affidavit)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form N — \"(d) My Mother being named....\""
+    },
+    {
+      "name": "affidavitMotherNrcNo",
+      "label": "Mother's NRC number (affidavit)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form N — \"Holder of N.R.C No.:....\" (mother row)"
+    },
+    {
+      "name": "affidavitMotherVillageOrTown",
+      "label": "Mother's Village/Town (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"Village/Town....\" (mother row)"
+    },
+    {
+      "name": "affidavitMotherTribe",
+      "label": "Mother's Tribe (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"Tribe:....\" (mother row)"
+    },
+    {
+      "name": "affidavitMotherChief",
+      "label": "Mother's Chief (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"Chief....\" (mother row)"
+    },
+    {
+      "name": "affidavitMotherDistrict",
+      "label": "Mother's District (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"District....\" (mother row)"
+    },
+    {
+      "name": "affidavitMotherCountry",
+      "label": "Mother's Country (affidavit)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form N — \"Country....\" (mother row)"
+    },
+    {
+      "name": "affidavitHasBirthCertificate",
+      "label": "Applicant is in possession of a Birth Certificate",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Printed as \"I am in/not in possession of a Birth Certificate as facilities existed for the registration of births at the time of my birth (Delete which is not applicable)\" — modelled as a boolean. Gates `affidavitKnowledgeBasis`.",
+      "sourceRef": "Form N — \"7. I am in/not in possession of a Birth Certificate....\""
+    },
+    {
+      "name": "affidavitKnowledgeBasis",
+      "label": "Basis of knowledge of the details of my birth",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "affidavitHasBirthCertificate",
+        "equals": false
+      },
+      "description": "The form always prints this question (\"My knowledge of the details of my birth is based on....\") directly beneath Question 7, most relevant when no birth certificate exists — modelled as requiredWhen `affidavitHasBirthCertificate` equals false, an interpretation choice disclosed here since the form itself prints no explicit conditional tying the two.",
+      "sourceRef": "Form N — \"8. My knowledge of the details of my birth is based on....\""
+    },
+    {
+      "name": "affidavitSwornDate",
+      "label": "Date affidavit was sworn",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form N — \"Sworn by the said....before me this....day of....twenty hundred and....\""
+    }
+  ]
+}

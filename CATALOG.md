@@ -4,7 +4,37 @@
 
 ## Executive Summary
 
-**77 jurisdictions** | **591 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**77 jurisdictions** | **592 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4278, "GovSchema Standard Research"): Zambia
+> deepens to 2/6 via its Passport vertical**, via
+> `zm/dnrpc/passport-application@1.0.0` — the Department of National
+> Registration, Passport and Citizenship's (DNRPC) "Form A" application for
+> a Zambian passport (applicants over sixteen), combined with its mandatory
+> companion "Form N" (Affidavit of Birth), both distributed as a single PDF
+> via the Ministry of Foreign Affairs and International Cooperation's
+> (MOFAIC) Diaspora Portal. This was the GOV-4271-cycle-banked "Zambia
+> Passport" STRONG candidate (see this catalog's own Known Gaps entry
+> below); fetched directly and unauthenticated as a genuine native
+> (searchable-text) PDF (no login/CAPTCHA/WAF gate) from
+> `mofaic.gov.zm/diasporaportal`, cross-corroborated via the portal's own
+> "Documents" index page. Rendered all 5 pages to images via `pdfjs-dist` +
+> `node-canvas` to confirm the form's dense multi-column/ruled-table layout
+> before finalizing the field list. Models 117 fields across 13 steps,
+> including four directly-supplied, unprinted boolean eligibility gates
+> (`isMarriedWoman`, `bornOutsideZambia`, `hasLostPreviousPassport`,
+> `applicantIsMinor`) justified by the form's own section headers/notes —
+> Page 1's Note 1 directly states which of Form A's ten sections are
+> universal versus conditional. The guardian-consent section (Section 10)
+> uses a compound `requiredWhen` (`applicantIsMinor` true AND
+> `maritalStatus` not `MARRIED`) directly encoding Note 4(f)'s stated
+> married-minor exception. Form N (the Affidavit of Birth) is modelled as
+> an always-required step, not conditional, since Note 4(h) states "All
+> applicants must attach duly completed sworn birth affidavit using from
+> N." Zambia's Taxes candidate (ZRA's 19-page Individual Income Tax Return)
+> remains open, pre-scouted STRONG backlog for a future cycle — see the
+> Known Gaps section below. See the document's own VERIFICATION.md for the
+> full sourcing record and 9 disclosed findings.
 
 > **Update (2026-07-22, GOV-4271, "GovSchema Standard Research"): Zambia
 > opens as the registry's 77th jurisdiction — Business Formation (1 of
@@ -13853,7 +13883,15 @@
 
 ## By Vertical
 
-### Passport (53/77 jurisdictions — 69%)
+### Passport (54/77 jurisdictions — 70%)
+
+> **Update (2026-07-22, GOV-4278, "GovSchema Standard Research"): Zambia
+> opens this vertical (2/6 for the jurisdiction)**, via
+> `zm/dnrpc/passport-application@1.0.0` — the Department of National
+> Registration, Passport and Citizenship's "Form A" application for a
+> Zambian passport, combined with its mandatory companion "Form N"
+> (Affidavit of Birth). See the Executive Summary's GOV-4278 update above
+> for the full sourcing record and disclosed findings.
 
 > **Update (2026-07-22, GOV-4264, "GovSchema Standard Research"): Ethiopia
 > deepens to 3/6 via this vertical**, via `et/ics/passport-application@1.0.0`
@@ -19782,15 +19820,12 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       finding (which had only checked some of these) to cover all 5. Do not
       re-attempt without a genuinely new source.
 0d. **Pre-scouted candidates banked this cycle (GOV-4271, 2026-07-22) —
-    Zambia Business Formation now authored, Zambia Passport and Taxes
-    remain open STRONG backlog, Panama and Albania each screened but not
-    authored:**
-    - **Zambia Passport** — Ministry of Foreign Affairs and International
-      Cooperation's Diaspora Portal hosts an unauthenticated, genuine
-      text-layer PDF, `PASSPORT-FORM-A-WITH-FORM-N.pdf` ("Form A with
-      Form N"), HTTP 200, no login/CAPTCHA/WAF gate. Not authored this
-      cycle; open backlog for a future cycle to open Zambia's Passport
-      vertical (2 of 6).
+    Zambia Business Formation and Passport now authored (Passport via
+    GOV-4278), Zambia Taxes remains open STRONG backlog, Panama and Albania
+    each screened but not authored:**
+    - **Zambia Passport** — authored (GOV-4278), see
+      `zm/dnrpc/passport-application@1.0.0` and the Executive Summary's
+      GOV-4278 update above.
     - **Zambia Taxes** — the Zambia Revenue Authority (ZRA) publishes an
       unauthenticated, genuine text-layer PDF, `Income-Tax-Return-for-
       Individuals.pdf` (Form ITF 46_1 V001), a 19-page individual income
