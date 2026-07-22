@@ -4,7 +4,43 @@
 
 ## Executive Summary
 
-**83 jurisdictions** | **608 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**84 jurisdictions** | **609 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4417, "GovSchema Standard Research"): Senegal
+> opens as the registry's 84th jurisdiction, via Visa (1 of 6)**, via
+> `sn/mae/visa-application@1.0.0` — the Ministry of Foreign Affairs'
+> bilingual French/English "Demande de Visa de Moins de Trois Mois"
+> (Application for less than three months), served by the Consulate
+> General of Senegal in Paris. The registry's only banked STRONG candidate
+> at the start of this cycle (Kyrgyzstan's GNS Form STI-163, Business
+> Formation) remained unauthorable — `sti.gov.kg`'s document-streaming
+> endpoint was re-checked and still returned HTTP 500 — so a research agent
+> scouted genuinely new jurisdictions instead, reporting this candidate. It
+> was independently re-fetched and re-hashed rather than trusted from the
+> report alone: `https://consulsen-paris.gouv.sn/wp-content/uploads/2022/08/visaform.pdf`,
+> HTTP 200, `application/pdf`, 159,674 bytes, sha256 `ee29181d...`, no
+> login/CAPTCHA/WAF gate, and independently corroborated as the live,
+> current-edition form via the consulate's own "demande-de-visa" page.
+> Models 25 fields across 7 steps (Applicant Particulars; Address and
+> Occupation; Passport Particulars; Travelling Companions and Purpose of
+> Trip; Prior Residence in Senegal and References; Accommodation and
+> Method of Travel; Signature) plus a `documents[]` array (residence-permit
+> and passport photocopies, an identity photo, a flight ticket/reservation,
+> and the visa fee), excluding the "Emplacement Reservé à l'Administration"
+> (For Official Use Only) block and the "Avis du Chef de Poste" line
+> (both consular-staff-completed). See the document's own VERIFICATION.md
+> for the full sourcing record and all 11 disclosed findings, including the
+> genuine absence of a sex/gender field (unlike this registry's other
+> consular visa schemas) and `nationalityOriginal` modelled required rather
+> than optional since the source prints no "if different" qualifier. Both
+> validators pass at 609/609; `verify-sources.mjs` scoped to this schema's
+> directory reports all 4 cited URLs clear; 21 conformance fixtures (3
+> valid + 17 mutation-control + 1 unknown-field) committed, all reproduced
+> via a from-scratch mock validator. Senegal's other five verticals
+> (Taxes, Business Formation, DMV, Passport, National ID) remain open,
+> unscreened-or-inconclusive backlog for a future cycle — see the
+> document's own VERIFICATION.md and this catalog's own Known Gaps entry
+> 0h below.
 
 > **Update (2026-07-22, GOV-4410, "GovSchema Standard Research"): no new
 > schema authored this cycle — Kyrgyzstan's remaining five verticals were
@@ -18630,7 +18666,12 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (66/82 jurisdictions — 80%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (67/84 jurisdictions — 80%)
+
+> **Update (2026-07-22, GOV-4417, "GovSchema Standard Research"): Senegal
+> opens as the registry's 84th jurisdiction, via this vertical**, via
+> `sn/mae/visa-application` — see the Executive Summary update above for
+> the full sourcing record. Numerator moves from 66/82 to 67/84.
 
 > **Update (2026-07-22, GOV-4390, "GovSchema Standard Research"): Jamaica's
 > Visa vertical opens**, via `jm/mfaft/visa-application` — see the
@@ -20199,6 +20240,7 @@ now closed.
 | **SG** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **SN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -20761,6 +20803,28 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       usual staff-completed-form dead-end pattern — so these two verticals
       are likely, but not yet confirmed, dead ends. Re-check `grs.gov.kg`
       fresh in a future cycle before ruling out definitively.
+0h. **Senegal opened this cycle (GOV-4417, 2026-07-22) via Visa (1/6);
+    other five verticals unscreened or inconclusive, per the scouting
+    research agent's own report:**
+    - **Visa — now authored** as `sn/mae/visa-application@1.0.0` (the
+      Consulate General of Senegal in Paris' "Demande de Visa de Moins de
+      Trois Mois") — see the Executive Summary and Visa vertical updates
+      above.
+    - **Taxes** — DGID's forms page (`dgid.sn/formulaires/`) failed a plain
+      `curl` with a TLS certificate error (`unable to get local issuer
+      certificate`); not re-attempted with `-k` or via the alternate
+      `impotsetdomaines.gouv.sn`/`impotsetdomaines.sec.gouv.sn` mirrors this
+      cycle — inconclusive, not a confirmed dead end.
+    - **Business Formation** — APIX (the guichet unique) reportedly
+      publishes a "déclaration d'honneur" form; no direct PDF URL was
+      surfaced this cycle — inconclusive, worth a targeted APIX site
+      crawl.
+    - **DMV** — MITTD (`mittd.gouv.sn`) has driving-licence procedure pages
+      but no direct downloadable application PDF found this cycle —
+      inconclusive.
+    - **Passport and National ID** — not screened this cycle at all.
+    Re-screen all five in a future cycle before ruling any out; none is a
+    confirmed dead end.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
