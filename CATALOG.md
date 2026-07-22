@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**77 jurisdictions** | **592 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**77 jurisdictions** | **593 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4287, "GovSchema Standard Research"): Zambia
+> deepens to 3/6 via its Taxes vertical**, via
+> `zm/zra/individual-income-tax-return@1.0.0` — the Zambia Revenue
+> Authority's (ZRA) Direct Taxes Division "Income Tax Return for
+> Individuals — Self-Assessment Form" (ITF 46_1 V001). This was the
+> GOV-4271-cycle-banked "Zambia Taxes" STRONG candidate (see this catalog's
+> own Known Gaps entry below); fetched directly and unauthenticated as a
+> genuine 19-page native (searchable-text) PDF (no login/CAPTCHA/WAF gate)
+> from `zra.org.zm`, correcting the GOV-4271 cycle's own banked URL (a
+> `2023/06` path) which now 404s, to a currently-live `2020/06` path. Models
+> 107 fields across 6 steps (Taxpayer Details; Part 1 Rental Income;
+> Section B Statement of Financial Position/Balance Sheet; Section F
+> Employment Income for up to two employers; Section G Interest in
+> Companies; Section H Declaration). Following this catalog's own
+> narrow-scoping precedent (e.g. Latvia's D3/D3¹/GD exclusions), the form's
+> business/self-employment income computation (Section A Summary; Section
+> C Statement of Comprehensive Income; Section D Computation of Chargeable
+> Income from Business per source; Schedules 1-4 covering Capital
+> Allowances, income of other persons, and current-/prior-year losses;
+> and Section E Partnership Firm income) is excluded from v1.0.0 as a
+> coherent, separable unit, disclosed as the natural follow-on
+> companion-schema candidate for a future cycle rather than force-fit into
+> one document. Every printed formula/subtotal line within the sections
+> this schema does cover is likewise excluded, per this registry's standing
+> closed decision to defer calculated/derived fields (GSP-0013 §7 / GOV-302
+> founder ruling). Zambia now stands at 3 of 6 verticals (Business
+> Formation and Passport already published). See the document's own
+> VERIFICATION.md for the full sourcing record and 10 disclosed findings.
 
 > **Update (2026-07-22, GOV-4278, "GovSchema Standard Research"): Zambia
 > deepens to 2/6 via its Passport vertical**, via
@@ -16135,7 +16164,38 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (64/77 jurisdictions — 83%)
+### Taxes — Income Tax Return, Tax Filing (65/77 jurisdictions — 84%)
+
+> **Update (2026-07-22, GOV-4287, "GovSchema Standard Research"): Zambia
+> opens this vertical (3/6 for the jurisdiction)**, via
+> `zm/zra/individual-income-tax-return@1.0.0` — the Zambia Revenue
+> Authority's (ZRA) Direct Taxes Division "Income Tax Return for
+> Individuals — Self-Assessment Form" (ITF 46_1 V001). This was the
+> GOV-4271-cycle-banked "Zambia Taxes" STRONG candidate (see this catalog's
+> own Known Gaps entry below); fetched directly and unauthenticated as a
+> genuine 19-page native (searchable-text) PDF (no login/CAPTCHA/WAF gate)
+> from `zra.org.zm`, correcting the GOV-4271 cycle's own banked URL (a
+> `2023/06` path) which now 404s, to a currently-live `2020/06` path.
+> Models 107 fields across 6 steps (Taxpayer Details; Part 1 Rental Income;
+> Section B Statement of Financial Position/Balance Sheet; Section F
+> Employment Income for up to two employers; Section G Interest in
+> Companies; Section H Declaration). Following this catalog's own
+> narrow-scoping precedent (e.g. Latvia's D3/D3¹/GD exclusions), the form's
+> business/self-employment income computation — Section A Summary, Section
+> C Statement of Comprehensive Income, Section D Computation of Chargeable
+> Income from Business per source, Schedules 1-4 (Capital Allowances;
+> income of other persons; current- and prior-year losses), and Section E
+> Partnership Firm income — is excluded from v1.0.0 as a coherent,
+> separable unit, disclosed as the natural follow-on companion-schema
+> candidate for a future cycle rather than force-fit into one document.
+> Every printed formula/subtotal line within the sections this schema does
+> cover (e.g. the balance sheet's own "Total Fixed Assets", employment's own
+> "TOTAL TAXABLE INCOME FROM EMPLOYMENT") is likewise excluded, per this
+> registry's standing closed decision to defer calculated/derived fields
+> (GSP-0013 §7). Zambia now stands at 3 of 6 verticals (Business Formation
+> and Passport already published). See the Executive Summary's Known Gaps
+> section and the document's own VERIFICATION.md for the full sourcing
+> record and 10 disclosed findings.
 
 > **Update (2026-07-21, GOV-4202, "GovSchema Standard Research"): Latvia
 > adds the Declaration DK pielikums as a further top-level Taxes document**,
@@ -19524,7 +19584,7 @@ now closed.
 | **UZ** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **VN** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **ZM** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **ZM** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
 
 "Schemas (top-level dirs)" counts distinct `<agency>/<process-name>` entries
 under `registry/<jurisdiction>/`, not every version/edition. US is
@@ -19820,19 +19880,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       finding (which had only checked some of these) to cover all 5. Do not
       re-attempt without a genuinely new source.
 0d. **Pre-scouted candidates banked this cycle (GOV-4271, 2026-07-22) —
-    Zambia Business Formation and Passport now authored (Passport via
-    GOV-4278), Zambia Taxes remains open STRONG backlog, Panama and Albania
-    each screened but not authored:**
+    Zambia Business Formation, Passport, and Taxes now all authored
+    (Passport via GOV-4278, Taxes via GOV-4287, closing Zambia's disclosed
+    backlog from this entry), Panama and Albania each screened but not
+    authored:**
     - **Zambia Passport** — authored (GOV-4278), see
       `zm/dnrpc/passport-application@1.0.0` and the Executive Summary's
       GOV-4278 update above.
-    - **Zambia Taxes** — the Zambia Revenue Authority (ZRA) publishes an
-      unauthenticated, genuine text-layer PDF, `Income-Tax-Return-for-
-      Individuals.pdf` (Form ITF 46_1 V001), a 19-page individual income
-      tax return with TPIN/address/rental-income/balance-sheet fields,
-      HTTP 200, no login/CAPTCHA/WAF gate. Not authored this cycle (its
-      19-page scope is a substantially larger undertaking than the
-      Passport candidate above); open backlog for a future cycle.
+    - **Zambia Taxes** — authored (GOV-4287), see
+      `zm/zra/individual-income-tax-return@1.0.0` and the Executive
+      Summary's GOV-4287 update above. The originally-banked URL (a
+      `2023/06` path) had gone stale (404) by the time of authoring;
+      GOV-4287 corrected it to a currently-live `2020/06` path on the same
+      `zra.org.zm` host before fetching.
     - **Panama** — screened across all 6 verticals, unauthenticated and
       not gated. Visa (Migración Panamá's tourist-visa PDF,
       `migracion.gob.pa/wp-content/uploads/10-Formulario_visa_de_turista.pdf`,
