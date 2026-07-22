@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**82 jurisdictions** | **604 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**82 jurisdictions** | **605 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4376, "GovSchema Standard Research"): Jamaica's
+> DMV vertical opens (3 of 6)**, via
+> `jm/taj/driving-licence-application@1.0.0` — Tax Administration Jamaica's
+> (TAJ) "Form F1" (I.R. 66), "Application for Driver's Licence" under the
+> Road Traffic Act, a genuine fillable AcroForm covering both Private and
+> Motor Cycle driver's-licence applications. Re-verified all three of
+> Jamaica's remaining disclosed-STRONG backlog verticals fresh this cycle
+> (DMV, Visa, Taxes all confirmed still live and unauthenticated) and chose
+> this one as the most tractable: unlike the Visa form and TAJ's own IT01
+> income-tax return (both flat/non-AcroForm specimens requiring inferred
+> field boundaries), Form F1 is a genuine fillable AcroForm with 15 real,
+> individually named/typed content widgets (plus 3 non-content SAVE/PRINT/
+> RESET button widgets, excluded), independently re-fetched and re-hashed at
+> `jamaicatax.gov.jm`, 100,795 bytes, sha256 `3a49653489...`. Models 15
+> `fields[]` across 3 steps (Application Declaration; Personal Particulars
+> (a)-(e); Licensing History (f)-(l)) plus 4 `documents[]` entries,
+> excluding the same source PDF's own second physical page in full — "Form
+> F3", a Certificate of Character completed and signed by a third-party
+> Justice of the Peace or police officer, modelled as a required supporting
+> document rather than a field. Nine disclosed source-fidelity findings
+> include an un-widgeted Private/Motor Cycle licence-type selection (a
+> printed two-option stacked layout with no checkbox, item struck out by
+> hand), a duplicated-name opening declaration field, and a two-widget/
+> one-question collapse for item (i)'s licence-refusal authority-and-date
+> answer. Both validators pass at 605/605; `verify-sources.mjs` scoped to
+> this schema's directory reports all 7 cited URLs clear, including a live
+> re-fetch confirming the source PDF's own byte-for-byte hash and an exact
+> re-grep of this schema's own quoted "Who applies" caption against the
+> TAJ forms page's raw fetched HTML. 19 conformance fixtures (3 valid + 16
+> mutation-control) committed, all reproduced via a from-scratch mock
+> validator (0 dangling `requiredWhen` references). Also corrected a
+> pre-existing gap in this document's own By-Jurisdiction table below,
+> which had never gained a **JM** row across the two prior Jamaica cycles
+> (GOV-4360, GOV-4367) despite Jamaica already being open. **Jamaica now
+> stands at 3 of 6 verticals** (Business Formation, Passport, DMV); Visa and
+> Taxes remain open, STRONG banked backlog (National ID is a confirmed dead
+> end).
 
 > **Update (2026-07-22, GOV-4367, "GovSchema Standard Research"): Jamaica's
 > Passport vertical opens (2 of 6)**, via
@@ -14835,7 +14873,19 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (60/81 jurisdictions — 74%)
+### DMV — Vehicle Registration, Licensing, Permits (61/82 jurisdictions — 74%)
+
+> **Update (2026-07-22, GOV-4376, "GovSchema Standard Research"): Jamaica's
+> DMV vertical opens (3 of 6)**, via
+> `jm/taj/driving-licence-application@1.0.0` — Tax Administration Jamaica's
+> "Form F1" (I.R. 66), "Application for Driver's Licence". See the
+> Executive Summary's GOV-4376 update above and the document's own
+> VERIFICATION.md for the full sourcing record, including all 9 disclosed
+> source-fidelity findings. Jamaica's other two disclosed-STRONG verticals
+> (Visa, Taxes) remain open banked backlog. Numerator updated from 60 to
+> 61; denominator corrected from 81 to 82 to match the registry's current
+> total jurisdiction count (this section's own denominator had lagged
+> behind the GOV-4360 cycle that opened Jamaica as the 82nd jurisdiction).
 
 > **Update (2026-07-22, GOV-4335/GOV-4337, "GovSchema Standard Research"):
 > Uganda's DMV vertical opens (1 of 6), opening Uganda as the registry's
@@ -20001,6 +20051,7 @@ now closed.
 | **IN** | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IS** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **JM** | 3 | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **JO** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
@@ -20493,19 +20544,25 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       `jm/orc/business-name-registration-individual@1.0.0`, see the
       Executive Summary and Business Formation vertical updates above.
     - **DMV** — Tax Administration Jamaica's Form F1/F3 driver's licence
-      application, hosted at `jamaicatax.gov.jm`, ~100KB, an estimated
-      ~15-20 fields; a companion learner's-permit Form H3A is separately
-      hosted at `mtm.gov.jm` (the Island Traffic Authority/Ministry of
-      Transport and Mining) and would need ToUnicode CMap decoding to
-      extract cleanly (not yet attempted this cycle). Open, STRONG banked
-      backlog for a future cycle.
+      application, hosted at `jamaicatax.gov.jm`, 100,795 bytes, a genuine
+      15-field fillable AcroForm (Form F1) plus a non-fillable, third-party
+      "Form F3" Certificate of Character on the same PDF's second page; a
+      companion learner's-permit Form H3A is separately hosted at
+      `mtm.gov.jm` (the Island Traffic Authority/Ministry of Transport and
+      Mining) and would need ToUnicode CMap decoding to extract cleanly
+      (not yet attempted). **Update (GOV-4376, 2026-07-22): now authored**
+      as `jm/taj/driving-licence-application@1.0.0`, opening Jamaica's DMV
+      vertical (3 of 6) — see the Executive Summary and DMV vertical
+      updates above.
     - **Visa** — the Jamaican Embassy in Washington, D.C.'s own
       diplomatic-mission-hosted "Visa Application Form J",
-      `embassyofjamaica.org`, ~94KB, an estimated ~16 fields. Note: this is
-      a `.org` diplomatic-mission domain, not a `.gov.jm` one, but it is the
-      official embassy of the Jamaican state, the same class of source this
-      registry has accepted elsewhere for embassy-hosted consular forms.
-      Open, STRONG banked backlog for a future cycle.
+      `embassyofjamaica.org`, 93,958 bytes (re-confirmed live, GOV-4376,
+      2026-07-22), a flat/non-AcroForm single-page specimen with 16
+      numbered items. Note: this is a `.org` diplomatic-mission domain, not
+      a `.gov.jm` one, but it is the official embassy of the Jamaican
+      state, the same class of source this registry has accepted elsewhere
+      for embassy-hosted consular forms. Open, STRONG banked backlog for a
+      future cycle.
     - **Passport** — the Passport, Immigration and Citizenship Agency's
       (PICA) own genuine AcroForm, `pica.gov.jm`, ~776KB, 152 typed form
       fields — the richest and cleanest source of all six Jamaican
@@ -20515,9 +20572,10 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Passport vertical (2 of 6) — see the Executive Summary and Passport
       vertical updates above.
     - **Taxes** — Tax Administration Jamaica's Form IT01, "Return of Income
-      — Individuals", `jamaicatax.gov.jm`, ~174KB, dozens of line items
-      (a full annual individual income tax return). Open, STRONG banked
-      backlog for a future cycle.
+      — Individuals", `jamaicatax.gov.jm`, 174,411 bytes (re-confirmed
+      live, GOV-4376, 2026-07-22), a flat/non-AcroForm 5-page specimen with
+      dozens of line items (a full annual individual income tax return).
+      Open, STRONG banked backlog for a future cycle.
     - **National ID — confirmed dead end.** Jamaica's National Identification
       and Registration Authority (NIRA) and the Electoral Office of Jamaica
       both issue identity credentials exclusively through in-person
