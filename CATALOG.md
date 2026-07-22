@@ -4,7 +4,29 @@
 
 ## Executive Summary
 
-**84 jurisdictions** | **609 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**85 jurisdictions** | **610 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4427, "GovSchema Standard Research"): Paraguay
+> opens as the registry's 85th jurisdiction, via Taxes (1 of 6)**, via
+> `py/dnit/individual-income-tax-return@1.0.0` — the Dirección Nacional de
+> Ingresos Tributarios's (DNIT) Formulario N.515, "IRP - Rentas Derivadas de
+> la Prestación de Servicios Personales" (individual income tax on income
+> from personal services). Consumes the STRONG candidate banked by the
+> GOV-4424 cycle below rather than re-scouting fresh: independently
+> re-fetched and re-hashed,
+> `dnit.gov.py/documents/d/global/formulario-n-515-irp-rentas-derivadas-de-la-prestacion-de-servicios-personales-version-1`,
+> HTTP 200, `application/pdf`, 704,170 bytes (byte-for-byte matching the
+> banked figure), sha256 `221a33b9...`, no login/CAPTCHA/WAF gate. A flat
+> (non-AcroForm) 3-page specimen with 154 numbered casillas across a
+> general/identification block and five RUBROs; RUBRO 3 (casillas 25-32)
+> was excluded in its entirety as 100% e-filing-system-computed, along with
+> every other same-form sum/difference/rate-application line and the
+> Anexo's two appendix tables (Cuadro 1: préstamos/remanente, Cuadro 2:
+> familiares a cargo) — see the document's own VERIFICATION.md for the full
+> scope record. Business Formation (SUACE), DMV (Municipalidad de
+> Asunción), and Visa (MRE) remain open, STRONG, ready-to-author backlog
+> from the same scouting cycle; Passport and National ID (cédula) are
+> confirmed dead ends.
 
 > **Update (2026-07-22, GOV-4424, "GovSchema Standard Research"): no new
 > schema authored directly by this cycle — Senegal's remaining five
@@ -16791,7 +16813,14 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (69/83 jurisdictions — 83%)
+### Taxes — Income Tax Return, Tax Filing (70/84 jurisdictions — 83%)
+
+> **Update (2026-07-22, GOV-4427, "GovSchema Standard Research"): Paraguay
+> opens as the registry's 85th jurisdiction via this vertical (1/6)**, via
+> `py/dnit/individual-income-tax-return@1.0.0` — DNIT's Formulario N.515,
+> "IRP - Rentas Derivadas de la Prestación de Servicios Personales" — see
+> the Executive Summary update above for the full sourcing record and the
+> document's own VERIFICATION.md.
 
 > **Update (2026-07-22, GOV-4383, "GovSchema Standard Research"): Jamaica
 > opens this vertical (4/6 for the jurisdiction at authoring time; now 5/6
@@ -20256,6 +20285,7 @@ now closed.
 | **PK** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **PY** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **RO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **RS** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **RW** | 5 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
@@ -20895,9 +20925,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       informational-only, with the actual application routed through a
       login-gated e-gov portal or an in-person office. Taxes was chosen
       as the first vertical to author (delegated as GOV-4427, opening
-      Paraguay as the registry's 85th jurisdiction); Business Formation,
-      DMV, and Visa remain open, STRONG, ready-to-author backlog for
-      future cycles.
+      Paraguay as the registry's 85th jurisdiction). **Update (GOV-4427,
+      2026-07-22): now authored** as
+      `py/dnit/individual-income-tax-return@1.0.0` — see the Executive
+      Summary and Taxes vertical updates above and the document's own
+      VERIFICATION.md for the full scope record (RUBRO 3 and the Anexo's
+      two appendix tables excluded as system-computed/appendix detail).
+      Business Formation, DMV, and Visa remain open, STRONG,
+      ready-to-author backlog for future cycles.
     - **Namibia** — **Taxes**: NamRA's "Return of Income for Individuals"
       (Form 6-0/0014C/1), served from the ITAS e-filing subdomain rather
       than NamRA's own site,
