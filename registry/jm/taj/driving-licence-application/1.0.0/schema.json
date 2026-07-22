@@ -1,0 +1,242 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "jm/taj/driving-licence-application",
+  "version": "1.0.0",
+  "title": "Jamaica Driver's Licence Application (Tax Administration Jamaica)",
+  "description": "Tax Administration Jamaica's (TAJ) \"Form F1, Application for Driver's Licence\" under the Road Traffic Act (I.R. 66), the applicant-facing side of a combined two-page specimen whose second page is \"Form F3, Certificate of Character\" — a mandatory character reference completed and signed by a Justice of the Peace or a Superintendent/Assistant Superintendent of Police, not the applicant. Opens Jamaica's DMV vertical (3 of 6), deepening the jurisdiction per the GOV-4360 cycle's own banked backlog (CATALOG.md Known Gaps entry 0f). This schema models every field backed by the source PDF's own AcroForm widgets on Form F1 (the applicant's declaration, personal particulars, and driver's-licence history) plus one printed-but-unwidgeted licence-type choice (see this schema's own verification.notes Finding 1). It excludes Form F1's own \"For Departmental use only\"/\"REMARKS\" section (staff-completed, not applicant-supplied) and both of Form F1's own unwidgeted signature/witness lines, and excludes Form F3 in its entirety as a third-party attestation, modelled instead as `documents[]` entries. Filing this application is an applicant's own action performed with Tax Administration Jamaica; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Jamaica or Tax Administration Jamaica.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "JM",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Tax Administration Jamaica",
+    "abbreviation": "TAJ",
+    "url": "https://www.jamaicatax.gov.jm"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.jamaicatax.gov.jm/documents/10194/18658/form+f1+f3.pdf",
+    "retrievedAt": "2026-07-22",
+    "documentRef": "Form F1 (I.R. 66) / Form F3"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-22",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-22",
+    "notes": "GOV-4376 (\"GovSchema Standard Research\"), authored per the GOV-4360 cycle's own banked Jamaica DMV backlog entry (CATALOG.md Known Gaps entry 0f). Re-scouted fresh this cycle rather than trusting the banked note alone: `jamaicatax.gov.jm`'s own `/web/guest/motor-vehicle-driver-s-licence1` forms page was independently re-crawled to relocate the live document link (the banked note gave the host, not the exact path), landing on the same `documents/10194/18658/form+f1+f3.pdf` asset.\n\nIndependently re-fetched and re-hashed: HTTP 200, `Content-Type: application/pdf`, 100,795 bytes (matching the banked cycle's own ~100KB estimate almost exactly). sha256 of the retrieved bytes: `3a496534894c00668381d554ad4a780914c8633cbb26e035356e0beaefd7f7d5`.\n\nExtraction method: `pdfjs-dist` (vendored at `/tmp/node_modules/pdfjs-dist`) `getAnnotations()` enumerated the PDF's own `/Widget` AcroForm fields directly — a genuine interactive form, not a flat specimen. Found 18 named widgets, all on page 1 (Form F1): 3 non-data push-buttons (`SAVE`/`PRINT`/`RESET`, form-embedded JavaScript controls, excluded) and 15 data-bearing text fields, matching the banked cycle's own \"~15-20 fields\" estimate. Page 2 (Form F3) carries zero widgets — confirmed mechanically, not merely by inspection. Widget rects were cross-referenced against `getTextContent()`'s own per-glyph y-coordinates to attach each widget to its printed label, then both pages were rendered to PNG via `pdfjs-dist` + `node-canvas` at 2.5x scale to visually confirm the layout, the stacked either/or licence-type choice, and the exact source spelling of Form F3's own attestation text.\n\nModels 16 `fields[]` across 3 steps (15 backed by a named AcroForm widget, plus one printed-but-unwidgeted licence-type choice, Finding 1) and 4 `documents[]` entries. Excludes Form F1's own \"For Departmental use only\"/\"Licence No .../Issued\"/\"REMARKS\" block (staff-completed, not applicant-supplied) and both of its own \"Signature of Applicant\" lines plus the \"Declared to before me this ... day of ... 20...; J.P. or Member of Licensing Authority\" witness line — none of these four lines is backed by an AcroForm widget, all four are modelled collectively as the `signedApplicationForm` document (Finding 2). Form F3 (\"Certificate of Character\") is excluded from `fields[]` in its entirety and modelled as the `characterCertificate` attestation document, since every one of its data points — the certifying Justice of the Peace's or police officer's own name, parish, certification, and signature — is third-party-supplied, not applicant-supplied, structurally analogous to the medical-examiner and driving-test-examiner blocks this registry's own `ug/mowt/driving-licence-application` and `bw/drts/driving-licence-application` schemas already exclude for the same reason.\n\n## Disclosed source-fidelity findings\n\n1. **`licenceTypeSought` reconstructed from a printed either/or choice with no backing AcroForm widget.** Form F1's own declaration sentence reads \"I ______ do hereby apply that a [Private Driver's Licence / Motor Cycle Driver's Licence] be granted to me\", with the two licence types printed one above the other, separated by a horizontal rule (a strike-one-out presentation), confirmed visually via the rendered page-1 PNG. Unlike the form's 15 other data points, no widget of any kind (text, checkbox, or radio) backs this choice — none of the 18 enumerated widgets falls in this region. Modelled as a required enum (`PRIVATE_DRIVERS_LICENCE`/`MOTOR_CYCLE_DRIVERS_LICENCE`) since the underlying data point is genuinely required to process the application, per this registry's own precedent of modelling a printed-but-unwidgeted required choice (see, e.g., `bw/dic/passport-application`'s own boolean eligibility gates) rather than silently omitting a load-bearing field the source's own widget layer happens to omit.\n\n2. **`signedApplicationForm` collapses four unwidgeted lines into one document, not four fields.** Form F1 prints two separate \"Signature of Applicant\" lines (one directly under the opening declaration, one at the foot of the page following item (l)) and a \"Declared to before me this ___ day of ___ 20___; J.P. or Member of Licensing Authority\" witness line in between — none backed by a widget, all modelled as part of the single `signedApplicationForm` document, the same treatment this registry's own `jm/pica/passport-application` gives to its own multiple unwidgeted signature lines (see that schema's own verification.notes Finding 7).\n\n3. **`refusalDate` modelled as a free-text string, not a `date`.** Item (i)'s own printed label — \"If so, by what Licensing Authority or Authorities, and on what date or dates?\" — explicitly contemplates plural dates across possibly-plural authorities sharing a single blank line; a single ISO `date` value cannot represent that, so the field is modelled as a string, consistent with `refusalAuthority` on the same line.\n\n4. **Form F3's own attestation text is quoted with the source's own spelling, including an apparent typo (\"opposited\" for \"opposite\").** Confirmed via the rendered page-2 PNG at 2.5x scale, not merely the raw text-extraction stream, that the source itself prints \"...has been known to me personally during the period stated opposited to my name...\" — genuinely present in the government specimen, not a `pdfjs-dist` extraction artifact.\n\n## Conformance\n\n3 valid mock scenarios (a first-time private-licence applicant with a clean history; a motor-cycle-licence applicant with a prior licence issued elsewhere and no adverse history; an applicant with a prior refusal and a prior suspension, both with authority/date/tribunal detail supplied) plus 12 mutation-control fixtures (a missing statically-required field for each of `applicantFullName`, `licenceTypeSought`, `surname`, `christianNameInFull`, `placeOfResidence`, `ageNextBirthday`, `dateOfBirth`, `placeOfBirth`, `priorLicenceIssued`, `licenceRefused`, `licenceSuspendedRevokedOrEndorsed`, and `literateInEnglish`; an invalid `licenceTypeSought` enum value; two missing conditionally-required fields — `priorLicensingAuthority` when `priorLicenceIssued` is true, and `refusalAuthority` when `licenceRefused` is true; and an unknown top-level field) are committed under `conformance/jm/taj/driving-licence-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required and `requiredWhen` rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all fixtures: all 3 valid scenarios at 0 errors, all mutation controls each raising exactly 1 error. Validated clean with `node tools/validate.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-22"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "declaration",
+      "title": "Declaration to the Licensing Authority",
+      "fields": ["applicantFullName", "licenceTypeSought"],
+      "next": "personal_particulars"
+    },
+    {
+      "id": "personal_particulars",
+      "title": "Personal Particulars",
+      "fields": ["surname", "christianNameInFull", "placeOfResidence", "ageNextBirthday", "dateOfBirth", "placeOfBirth"],
+      "next": "licensing_history"
+    },
+    {
+      "id": "licensing_history",
+      "title": "Driver's Licence History",
+      "fields": ["priorLicenceIssued", "priorLicensingAuthority", "licenceRefused", "refusalAuthority", "refusalDate", "licenceSuspendedRevokedOrEndorsed", "suspensionAuthorityOrTribunal", "literateInEnglish"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "applicantFullName",
+      "label": "Applicant's full name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form F1 — \"I ______ do hereby apply that a ... be granted to me\" (AcroForm field \"Name\")"
+    },
+    {
+      "name": "licenceTypeSought",
+      "label": "Licence type sought",
+      "type": "enum",
+      "required": true,
+      "description": "Printed as a strike-one-out either/or choice with no backing AcroForm widget. See this schema's own verification.notes Finding 1.",
+      "sourceRef": "Form F1 — \"Private Driver's Licence / Motor Cycle Driver's Licence\"",
+      "validation": {
+        "enum": ["PRIVATE_DRIVERS_LICENCE", "MOTOR_CYCLE_DRIVERS_LICENCE"]
+      }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form F1, item (a) — \"Surname\" (AcroForm field \"Surname\")"
+    },
+    {
+      "name": "christianNameInFull",
+      "label": "Christian Name in full",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form F1, item (b) — \"Christian Name in full\" (AcroForm field \"First name\")"
+    },
+    {
+      "name": "placeOfResidence",
+      "label": "Place of Residence",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form F1, item (c) — \"Place of Residence\" (AcroForm field \"Residence\")"
+    },
+    {
+      "name": "ageNextBirthday",
+      "label": "Age next birthday",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Form F1, item (d) — \"What is your age next Birthday?\" (AcroForm field \"Age\")"
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form F1, item (e) — \"Date and Place of your Birth?\" (AcroForm field \"Date of Birth\")"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form F1, item (e) — \"Date and Place of your Birth?\" (AcroForm field \"Place of Birth\")"
+    },
+    {
+      "name": "priorLicenceIssued",
+      "label": "Has any Driver's Licence been issued to you?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form F1, item (f) — \"Has any Driver's Licence been issued to you?\" (AcroForm field \"Licence issued\")"
+    },
+    {
+      "name": "priorLicensingAuthority",
+      "label": "If so, by what Licensing Authority?",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "priorLicenceIssued",
+        "equals": true
+      },
+      "sourceRef": "Form F1, item (g) — \"If so, by what Licensing Authority?\" (AcroForm field \"Licencing Authority\")"
+    },
+    {
+      "name": "licenceRefused",
+      "label": "Have you ever been refused a Driver's License?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form F1, item (h) — \"Have you ever been refused a Driver's License?\" (AcroForm field \"Licence refused\")"
+    },
+    {
+      "name": "refusalAuthority",
+      "label": "If so, by what Licensing Authority or Authorities",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "licenceRefused",
+        "equals": true
+      },
+      "sourceRef": "Form F1, item (i) — \"If so, by what Licensing Authority or Authorities, and on what date or dates?\" (AcroForm field \"Licence denied\")"
+    },
+    {
+      "name": "refusalDate",
+      "label": "and on what date or dates?",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "licenceRefused",
+        "equals": true
+      },
+      "description": "Free text, not a single ISO date, since the source's own label contemplates plural dates. See this schema's own verification.notes Finding 3.",
+      "sourceRef": "Form F1, item (i) — \"If so, by what Licensing Authority or Authorities, and on what date or dates?\" (AcroForm field \"Licence denial date\")"
+    },
+    {
+      "name": "licenceSuspendedRevokedOrEndorsed",
+      "label": "Have you ever had a Driver's Licence suspended, revoked or endorsed?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form F1, item (j) — \"Have you ever had a Driver's Licence suspended, revoked or endorsed?\" (AcroForm field \"Suspended Licence\")"
+    },
+    {
+      "name": "suspensionAuthorityOrTribunal",
+      "label": "If so, by what Authority or Tribunal",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "licenceSuspendedRevokedOrEndorsed",
+        "equals": true
+      },
+      "sourceRef": "Form F1, item (k) — \"If so, by what Authority or Tribunal\" (AcroForm field \"Tribunal\")"
+    },
+    {
+      "name": "literateInEnglish",
+      "label": "Are you able to read and write English?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Form F1, item (l) — \"Are you able to read and write English?\" (AcroForm field \"Literate\")"
+    }
+  ],
+  "documents": [
+    {
+      "id": "photograph",
+      "label": "Applicant's photograph, affixed in the \"Photo of Applicant\" box",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form F1, photograph box — \"PHOTO OF APPLICANT\""
+    },
+    {
+      "id": "certificateOfCompetence",
+      "label": "Certificate of Competence",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form F1 — \"Enclosures: Certificate of Competence.\""
+    },
+    {
+      "id": "characterCertificate",
+      "label": "Certificate of Character (Form F3), completed and signed by a Justice of the Peace or a Superintendent/Assistant Superintendent of Police personally acquainted with the applicant",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "responsible-party",
+      "statement": "I, the undersigned Justice of the Peace/Superintendent of Police in the parish of ____, hereby certify that in the area in which the applicant resides:- ____ of ____ (a) has been known to me personally during the period stated opposited to my name and that he is sober and of good character; or (b) has (no) such records of breaches of the Peace as should debar him from obtaining a Licence. I would (not) recommend him as a suitable person to be licensed to drive a motor vehicle. I certify that the applicant has affixed his signature in my presence.",
+      "sourceRef": "Form F3, \"Certificate of Character\", in full"
+    },
+    {
+      "id": "signedApplicationForm",
+      "label": "The fully completed Form F1, signed by the applicant and witnessed/dated before a Justice of the Peace or a member of the Licensing Authority",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form F1 — both \"Signature of Applicant\" lines and the \"Declared to before me this ... day of ... 20...; J.P. or Member of Licensing Authority\" witness line. See this schema's own verification.notes Finding 2."
+    }
+  ]
+}
