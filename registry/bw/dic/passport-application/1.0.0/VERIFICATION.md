@@ -56,7 +56,7 @@ Finding 10 below).
 Models 72 `fields[]` across 8 steps (Eligibility Gates; Passport Type and
 Delivery; Section 1 Personal Details; Section 2 Parents' Details; Section 3
 Next of Kin; Section 4 Traditional Authority; Section 5 Parent or Legal
-Guardian's Consent; Section 6 Declaration) plus 4 `documents[]` entries.
+Guardian's Consent; Section 6 Declaration) plus 5 `documents[]` entries.
 
 ## Disclosed source-fidelity findings
 
@@ -155,6 +155,24 @@ Guardian's Consent; Section 6 Declaration) plus 4 `documents[]` entries.
     were physically produced, receipt/fee particulars, and
     application-checked-by sign-off, none of which is applicant-supplied
     data.
+11. **`proofOfMarriageOrCustomaryLawLetter` modelled as a fifth `documents[]`
+    entry, requiredWhen `title` equals `MRS`.** Page 3, printed directly
+    beside the Mr./Mrs./Miss title checkboxes: "(If married female proof of
+    marriage should be produced if not previously provided Or A letter from
+    the Chief/Headman, if married under Customary Law)". This is the same
+    conditional-document-requirement pattern this schema already applies to
+    `nationalIdOmang`/`birthCertificateOrAffidavit` (Finding 4) — a printed
+    requirement gated on a directly-answerable field rather than an
+    unprinted derived condition. The source's own "if not previously
+    provided" qualifier (an applicant who already submitted proof of
+    marriage on a prior application need not resubmit it) is not
+    separately modelled, since GSP-0013's `Condition` grammar has no way to
+    represent "unless already on file with the agency" — the same
+    disclose-rather-than-fabricate treatment this schema's own Finding 2
+    applies to an analogous source nuance the `Condition` grammar cannot
+    express. This branch is exercised by the existing
+    `valid-adult-collected-by-distinguishing-mark` fixture, which already
+    sets `title: "MRS"`.
 
 ## Conformance
 
@@ -162,19 +180,22 @@ Guardian's Consent; Section 6 Declaration) plus 4 `documents[]` entries.
 evidence and no guardian consent triggered; a minor applicant under 21
 triggering full guardian consent, with birth-certificate identity evidence;
 an adult applicant using the collected-by delivery method with a
-distinguishing mark disclosed) plus 14 mutation-control fixtures (a missing
-statically-required field for each of `passportType`, `title`, `surname`,
-`dateOfBirth`, `nationalStatus`, `fatherSurname`, `motherSurname`,
-`nextOfKinSurname`, `nameOfChief`, `district`, and `applicantSignature`; a
-missing `requiredWhen`-true `guardianSurname` while `applicantIsMinor` is
-true; an invalid `passportType` enum value; and an unknown top-level field)
-are committed under `conformance/bw/dic/passport-application/1.0.0/`,
-matching this registry's established fixture convention of validating
-`fields[]` values only — the `documents[]` array's own two conditional
-entries (`nationalIdOmang`/`birthCertificateOrAffidavit`) are exercised by
-the two `applicantOverSixteen` branches already covered across the 3 valid
-scenarios, not by separate mutation fixtures, since this registry's fixture
-format has no document-satisfaction representation.
+distinguishing mark disclosed, and — since this scenario's `title` is
+`MRS` — the `proofOfMarriageOrCustomaryLawLetter` `requiredWhen` branch)
+plus 14 mutation-control fixtures (a missing statically-required field for
+each of `passportType`, `title`, `surname`, `dateOfBirth`, `nationalStatus`,
+`fatherSurname`, `motherSurname`, `nextOfKinSurname`, `nameOfChief`,
+`district`, and `applicantSignature`; a missing `requiredWhen`-true
+`guardianSurname` while `applicantIsMinor` is true; an invalid
+`passportType` enum value; and an unknown top-level field) are committed
+under `conformance/bw/dic/passport-application/1.0.0/`, matching this
+registry's established fixture convention of validating `fields[]` values
+only — the `documents[]` array's own three conditional entries
+(`nationalIdOmang`/`birthCertificateOrAffidavit`/
+`proofOfMarriageOrCustomaryLawLetter`) are exercised by the
+`applicantOverSixteen` and `title` branches already covered across the 3
+valid scenarios, not by separate mutation fixtures, since this registry's
+fixture format has no document-satisfaction representation.
 
 An ephemeral, from-scratch conformance checker (deriving required/
 requiredWhen rules directly from this schema's own `fields[]`, discarded
