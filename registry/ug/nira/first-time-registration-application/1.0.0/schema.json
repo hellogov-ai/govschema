@@ -1,0 +1,2048 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ug/nira/first-time-registration-application",
+  "version": "1.0.0",
+  "title": "Uganda First-Time National Identification Registration (NIRA Form 3)",
+  "description": "The National Identification and Registration Authority's (NIRA) \"Form 3 — Application for Registration and National Identification Card\" (First-Time Registration), under the Registration of Persons Act, 2015, used by an individual — a child or an adult — applying for a Ugandan National Identification Number (NIN) and National ID card for the first time. Closes Uganda's National ID & Civic Documents vertical (3 of 6), alongside the already-published `ug/mowt/driving-licence-application` (DMV) and `ug/ursb/business-name-registration-individual` (Business Formation). This schema models every applicant-supplied field across the form's own Part A (Personal Information; Place of Residence; Place of Birth; Place of Origin, Citizenship and Passport Information), Part B (Voters Information and Spouse Details, the source's own header marking Part B \"to be filled for Adult registration only\"), Part C (the applicant's own family particulars: Father's, Mother's, and Grandparent(s)/Introducer details, and Particulars of Applicant's Children), and Part E (Declaration). It excludes, in full: the Registration Location Code and Application ID at the top of Part A (per the form's own \"FORM FILLING INFORMATION GUIDE\" on page 4, these are filled by the \"REGN OFFICER\" or system-generated, never applicant-supplied); Part D in its entirety (\"Form Section to be retained by the Registration Officer\", a condensed duplicate of Parts A-C kept for the officer's own retained copy, not new applicant data); and Part F in its entirety (\"FOR OFFICIAL USE ONLY\" — the registration officer's own citizenship assessment, documentary-proof ticks, and signature/date). Completing and submitting this form is an applicant's own action performed with NIRA; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Uganda or NIRA.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "UG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "National Identification and Registration Authority",
+    "abbreviation": "NIRA",
+    "url": "https://www.nira.go.ug"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.nira.go.ug/media/2025/07/Form-3-NIRA-First-Time-Registration-Form.pdf",
+    "retrievedAt": "2026-07-22",
+    "documentRef": "\"Form 3 — Application for Registration and National Identification Card (First Time Registration)\", National Identification and Registration Authority, native (searchable-text) PDF, 4 pages (the 4th page is the form's own \"FORM FILLING INFORMATION GUIDE\", a field-by-field completion guide, not a 4th page of the form itself), served unauthenticated from nira.go.ug's own media library."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-22",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-22",
+    "notes": "GOV-4353 (child of GOV-4351, \"GovSchema Standard Research\"), closing the last item of Uganda's pre-scouted 3-of-6 backlog (CATALOG.md Known Gaps entry 0e) after `ug/mowt/driving-licence-application` (GOV-4335/4337) and `ug/ursb/business-name-registration-individual` (GOV-4343/4346) each independently reported `nira.go.ug` timing out on connect. Resolved this cycle: the bare `nira.go.ug` host still times out, but `www.nira.go.ug` resolves and serves the document over HTTP 200; the host also has an incomplete TLS certificate chain (a server misconfiguration, confirmed by `curl -k` succeeding where a strict-verification fetch fails), unrelated to the DNS/connect issue the bare host has.\n\nIndependently re-fetched and re-hashed rather than trusted from the issue brief alone: `https://www.nira.go.ug/media/2025/07/Form-3-NIRA-First-Time-Registration-Form.pdf`, HTTP 200, 312,831 bytes, sha256 `37e7df2b2800bd6e2e210944cd02f1c08ed265c924b2775fedc1b70cb54e4623` — byte-for-byte and hash-for-hash match against the issue's own reported figures. Confirmed mechanically: the retrieved bytes begin `%PDF-1.7` and contain zero `/AcroForm`, `/Widget`, and `/FT` occurrences — a flat, print-and-fill specimen, not an interactive AcroForm PDF. Also confirmed `https://www.nira.go.ug/` itself resolves (HTTP 200, page `<title>NIRA | National Identification & Registration Authority</title>`), supporting the `authority.url`.\n\nExtraction method: text extracted via `pdfjs-dist`'s `getTextContent()` API (vendored at `/tmp/node_modules/pdfjs-dist`) across all 4 pages, walking each page's text-run items by exact x/y position (not rounded y-bucketing alone) to reconstruct multi-column rows precisely. Page 4, the form's own \"FORM FILLING INFORMATION GUIDE\", was used as the primary source for field descriptions and for the applicant-vs-\"REGN OFFICER\" scoping calls, per the issue's own instruction, not just the issue's own summary. Two areas of ambiguous layout were additionally cross-checked by rendering pages 1 and 2 to PNG via `pdfjs-dist` + `node-canvas` at 2.5x scale: the Part C.10 children table (see Finding 7) and the multi-column Country/District/County/Sub-County/Parish-Ward/Village address grids (used to confirm the 2-column vs 3-column row layouts described in Finding 8).\n\nModels 165 `fields[]` across 12 steps, all applicant-supplied (per the page-4 guide's own \"REGN OFFICER\" attribution). Excludes, in full: the Registration Location Code and Application ID at the top of Part A (guide: location code is \"REGN OFFICER\"-filled; Application ID \"To be generated by the Application\"); Part D in its entirety (\"Form Section to be retained by the Registration Officer\", a condensed duplicate of Parts A-C for the officer's own retained copy); and Part F in its entirety (\"FOR OFFICIAL USE ONLY\" — citizenship assessment, documentary-proof ticks, the registration officer's own name/signature/date).\n\n## Disclosed source-fidelity findings\n\n1. **No per-field required/optional markers exist anywhere in Parts A-C, except where the source itself prints an explicit textual condition** (e.g. \"Fill if By registration, Naturalisation or Dual\"). In that absence, this schema marks a field `required: true` only where it captures core identifying or administrative-boundary data indispensable to a national identity registration (name, sex, date of birth, and the Country/District/County/Sub-County/Parish-Ward/Village hierarchy for Place of Residence/Birth/Origin, plus `citizenshipType`), and `required: false` for auxiliary demographic, contact, or descriptive data (contacts, education, profession, occupation, religion, disabilities, other/previous/maiden names, street/plot-level address detail, passport/file numbers, and every Part C family-member field — see Finding 5). This is a disclosed judgment call, not a source-stated rule.\n\n2. **`registrationType` (\"FORM 3 CHILD ADULT (Tick Appropriate)\") gates Part B in its entirety**, per the source's own Part B header, \"(to be filled for Adult registration only)\". Modelled as a required 2-value enum; every Part B field carries a matching `requiredWhen`/`visibleWhen` on `registrationType equals ADULT`.\n\n3. **The five \"Disabilities\" checkboxes (Blind, Deaf, Physical, Mental, Dumb) are modelled as five independent optional booleans, not a single-select enum.** More than one can apply simultaneously (e.g. Deaf and Dumb, or Blind and Physical) and the source prints no mutual-exclusivity marker between them; v0.3's field-type vocabulary has no multi-select/array primitive (GSP-0009, not yet accepted), so this follows the independent-boolean-per-checkbox precedent this registry's own `my/jpj/driving-licence-application` (`physicalDisability`, etc.) established for a comparable non-exclusive checkbox row.\n\n4. **The Spouse Details block (Part B.6) is modelled `requiredWhen`/`visibleWhen` an `all` of `registrationType equals ADULT` and `maritalStatus equals MARRIED`, though the source itself states no such condition explicitly** — Part B's own header conditions the whole Part on Adult registration, but nothing on the form ties Spouse Details specifically to a Married marital status; this is the disclosed judgment call the issue itself flagged, made because a spouse-details block is not logically answerable by a Single/Divorced/Widowed/Separated applicant. Within the block, `spouseSurname`/`spouseGivenNames`/`spouseCitizenshipType`/`placeOfMarriage`/`dateOfMarriage`/`typeOfMarriage`/`marriageCertificateNumber`/`otherSpouses` inherit this same conditional requiredness; `spouseOtherNames`/`spousePreviousNames`/`spouseMaidenName`/`spouseNationalIdNumber`/`spouseDualCitizenship`/`spouseCitizenshipUnderArticle9` remain unconditionally optional even within the block (per Finding 1's general policy).\n\n5. **The Father's, Mother's, and Grandparent(s)/Introducer blocks (Part C.7-9) carry no outer `requiredWhen`/`visibleWhen` gate at all — every field in all three blocks is unconditionally optional.** Section 9's own printed condition — \"if information of both parents is not available for Applicants under Citizenship by Birth/ descent\" — establishes that father/mother information is not always available, which is why the Grandparent/Introducer fallback exists; by the same logic this schema does not fabricate a `required: true` on any father/mother field either. GSP-0013's Condition grammar also has no \"field is absent\" leaf operator, so a conditional link from `grandparentSurname` to \"father and mother details are both blank\" could not be expressed even if the source stated it more mechanically. This mirrors the treatment the issue itself asked for.\n\n6. **The `citizenshipCertificateNumber`/`otherNationality` conditional-requiredness wording is taken verbatim from the page-4 guide, not inferred**: \"Certificate Number Fill if By registration, Naturalisation or Dual\" and \"Other Nationality If DUAL Citizen (Double Citizen) then fill Other Country\". Applied identically to the applicant's own, Father's, and Mother's citizenship blocks, per the guide's own \"CITIZENSHIP OF FATHER Citizenship Type Same as Citizenship of Applicant\" (and the equivalent line for Mother). The Spouse Details block (Part B.6), however, prints no \"Citizenship Certificate Number\" line at all between its own article-9 tick and its \"If Dual...\" line — confirmed by re-extracting the exact y-ordered text run on page 1 (the applicant's, Father's, and Mother's blocks each print that line; Spouse's does not) — so `spouseCitizenshipCertificateNumber` is not modelled at all, an asymmetry disclosed here rather than silently \"fixed\" by adding a field the source does not print.\n\n7. **Part C.10 \"Particulars of Applicant's Children\" is modelled as 4 bounded slots (`child1`..`child4`), not an unbounded array, because the source itself prints exactly 4 blank data rows beneath the table's own column headers** — confirmed by rendering page 2 to a PNG at 2.5x scale and measuring the printed row-divider line pixel positions (6 horizontal rules bounding 1 header row + 4 data rows, each ~15pt tall, ending well above the page-4 footer). This is a genuine literal-printed-row-count anchor, the convention this registry's prior bounded-repeating-slot precedents required, rather than the looser 1-2-slot \"replicate this section\" scoping this registry used for `zm/pacra/company-incorporation`'s unbounded director rows; v0.3 has no array/repeating-element primitive (GSP-0009, not yet accepted) so a fifth child exceeds this form's own printed capacity, a limitation disclosed here rather than silently dropped.\n\n8. **Father's and Mother's Place of Residence \"Street\"/\"House No.\" fields are modelled matching the applicant's own Place of Residence structure (`residenceStreet` + `residencePlotHouseNumber`), per the page-4 guide's own \"Guidance same as Place of Residence\" instruction for both parents, even though the raw extracted label text for this specific row differs slightly between the three blocks** (applicant: \"Street\" / \"Plot / House No.\"; Father's printed row: \"Street\" / \"Street/House No.\"; Mother's printed row folds Village/Street/House No. into one wider 3-column row rather than 2). Treated as the same two fields in all three blocks per the guide's own explicit equivalence, not fabricated from an assumption of visual similarity alone.\n\n## Conformance\n\n5 valid mock scenarios (a first-time child registrant with only Part A/C fields populated; a first-time adult single citizen-by-birth applicant with no children; an adult married-by-registration applicant with a spouse, one child, and a dual-citizenship declaration; an adult applicant relying on the Grandparent/Introducer fallback with both parents' blocks left blank; an adult applicant with all 4 children slots populated) plus mutation-control fixtures — one missing-required-field control for each statically-required field (`registrationType`, `surname`, `givenName`, `sex`, `dateOfBirth`, `residenceType`, `residenceCountry`, `residenceDistrict`, `residenceCounty`, `residenceSubCounty`, `residenceParishWard`, `residenceVillage`, `yearsLivedAtAddress`, `birthCountry`, `birthDistrict`, `birthCounty`, `birthSubCounty`, `birthParishWard`, `birthVillage`, `originCountry`, `originDistrict`, `originCounty`, `originSubCounty`, `originParishWard`, `originVillage`, `citizenshipType`, `declarantName`, `signature`, `date`), one missing-conditionally-required control for a representative subset of `requiredWhen` fields (`citizenshipCertificateNumber`, `otherNationality`, `preferredPollingStation`, `maritalStatus`, `spouseSurname`, `spouseCitizenshipType`, `spouseOtherNationality`, `placeOfMarriage`, `otherSpousesCount`, `fatherCitizenshipCertificateNumber`, `fatherOtherNationality`, `motherCitizenshipCertificateNumber`, `motherOtherNationality`), an invalid-enum control (`sex`), and an unknown-top-level-field control, are committed under `conformance/ug/nira/first-time-registration-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required and `requiredWhen`/`visibleWhen` rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all fixtures: all valid scenarios at 0 errors, all mutation controls each raising exactly 1 error. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-22"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "registration_type",
+      "title": "Form 3 — Child or Adult",
+      "fields": [
+        "registrationType"
+      ],
+      "next": "personal_information"
+    },
+    {
+      "id": "personal_information",
+      "title": "Part A.1 — Personal Information",
+      "fields": [
+        "surname",
+        "givenName",
+        "otherNames",
+        "maidenName",
+        "previousNames",
+        "sex",
+        "dateOfBirth",
+        "dateOfBirthEstimated",
+        "email",
+        "homePhoneNumber",
+        "mobilePhoneNumber",
+        "highestLevelOfEducation",
+        "profession",
+        "occupation",
+        "religion",
+        "disabilityBlind",
+        "disabilityDeaf",
+        "disabilityPhysical",
+        "disabilityMental",
+        "disabilityDumb"
+      ],
+      "next": "place_of_residence"
+    },
+    {
+      "id": "place_of_residence",
+      "title": "Part A.2 — Place of Residence",
+      "fields": [
+        "residenceType",
+        "residenceCountry",
+        "residenceDistrict",
+        "residenceCounty",
+        "residenceSubCounty",
+        "residenceParishWard",
+        "residenceVillage",
+        "residenceStreet",
+        "residencePlotHouseNumber",
+        "yearsLivedAtAddress",
+        "districtOfPreviousResidence",
+        "postalAddress"
+      ],
+      "next": "place_of_birth"
+    },
+    {
+      "id": "place_of_birth",
+      "title": "Part A.3 — Place of Birth",
+      "fields": [
+        "birthCountry",
+        "birthDistrict",
+        "birthCounty",
+        "birthSubCounty",
+        "birthParishWard",
+        "birthVillage",
+        "birthCityTown",
+        "birthHealthFacility"
+      ],
+      "next": "place_of_origin"
+    },
+    {
+      "id": "place_of_origin",
+      "title": "Part A.4 — Place of Origin, Citizenship, and Passport Information",
+      "fields": [
+        "originCountry",
+        "originDistrict",
+        "originCounty",
+        "originSubCounty",
+        "originParishWard",
+        "originVillage",
+        "indigenousCommunityTribe",
+        "clan",
+        "citizenshipType",
+        "dualCitizenship",
+        "citizenshipUnderArticle9",
+        "citizenshipCertificateNumber",
+        "otherNationality",
+        "passportNumber",
+        "fileNumber"
+      ],
+      "next": "voter_information"
+    },
+    {
+      "id": "voter_information",
+      "title": "Part B.5 — Voters Information (Adult registration only)",
+      "fields": [
+        "preferredPollingStation",
+        "pollingStationName",
+        "maritalStatus"
+      ],
+      "next": "spouse_details"
+    },
+    {
+      "id": "spouse_details",
+      "title": "Part B.6 — Spouse Details (Adult registration, married applicants only)",
+      "fields": [
+        "spouseSurname",
+        "spouseGivenNames",
+        "spouseOtherNames",
+        "spousePreviousNames",
+        "spouseMaidenName",
+        "spouseNationalIdNumber",
+        "spouseCitizenshipType",
+        "spouseDualCitizenship",
+        "spouseCitizenshipUnderArticle9",
+        "spouseOtherNationality",
+        "placeOfMarriage",
+        "dateOfMarriage",
+        "typeOfMarriage",
+        "marriageCertificateNumber",
+        "otherSpouses",
+        "otherSpousesCount"
+      ],
+      "next": "father_details"
+    },
+    {
+      "id": "father_details",
+      "title": "Part C.7 — Father's Details",
+      "fields": [
+        "fatherSurname",
+        "fatherGivenNames",
+        "fatherPreviousNames",
+        "fatherOtherNames",
+        "fatherNationalIdNumber",
+        "fatherIdDocumentNumber",
+        "fatherCitizenshipType",
+        "fatherDualCitizenship",
+        "fatherCitizenshipUnderArticle9",
+        "fatherCitizenshipCertificateNumber",
+        "fatherOtherNationality",
+        "fatherLivingStatus",
+        "fatherOccupation",
+        "fatherResidenceCountry",
+        "fatherResidenceDistrict",
+        "fatherResidenceCounty",
+        "fatherResidenceSubCounty",
+        "fatherResidenceParishWard",
+        "fatherResidenceVillage",
+        "fatherResidenceStreet",
+        "fatherResidencePlotHouseNumber",
+        "fatherOriginCountry",
+        "fatherOriginDistrict",
+        "fatherOriginCounty",
+        "fatherOriginSubCounty",
+        "fatherOriginParishWard",
+        "fatherOriginVillage",
+        "fatherIndigenousCommunityTribe",
+        "fatherClan"
+      ],
+      "next": "mother_details"
+    },
+    {
+      "id": "mother_details",
+      "title": "Part C.8 — Mother's Details",
+      "fields": [
+        "motherSurname",
+        "motherGivenNames",
+        "motherPreviousNames",
+        "motherOtherNames",
+        "motherNationalIdNumber",
+        "motherIdDocumentNumber",
+        "motherCitizenshipType",
+        "motherDualCitizenship",
+        "motherCitizenshipUnderArticle9",
+        "motherCitizenshipCertificateNumber",
+        "motherOtherNationality",
+        "motherLivingStatus",
+        "motherOccupation",
+        "motherResidenceCountry",
+        "motherResidenceDistrict",
+        "motherResidenceCounty",
+        "motherResidenceSubCounty",
+        "motherResidenceParishWard",
+        "motherResidenceVillage",
+        "motherResidenceStreet",
+        "motherResidencePlotHouseNumber",
+        "motherOriginCountry",
+        "motherOriginDistrict",
+        "motherOriginCounty",
+        "motherOriginSubCounty",
+        "motherOriginParishWard",
+        "motherOriginVillage",
+        "motherIndigenousCommunityTribe",
+        "motherClan"
+      ],
+      "next": "grandparent_introducer_details"
+    },
+    {
+      "id": "grandparent_introducer_details",
+      "title": "Part C.9 — Details of Grand Parent(s)/Introducer",
+      "fields": [
+        "grandparentSurname",
+        "grandparentGivenNames",
+        "grandparentOtherNames",
+        "grandparentDateOfBirth",
+        "grandparentNationalIdNumber",
+        "grandparentOriginCountry",
+        "grandparentOriginDistrict",
+        "grandparentOriginCounty",
+        "grandparentOriginSubCounty",
+        "grandparentOriginParishWard",
+        "grandparentOriginVillage",
+        "grandparentIndigenousCommunityTribe",
+        "grandparentClan"
+      ],
+      "next": "childrens_particulars"
+    },
+    {
+      "id": "childrens_particulars",
+      "title": "Part C.10 — Particulars of Applicant's Children",
+      "fields": [
+        "child1Name",
+        "child1Sex",
+        "child1DateOfBirth",
+        "child1NationalIdNumber",
+        "child2Name",
+        "child2Sex",
+        "child2DateOfBirth",
+        "child2NationalIdNumber",
+        "child3Name",
+        "child3Sex",
+        "child3DateOfBirth",
+        "child3NationalIdNumber",
+        "child4Name",
+        "child4Sex",
+        "child4DateOfBirth",
+        "child4NationalIdNumber"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Part E — Declaration",
+      "fields": [
+        "declarantName",
+        "signature",
+        "date"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "registrationType",
+      "label": "FORM 3 CHILD ADULT (Tick Appropriate)",
+      "type": "enum",
+      "required": true,
+      "description": "Whether this is a first-time registration for a child or an adult applicant. Gates Part B (Voter Information and Spouse Details), which the source form itself marks 'to be filled for Adult registration only'.",
+      "sourceRef": "\"FORM 3 CHILD ADULT (Tick Appropriate)\" — form header",
+      "validation": {
+        "enum": [
+          "CHILD",
+          "ADULT"
+        ]
+      }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PART A.1 Personal Information — \"Surname\""
+    },
+    {
+      "name": "givenName",
+      "label": "Given Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PART A.1 Personal Information — \"Given Name\""
+    },
+    {
+      "name": "otherNames",
+      "label": "Other Names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Middle name(s) or extra names, per the form-filling guide.",
+      "sourceRef": "PART A.1 Personal Information — \"Other Names\""
+    },
+    {
+      "name": "maidenName",
+      "label": "Maiden Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Names carried before marriage, per the form-filling guide (guide: \"Names carried before Marriage (Females Only)\"). Not gated to sex or marital status: it applies only where the applicant has actually married and adopted a different name, a narrower condition than sex alone, so this is modelled as unconditionally optional rather than a requiredWhen on sex — a disclosed judgment call.",
+      "sourceRef": "PART A.1 Personal Information — \"Maiden Name\""
+    },
+    {
+      "name": "previousNames",
+      "label": "Previous Names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Per the form-filling guide: \"If you have ever changed names\".",
+      "sourceRef": "PART A.1 Personal Information — \"Previous\" [Names]"
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "PART A.1 Personal Information — \"Sex Male Female\"",
+      "validation": {
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ]
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth (DD/MM/YYYY)",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PART A.1 Personal Information — \"Date of Birth (DD/MM/YYYY)\""
+    },
+    {
+      "name": "dateOfBirthEstimated",
+      "label": "Tick If Estimated",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the date of birth given is an estimate rather than a documented exact date.",
+      "sourceRef": "PART A.1 Personal Information — \"Tick If Estimated\""
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART A.1 Personal Information — Contacts \"Email\""
+    },
+    {
+      "name": "homePhoneNumber",
+      "label": "Home Phone No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART A.1 Personal Information — Contacts \"Home Phone No.\""
+    },
+    {
+      "name": "mobilePhoneNumber",
+      "label": "Mobile No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The source form itself notes \"(For Extra, Fill additional Form)\" beside this field, i.e. a supplementary form is used to record more than one mobile number; this schema models only the one number the base form itself provides a blank for.",
+      "sourceRef": "PART A.1 Personal Information — Contacts \"Mobile No. (For Extra, Fill additional Form)\""
+    },
+    {
+      "name": "highestLevelOfEducation",
+      "label": "Highest Level of Education",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART A.1 Personal Information — \"Highest Level of Education\""
+    },
+    {
+      "name": "profession",
+      "label": "Profession",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART A.1 Personal Information — \"Profession\""
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART A.1 Personal Information — \"Occupation\""
+    },
+    {
+      "name": "religion",
+      "label": "Religion",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART A.1 Personal Information — \"Religion\""
+    },
+    {
+      "name": "disabilityBlind",
+      "label": "Disabilities — Blind",
+      "type": "boolean",
+      "required": false,
+      "classification": "health",
+      "description": "Independent tick; more than one disability category may apply simultaneously, so each is modelled as its own boolean rather than a single-select enum (GSP-0009's multi-select array primitive is not part of this spec cut).",
+      "sourceRef": "PART A.1 Personal Information — \"Disabilities Blind Deaf Physical Mental Dumb\""
+    },
+    {
+      "name": "disabilityDeaf",
+      "label": "Disabilities — Deaf",
+      "type": "boolean",
+      "required": false,
+      "classification": "health",
+      "description": "Independent tick; more than one disability category may apply simultaneously, so each is modelled as its own boolean rather than a single-select enum (GSP-0009's multi-select array primitive is not part of this spec cut).",
+      "sourceRef": "PART A.1 Personal Information — \"Disabilities Blind Deaf Physical Mental Dumb\""
+    },
+    {
+      "name": "disabilityPhysical",
+      "label": "Disabilities — Physical",
+      "type": "boolean",
+      "required": false,
+      "classification": "health",
+      "description": "Independent tick; more than one disability category may apply simultaneously, so each is modelled as its own boolean rather than a single-select enum (GSP-0009's multi-select array primitive is not part of this spec cut).",
+      "sourceRef": "PART A.1 Personal Information — \"Disabilities Blind Deaf Physical Mental Dumb\""
+    },
+    {
+      "name": "disabilityMental",
+      "label": "Disabilities — Mental",
+      "type": "boolean",
+      "required": false,
+      "classification": "health",
+      "description": "Independent tick; more than one disability category may apply simultaneously, so each is modelled as its own boolean rather than a single-select enum (GSP-0009's multi-select array primitive is not part of this spec cut).",
+      "sourceRef": "PART A.1 Personal Information — \"Disabilities Blind Deaf Physical Mental Dumb\""
+    },
+    {
+      "name": "disabilityDumb",
+      "label": "Disabilities — Dumb",
+      "type": "boolean",
+      "required": false,
+      "classification": "health",
+      "description": "Independent tick; more than one disability category may apply simultaneously, so each is modelled as its own boolean rather than a single-select enum (GSP-0009's multi-select array primitive is not part of this spec cut).",
+      "sourceRef": "PART A.1 Personal Information — \"Disabilities Blind Deaf Physical Mental Dumb\""
+    },
+    {
+      "name": "residenceType",
+      "label": "Place of Residence (Tick Appropriate)",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "PART A.2 Place of Residence — \"(Tick Appropriate) Local Foreign\"",
+      "validation": {
+        "enum": [
+          "LOCAL",
+          "FOREIGN"
+        ]
+      }
+    },
+    {
+      "name": "residenceCountry",
+      "label": "Country",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.2 Place of Residence — \"Country\""
+    },
+    {
+      "name": "residenceDistrict",
+      "label": "District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.2 Place of Residence — \"District\""
+    },
+    {
+      "name": "residenceCounty",
+      "label": "County",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.2 Place of Residence — \"County\""
+    },
+    {
+      "name": "residenceSubCounty",
+      "label": "Sub-County",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.2 Place of Residence — \"Sub-County\""
+    },
+    {
+      "name": "residenceParishWard",
+      "label": "Parish/Ward",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.2 Place of Residence — \"Parish/Ward\""
+    },
+    {
+      "name": "residenceVillage",
+      "label": "Village",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.2 Place of Residence — \"Village\""
+    },
+    {
+      "name": "residenceStreet",
+      "label": "Street",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART A.2 Place of Residence — \"Street\""
+    },
+    {
+      "name": "residencePlotHouseNumber",
+      "label": "Plot / House No.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART A.2 Place of Residence — \"Plot / House No.\""
+    },
+    {
+      "name": "yearsLivedAtAddress",
+      "label": "Number of Years Lived at this Address",
+      "type": "integer",
+      "required": true,
+      "description": "Per the form-filling guide: \"Allowed values are 1 to 99\".",
+      "sourceRef": "PART A.2 Place of Residence — \"Number of Years Lived at this Address\"",
+      "validation": {
+        "minimum": 1,
+        "maximum": 99
+      }
+    },
+    {
+      "name": "districtOfPreviousResidence",
+      "label": "District of Previous Place of Residence",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART A.2 Place of Residence — \"District of Previous Place of Residence\""
+    },
+    {
+      "name": "postalAddress",
+      "label": "Postal Address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART A.2 Place of Residence — \"Postal Address\""
+    },
+    {
+      "name": "birthCountry",
+      "label": "Country",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.3 Place of Birth — \"Country\""
+    },
+    {
+      "name": "birthDistrict",
+      "label": "District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.3 Place of Birth — \"District\""
+    },
+    {
+      "name": "birthCounty",
+      "label": "County",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.3 Place of Birth — \"County\""
+    },
+    {
+      "name": "birthSubCounty",
+      "label": "Sub-County",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.3 Place of Birth — \"Sub-County\""
+    },
+    {
+      "name": "birthParishWard",
+      "label": "Parish/Ward",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.3 Place of Birth — \"Parish/Ward\""
+    },
+    {
+      "name": "birthVillage",
+      "label": "Village",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.3 Place of Birth — \"Village\""
+    },
+    {
+      "name": "birthCityTown",
+      "label": "City/Town",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART A.3 Place of Birth — \"City/Town\""
+    },
+    {
+      "name": "birthHealthFacility",
+      "label": "Health Facility",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART A.3 Place of Birth — \"Health Facility\""
+    },
+    {
+      "name": "originCountry",
+      "label": "Country",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.4 Place of Origin — \"Country\""
+    },
+    {
+      "name": "originDistrict",
+      "label": "District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.4 Place of Origin — \"District\""
+    },
+    {
+      "name": "originCounty",
+      "label": "County",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.4 Place of Origin — \"County\""
+    },
+    {
+      "name": "originSubCounty",
+      "label": "Sub-County",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.4 Place of Origin — \"Sub-County\""
+    },
+    {
+      "name": "originParishWard",
+      "label": "Parish/Ward",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.4 Place of Origin — \"Parish/Ward\""
+    },
+    {
+      "name": "originVillage",
+      "label": "Village",
+      "type": "string",
+      "required": true,
+      "sourceRef": "PART A.4 Place of Origin — \"Village\""
+    },
+    {
+      "name": "indigenousCommunityTribe",
+      "label": "Indigenous Community/Tribe",
+      "type": "string",
+      "required": false,
+      "description": "Not applicable to citizens by registration/naturalization who may have no indigenous Ugandan tribe; the source prints no explicit conditional marker tying this to citizenshipType, so it is modelled as unconditionally optional rather than fabricating a requiredWhen gate.",
+      "sourceRef": "PART A.4 Place of Origin — \"Indigenous Community/Tribe\""
+    },
+    {
+      "name": "clan",
+      "label": "Clan",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART A.4 Place of Origin — \"Clan\""
+    },
+    {
+      "name": "citizenshipType",
+      "label": "Citizenship Type",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "PART A.4 Place of Origin — \"Citizenship Type By Birth By Registration By Naturalization\"",
+      "validation": {
+        "enum": [
+          "BY_BIRTH",
+          "BY_REGISTRATION",
+          "BY_NATURALIZATION"
+        ]
+      }
+    },
+    {
+      "name": "dualCitizenship",
+      "label": "Dual Citizenship",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "PART A.4 Place of Origin — \"Dual Citizenship\""
+    },
+    {
+      "name": "citizenshipUnderArticle9",
+      "label": "Citizenship acquired under article 9 of the 1995 Constitution",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "PART A.4 Place of Origin — \"Citizenship acquired under article 9 of the 1995 Constitution\""
+    },
+    {
+      "name": "citizenshipCertificateNumber",
+      "label": "Citizenship Certificate Number (if Naturalization, Registration or Dual)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "citizenshipType",
+            "in": [
+              "BY_REGISTRATION",
+              "BY_NATURALIZATION"
+            ]
+          },
+          {
+            "field": "dualCitizenship",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "PART A.4 Place of Origin — \"Citizenship Certificate Number(if Naturalization,Registration or Dual)\""
+    },
+    {
+      "name": "otherNationality",
+      "label": "If Dual, state Citizenship and also state other Nationality",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "dualCitizenship",
+        "equals": true
+      },
+      "sourceRef": "PART A.4 Place of Origin — \"If Dual, state Citizenship and also state other Nationality\""
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART A.4 Passport Information — \"Passport Number\""
+    },
+    {
+      "name": "fileNumber",
+      "label": "File Number",
+      "type": "string",
+      "required": false,
+      "description": "Per the form-filling guide: \"FA/XXXXXX or IM/XXXXXX\".",
+      "sourceRef": "PART A.4 Passport Information — \"File Number\""
+    },
+    {
+      "name": "preferredPollingStation",
+      "label": "Preferred Polling Station",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "registrationType",
+        "equals": "ADULT"
+      },
+      "visibleWhen": {
+        "field": "registrationType",
+        "equals": "ADULT"
+      },
+      "description": "The source form itself is headed \"PART B. (to be filled for Adult registration only)\".",
+      "sourceRef": "PART B.5 Voters Information — \"Preferred Polling Station Place of Residence Place Of Origin\"",
+      "validation": {
+        "enum": [
+          "PLACE_OF_RESIDENCE",
+          "PLACE_OF_ORIGIN"
+        ]
+      }
+    },
+    {
+      "name": "pollingStationName",
+      "label": "Polling Station Name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "registrationType",
+        "equals": "ADULT"
+      },
+      "visibleWhen": {
+        "field": "registrationType",
+        "equals": "ADULT"
+      },
+      "sourceRef": "PART B.5 Voters Information — \"Polling Station Name\""
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital Status (Tick Appropriate)",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "registrationType",
+        "equals": "ADULT"
+      },
+      "visibleWhen": {
+        "field": "registrationType",
+        "equals": "ADULT"
+      },
+      "sourceRef": "PART B.5 Voters Information — \"Marital Status Married Single Divorced Widowed Separated (Tick Appropriate)\"",
+      "validation": {
+        "enum": [
+          "MARRIED",
+          "SINGLE",
+          "DIVORCED",
+          "WIDOWED",
+          "SEPARATED"
+        ]
+      }
+    },
+    {
+      "name": "spouseSurname",
+      "label": "Surname",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "classification": "pii",
+      "description": "Not printed on the source as conditional on marital status; modelled requiredWhen married, a disclosed judgment call — see this schema's own verification.notes.",
+      "sourceRef": "PART B.6 Spouse Details — \"Surname\""
+    },
+    {
+      "name": "spouseGivenNames",
+      "label": "Given Names",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "classification": "pii",
+      "sourceRef": "PART B.6 Spouse Details — \"Given Names\""
+    },
+    {
+      "name": "spouseOtherNames",
+      "label": "Other Names",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "classification": "pii",
+      "sourceRef": "PART B.6 Spouse Details — \"Other Names\""
+    },
+    {
+      "name": "spousePreviousNames",
+      "label": "Previous Names",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "classification": "pii",
+      "sourceRef": "PART B.6 Spouse Details — \"Previous Names\""
+    },
+    {
+      "name": "spouseMaidenName",
+      "label": "Maiden Name",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "classification": "pii",
+      "sourceRef": "PART B.6 Spouse Details — \"Maiden Name\""
+    },
+    {
+      "name": "spouseNationalIdNumber",
+      "label": "National ID Number (NIN)",
+      "type": "string",
+      "required": false,
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "classification": "pii",
+      "description": "Per the form-filling guide: \"Read this number from the National ID Card if you have one\" — optional.",
+      "sourceRef": "PART B.6 Spouse Details — \"National ID Number (NIN)\""
+    },
+    {
+      "name": "spouseCitizenshipType",
+      "label": "Citizenship Type",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "sourceRef": "PART B.6 Spouse Details — \"Citizenship Type By Birth By Registration By Naturalization\"",
+      "validation": {
+        "enum": [
+          "BY_BIRTH",
+          "BY_REGISTRATION",
+          "BY_NATURALIZATION"
+        ]
+      }
+    },
+    {
+      "name": "spouseDualCitizenship",
+      "label": "Dual Citizenship",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "sourceRef": "PART B.6 Spouse Details — \"Dual Citizenship\""
+    },
+    {
+      "name": "spouseCitizenshipUnderArticle9",
+      "label": "Citizenship acquired under article 9 of the 1995 Constitution",
+      "type": "boolean",
+      "required": false,
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "sourceRef": "PART B.6 Spouse Details — \"Citizenship acquired under article 9 of the 1995 Constitution\""
+    },
+    {
+      "name": "spouseOtherNationality",
+      "label": "If Dual, state Citizenship and also state other Nationality",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          },
+          {
+            "field": "spouseDualCitizenship",
+            "equals": true
+          }
+        ]
+      },
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          },
+          {
+            "field": "spouseDualCitizenship",
+            "equals": true
+          }
+        ]
+      },
+      "description": "Unlike the applicant's own, father's, and mother's citizenship blocks, the Spouse Details section prints no \"Citizenship Certificate Number\" line between the article-9 tick and this field — see this schema's own verification.notes.",
+      "sourceRef": "PART B.6 Spouse Details — \"If Dual, state Citizenship and also state other Nationality\""
+    },
+    {
+      "name": "placeOfMarriage",
+      "label": "Place of Marriage",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "sourceRef": "PART B.6 Spouse Details — \"Place of Marriage\""
+    },
+    {
+      "name": "dateOfMarriage",
+      "label": "Date of Marriage (DD/MM/YYYY)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "sourceRef": "PART B.6 Spouse Details — \"Date of Marriage (DD/MM/YYYY)\""
+    },
+    {
+      "name": "typeOfMarriage",
+      "label": "Type of Marriage",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "sourceRef": "PART B.6 Spouse Details — \"Type of Marriage Civil Religious Cultural Customary\"",
+      "validation": {
+        "enum": [
+          "CIVIL",
+          "RELIGIOUS",
+          "CULTURAL",
+          "CUSTOMARY"
+        ]
+      }
+    },
+    {
+      "name": "marriageCertificateNumber",
+      "label": "Marriage Certificate Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "sourceRef": "PART B.6 Spouse Details — \"Marriage Certificate Number\""
+    },
+    {
+      "name": "otherSpouses",
+      "label": "Other Spouses (on separate sheet)",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          }
+        ]
+      },
+      "sourceRef": "PART B.6 Spouse Details — \"Other Spouses (on separate sheet) Yes No\""
+    },
+    {
+      "name": "otherSpousesCount",
+      "label": "If yes, Number of other spouses",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          },
+          {
+            "field": "otherSpouses",
+            "equals": true
+          }
+        ]
+      },
+      "visibleWhen": {
+        "all": [
+          {
+            "field": "registrationType",
+            "equals": "ADULT"
+          },
+          {
+            "field": "maritalStatus",
+            "equals": "MARRIED"
+          },
+          {
+            "field": "otherSpouses",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "PART B.6 Spouse Details — \"If yes, Number of other spouses\"",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "fatherSurname",
+      "label": "Surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C.7/8 Father's details — \"Surname\""
+    },
+    {
+      "name": "fatherGivenNames",
+      "label": "Given Names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C Father's details — \"Given Names\""
+    },
+    {
+      "name": "fatherPreviousNames",
+      "label": "Previous Names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C Father's details — \"Previous Names\""
+    },
+    {
+      "name": "fatherOtherNames",
+      "label": "Other Names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C Father's details — \"Other Names\""
+    },
+    {
+      "name": "fatherNationalIdNumber",
+      "label": "National ID Number (NIN)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C Father's details — \"National ID Number (NIN)\""
+    },
+    {
+      "name": "fatherIdDocumentNumber",
+      "label": "ID Document Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "An identity document number other than the NIN, e.g. for a parent registered under a legacy ID/voter system prior to NIRA's own NIN rollout.",
+      "sourceRef": "PART C Father's details — \"ID Document Number\""
+    },
+    {
+      "name": "fatherCitizenshipType",
+      "label": "Citizenship Type",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "PART C Father's details — \"Citizenship Type By Birth By Registration By Naturalization Dual Citizenship\"",
+      "validation": {
+        "enum": [
+          "BY_BIRTH",
+          "BY_REGISTRATION",
+          "BY_NATURALIZATION"
+        ]
+      }
+    },
+    {
+      "name": "fatherDualCitizenship",
+      "label": "Dual Citizenship",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "PART C Father's details — \"Dual Citizenship\""
+    },
+    {
+      "name": "fatherCitizenshipUnderArticle9",
+      "label": "Citizenship acquired under article 9 of the 1995 Constitution",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "PART C Father's details — \"Citizenship acquired under article 9 of the 1995 Constitution\""
+    },
+    {
+      "name": "fatherCitizenshipCertificateNumber",
+      "label": "Citizenship Certificate Number (if Naturalization, Registration or Dual)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "fatherCitizenshipType",
+            "in": [
+              "BY_REGISTRATION",
+              "BY_NATURALIZATION"
+            ]
+          },
+          {
+            "field": "fatherDualCitizenship",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "PART C Father's details — \"Citizenship Certificate Number(if Naturalization,Registration or Dual)\""
+    },
+    {
+      "name": "fatherOtherNationality",
+      "label": "If Dual, state Citizenship and also state other Nationality",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "fatherDualCitizenship",
+        "equals": true
+      },
+      "sourceRef": "PART C Father's details — \"If Dual, state Citizenship and also state other Nationality\""
+    },
+    {
+      "name": "fatherLivingStatus",
+      "label": "Living Status",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "PART C Father's details — \"Living Status Alive Deceased Unknown\"",
+      "validation": {
+        "enum": [
+          "ALIVE",
+          "DECEASED",
+          "UNKNOWN"
+        ]
+      }
+    },
+    {
+      "name": "fatherOccupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's details — \"Occupation\""
+    },
+    {
+      "name": "fatherResidenceCountry",
+      "label": "Country",
+      "type": "string",
+      "required": false,
+      "description": "Per the form-filling guide: \"FATHERS RESIDENTIAL ADDRESS ... Guidance same as Place of Residence\".",
+      "sourceRef": "PART C Father's Place of Residence — \"Country\""
+    },
+    {
+      "name": "fatherResidenceDistrict",
+      "label": "District",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's Place of Residence — \"District\""
+    },
+    {
+      "name": "fatherResidenceCounty",
+      "label": "County",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's Place of Residence — \"County\""
+    },
+    {
+      "name": "fatherResidenceSubCounty",
+      "label": "Sub-County",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's Place of Residence — \"Sub-County\""
+    },
+    {
+      "name": "fatherResidenceParishWard",
+      "label": "Parish/Ward",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's Place of Residence — \"Parish/Ward\""
+    },
+    {
+      "name": "fatherResidenceVillage",
+      "label": "Village",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's Place of Residence — \"Village\""
+    },
+    {
+      "name": "fatherResidenceStreet",
+      "label": "Street",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's Place of Residence — \"Street\""
+    },
+    {
+      "name": "fatherResidencePlotHouseNumber",
+      "label": "Street/House No.",
+      "type": "string",
+      "required": false,
+      "description": "Modelled matching the applicant's own Place of Residence \"Plot / House No.\" field per the guide's own \"same as Place of Residence\" instruction; the source's own printed label for this row reads \"Street/House No.\" rather than \"Plot / House No.\" — see this schema's own verification.notes.",
+      "sourceRef": "PART C Father's Place of Residence — \"Street/House No.\""
+    },
+    {
+      "name": "fatherOriginCountry",
+      "label": "Country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's Place of Origin — \"Country\""
+    },
+    {
+      "name": "fatherOriginDistrict",
+      "label": "District",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's Place of Origin — \"District\""
+    },
+    {
+      "name": "fatherOriginCounty",
+      "label": "County",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's Place of Origin — \"County\""
+    },
+    {
+      "name": "fatherOriginSubCounty",
+      "label": "Sub-County",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's Place of Origin — \"Sub-County\""
+    },
+    {
+      "name": "fatherOriginParishWard",
+      "label": "Parish/Ward",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's Place of Origin — \"Parish/Ward\""
+    },
+    {
+      "name": "fatherOriginVillage",
+      "label": "Village",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's Place of Origin — \"Village\""
+    },
+    {
+      "name": "fatherIndigenousCommunityTribe",
+      "label": "Father's Indigenous Community/Tribe",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's details — \"Fathers Indigenous Community/ Tribe\""
+    },
+    {
+      "name": "fatherClan",
+      "label": "Father's Clan",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Father's details — \"Fathers Clan\""
+    },
+    {
+      "name": "motherSurname",
+      "label": "Surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C.7/8 Mother's details — \"Surname\""
+    },
+    {
+      "name": "motherGivenNames",
+      "label": "Given Names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C Mother's details — \"Given Names\""
+    },
+    {
+      "name": "motherPreviousNames",
+      "label": "Previous Names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C Mother's details — \"Previous Names\""
+    },
+    {
+      "name": "motherOtherNames",
+      "label": "Other Names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C Mother's details — \"Other Names\""
+    },
+    {
+      "name": "motherNationalIdNumber",
+      "label": "National ID Number (NIN)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C Mother's details — \"National ID Number (NIN)\""
+    },
+    {
+      "name": "motherIdDocumentNumber",
+      "label": "ID Document Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "An identity document number other than the NIN, e.g. for a parent registered under a legacy ID/voter system prior to NIRA's own NIN rollout.",
+      "sourceRef": "PART C Mother's details — \"ID Document Number\""
+    },
+    {
+      "name": "motherCitizenshipType",
+      "label": "Citizenship Type",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "PART C Mother's details — \"Citizenship Type By Birth By Registration By Naturalization Dual Citizenship\"",
+      "validation": {
+        "enum": [
+          "BY_BIRTH",
+          "BY_REGISTRATION",
+          "BY_NATURALIZATION"
+        ]
+      }
+    },
+    {
+      "name": "motherDualCitizenship",
+      "label": "Dual Citizenship",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "PART C Mother's details — \"Dual Citizenship\""
+    },
+    {
+      "name": "motherCitizenshipUnderArticle9",
+      "label": "Citizenship acquired under article 9 of the 1995 Constitution",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "PART C Mother's details — \"Citizenship acquired under article 9 of the 1995 Constitution\""
+    },
+    {
+      "name": "motherCitizenshipCertificateNumber",
+      "label": "Citizenship Certificate Number (if Naturalization, Registration or Dual)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          {
+            "field": "motherCitizenshipType",
+            "in": [
+              "BY_REGISTRATION",
+              "BY_NATURALIZATION"
+            ]
+          },
+          {
+            "field": "motherDualCitizenship",
+            "equals": true
+          }
+        ]
+      },
+      "sourceRef": "PART C Mother's details — \"Citizenship Certificate Number(if Naturalization,Registration or Dual)\""
+    },
+    {
+      "name": "motherOtherNationality",
+      "label": "If Dual, state Citizenship and also state other Nationality",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "motherDualCitizenship",
+        "equals": true
+      },
+      "sourceRef": "PART C Mother's details — \"If Dual, state Citizenship and also state other Nationality\""
+    },
+    {
+      "name": "motherLivingStatus",
+      "label": "Living Status",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "PART C Mother's details — \"Living Status Alive Deceased Unknown\"",
+      "validation": {
+        "enum": [
+          "ALIVE",
+          "DECEASED",
+          "UNKNOWN"
+        ]
+      }
+    },
+    {
+      "name": "motherOccupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's details — \"Occupation\""
+    },
+    {
+      "name": "motherResidenceCountry",
+      "label": "Country",
+      "type": "string",
+      "required": false,
+      "description": "Per the form-filling guide: \"MOTHERS RESIDENTIAL ADDRESS ... Guidance same as Place of Residence\".",
+      "sourceRef": "PART C Mother's Place of Residence — \"Country\""
+    },
+    {
+      "name": "motherResidenceDistrict",
+      "label": "District",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's Place of Residence — \"District\""
+    },
+    {
+      "name": "motherResidenceCounty",
+      "label": "County",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's Place of Residence — \"County\""
+    },
+    {
+      "name": "motherResidenceSubCounty",
+      "label": "Sub-County",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's Place of Residence — \"Sub-County\""
+    },
+    {
+      "name": "motherResidenceParishWard",
+      "label": "Parish/Ward",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's Place of Residence — \"Parish/Ward\""
+    },
+    {
+      "name": "motherResidenceVillage",
+      "label": "Village",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's Place of Residence — \"Village\""
+    },
+    {
+      "name": "motherResidenceStreet",
+      "label": "Street",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's Place of Residence — \"Street\""
+    },
+    {
+      "name": "motherResidencePlotHouseNumber",
+      "label": "Street/House No.",
+      "type": "string",
+      "required": false,
+      "description": "Modelled matching the applicant's own Place of Residence \"Plot / House No.\" field per the guide's own \"same as Place of Residence\" instruction; the source's own printed label for this row reads \"Street/House No.\" rather than \"Plot / House No.\" — see this schema's own verification.notes.",
+      "sourceRef": "PART C Mother's Place of Residence — \"Street/House No.\""
+    },
+    {
+      "name": "motherOriginCountry",
+      "label": "Country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's Place of Origin — \"Country\""
+    },
+    {
+      "name": "motherOriginDistrict",
+      "label": "District",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's Place of Origin — \"District\""
+    },
+    {
+      "name": "motherOriginCounty",
+      "label": "County",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's Place of Origin — \"County\""
+    },
+    {
+      "name": "motherOriginSubCounty",
+      "label": "Sub-County",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's Place of Origin — \"Sub-County\""
+    },
+    {
+      "name": "motherOriginParishWard",
+      "label": "Parish/Ward",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's Place of Origin — \"Parish/Ward\""
+    },
+    {
+      "name": "motherOriginVillage",
+      "label": "Village",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's Place of Origin — \"Village\""
+    },
+    {
+      "name": "motherIndigenousCommunityTribe",
+      "label": "Mother's Indigenous Community/Tribe",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's details — \"Mothers Indigenous Community/ Tribe\""
+    },
+    {
+      "name": "motherClan",
+      "label": "Mother's Clan",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C Mother's details — \"Mothers Clan\""
+    },
+    {
+      "name": "grandparentSurname",
+      "label": "Surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Section 9 is itself printed conditionally: \"if information of both parents is not available for Applicants under Citizenship by Birth/ descent\". This schema models the whole block as unconditionally optional rather than encoding that condition against fatherSurname/motherSurname absence, since GSP-0013's Condition grammar has no \"field is absent\" leaf operator — a disclosed judgment call. See this schema's own verification.notes.",
+      "sourceRef": "PART C.9 Details of Grand Parent(s)/Introducer — \"Surname\""
+    },
+    {
+      "name": "grandparentGivenNames",
+      "label": "Given Names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C.9 Details of Grand Parent(s)/Introducer — \"Given Names\""
+    },
+    {
+      "name": "grandparentOtherNames",
+      "label": "Other Names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C.9 Details of Grand Parent(s)/Introducer — \"Other Names\""
+    },
+    {
+      "name": "grandparentDateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C.9 Details of Grand Parent(s)/Introducer — \"Date of Birth\""
+    },
+    {
+      "name": "grandparentNationalIdNumber",
+      "label": "National ID No (NIN)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C.9 Details of Grand Parent(s)/Introducer — \"National ID No (NIN)\""
+    },
+    {
+      "name": "grandparentOriginCountry",
+      "label": "Country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C.9 Grand Parents Place of Origin — \"Country\""
+    },
+    {
+      "name": "grandparentOriginDistrict",
+      "label": "District",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C.9 Grand Parents Place of Origin — \"District\""
+    },
+    {
+      "name": "grandparentOriginCounty",
+      "label": "County",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C.9 Grand Parents Place of Origin — \"County\""
+    },
+    {
+      "name": "grandparentOriginSubCounty",
+      "label": "Sub-County",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C.9 Grand Parents Place of Origin — \"Sub-County\""
+    },
+    {
+      "name": "grandparentOriginParishWard",
+      "label": "Parish/Ward",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C.9 Grand Parents Place of Origin — \"Parish/Ward\""
+    },
+    {
+      "name": "grandparentOriginVillage",
+      "label": "Village",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C.9 Grand Parents Place of Origin — \"Village\""
+    },
+    {
+      "name": "grandparentIndigenousCommunityTribe",
+      "label": "Indigenous Community/tribe",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C.9 Details of Grand Parent(s)/Introducer — \"Indigenous Community/tribe\""
+    },
+    {
+      "name": "grandparentClan",
+      "label": "Clan",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C.9 Details of Grand Parent(s)/Introducer — \"clan\""
+    },
+    {
+      "name": "child1Name",
+      "label": "Names of Child",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The source prints this table with exactly 4 blank data rows beneath its column headers (confirmed by rendering page 2 to an image and measuring the printed row-divider lines); this schema models 4 bounded child1..child4 slots matching that literal printed row count rather than an unbounded array, since v0.3's field model has no array/repeating-element primitive (GSP-0009, not yet accepted). A fifth or later child exceeds this form's own printed capacity.",
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"Names of Child\" (row 1 of 4)"
+    },
+    {
+      "name": "child1Sex",
+      "label": "Sex (M/F)",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"Sex (M/F)\" (row 1 of 4)",
+      "validation": {
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ]
+      }
+    },
+    {
+      "name": "child1DateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": false,
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"Date of Birth\" (row 1 of 4)"
+    },
+    {
+      "name": "child1NationalIdNumber",
+      "label": "National ID Number (if available)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"National ID Number (if available)\" (row 1 of 4)"
+    },
+    {
+      "name": "child2Name",
+      "label": "Names of Child",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"Names of Child\" (row 2 of 4)"
+    },
+    {
+      "name": "child2Sex",
+      "label": "Sex (M/F)",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"Sex (M/F)\" (row 2 of 4)",
+      "validation": {
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ]
+      }
+    },
+    {
+      "name": "child2DateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": false,
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"Date of Birth\" (row 2 of 4)"
+    },
+    {
+      "name": "child2NationalIdNumber",
+      "label": "National ID Number (if available)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"National ID Number (if available)\" (row 2 of 4)"
+    },
+    {
+      "name": "child3Name",
+      "label": "Names of Child",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"Names of Child\" (row 3 of 4)"
+    },
+    {
+      "name": "child3Sex",
+      "label": "Sex (M/F)",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"Sex (M/F)\" (row 3 of 4)",
+      "validation": {
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ]
+      }
+    },
+    {
+      "name": "child3DateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": false,
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"Date of Birth\" (row 3 of 4)"
+    },
+    {
+      "name": "child3NationalIdNumber",
+      "label": "National ID Number (if available)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"National ID Number (if available)\" (row 3 of 4)"
+    },
+    {
+      "name": "child4Name",
+      "label": "Names of Child",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"Names of Child\" (row 4 of 4)"
+    },
+    {
+      "name": "child4Sex",
+      "label": "Sex (M/F)",
+      "type": "enum",
+      "required": false,
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"Sex (M/F)\" (row 4 of 4)",
+      "validation": {
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ]
+      }
+    },
+    {
+      "name": "child4DateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": false,
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"Date of Birth\" (row 4 of 4)"
+    },
+    {
+      "name": "child4NationalIdNumber",
+      "label": "National ID Number (if available)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "PART C.10 Particulars of Applicants Children — \"National ID Number (if available)\" (row 4 of 4)"
+    },
+    {
+      "name": "declarantName",
+      "label": "Declaration statement — declarant's name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The blank within the declaration's own printed statement (\"I .......................... declare that the above particulars are true...\"); completed by the applicant, or by a parent/guardian for a person under 18.",
+      "sourceRef": "PART E. Declaration — \"I .......... declare that the above particulars are true to my knowledge and belief.\""
+    },
+    {
+      "name": "signature",
+      "label": "Signature/Thumbprint of Applicant or Parent/Guardian",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "PART E. Declaration — \"Signature/Thumbprint of Applicant or Parent/Guardian\""
+    },
+    {
+      "name": "date",
+      "label": "Date of Declaration",
+      "type": "date",
+      "required": true,
+      "sourceRef": "PART E. Declaration — \"Date of Declaration\""
+    }
+  ]
+}
