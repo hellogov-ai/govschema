@@ -4,7 +4,43 @@
 
 ## Executive Summary
 
-**82 jurisdictions** | **603 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**82 jurisdictions** | **604 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4367, "GovSchema Standard Research"): Jamaica's
+> Passport vertical opens (2 of 6)**, via
+> `jm/pica/passport-application@1.0.0` — the Passport, Immigration and
+> Citizenship Agency's (PICA) own "Jamaican Passport Application Form", a
+> genuine fillable AcroForm (152 unique field names across 172 `/Widget`
+> annotations, independently re-fetched and re-hashed at `pica.gov.jm`,
+> 776,064 bytes, sha256 `aa259402...`) covering first-time, renewal, and
+> replacement applications in a single unified document. Consumes the
+> single most attractive of Jamaica's four disclosed-STRONG banked-backlog
+> verticals left open by the GOV-4360 cycle (see the Executive Summary's
+> GOV-4360 update above and the Known Gaps entry 0f below) — flagged in
+> that cycle's own scouting notes as "the richest and cleanest source of
+> all six Jamaican verticals scouted, a true fillable AcroForm rather than
+> a flat/scanned specimen". Models 110 `fields[]` across 12 steps
+> (eligibility gates for under-18/religious-headgear/born-outside-Jamaica;
+> Personal Data; Marriage Details; Consent for Minor; Particulars of Most
+> Recent Passport; Declaration of Applicant; two Emergency Contacts;
+> Official Certification by a third-party referee; Religious Headgear;
+> Born Outside Jamaica; sixteen renumbered Supplementary Information
+> lines) plus 6 `documents[]` entries, excluding the form's own entire
+> "FOR OFFICIAL USE ONLY"/"RECEPTION TEAM" section (PICA-staff-completed,
+> not applicant-supplied) and every signature line (none is backed by an
+> AcroForm widget, unlike every other data point on this form — modelled
+> instead as a single `signedApplicationForm` document). See the
+> document's own VERIFICATION.md for the full sourcing record and all 15
+> disclosed source-fidelity findings, including a genuinely ambiguous
+> repeated "Place of Birth" label (Finding 4) and a duplicate-widget
+> naming defect in the source AcroForm's own Supplementary Information
+> section (Finding 8). Both validators pass at 604/604; `verify-sources.mjs`
+> scoped to this schema's directory reports all 3 cited URLs clear; 20
+> conformance fixtures (3 valid + 17 mutation-control) committed, all
+> reproduced via a from-scratch mock validator. **Jamaica now stands at 2
+> of 6 verticals** (Business Formation, Passport); DMV, Visa, and Taxes
+> remain open, STRONG banked backlog (National ID is a confirmed dead
+> end).
 
 > **Update (2026-07-22, GOV-4360, "GovSchema Standard Research"): Jamaica
 > opens as the registry's 82nd jurisdiction**, via
@@ -14228,7 +14264,18 @@
 
 ## By Vertical
 
-### Passport (55/80 jurisdictions — 69%)
+### Passport (56/82 jurisdictions — 68%)
+
+> **Update (2026-07-22, GOV-4367, "GovSchema Standard Research"): Jamaica
+> opens this vertical (2/6 for the jurisdiction)**, via
+> `jm/pica/passport-application@1.0.0` — the Passport, Immigration and
+> Citizenship Agency's (PICA) own genuine AcroForm "Jamaican Passport
+> Application Form". See the Executive Summary's GOV-4367 update above and
+> the document's own VERIFICATION.md for the full sourcing record. This
+> vertical's own denominator is also corrected here from 80 to 82 — Uganda
+> (GOV-4337) and Jamaica (GOV-4360) had each opened via a non-Passport
+> vertical without this section's own denominator being bumped, the same
+> stale-denominator class of fix prior cycles have already applied here.
 
 > **Update (2026-07-22, GOV-4328, "GovSchema Standard Research"): Botswana
 > opens this vertical (4/6 for the jurisdiction)**, via
@@ -20463,9 +20510,10 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       (PICA) own genuine AcroForm, `pica.gov.jm`, ~776KB, 152 typed form
       fields — the richest and cleanest source of all six Jamaican
       verticals scouted this cycle, a true fillable AcroForm rather than a
-      flat/scanned specimen. Open, STRONG banked backlog for a future
-      cycle, and the single most attractive next Jamaica candidate given
-      its field-level typing.
+      flat/scanned specimen. **Update (GOV-4367, 2026-07-22): now
+      authored** as `jm/pica/passport-application@1.0.0`, opening Jamaica's
+      Passport vertical (2 of 6) — see the Executive Summary and Passport
+      vertical updates above.
     - **Taxes** — Tax Administration Jamaica's Form IT01, "Return of Income
       — Individuals", `jamaicatax.gov.jm`, ~174KB, dozens of line items
       (a full annual individual income tax return). Open, STRONG banked
