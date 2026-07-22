@@ -1,0 +1,387 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "bw/drts/driving-licence-application",
+  "version": "1.0.0",
+  "title": "Botswana Driving Licence/Permit Application (Form DL 1)",
+  "description": "The Department of Road Transport and Safety's (DRTS) \"Application for a Botswana Driving Licence/Permit\" (Form DL 1), under the Road Traffic Act (Cap. 69:01, Section 4, Amendment 2002), used by an individual to apply for a new driving licence, a driving-licence-card renewal, a provisional/learner \"L\" licence, an additional licence class, a new or renewed Instructor Certificate, conversion of an existing driving licence to a card, conversion of a foreign licence to a Botswana licence card, a Professional Driving Permit (PrDP) transaction (new, PSV-to-PrDP conversion, or renewal), or a duplicate of any of the above. Deepens Botswana past its one already-published vertical (bw/burs/individual-tax-return, Taxes), opening the DMV vertical (2 of 6). This schema models the applicant's own type-of-application selection, individual particulars, any existing (foreign or Botswana) licence details being renewed/converted, physical and postal addresses, the licence class and vehicle/driver restriction codes being requested, and the applicant's declaration, place/date, and signature. It excludes the form's own \"FOR PrDP APPLICANTS ONLY\" police-officer certificate, the \"FOR OFFICIAL USE ONLY\" driving-test-examiner block, and the purely informational \"Information about Driving Licence Classes for Motor Vehicles\" reference table — none of these are applicant-supplied data (see VERIFICATION.md). Filing this application is an applicant's own action performed with DRTS; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Botswana or the Department of Road Transport and Safety.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "BW",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Road Transport and Safety",
+    "abbreviation": "DRTS",
+    "url": "https://www.gov.bw"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.gov.bw/sites/default/files/2019-12/Form_DL1_1.pdf",
+    "retrievedAt": "2026-07-22",
+    "documentRef": "Form DL 1, \"Application for a Botswana Driving Licence/Permit\", Department of Road Transport and Safety, native (searchable-text) PDF, 2 physical PDF pages printed as a 4-logical-page double-sided booklet spread (Page 1 of 4: applicant particulars and licence-class selection; Page 2 of 4: declaration and signature; Page 3 of 4: informational driving-licence-class reference table; Page 4 of 4: PrDP police-officer certificate and official-use-only examiner block)."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-22",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-22",
+    "notes": "GOV-4314 (\"GovSchema Standard Research\"). Rather than scouting a new jurisdiction from scratch, deepened Botswana's own pre-scouted, STRONG banked backlog left open by the GOV-4307 cycle (see CATALOG.md's Known Gaps entry 0e) — Form DL1, one of three STRONG-but-unauthored Botswana verticals (Visa, DMV, Passport), chosen here for the smallest source file (38,662 bytes) among the three.\n\nIndependently re-fetched and re-hashed rather than trusted from the prior cycle's own report alone: `https://www.gov.bw/sites/default/files/2019-12/Form_DL1_1.pdf`, HTTP 200, `Content-Type: application/pdf`, 38,662 bytes (byte-for-byte match with the GOV-4307 cycle's own reported size), sha256 `3a17d1d4c93475e56f13649a1164fd7f85acdcae45d41c8661df92174384c665`. Confirmed mechanically: the retrieved bytes begin `%PDF-1.2` and contain zero `/AcroForm`, `/Widget`, and `/FT` occurrences — a flat, print-and-fill specimen, not an interactive AcroForm PDF.\n\nExtraction method: text extracted via `pdfjs-dist`'s `getTextContent()` API (vendored at `/tmp/node_modules/pdfjs-dist` from prior cycles), grouped by y-coordinate row and sorted by x-coordinate. The PDF's 2 physical pages are each a landscape double-page spread: physical page 1 = logical Page 1 of 4 (x-coordinates ~630-1150) on the right half plus logical Page 4 of 4 (x-coordinates ~20-550) on the left half; physical page 2 = logical Page 2 of 4 (right half) plus logical Page 3 of 4 (left half) — confirmed by each logical page's own printed \"Page N of 4\" footer and cross-checked visually by rendering each physical page to a PNG via `pdfjs-dist` + `node-canvas` (glyph paths for this PDF's embedded Times-family subset partially failed to rasterize as visible text — a font-embedding quirk affecting only the visual render, not the text-layer extraction used for field modelling — but the printed table/checkbox grid lines rendered cleanly and were used to confirm the checkbox layout described in Finding 1 below).\n\nModels 34 `fields[]` across 6 steps. Excludes: the purely informational Page 3 of 4 \"Information about Driving Licence Classes for Motor Vehicles\" table (used only as descriptive-label source material for this schema's own class/restriction enums, per Finding 2 below, not modelled as applicant input); the Page 4 of 4 \"FOR PrDP APPLICANTS ONLY — Certificate from a Police Officer\" block (a third-party law-enforcement certification, not applicant-supplied); and the Page 4 of 4 \"FOR OFFICIAL USE ONLY — Driving Test Examiner\" block (office/examiner-completed, not applicant-supplied).\n\n## Disclosed source-fidelity findings\n\n1. **Type-of-application checkbox grid reconstructed from an 8-row x 2-column table with 12 printed, labelled options (plus unlabelled/blank grid cells excluded).** Page 1's own top table prints 8 rows, each with a left and a right checkbox cell (confirmed visually via the rendered PNG's grid lines), but only 12 of the 16 cells carry accompanying printed text — rows 2, 3, 5, and 6 have text only in the left cell, with the right cell a blank/unlabelled grid artifact carrying no distinguishable meaning. Modelled as a single required enum `applicationType` with exactly the 12 labelled options (`DRIVING_LICENCE_NEW`, `DRIVING_LICENCE_CARD_RENEWAL`, `PROVISIONAL_LEARNER_LICENCE`, `ADDITIONAL_LICENCE_CLASS`, `INSTRUCTOR_CERTIFICATE_NEW`, `INSTRUCTOR_CERTIFICATE_RENEWAL`, `CONVERSION_LICENCE_TO_CARD`, `FOREIGN_TO_BOTSWANA_LICENCE`, `PSV_TO_PRDP`, `PRDP_RENEWAL`, `PRDP_NEW`, `DUPLICATE_ANY`) — the same single-select-enum treatment this registry's own `sg/spf/driving-licence-application` (`licenceClassApplied`) and `my/jpj/driving-licence-application` (`licenseClassSought`) established for a tick-one-of-many licence-transaction selector, since GSP-0009's field-type vocabulary has no multi-select/array primitive (confirmed in `spec/v0.3/govschema.schema.json`, field `type` enum: `string`, `number`, `integer`, `boolean`, `date`, `enum`, `file`, `object`). The form does not print an explicit prohibition on ticking more than one box; this schema follows the same registry precedent of modelling the common single-selection case and disclosing the theoretical multi-select case as an unmodelled scope limitation.\n\n2. **Licence-class and restriction-code selection modelled as three single-select enums, following the same single-selection precedent as Finding 1.** Page 1's own \"Class of Motor Vehicles for which a Licence is requested\" table lists 10 licence classes (A1, A, B, C1, C, EB, EC1, EC, F, H), each with its own printed checkbox, alongside two independently-numbered restriction-code lists — \"Vehicle Restrictions\" (codes 0-4: None, Automatic transmission only, Electrically (Battery) powered vehicle, Additional/mounted fittings, Others) spanning rows A1-EB, and \"Driver Restrictions\" (codes 0-3: None, Glasses/Contact Lenses, Physically disabled (with certified badge), Others) spanning rows EC1-H — each code also with its own printed checkbox. The two restriction-code lists are visually adjacent to but structurally independent of the licence-class rows (confirmed by the rendered PNG: the code checkboxes sit in a separate table column, and the \"Vehicle Restrictions\"/\"Driver Restrictions\" column headers themselves fall mid-table, at the A1 and EB class rows respectively, not aligned to any single class row). Modelled as `licenceClassRequested` (required enum, 10 values, single-selection scope per Finding 1), `vehicleRestrictionRequested` (optional enum, 5 values), and `driverRestrictionRequested` (optional enum, 4 values) — the class-code short descriptions in this schema's own enum come from this same Page 1 table, not the separate Page 3 of 4 informational reference table (excluded per this document's own top-level description), though the two are consistent with each other.\n\n3. **`nationalIdOmang` and `passportNumberOrOther` both modelled as unconditionally optional, disclosing an unencoded \"one of the two\" constraint.** Page 1 prints these as two separate lines — \"National ID (Omang):\" for citizens and \"Passport No./Others (Non Citizen only):\" for non-citizens — a natural mutual-exclusivity the form itself does not print as an explicit rule (no \"if non-citizen\" conditional heading, unlike, e.g., this form's own explicit \"(Non Citizen only)\" parenthetical, which *is* preserved in the field's own label/description). GSP-0013's `requiredWhen` grammar has no \"at least one of N fields\" primitive (the same registry-wide gap disclosed by, e.g., `mt/identita/passport-application`'s single-parent-consent workaround). Rather than fabricate a one-way conditional tying one field's requiredness to the other's absence — which this registry's own memory of the `notEquals \"\"` anti-pattern (an optional field's absence is not reliably distinguishable from an empty string under GSP-0013's semantics) flags as an established bug source — both fields are modelled as unconditionally optional, with each field's own description disclosing the citizen/non-citizen exclusivity as informational guidance rather than enforced validation.\n\n4. **Existing-licence fields (\"Licence Details\", captioned \"Please delete where inapplicable\") modelled as unconditionally optional, not gated on `applicationType`.** These six fields (`existingLicenceNumber`, `existingLicenceClasses`, `existingLicenceDriverRestrictions`, `existingLicenceVehicleRestrictions`, `existingLicenceDateOfIssue`, `existingLicenceCountryOfIssue`) plus `referenceDetails` are only relevant to renewal/conversion/additional-class/foreign-conversion application types, per the section's own \"Please delete where inapplicable\" caption — but the form prints no explicit cross-reference tying this caption to specific `applicationType` values, and fabricating such a tie would risk encoding a rule the source itself does not state. Modelled as unconditionally optional per this registry's \"disclose rather than fabricate an unprinted conditional\" convention (see, e.g., `mt/transport-malta/driving-licence-renewal`'s own Finding 4).\n\n5. **`referenceDetails` modelled as an optional string plus a conditionally-required supporting document, both unconditionally-optional per Finding 4.** The printed note reads, verbatim: \"*Please attach reference details and Confirmation from issuing Country!\" — modelled as the string field `referenceDetails` plus the document `referenceDetailsConfirmation`, both left unconditionally optional for the same reason as Finding 4 (no printed cross-reference to a specific `applicationType` value).\n\n6. **Declaration's two embedded either/or choices modelled as one boolean and one enum.** Page 2's single combined declaration paragraph embeds two printed either/or choices with no separate heading of their own: \"I use glasses for driving\" / \"I do not use glasses for driving\" (modelled as the required boolean `usesGlassesForDriving`, true selecting the first option) and \"I have read this declaration,\" / \"This declaration has been read to me,\" (modelled as the required enum `declarationReadMethod`, values `SELF_READ` / `READ_TO_APPLICANT`, relevant to the applicant's own `literate` answer captured earlier in the form but not cross-validated against it, since the form itself prints no such cross-reference).\n\n7. **Postal-address fields modelled as unconditionally optional.** Unlike the Physical Address fields (required — every applicant has a physical address), the source prints no explicit optionality marker for Postal Address, but a P.O. Box/Bag arrangement is not universal; modelled as optional per this registry's general convention of treating a secondary/supplementary address block as optional absent an explicit required marker.\n\n## Conformance\n\n3 valid mock scenarios (a first-time \"L\" learner's-licence citizen applicant with no existing licence; a Botswana-licence-holder applying for an additional class, existing-licence fields populated; a non-citizen foreign-licence-to-Botswana-card conversion applicant using the passport field, reference details, and the supporting document) plus 13 mutation-control fixtures (a missing statically-required field for each of `applicationType`, `surname`, `firstNames`, `gender`, `dateOfBirth`, `literate`, `physicalAddressPlotNo`, and `licenceClassRequested`; an invalid `applicationType` enum value; a missing `usesGlassesForDriving`; a missing `declarationReadMethod`; a missing `signature`; and an unknown top-level field) are committed under `conformance/bw/drts/driving-licence-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all fixtures: all 3 valid scenarios at 0 errors, all mutation controls each raising exactly 1 error. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-22"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "application_type",
+      "title": "Type of Application",
+      "fields": ["applicationType"],
+      "next": "individual_details"
+    },
+    {
+      "id": "individual_details",
+      "title": "Details of the Applicant — Individual Details",
+      "fields": ["nationalIdOmang", "passportNumberOrOther", "surname", "firstNames", "nationality", "gender", "dateOfBirth", "countryOfBirth", "literate"],
+      "next": "licence_details"
+    },
+    {
+      "id": "licence_details",
+      "title": "Details of the Applicant — Licence Details (where applicable)",
+      "fields": ["existingLicenceNumber", "existingLicenceClasses", "existingLicenceDriverRestrictions", "existingLicenceVehicleRestrictions", "existingLicenceDateOfIssue", "referenceDetails", "existingLicenceCountryOfIssue"],
+      "next": "addresses"
+    },
+    {
+      "id": "addresses",
+      "title": "Physical and Postal Address",
+      "fields": ["physicalAddressPlotNo", "physicalAddressStreetName", "physicalAddressLocationWard", "physicalAddressCityTownVillage", "postalAddressBoxOrBag", "postalAddressLocationWard", "postalAddressCityTownVillage", "telephoneNumber", "cellphoneNumber"],
+      "next": "licence_class_and_restrictions"
+    },
+    {
+      "id": "licence_class_and_restrictions",
+      "title": "Class of Motor Vehicles for which a Licence is Requested",
+      "fields": ["licenceClassRequested", "vehicleRestrictionRequested", "driverRestrictionRequested"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": ["usesGlassesForDriving", "declarationReadMethod", "place", "date", "signature"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "applicationType",
+      "label": "Type of application (please tick the applicable box)",
+      "type": "enum",
+      "required": true,
+      "description": "The transaction being requested. See this schema's own verification.notes Finding 1 for the reconstruction of this checkbox grid from the source's own 8-row x 2-column table.",
+      "sourceRef": "Page 1 of 4 — \"(Please tick (√) the applicable box)\"",
+      "validation": {
+        "enum": ["DRIVING_LICENCE_NEW", "DRIVING_LICENCE_CARD_RENEWAL", "PROVISIONAL_LEARNER_LICENCE", "ADDITIONAL_LICENCE_CLASS", "INSTRUCTOR_CERTIFICATE_NEW", "INSTRUCTOR_CERTIFICATE_RENEWAL", "CONVERSION_LICENCE_TO_CARD", "FOREIGN_TO_BOTSWANA_LICENCE", "PSV_TO_PRDP", "PRDP_RENEWAL", "PRDP_NEW", "DUPLICATE_ANY"]
+      }
+    },
+    {
+      "name": "nationalIdOmang",
+      "label": "National ID (Omang)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "For Botswana citizens. See this schema's own verification.notes Finding 3 for the disclosed, unenforced exclusivity with `passportNumberOrOther`.",
+      "sourceRef": "Page 1 of 4, Individual Details — \"National ID (Omang):\""
+    },
+    {
+      "name": "passportNumberOrOther",
+      "label": "Passport No./Others (Non Citizen only)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "For non-citizens. See this schema's own verification.notes Finding 3 for the disclosed, unenforced exclusivity with `nationalIdOmang`.",
+      "sourceRef": "Page 1 of 4, Individual Details — \"Passport No./Others (Non Citizen only):\""
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 of 4, Individual Details — \"Surname:\""
+    },
+    {
+      "name": "firstNames",
+      "label": "First Names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 of 4, Individual Details — \"First Names:\""
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 of 4, Individual Details — \"Nationality:\""
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 1 of 4, Individual Details — \"Gender: (Male Female)\"",
+      "validation": {
+        "enum": ["MALE", "FEMALE"]
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "description": "The source prints separate Day/Month/Year blanks; modelled as a single date value, the same collapsing convention this registry uses elsewhere for a printed Day/Month/Year triplet.",
+      "sourceRef": "Page 1 of 4, Individual Details — \"Date of Birth: Day: Month: Year:\""
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of Birth",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1 of 4, Individual Details — \"Country of Birth:\""
+    },
+    {
+      "name": "literate",
+      "label": "Literate",
+      "type": "boolean",
+      "required": true,
+      "description": "true for the printed \"YES\" option, false for \"NO\".",
+      "sourceRef": "Page 1 of 4, Individual Details — \"Literate: YES: NO:\""
+    },
+    {
+      "name": "existingLicenceNumber",
+      "label": "Foreign/Botswana Licence Number",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's existing (foreign or Botswana) driving licence number, whichever applies, per the source's own \"Please delete where inapplicable\" section caption. See this schema's own verification.notes Finding 4.",
+      "sourceRef": "Page 1 of 4, Licence Details — \"Foreign/Botswana Licence Number:\""
+    },
+    {
+      "name": "existingLicenceClasses",
+      "label": "Foreign/Botswana Driving Classes",
+      "type": "string",
+      "required": false,
+      "description": "The licence class(es) already held on the applicant's existing (foreign or Botswana) licence.",
+      "sourceRef": "Page 1 of 4, Licence Details — \"Foreign/Botswana Driving Classes:\""
+    },
+    {
+      "name": "existingLicenceDriverRestrictions",
+      "label": "Foreign/Driver Restrictions",
+      "type": "string",
+      "required": false,
+      "description": "The driver restriction(s) already endorsed on the applicant's existing licence, as printed on that licence — distinct from `driverRestrictionRequested`, which is the restriction code being requested for the new licence.",
+      "sourceRef": "Page 1 of 4, Licence Details — \"Foreign/Driver Restrictions:\""
+    },
+    {
+      "name": "existingLicenceVehicleRestrictions",
+      "label": "Foreign/Vehicle Restrictions",
+      "type": "string",
+      "required": false,
+      "description": "The vehicle restriction(s) already endorsed on the applicant's existing licence, as printed on that licence — distinct from `vehicleRestrictionRequested`, which is the restriction code being requested for the new licence.",
+      "sourceRef": "Page 1 of 4, Licence Details — \"Foreign/Vehicle Restrictions:\""
+    },
+    {
+      "name": "existingLicenceDateOfIssue",
+      "label": "Date of issue",
+      "type": "date",
+      "required": false,
+      "description": "The date the applicant's existing licence was issued. The source prints separate Day/Month/Year blanks; modelled as a single date value.",
+      "sourceRef": "Page 1 of 4, Licence Details — \"Date of issue (Day: Month: Year: )\""
+    },
+    {
+      "name": "referenceDetails",
+      "label": "Reference Details",
+      "type": "string",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 5. Accompanied by the `referenceDetailsConfirmation` document per the source's own printed note.",
+      "sourceRef": "Page 1 of 4, Licence Details — \"Reference Details*: *Please attach reference details and Confirmation from issuing Country!\""
+    },
+    {
+      "name": "existingLicenceCountryOfIssue",
+      "label": "Country of Issue",
+      "type": "string",
+      "required": false,
+      "description": "The country that issued the applicant's existing licence.",
+      "sourceRef": "Page 1 of 4, Licence Details — \"Country of Issue:\""
+    },
+    {
+      "name": "physicalAddressPlotNo",
+      "label": "Plot No.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 of 4, Physical Address — \"Plot No.:\""
+    },
+    {
+      "name": "physicalAddressStreetName",
+      "label": "Street Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 of 4, Physical Address — \"Street Name:\""
+    },
+    {
+      "name": "physicalAddressLocationWard",
+      "label": "Location/Ward",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 of 4, Physical Address — \"Location/Ward:\""
+    },
+    {
+      "name": "physicalAddressCityTownVillage",
+      "label": "City/Town/Village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 of 4, Physical Address — \"City/Town/Village:\""
+    },
+    {
+      "name": "postalAddressBoxOrBag",
+      "label": "P.O. Box/Bag",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 7.",
+      "sourceRef": "Page 1 of 4, Postal Address — \"P.O. Box/Bag:\""
+    },
+    {
+      "name": "postalAddressLocationWard",
+      "label": "Location/Ward",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1 of 4, Postal Address — \"Location/Ward:\""
+    },
+    {
+      "name": "postalAddressCityTownVillage",
+      "label": "City/Town/Village",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1 of 4, Postal Address — \"City/Town/Village:\""
+    },
+    {
+      "name": "telephoneNumber",
+      "label": "Tel No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1 of 4 — \"Tel No.:\""
+    },
+    {
+      "name": "cellphoneNumber",
+      "label": "Cellphone",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1 of 4 — \"Cellphone:\""
+    },
+    {
+      "name": "licenceClassRequested",
+      "label": "Class of Motor Vehicle for which a Licence is requested",
+      "type": "enum",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 2 for the single-selection scope and the class-code short descriptions' own source.",
+      "sourceRef": "Page 1 of 4 — \"Class of Motor Vehicles for which a Licence is requested:\"",
+      "validation": {
+        "enum": ["A1", "A", "B", "C1", "C", "EB", "EC1", "EC", "F", "H"]
+      }
+    },
+    {
+      "name": "vehicleRestrictionRequested",
+      "label": "Vehicle Restriction",
+      "type": "enum",
+      "required": false,
+      "description": "0 = None; 1 = Automatic transmission only; 2 = Electrically (Battery) powered vehicle; 3 = Additional/mounted fittings; 4 = Others (please specify). See this schema's own verification.notes Finding 2.",
+      "sourceRef": "Page 1 of 4 — \"Vehicle Restrictions\" column, codes 0-4",
+      "validation": {
+        "enum": ["0", "1", "2", "3", "4"]
+      }
+    },
+    {
+      "name": "driverRestrictionRequested",
+      "label": "Driver Restriction",
+      "type": "enum",
+      "required": false,
+      "description": "0 = None; 1 = Glasses/Contact Lenses; 2 = Physically disabled (with certified badge); 3 = Others (please specify). See this schema's own verification.notes Finding 2.",
+      "sourceRef": "Page 1 of 4 — \"Driver Restrictions\" column, codes 0-3",
+      "validation": {
+        "enum": ["0", "1", "2", "3"]
+      }
+    },
+    {
+      "name": "usesGlassesForDriving",
+      "label": "I use glasses for driving / I do not use glasses for driving",
+      "type": "boolean",
+      "required": true,
+      "description": "true selects the printed \"I use glasses for driving\" option, false selects \"I do not use glasses for driving\". See this schema's own verification.notes Finding 6.",
+      "sourceRef": "Page 2 of 4, Declaration — \"I use glasses for driving This declaration has been read to me,\""
+    },
+    {
+      "name": "declarationReadMethod",
+      "label": "I have read this declaration / this declaration has been read to me",
+      "type": "enum",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 6.",
+      "sourceRef": "Page 2 of 4, Declaration — \"I have read this declaration, This declaration has been read to me,\"",
+      "validation": {
+        "enum": ["SELF_READ", "READ_TO_APPLICANT"]
+      }
+    },
+    {
+      "name": "place",
+      "label": "Place",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 2 of 4, Declaration — \"Place:\""
+    },
+    {
+      "name": "date",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Page 2 of 4, Declaration — \"Date:\""
+    },
+    {
+      "name": "signature",
+      "label": "Signature of Applicant",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2 of 4, Declaration — \"Signature of Applicant:\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "referenceDetailsConfirmation",
+      "label": "Reference details and confirmation from issuing country",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "handling": "See this schema's own verification.notes Finding 5.",
+      "sourceRef": "Page 1 of 4, Licence Details — \"*Please attach reference details and Confirmation from issuing Country!\""
+    }
+  ]
+}
