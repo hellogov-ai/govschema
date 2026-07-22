@@ -4,7 +4,37 @@
 
 ## Executive Summary
 
-**83 jurisdictions** | **607 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**83 jurisdictions** | **608 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4383, "GovSchema Standard Research"): Jamaica's
+> Taxes vertical opens (4 of 6 for the jurisdiction at authoring time; now
+> 5 of 6 following the already-merged Visa update below)**, via
+> `jm/taj/individual-income-tax-return@1.0.0` — Tax Administration Jamaica's
+> (TAJ) Form IT01, "Annual Return of Income and Tax Payable, Individuals
+> (Self-Employed Persons)", a flat (non-AcroForm) return independently
+> re-fetched and re-hashed at `jamaicatax.gov.jm`, 174,411 bytes, sha256
+> `31bf9df3...`, byte-for-byte matching the GOV-4360 cycle's own banked
+> ~174KB estimate exactly. Consumes the Taxes candidate banked by the
+> GOV-4360 cycle (see the Known Gaps entry 0f below), chosen this cycle
+> over Jamaica's remaining open item (Visa) since that candidate's host and
+> file size had drifted materially since being banked, while Taxes verified
+> with zero drift. Models 49 directly-supplied `fields[]` across 5 steps
+> (General Information; Summary of Income; Deductions; Tax Computation and
+> Credits; Declaration), excluding every printed formula/subtotal line
+> computed by simple addition/subtraction or by applying a published tax
+> rate to another line (20 such lines, per this registry's standing closed
+> decision to defer calculated/derived fields, GSP-0013 §7, founder-
+> confirmed on GOV-302) and the form's own "FOR OFFICIAL USE" block. See
+> the document's own VERIFICATION.md for the full sourcing record and all
+> 8 disclosed findings, including a genuine Section D line-numbering
+> anomaly (Finding 1) and the deliberate omission of a `minimum: 0`
+> constraint on two lines the source's own notes describe as potentially
+> negative (Finding 3). Both validators pass at 606/606; `verify-sources.mjs`
+> scoped to this schema's directory reports all 3 cited URLs clear; 11
+> conformance fixtures (3 valid + 7 mutation-control + 1 unknown-field)
+> committed, all reproduced via a from-scratch mock validator. **Jamaica
+> now stands at 5 of 6 verticals** (Business Formation, Passport, DMV,
+> Taxes, and Visa); only National ID remains, a confirmed dead end.
 
 > **Update (2026-07-22, GOV-4399, "GovSchema Standard Research"): Kyrgyzstan
 > opens as the registry's 83rd jurisdiction, via Taxes (1 of 6)**, via
@@ -55,10 +85,9 @@
 > their intended semantics. 3 valid mock scenarios plus 12 mutation-control
 > fixtures and one unknown-field-rejected fixture reproduced via a
 > from-scratch mock validator. **Jamaica now stands at 5 of 6 verticals**
-> (Business Formation, Passport, DMV, Taxes — pending merge via GOV-4383 —
-> and Visa; only National ID remains, a confirmed dead end per the
-> GOV-4360 cycle's own screening). See the Visa vertical update and
-> CATALOG.md's Known Gaps entry 0f below.
+> (Business Formation, Passport, DMV, Taxes, and Visa; only National ID
+> remains, a confirmed dead end per the GOV-4360 cycle's own screening).
+> See the Visa vertical update and CATALOG.md's Known Gaps entry 0f below.
 
 > **Update (2026-07-22, GOV-4376, "GovSchema Standard Research"): Jamaica's
 > DMV vertical opens (3 of 6)**, via
@@ -16688,7 +16717,16 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (68/83 jurisdictions — 82%)
+### Taxes — Income Tax Return, Tax Filing (69/83 jurisdictions — 83%)
+
+> **Update (2026-07-22, GOV-4383, "GovSchema Standard Research"): Jamaica
+> opens this vertical (4/6 for the jurisdiction at authoring time; now 5/6
+> following the since-merged Visa update)**, via
+> `jm/taj/individual-income-tax-return@1.0.0` — Tax Administration
+> Jamaica's (TAJ) Form IT01, "Annual Return of Income and Tax Payable,
+> Individuals (Self-Employed Persons)" — see the Executive Summary update
+> above for the full sourcing record and the document's own
+> VERIFICATION.md.
 
 > **Update (2026-07-22, GOV-4399, "GovSchema Standard Research"): Kyrgyzstan
 > opens as the registry's 83rd jurisdiction via this vertical (1/6)**, via
@@ -20642,9 +20680,11 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     - **Taxes** — Tax Administration Jamaica's Form IT01, "Return of Income
       — Individuals", `jamaicatax.gov.jm`, ~174KB, dozens of line items
       (a full annual individual income tax return). **Update (GOV-4383,
-      2026-07-22): authored** as
-      `jm/taj/individual-income-tax-return@1.0.0`, pending merge (PR #663,
-      review gate GOV-4385) as of this entry.
+      2026-07-22): now authored** as
+      `jm/taj/individual-income-tax-return@1.0.0`, opening Jamaica's Taxes
+      vertical (4 of 6 at authoring time; now 5 of 6, this entry's last
+      open item, following the Visa update above) — see the Executive
+      Summary and Taxes vertical updates above.
     - **National ID — confirmed dead end.** Jamaica's National Identification
       and Registration Authority (NIRA) and the Electoral Office of Jamaica
       both issue identity credentials exclusively through in-person

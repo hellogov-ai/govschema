@@ -1,0 +1,477 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "jm/taj/individual-income-tax-return",
+  "version": "1.0.0",
+  "title": "Jamaica Annual Return of Income and Tax Payable for Individuals (Form IT01)",
+  "description": "Tax Administration Jamaica's (TAJ) \"IT01, Annual Return of Income and Tax Payable — Individuals (Self-Employed Persons)\" under the Income Tax Act, filed by self-employed individuals and by PAYE employees with additional income sources. Deepens Jamaica's Taxes vertical, consuming the STRONG banked candidate left open by the GOV-4360 cycle (CATALOG.md Known Gaps entry 0f). This schema models Section A (General Information); the directly-supplied lines of Section B (Summary of Income), Section C (Deductions), and Section D (Tax Computation and Credits); and Section E (Declaration, including the optional Representative's Details block). Every printed formula/subtotal line computed by simple addition or subtraction of other same-form lines (e.g. \"Gross Operating Profit (Subtract Line 8 from Line 7)\", \"Total Income (Add Lines 13, 16, 28, 29, 30, 31, 32, & 33)\") or by applying a published tax rate to another line (Lines 45-47) is excluded from `fields[]`, per this registry's standing closed decision to defer calculated/derived fields (GSP-0013 §7, founder-confirmed on GOV-302) — see this document's own VERIFICATION.md for the full list of excluded lines and the disclosed Section D line-numbering anomaly. This schema does not file the return itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Jamaica or Tax Administration Jamaica.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "JM",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Tax Administration Jamaica",
+    "abbreviation": "TAJ",
+    "url": "https://www.jamaicatax.gov.jm"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.jamaicatax.gov.jm/documents/10181/123967/it01.pdf/bd010927-29a5-48dc-afea-cf4ef85d3077",
+    "retrievedAt": "2026-07-22",
+    "documentRef": "Form No. IT01 (Revised 2013/11), \"Annual Return of Income and Tax Payable, Individuals (Self-Employed Persons)\""
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-22",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-22",
+    "notes": "GOV-4383 (\"GovSchema Standard Research\"), authored per the GOV-4360 cycle's own banked Jamaica Taxes backlog entry (CATALOG.md Known Gaps entry 0f: TAJ's Form IT01, ~174KB, dozens of line items). Re-scouted fresh this cycle rather than trusting the banked URL alone: the banked note gave only the host (`jamaicatax.gov.jm`) and an approximate byte count, not the exact path, so the live document link was independently relocated by search and re-fetched directly.\n\nIndependently re-fetched and re-hashed: `https://www.jamaicatax.gov.jm/documents/10181/123967/it01.pdf/bd010927-29a5-48dc-afea-cf4ef85d3077`, HTTP 200, `Content-Type: application/pdf`, 174,411 bytes — matching the banked cycle's own ~174KB estimate exactly. sha256 of the retrieved bytes: `31bf9df3b3a2be5300e69dc8cf4bd124e1daf206964e5e7c0f82b47965478bd6`. `Last-Modified: Fri, 06 Feb 2015`. No login/CAPTCHA/WAF gate; a plain unauthenticated `curl` with no session/cookie state reached it cleanly.\n\nExtraction method: `pdfjs-dist` (vendored at `/tmp/node_modules/pdfjs-dist`, CommonJS build at `legacy/build/pdf.js`) `getAnnotations()` confirmed zero `/Widget` annotations across all 5 pages — a genuine flat (non-AcroForm) specimen, not a fillable form, despite the PDF's own catalog carrying an `/AcroForm` dictionary reference. `getTextContent()` then read every text item's raw string and its `transform` x/y position across all 5 pages to reconstruct line-by-line layout (pages 1-2 are the return itself; pages 3-5 are the form's own \"Notes and Instructions\", prose guidance rather than applicant-supplied data, and are excluded from `fields[]`/`documents[]` entirely).\n\n## Document structure\n\nPage 1: Section A (General Information: Name, TRN, Home/Business Mailing Address, Trade Name, Occupation, New-Address/Revised-Return tick boxes) and Section B (Summary of Income, Lines 7-34). Page 2: Section C (Deductions, Lines 35-42), Section D (Tax Computation, Lines 01/02 and 43-47; Credits, Lines 48-53; Net Tax Payable, Lines 54-56), and Section E (Declaration, plus a Representative's Details block for agent/preparer-filed returns). Pages 3-5: prose completion notes, excluded.\n\n## Scope: excluded calculated/derived lines\n\nPer this registry's standing closed decision to defer calculated/derived fields (GSP-0013 §7, founder-confirmed on GOV-302 — the same precedent this registry's `zm/zra/individual-income-tax-return` already applies to its own formula lines), every printed line computed purely by adding/subtracting other same-form lines, or by applying a published tax rate to another line, is excluded from `fields[]`. Each excluded line's own formula is cited here so the gap is visible, not silent:\n\n- Line 9, Gross Operating Profit (Subtract Line 8 from Line 7)\n- Line 12, Total Expenses (Subtract Line 11 from Line 10)\n- Line 13, Net Profit (Subtract Line 12 from Line 9)\n- Line 16, Net Rental (Subtract Line 15 from Line 14)\n- Line 20, Total (Add Lines 17, 18 & 19)\n- Line 23, Total Income from Employments & Offices (Add Lines 20, 21 & 22)\n- Line 27, Total Deductions (Add Lines 24, 25 & 26)\n- Line 28, Net Income Arising from Employments & Offices (Subtract Line 27 from Line 23)\n- Line 34, Total Income (Add Lines 13, 16, 28, 29, 30, 31, 32, & 33)\n- Line 39, Total Deductions (Add Lines 35, 36, 37 & 38)\n- Line 40, Statutory Income before Donations (Subtract Line 39 from Line 34)\n- Line 42, Statutory Income after Donations (Subtract Line 41 from Line 40)\n- Line 43, Threshold plus dividends from companies resident in Jamaica (Add Lines 01 and 02)\n- Line 44, Statutory Income less threshold & dividends at Line 01 (Subtract Line 43 from Line 42)\n- Line 45, Tax on Statutory Income less threshold & dividends at Line 01 (Line 44 x Rate____%, the rate itself never a separately-numbered field)\n- Line 46, Tax on dividends received from companies resident in Jamaica (a published-rate calculation per the form's own notes, structurally the same class of exclusion as Line 45)\n- Line 47, Total Tax on Statutory Income (Add Lines 45 and 46)\n- Line 53, Total Credits (Add Lines 48, 49, 50, 51 & 52)\n- Line 54, NET TAX PAYABLE (Subtract Line 53 from Line 47)\n- Line 56, TAX PAYABLE/(REFUNDABLE) (Subtract Line 55 from Line 54)\n\nAttached supporting schedules the form references inline (\"Attach Schedule 1/2/3/4\", \"Attach P24/P24s/Certificates\") are not modelled as `documents[]` entries: their own detailed line items are not printed on this form, the same scope boundary `zm/zra/individual-income-tax-return` draws around its own excluded Schedules 1-4, and each referencing field's `sourceRef` cites the attachment inline instead.\n\n## Disclosed findings and interpretation choices\n\n1. **Section D's own line numbering genuinely restarts at 01/02 before continuing at 43** — confirmed via each text item's own y-coordinate (Lines 01/02 sit directly below the \"Section D - TAX COMPUTATION\" header, both above Line 43's own row), not a `pdfjs-dist` extraction artifact. Lines 01 (`dividendsReceivedResidentCompanies`) and 02 (`incomeAtNilRateThreshold`) are the two direct inputs Line 43 adds together.\n2. **`incomeAtNilRateThreshold` (Line 02) is modelled as a direct field, not excluded as calculated**, even though its value is looked up from a published year-by-year threshold table (page 4's own notes, e.g. \"2013 - $507,312\") rather than freely chosen by the filer: the source's own printed formula language (\"Subtract Line X from Line Y\", \"Add Lines X and Y\") never describes how Line 02 itself is derived — only how it is subsequently *used* by Line 43 — so Line 02 is a value the filer directly transcribes onto this form, structurally the same treatment this registry's `bw/burs/individual-tax-return` gives its own schedule-sourced `businessChargeableIncomeOrLoss`-class fields.\n3. **`adjustments` (Line 11) and `donations` (Line 41) are modelled without a `minimum: 0` constraint**, since the form's own notes for Line 11 state a net adjustment \"could result in an increase or reduction to profit\" and explicitly instruct that \"any capital gain should be deducted\" (i.e. the net figure can be negative), and Line 41's own computation (feeding a subtraction at Line 42) is not constrained non-negative by the source either — the same disclosed non-negative-constraint carve-out this registry's `zm/zra/individual-income-tax-return` already applies to its own `profitLossForYear` field (that document's Finding 8). Every other Section B/C/D money field is a plain income/expense/credit amount and is constrained `minimum: 0`.\n4. **`homeAddress` (Item 3a) is modelled `required: false`**, per the source's own qualifier \"(if different from 3b.)\" — the field is only completed when it differs from the required `businessMailingAddress` (Item 3b), and the source prints no separate boolean/checkbox this schema could gate on, the same no-printed-signal treatment `zm/zra/individual-income-tax-return`'s own Tax Agent block (that document's Finding 6) already uses for its own analogous ungated optional fields.\n5. **`newAddressIndicated` and `isRevisedReturn` (Item 6) are modelled as two independent booleans, not a mutually-exclusive enum**, since the source prints them as two separate tick boxes (\"New Address\" / \"Revised Return\") with no printed instruction restricting a filer to ticking only one.\n6. **Every Section B/C/D income, expense, and credit line is modelled `required: false`**, despite the form's own blanket instruction \"All sections MUST be completed\": no individual filer has income or deductions in every one of these categories in a given year, and the source provides no explicit \"NONE\"/zero-value convention distinguishing a genuinely-zero line from an omitted one (unlike, e.g., `bw/burs/individual-tax-return`'s own Guide, which explicitly instructs entering the word \"NONE\"). A GovSchema-driven submission's own omission of an inapplicable line is treated as the machine equivalent of leaving that line's box blank on the paper form.\n7. **The Representative's Details block (`preparerName` through `preparerDate`) is modelled bare-optional with no gating field**, since Section E prints no checkbox distinguishing a self-filed return from one completed by a representative/agent/paid preparer — only the prose instruction \"To be signed by Taxpayer only; Representatives, Agents and Paid Preparers please complete Representative's Details below\" — the same no-printed-signal convention as Finding 4 and `zm/zra/individual-income-tax-return`'s own Tax Agent block.\n8. **Excluded as official-use-only, not applicant-supplied data:** Section E's own \"FOR OFFICIAL USE\" block.\n\n## Conformance\n\n3 valid mock scenarios — `valid-self-employed-business-income` (a self-employed individual with Section B business income lines, Section C capital allowances and donations, and a taxpayer-signed declaration with no representative); `valid-employment-and-rental-income` (a PAYE employee with Section B employment and rental income lines, National Insurance and superannuation deductions, and PAYE tax credited); and `valid-agent-prepared-with-dividends-and-revised-return` (a revised return exercising `isRevisedReturn`, `dividendsReceivedResidentCompanies`/`incomeAtNilRateThreshold`, and the full Representative's Details block) — plus 7 mutation-control fixtures (one missing statically-required field from each of `yearOfAssessment`, `name`, `trn`, `businessMailingAddress`, `occupation`, `taxpayerSignature`, `declarationDate`) and one unknown-field-rejected fixture, committed under `conformance/jm/taj/individual-income-tax-return/1.0.0/`.\n\nAn ephemeral, from-scratch conformance checker (deriving required rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all 11 fixtures: all 3 valid scenarios at 0 errors, all 7 mutation controls each raising exactly 1 error, and the unknown-field fixture correctly rejected. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-22"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "general_information",
+      "title": "Section A: General Information",
+      "fields": ["yearOfAssessment", "name", "trn", "homeAddress", "businessMailingAddress", "tradeName", "occupation", "newAddressIndicated", "isRevisedReturn"],
+      "next": "summary_of_income"
+    },
+    {
+      "id": "summary_of_income",
+      "title": "Section B: Summary of Income",
+      "fields": ["grossReceiptsSalesIncome", "costOfSalesOperations", "businessAdministrativeExpenses", "adjustments", "grossRentalIncome", "rentalExpenses", "salaryWagesBonusFeesCommission", "cashAllowances", "annualValuePerquisites", "annualValueQuartersOrResidence", "incomeFromOtherEmployment", "employeeExpensesClaimed", "nationalInsuranceContributions", "allowableContributionsSuperannuationEsop", "partnershipIncome", "pensions", "dividendsInterestAnnuitiesDiscounts", "incomeSourcesOutsideIsland", "otherIncome"],
+      "next": "deductions"
+    },
+    {
+      "id": "deductions",
+      "title": "Section C: Deductions",
+      "fields": ["totalCapitalAllowances", "lossesFromPreviousYearsBroughtForward", "covenantedDonations", "exemptions", "donations"],
+      "next": "tax_computation_and_credits"
+    },
+    {
+      "id": "tax_computation_and_credits",
+      "title": "Section D: Tax Computation and Credits",
+      "fields": ["dividendsReceivedResidentCompanies", "incomeAtNilRateThreshold", "payeDeductedByEmployer", "doubleTaxationRelief", "taxDeductedDistributionsInterest", "taxReliefIncentiveIncome", "otherCredits", "estimatedTaxPaid"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Section E: Declaration",
+      "fields": ["taxpayerSignature", "declarationDate", "preparerName", "preparerAddress", "preparerContactNumber", "preparerTrn", "preparerSignature", "preparerDate"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "yearOfAssessment",
+      "label": "Year of Assessment",
+      "type": "integer",
+      "required": true,
+      "description": "The form pre-prints \"2 0\" and the filer completes the last two digits; modelled as the full four-digit year.",
+      "sourceRef": "Page 1 header — \"Year of Assessment\" / \"2 0 ___ ___\""
+    },
+    {
+      "name": "name",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Printed format: Last, First, Middle.",
+      "sourceRef": "Page 1, Section A, item 1 — \"Name(Last, First, Middle)\""
+    },
+    {
+      "name": "trn",
+      "label": "Taxpayer Registration Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section A, item 2 — \"Taxpayer Registration Number\""
+    },
+    {
+      "name": "homeAddress",
+      "label": "Home Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Only completed if different from Business Mailing Address; the source prints no checkbox to gate on. See this schema's own verification.notes Finding 4.",
+      "sourceRef": "Page 1, Section A, item 3a — \"Home Address (if different from 3b.)\" (Street No. and Name, Postal Zone, Parish)"
+    },
+    {
+      "name": "businessMailingAddress",
+      "label": "Business Mailing Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section A, item 3b — \"Business Mailing Address\" (Street No. and Name, Postal Zone, Parish)"
+    },
+    {
+      "name": "tradeName",
+      "label": "Trade Name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section A, item 4 — \"Trade Name\""
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, Section A, item 5 — \"Occupation\""
+    },
+    {
+      "name": "newAddressIndicated",
+      "label": "New Address",
+      "type": "boolean",
+      "required": false,
+      "description": "Modelled as an independent boolean; not mutually exclusive with isRevisedReturn. See this schema's own verification.notes Finding 5.",
+      "sourceRef": "Page 1, Section A, item 6 — \"Tick appropriate box: New Address\""
+    },
+    {
+      "name": "isRevisedReturn",
+      "label": "Revised Return",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Section A, item 6 — \"Tick appropriate box: Revised Return\""
+    },
+    {
+      "name": "grossReceiptsSalesIncome",
+      "label": "Gross Receipts/Sales/Income",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 7 — \"Gross Receipts/Sales/Income\""
+    },
+    {
+      "name": "costOfSalesOperations",
+      "label": "Cost of Sales/Operations",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 8 — \"Cost of Sales/Operations\""
+    },
+    {
+      "name": "businessAdministrativeExpenses",
+      "label": "Business/Administrative Expenses",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 10 — \"Business/Administrative Expenses\""
+    },
+    {
+      "name": "adjustments",
+      "label": "Adjustments",
+      "type": "number",
+      "required": false,
+      "description": "May be negative — the form's own notes describe a net adjustment that \"could result in an increase or reduction to profit\" and instruct that any capital gain be deducted. See this schema's own verification.notes Finding 3.",
+      "sourceRef": "Page 1, Section B, Line 11 — \"Adjustments\" (Attach Schedule 1)"
+    },
+    {
+      "name": "grossRentalIncome",
+      "label": "Gross Rental from Land, House or other Property",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 14 — \"Gross Rental from Land, House or other Property\" (Attach Schedule 1)"
+    },
+    {
+      "name": "rentalExpenses",
+      "label": "Rental Expenses",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 15 — \"Rental Expenses\""
+    },
+    {
+      "name": "salaryWagesBonusFeesCommission",
+      "label": "Salary, Wages, Bonus, Fees, Commission",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 17 — \"Salary, Wages, Bonus, Fees, Commission\" (Attach P24)"
+    },
+    {
+      "name": "cashAllowances",
+      "label": "Cash Allowances (Travelling, housing, entertainment, etc.)",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 18 — \"Cash Allowances(Travelling, housing, entertainment, etc.)\""
+    },
+    {
+      "name": "annualValuePerquisites",
+      "label": "Annual Value Perquisites (Car, credit cards, etc.)",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 19 — \"Annual Value Perquisites(Car, credit cards, etc.)\""
+    },
+    {
+      "name": "annualValueQuartersOrResidence",
+      "label": "Annual Value of Quarters or Residence",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "description": "See notes for calculation.",
+      "sourceRef": "Page 1, Section B, Line 21 — \"Annual Value of Quarters or Residence(See notes for calculation)\""
+    },
+    {
+      "name": "incomeFromOtherEmployment",
+      "label": "Income from other Employment (that is, Other Employers)",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 22 — \"Income from other Employment(that is, Other Employers)\" (Attach P24s)"
+    },
+    {
+      "name": "employeeExpensesClaimed",
+      "label": "Expenses Claimed",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 24 — \"DEDUCT: Expenses Claimed\" (Attach Schedule 3 — Employee Expenses Claim)"
+    },
+    {
+      "name": "nationalInsuranceContributions",
+      "label": "National Insurance Contributions",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 25 — \"National Insurance Contributions\""
+    },
+    {
+      "name": "allowableContributionsSuperannuationEsop",
+      "label": "Allowable Contributions (Superannuation & ESOP)",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 26 — \"Allowable Contributions(Superannuation & ESOP)\""
+    },
+    {
+      "name": "partnershipIncome",
+      "label": "Partnership Income",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 29 — \"Partnership Income\""
+    },
+    {
+      "name": "pensions",
+      "label": "Pensions",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 30 — \"Pensions\" (Attach Certificates)"
+    },
+    {
+      "name": "dividendsInterestAnnuitiesDiscounts",
+      "label": "Dividends, Interest, Annuities, and Discounts",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 31 — \"Dividends, Interest, Annuities, and Discounts\" (Attach Schedule 4)"
+    },
+    {
+      "name": "incomeSourcesOutsideIsland",
+      "label": "Sources outside the Island",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 32 — \"Sources outside the Island\" (Attach Schedule 4)"
+    },
+    {
+      "name": "otherIncome",
+      "label": "Other Income",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 1, Section B, Line 33 — \"Other Income\" (Attach Schedule 4)"
+    },
+    {
+      "name": "totalCapitalAllowances",
+      "label": "Total Capital Allowances",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 2, Section C, Line 35 — \"Total Capital Allowances\" (Business & Rental Assets — Attach Schedule 2)"
+    },
+    {
+      "name": "lossesFromPreviousYearsBroughtForward",
+      "label": "Losses from Previous Years",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "description": "Brought forward.",
+      "sourceRef": "Page 2, Section C, Line 36 — \"Losses from Previous Years(Brought forward)\""
+    },
+    {
+      "name": "covenantedDonations",
+      "label": "Covenanted Donations",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 2, Section C, Line 37 — \"Covenanted Donations\" (Attach Schedule 4)"
+    },
+    {
+      "name": "exemptions",
+      "label": "Exemptions (Pension, Age Relief, etc.)",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "description": "See notes.",
+      "sourceRef": "Page 2, Section C, Line 38 — \"Exemptions (Pension, Age Relief, etc.)(See notes)\""
+    },
+    {
+      "name": "donations",
+      "label": "Donations",
+      "type": "number",
+      "required": false,
+      "description": "See notes for calculation. May be negative — see this schema's own verification.notes Finding 3.",
+      "sourceRef": "Page 2, Section C, Line 41 — \"Donations(See notes for calculation)\""
+    },
+    {
+      "name": "dividendsReceivedResidentCompanies",
+      "label": "Dividends received from companies resident in Jamaica",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "description": "Printed as Section D's own Line 01, ahead of Line 43 rather than sequentially numbered. See this schema's own verification.notes Finding 1.",
+      "sourceRef": "Page 2, Section D, Line 01 — \"Dividends received from companies resident in Jamaica\""
+    },
+    {
+      "name": "incomeAtNilRateThreshold",
+      "label": "Amount of Income at Nil Rate (Threshold)",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "description": "Looked up from a published year-by-year threshold table (see the form's own notes); printed as Section D's own Line 02, ahead of Line 43 rather than sequentially numbered. See this schema's own verification.notes Findings 1 and 2.",
+      "sourceRef": "Page 2, Section D, Line 02 — \"Amount of Income at Nil Rate(See notes)(Threshold)\""
+    },
+    {
+      "name": "payeDeductedByEmployer",
+      "label": "P.A.Y.E. Tax Deducted by Employer",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 2, Section D, Line 48 — \"P.A.Y.E. Tax Deducted by Employer\" (Per P24)"
+    },
+    {
+      "name": "doubleTaxationRelief",
+      "label": "Double Taxation Relief",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 2, Section D, Line 49 — \"Double Taxation Relief\""
+    },
+    {
+      "name": "taxDeductedDistributionsInterest",
+      "label": "Tax Deducted from Distributions & Interest Received",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "description": "This Distributions does not include Dividends.",
+      "sourceRef": "Page 2, Section D, Line 50 — \"Tax Deducted from Distributions & Interest Received(This Distributions does not include Dividends)\" (Attach Certificates)"
+    },
+    {
+      "name": "taxReliefIncentiveIncome",
+      "label": "Tax Relief in respect of Incentive Income",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 2, Section D, Line 51 — \"Tax Relief in respect of Incentive Income\""
+    },
+    {
+      "name": "otherCredits",
+      "label": "Other Credits",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "description": "Not including refunds claimed from previous years.",
+      "sourceRef": "Page 2, Section D, Line 52 — \"Other Credits(Not including refunds claimed from previous years)\""
+    },
+    {
+      "name": "estimatedTaxPaid",
+      "label": "Estimated Tax Paid",
+      "type": "number",
+      "required": false,
+      "validation": { "minimum": 0 },
+      "sourceRef": "Page 2, Section D, Line 55 — \"Estimated Tax Paid\""
+    },
+    {
+      "name": "taxpayerSignature",
+      "label": "Taxpayer's Signature",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Section E is to be signed by the Taxpayer only; Representatives, Agents and Paid Preparers complete the Representative's Details block instead.",
+      "sourceRef": "Page 2, Section E — \"Taxpayer's Signature\""
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Page 2, Section E — \"Date\" (beside the Taxpayer's Signature)"
+    },
+    {
+      "name": "preparerName",
+      "label": "Preparer's Name (Individual/Firm)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Representative's Details, completed only if this return was prepared by a person other than the Taxpayer. No printed checkbox distinguishes a self-filed return; see this schema's own verification.notes Finding 7.",
+      "sourceRef": "Page 2, Section E — \"Preparer's Name (Individual/Firm)\""
+    },
+    {
+      "name": "preparerAddress",
+      "label": "Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section E, Representative's Details — \"Address\""
+    },
+    {
+      "name": "preparerContactNumber",
+      "label": "Contact Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section E, Representative's Details — \"Contact Number\""
+    },
+    {
+      "name": "preparerTrn",
+      "label": "TRN",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section E, Representative's Details — \"TRN\""
+    },
+    {
+      "name": "preparerSignature",
+      "label": "Signature",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section E, Representative's Details — \"Signature\""
+    },
+    {
+      "name": "preparerDate",
+      "label": "Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Page 2, Section E, Representative's Details — \"Date\""
+    }
+  ]
+}
