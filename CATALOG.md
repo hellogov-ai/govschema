@@ -4,7 +4,34 @@
 
 ## Executive Summary
 
-**80 jurisdictions** | **596 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**80 jurisdictions** | **597 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4314, "GovSchema Standard Research"): Botswana
+> DMV opens (2 of 6)**, via `bw/drts/driving-licence-application@1.0.0` —
+> the Department of Road Transport and Safety's "Application for a
+> Botswana Driving Licence/Permit" (Form DL 1). Rather than scouting a new
+> jurisdiction from scratch, this cycle deepened Botswana's own
+> pre-scouted, STRONG banked backlog left open by the GOV-4307 cycle below
+> (Visa, DMV, Passport) — Form DL1 chosen among the three for the smallest
+> source file (38,662 bytes). Independently re-fetched and re-hashed
+> (`https://www.gov.bw/sites/default/files/2019-12/Form_DL1_1.pdf`, HTTP
+> 200, byte-for-byte match with the prior cycle's own reported size, sha256
+> `3a17d1d4c93475e56f13649a1164fd7f85acdcae45d41c8661df92174384c665`) and
+> extracted via `pdfjs-dist`. This flat, non-AcroForm PDF's 2 physical pages
+> are each a landscape double-page spread printing 4 logical form pages
+> (identified by each logical page's own printed "Page N of 4" footer, and
+> cross-checked visually by rendering to PNG via `pdfjs-dist` +
+> `node-canvas`). Models 34 fields across 6 steps (Type of Application;
+> Individual Details; Licence Details; Physical and Postal Address; Class
+> of Motor Vehicles and Restrictions Requested; Declaration) covering the
+> applicant-facing logical pages 1 and 2, excluding the purely informational
+> licence-class reference table (page 3) and the police-officer/official-use
+> blocks (page 4). See the document's own VERIFICATION.md for the full
+> sourcing record and 7 disclosed findings, including the reconstruction of
+> a 12-option application-type checkbox grid and the disclosed "at least
+> one of Omang/passport" GSP-0013 grammar gap. Botswana's other two
+> disclosed-STRONG verticals (Visa, Passport) remain open backlog for a
+> future cycle — see the Known Gaps section below.
 
 > **Update (2026-07-22, GOV-4307, "GovSchema Standard Research"): Botswana
 > opens as the registry's 80th jurisdiction — Taxes (1 of 6)**, via
@@ -14552,7 +14579,19 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (58/78 jurisdictions — 74%)
+### DMV — Vehicle Registration, Licensing, Permits (59/80 jurisdictions — 74%)
+
+> **Update (2026-07-22, GOV-4314, "GovSchema Standard Research"): Botswana's
+> DMV vertical opens (2 of 6)**, via
+> `bw/drts/driving-licence-application@1.0.0` — the Department of Road
+> Transport and Safety's "Application for a Botswana Driving Licence/Permit"
+> (Form DL 1). See the Executive Summary's GOV-4314 update above and the
+> document's own VERIFICATION.md for the full sourcing record, including
+> the 7 disclosed source-fidelity findings. Botswana's other two
+> disclosed-STRONG verticals (Visa, Passport) remain open backlog. Numerator
+> updated from 58 to 59; denominator corrected from 78 to 80 to match the
+> registry's current total jurisdiction count (this section's own
+> denominator had lagged behind the last few new-jurisdiction cycles).
 
 > **Update (2026-07-21, GOV-4239, "GovSchema Standard Research"): Malta's
 > DMV vertical opens (5 of 6)**, via
@@ -19628,7 +19667,7 @@ now closed.
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **BW** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **BW** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 14 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
@@ -20044,10 +20083,11 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       VERIFICATION.md). Albania's other five verticals (DMV, Business
       Formation, Visa, Passport, National ID) remain confirmed dead ends
       per this same GOV-4271 screening pass.
-0e. **New-jurisdiction candidates scouted this cycle (GOV-4307, 2026-07-22)
-    — Botswana now opened via Taxes, its other three STRONG verticals left
-    as banked backlog; Uganda screened as a ready-to-author 3-of-6
-    candidate for a future cycle; Bolivia confirmed weak:**
+0e. **New-jurisdiction candidates scouted the GOV-4307 cycle (2026-07-22)
+    — Botswana opened via Taxes, then deepened to DMV (GOV-4314,
+    2026-07-22); Visa and Passport remain STRONG banked backlog; Uganda
+    screened as a ready-to-author 3-of-6 candidate for a future cycle;
+    Bolivia confirmed weak:**
     - **Botswana** — screened across all six verticals via an independent
       research agent, then independently re-verified. Four verticals came
       back STRONG, unauthenticated and ungated: **Taxes** (BURS Form ITA
@@ -20059,7 +20099,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       numbered fields); **DMV** (Form DL1, "Application for a Botswana
       Driving Licence/Permit," Department of Road Transport and Safety,
       `gov.bw/sites/default/files/2019-12/Form_DL1_1.pdf`, HTTP 200, 38KB,
-      full vehicle-class table); **Passport** (Form PP1 Rev, Department of
+      full vehicle-class table — **now authored (GOV-4314, 2026-07-22)** as
+      `bw/drts/driving-licence-application@1.0.0`, see the Executive Summary
+      and DMV vertical updates above); **Passport** (Form PP1 Rev, Department of
       Immigration and Citizenship, mirrored unauthenticated on Botswana's
       own embassy site since `gov.bw` WAF-blocks that particular path
       directly — `botswanaembassy.org/sites/default/files/documents/
@@ -20069,7 +20111,8 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       post-incorporation maintenance/IP forms are downloadable from
       `cipa.co.bw/forms-downloads-2`) and **National ID** (Omang, in-person
       only at civil registration offices, no downloadable form found) are
-      confirmed dead ends. Visa, DMV, and Passport remain open, STRONG,
+      confirmed dead ends. **Update (GOV-4314, 2026-07-22): DMV is now
+      authored**, see above. Visa and Passport remain open, STRONG,
       ready-to-author backlog for a future cycle.
     - **Uganda** — screened across all six verticals. Three verticals came
       back STRONG: **Business Formation** (URSB's "Statement of
