@@ -6,6 +6,29 @@
 
 **84 jurisdictions** | **609 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-22, GOV-4424, "GovSchema Standard Research"): no new
+> schema authored directly by this cycle — Senegal's remaining five
+> verticals were screened fresh and found dead-end/inconclusive; three new
+> jurisdiction candidates were scouted, and the strongest (Paraguay, 4 of 6
+> STRONG) was delegated for authoring as GOV-4427.** See Known Gaps entry 0i below for the
+> full record: Senegal's Taxes, Business Formation, DMV, Passport, and
+> National ID verticals are now all confirmed dead-end or inconclusive
+> (DGID, APIX, and DAF/interior-ministry sources all route through
+> in-person or login-gated e-services; MITTD's own domain no longer serves
+> its content). Paraguay (DNIT, SUACE, a municipal DMV form, and MRE Visa
+> all independently fetched and confirmed STRONG), Namibia (NamRA, BIPA,
+> and MHAISS Visa STRONG; Passport/National ID/DMV dead-end), and
+> Tajikistan (Tax Committee, one-stop-shop registrar, and the internal
+> passport/national-ID form STRONG; DMV/Visa/foreign-passport dead-end or
+> JS-SPA-gated) were each screened across all six verticals via independent
+> research agents with real HTTP fetches, not guesses. Paraguay's 4-of-6
+> showing is the strongest since Botswana's; its Taxes vertical (DNIT
+> Formulario N.515) was delegated to a child authoring issue rather than
+> authored in this same cycle, per this routine's own precedent that a
+> research cycle finding strong candidates should delegate + close rather
+> than pivot into authoring inline when the wake is scoped to the research
+> issue itself.
+
 > **Update (2026-07-22, GOV-4417, "GovSchema Standard Research"): Senegal
 > opens as the registry's 84th jurisdiction, via Visa (1 of 6)**, via
 > `sn/mae/visa-application@1.0.0` — the Ministry of Foreign Affairs'
@@ -20803,28 +20826,124 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       usual staff-completed-form dead-end pattern — so these two verticals
       are likely, but not yet confirmed, dead ends. Re-check `grs.gov.kg`
       fresh in a future cycle before ruling out definitively.
-0h. **Senegal opened this cycle (GOV-4417, 2026-07-22) via Visa (1/6);
-    other five verticals unscreened or inconclusive, per the scouting
-    research agent's own report:**
+0h. **Senegal opened via Visa (GOV-4417, 2026-07-22, 1/6); remaining five
+    verticals screened fresh the following cycle (GOV-4424, 2026-07-22) and
+    all confirmed dead-end or inconclusive-with-broken-domain — entry now
+    closed, no further open backlog:**
     - **Visa — now authored** as `sn/mae/visa-application@1.0.0` (the
       Consulate General of Senegal in Paris' "Demande de Visa de Moins de
       Trois Mois") — see the Executive Summary and Visa vertical updates
       above.
-    - **Taxes** — DGID's forms page (`dgid.sn/formulaires/`) failed a plain
-      `curl` with a TLS certificate error (`unable to get local issuer
-      certificate`); not re-attempted with `-k` or via the alternate
-      `impotsetdomaines.gouv.sn`/`impotsetdomaines.sec.gouv.sn` mirrors this
-      cycle — inconclusive, not a confirmed dead end.
-    - **Business Formation** — APIX (the guichet unique) reportedly
-      publishes a "déclaration d'honneur" form; no direct PDF URL was
-      surfaced this cycle — inconclusive, worth a targeted APIX site
-      crawl.
-    - **DMV** — MITTD (`mittd.gouv.sn`) has driving-licence procedure pages
-      but no direct downloadable application PDF found this cycle —
-      inconclusive.
-    - **Passport and National ID** — not screened this cycle at all.
-    Re-screen all five in a future cycle before ruling any out; none is a
-    confirmed dead end.
+    - **Taxes — confirmed dead end (GOV-4424).** `impotsetdomaines.gouv.sn`
+      now redirects to `www.dgid.sn` (DGID and Domaines have merged onto one
+      site); every PDF linked from its `/formulaires/`,
+      `/fiches-de-renseigement/`, `/procedures-fiscales/`, and `/fiscalite/`
+      pages is an employer-side withholding statement, a land/domaine form,
+      or an informational flyer (`IR-FLYERS.pdf` extracts to zero
+      machine-readable text — an image-only promotional flyer). No
+      individual income-tax declaration form exists outside the
+      login-gated "Mon Espace Perso" e-service.
+    - **Business Formation — confirmed dead end (GOV-4424).** `apix.sn` is
+      unreachable (TCP connect timeout); its successor site
+      `investinsenegal.sn` links a BCE procedure checklist whose own text
+      states the "déclaration sur l'honneur" template is available only
+      in person at APIX/BCE or a notary — confirmed by the primary source
+      itself, not just an absence of a found link.
+    - **DMV — confirmed dead end (GOV-4424).** `mittd.gouv.sn` resolves but
+      serves an entirely unrelated microsite (a Ministry of Petroleum and
+      Energy "universal electricity access" page) — the domain is
+      misconfigured/repurposed and serves no MITTD content at all; the
+      `senegalservices.sn` citizen-services aggregator is unreachable
+      (TLS handshake reset).
+    - **Passport — confirmed dead end (GOV-4424).** The Consulate General
+      in Paris' own passport/ID/immigration-card pages are all checklists
+      of supporting documents only, with zero PDF/DOC links; text confirms
+      passports are biometric (fingerprint chip) and fabricated in Dakar,
+      with no paper application form. An adjacent "Carte Consulaire"
+      (diaspora registration card) form was found but is a distinct
+      document, not a passport or National ID match.
+    - **National ID — confirmed dead end (GOV-4424).** `daf.sn` is
+      unreachable; `interieur.gouv.sn`'s CNI page explicitly describes an
+      in-person-only process at commissariats/gendarmeries/préfectures,
+      with only a document checklist, no application form.
+0i. **Three new-jurisdiction candidates scouted in parallel (GOV-4424,
+    2026-07-22) after Senegal's remaining backlog came back empty —
+    Paraguay is the strongest (4/6 STRONG) and delegated for authoring as
+    GOV-4427; Namibia and Tajikistan (each 3/6 STRONG) banked as open
+    backlog for future cycles:**
+    - **Paraguay** — **Taxes**: DNIT Formulario N.515 ("IRP — Rentas de
+      Servicios Personales"), individual income-tax return, numbered
+      casillas 01-32,
+      `dnit.gov.py/documents/d/global/formulario-n-515-irp-rentas-derivadas-de-la-prestacion-de-servicios-personales-version-1`,
+      HTTP 200, `application/pdf`, 704,170 bytes. **Business Formation**:
+      SUACE Formulario N°1 (individual/EIRL business formalization),
+      numbered sections 1-7 with required-field markers,
+      `suace.gov.py/wp-content/uploads/2020/02/FORMULARIO-FISICA-03.02.2020.pdf`,
+      HTTP 200, 4,295,121 bytes. **DMV**: the Municipalidad de Asunción's
+      "Declaración Jurada, Licencia de Conducir" (covers new/renewal/
+      category-change/duplicate in one form, plus a page-2 medical
+      declaration),
+      `asuncion.gov.py/wp-content/uploads/2019/03/DECLARACION-JURADA-Licencia-de-conducir-def.pdf`,
+      HTTP 200, 155,460 bytes (municipal rather than a unified national
+      form — Paraguay issues driving licences at the municipal level).
+      **Visa**: MRE's "Formulario de Visa Titular/Dependiente 2021," a
+      directly downloadable `.docx` pair (distinct from the separate
+      login-gated online tourist/technical-visa system),
+      `mre.gov.py/wp-content/uploads/documentacion-dgp/Formulario_de_Visa_Titular_2021..docx`,
+      HTTP 200, 57,591 bytes. **Passport and National ID (cédula)** are
+      both confirmed dead ends: `identificaciones.gov.py`'s own pages are
+      informational-only, with the actual application routed through a
+      login-gated e-gov portal or an in-person office. Taxes was chosen
+      as the first vertical to author (delegated as GOV-4427, opening
+      Paraguay as the registry's 85th jurisdiction); Business Formation,
+      DMV, and Visa remain open, STRONG, ready-to-author backlog for
+      future cycles.
+    - **Namibia** — **Taxes**: NamRA's "Return of Income for Individuals"
+      (Form 6-0/0014C/1), served from the ITAS e-filing subdomain rather
+      than NamRA's own site,
+      `itas.namra.org.na/assets/documents/return-forms/Return_for_Individual.pdf`
+      (needs a browser-like User-Agent/Referer to clear a WAF 403 on a
+      plain curl), 1,097,728 bytes, `application/pdf`. **Business
+      Formation**: BIPA's CC1 Founding Statement (close corporation),
+      `bipa.na/download/cc1-founding-statement/?wpdmdl=6102`, HTTP 200,
+      215,552 bytes, genuine OLE2 `.doc`. **Visa**: MHAISS's "Visas
+      Application.pdf" from its Liferay document-library download-forms
+      section, HTTP 200, 82,771 bytes. **Passport, National ID, and DMV
+      (NaTIS)** are confirmed dead ends: Passport and National ID are
+      referenced by name but never linked in MHAISS's document library
+      (in-person/`eservices.mhaiss.gov.na`-portal only); `natis.com.na`
+      does not resolve, and the Roads Authority's (`ra.org.na`)
+      SharePoint-migration-era form links all 404 live, with real
+      transactions routed through the login-gated `online.ra.org.na`.
+      Not authored this cycle (Paraguay's stronger 4-of-6 showing was
+      prioritized); a ready-to-author 3-of-6 new-jurisdiction candidate
+      for a future cycle.
+    - **Tajikistan** — **Taxes**: the Tax Committee's (`andoz.tj`)
+      simplified-tax-system declaration ("Эъломияи андози низоми
+      содакардашуда"), a flat single-page form with numbered fields
+      001-007, `andoz.tj/docs/deklarasii_2022/Эъломия.pdf`, HTTP 200,
+      165,556 bytes. **Business Formation**: the same one-stop-shop
+      registrar's sole-proprietor registration form ("form_№2.pdf"),
+      6 pages, sections for applicant ID/address/TIN/activity type,
+      `andoz.tj/docs/shaakli-arizaho/form_№2.pdf`, HTTP 200, 644,554
+      bytes (a sibling legal-entity/LLC form, "form_№1.pdf," is also
+      confirmed). **National ID**: `passportvkd.tj` (the dedicated
+      Interior Ministry passport-registration-service site)'s
+      "Zamimaho.docx" appendices, containing "Shakli 1" — application for
+      the internal passport/шиноснома (Tajikistan's national-ID-equivalent
+      document, with no separate ID card), 34 numbered fields across
+      identity, biometric, and questionnaire sections,
+      `passportvkd.tj/wp-content/uploads/2019/11/Zamimaho.docx`, HTTP 200,
+      608,357 bytes, genuine Office Open XML `.docx`. **DMV, Visa, and
+      foreign Passport** are dead end or weak: no GAI/traffic-police
+      domain resolves and `mvd.tj`/`vkd.tj` carry only fee schedules; both
+      `evisa.tj` and `visa.gov.tj` are pure JS single-page apps with no
+      static form; foreign-passport issuance is described only
+      informationally across `consular.tj`/`passportvkd.tj`/`mfa.tj`, with
+      one embassy page's title literally promising a "PDF and MS Word"
+      form but no actual attachment link. Not authored this cycle; a
+      ready-to-author 3-of-6 new-jurisdiction candidate for a future
+      cycle.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
