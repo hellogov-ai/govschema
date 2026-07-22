@@ -1,0 +1,561 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "bw/dic/visa-application",
+  "version": "1.0.0",
+  "title": "Botswana Visa Application (Form 1)",
+  "description": "The Department of Immigration and Citizenship's \"Application for a Visa\" (Form 1), under the Immigration Act (Cap. 25:02, Regulation 7(1)), used by a foreign national requiring a visa to enter the Republic of Botswana. Deepens Botswana past its two already-published verticals (bw/burs/individual-tax-return, Taxes; bw/drts/driving-licence-application, DMV), opening the Visa vertical (3 of 6). This schema models the applicant's own identity and biographic particulars, the type of visa and number of entries requested, the applicant's address in Botswana and in their country of domicile, occupation, reasons for travel, the requested visa validity period, references in Botswana, funds available for the visit, passport/travel-document particulars, preferred method of communication, and the applicant's declaration and signature. It excludes the form's own \"For Official Use Only\" file-number box, which is office-completed, not applicant-supplied. Filing this application is an applicant's own action performed with the Department of Immigration and Citizenship; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Botswana or the Department of Immigration and Citizenship.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "BW",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Immigration and Citizenship",
+    "abbreviation": "DIC",
+    "url": "https://www.gov.bw"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.gov.bw/sites/default/files/2026-03/Application%20for%20a%20VISA%20Form%201_2.pdf",
+    "retrievedAt": "2026-07-22",
+    "documentRef": "Form 1, \"Application for a Visa\", Department of Immigration and Citizenship, native (searchable-text) PDF, 2 pages."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-22",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-22",
+    "notes": "GOV-4321 (\"GovSchema Standard Research\"). Rather than scouting a new jurisdiction from scratch, deepened Botswana's own pre-scouted, STRONG banked backlog left open by the GOV-4307 cycle (see CATALOG.md's Known Gaps entry 0e) — Form 1, one of two STRONG-but-unauthored Botswana verticals remaining (Visa, Passport) after the GOV-4314 cycle authored DMV.\n\nIndependently re-fetched and re-hashed rather than trusted from a prior cycle's own report alone: `https://www.gov.bw/sites/default/files/2026-03/Application%20for%20a%20VISA%20Form%201_2.pdf`, HTTP 200, `Content-Type: application/pdf`, 477,256 bytes (byte-for-byte match with the GOV-4307 cycle's own reported size), begins `%PDF-1.4`. Confirmed mechanically: zero `/AcroForm`, `/Widget`, and `/FT` occurrences in the raw bytes — a flat, print-and-fill specimen, not an interactive AcroForm PDF.\n\nExtraction method: text extracted via `pdfjs-dist`'s `getTextContent()` API (vendored at `/tmp/node_modules/pdfjs-dist` from prior cycles), grouped by y-coordinate row and sorted by x-coordinate. Both pages rendered cleanly to PNG via `pdfjs-dist` + `node-canvas` (no glyph-mapping failure this time, unlike the sibling `bw/drts/driving-licence-application` PDF) and used to visually confirm every checkbox grid described in the findings below.\n\nModels 49 `fields[]` across 11 steps plus 1 `documents[]` entry (the form's own \"Photo 3cm x 4cm\" placeholder box). Excludes only the \"For Official Use Only\"/\"File Number\" box, an office-completed field.\n\n## Disclosed source-fidelity findings\n\n1. **`sex` modelled as a required enum (`MALE`, `FEMALE`) despite the source printing a checkbox after \"Female\" only.** The rendered page confirms \"Sex: Male    Female☐\" — a printed checkbox glyph immediately follows \"Female\" but no corresponding box follows \"Male\" anywhere on the row (confirmed by a targeted crop of the rendered PNG, not just the text layer, ruling out a text-extraction gap). This is a genuine printing asymmetry in the source, not an extraction artifact; modelled as an ordinary two-value enum since the intended semantics (tick one of Male/Female) are unambiguous despite the missing box glyph.\n2. **`age` modelled as an optional integer, distinct from and not cross-validated against `dateOfBirth`.** Item 2 prints \"Age:\" with its own 3-box entry field labelled `Y Y Y` immediately to the left of \"Date of Birth:\" (which carries its own 8-box `D D M M Y Y Y Y` entry) — the `Y Y Y` caption under the Age boxes does not follow the same day/month/year convention as the adjacent Date of Birth boxes and most plausibly denotes a 1-3 digit age-in-years value, but the form gives no further explanation. Modelled as its own optional field per the source's own distinct box, without fabricating a cross-check against `dateOfBirth`.\n3. **`visaTypeRequired` (item 4(a)) modelled as a single-select required enum with 10 options (`DIPLOMATIC`, `OFFICIAL`, `EMPLOYMENT`, `BUSINESS`, `INVESTMENT`, `TOURIST`, `VISITOR`, `STUDY`, `TRANSIT`, `EMERGENCY`), each confirmed via the rendered image to carry its own printed checkbox.** `numberOfEntries` (item 4(b)) is modelled as its own separate single-select required enum (`SINGLE`, `MULTIPLE`), likewise each with its own confirmed checkbox — the two questions are printed side by side but are structurally independent selections, per this registry's own established single-selection-enum convention for tick-one-of-many rows (e.g. `bw/drts/driving-licence-application` Finding 1), since GSP-0009's field-type vocabulary has no multi-select/array primitive.\n4. **Item 11 (\"References in Country of Destination\") modelled as two independent, unconditionally optional free-text fields (`reference1Details`, `reference2Details`).** The source prints a single boxed area split into two side-by-side blank sub-boxes labelled only \"(1)\" and \"(2)\", captioned once at the section heading with \"(with Names, Physical Address, Telephone No, Residence Permit No, ID No)\" — no further column sub-division is printed inside either box, so each is modelled as one combined free-text field per the source's own layout, matching this registry's precedent for an ungated, unlabelled repeatable block (e.g. `pa/migracion/tourist-visa-application`'s `relative1NameRelationAddress`/`relative2NameRelationAddress`).\n5. **Item 12 (\"Please indicate what money or cash (amount) will be at your disposal\") modelled as four independent, unconditionally optional amount fields (`amountUSD`, `amountEUR`, `amountZAR`, plus `otherCurrencyName` and `otherCurrencyAmount`), not a single-select currency enum.** The rendered image confirms each of \"USD\", \"EUR\", \"ZAR\", and \"Other: ……\" is immediately followed by its own independent boxed amount-entry field, not a shared checkbox choice — an applicant may in principle declare funds in more than one currency. `otherCurrencyName` and `otherCurrencyAmount` are left independently optional rather than one gating the other, per this registry's own established avoidance of fabricating a `requiredWhen` tie between two co-located but not explicitly cross-referenced optional fields (see, e.g., `bw/drts/driving-licence-application` Finding 3's discussion of the `notEquals \"\"` anti-pattern).\n6. **Item 13's `passportValidUntil` and `returnVisaTo` fields modelled as unconditionally optional, disclosing an unexplained ambiguity.** Beneath the clearly-labelled \"Date of Issue\"/\"Date of Expiry\" pair, the source prints a further \"Valid Until:\" date box and a separate \"Return Visa to:\" free-text line, with no accompanying explanatory text distinguishing either from the passport's own already-captured expiry date or from the visa's own already-captured requested validity period (item 10). Modelled as their own distinct fields per the source's own distinct boxes, without fabricating an interpretation the source does not state.\n7. **`preferredCommunicationMethod` (item 14) modelled as a required single-select enum (`EMAIL`, `SMS`, `POST`), with `emailAddress`, `cellPhoneNumber`, `telephoneNumber`, and the four Present Postal Address sub-fields all modelled as unconditionally optional rather than gated via `requiredWhen` on the selected method.** The source visually groups the postal-address block under \"Post\" and situates \"Cell phone Number\"/\"Telephone Number\" on the same row as \"SMS\", but prints no explicit conditional cross-reference tying any contact field's requiredness to a specific checkbox selection (unlike, e.g., this registry's own genuinely gated fields elsewhere, which key off an explicit printed \"if\" condition) — following the same disclose-rather-than-fabricate precedent as Finding 5 above.\n8. **All Botswana-address and country-of-domicile-address sub-fields (Town/Village, Street/Ward, Plot/House No., Country) are modelled as required**, since items 5 and 6 print no optionality marker and, unlike the sibling `bw/drts/driving-licence-application`'s Postal Address (a genuinely secondary block), both addresses here are core to a visa applicant's identity and travel particulars.\n\n## Conformance\n\n3 valid mock scenarios (a single-entry tourist applicant with no existing Botswana visa history; a multiple-entry business applicant declaring funds in two currencies and both references; a transit applicant preferring SMS contact) plus 15 mutation-control fixtures (a missing statically-required field for each of `surname`, `firstName`, `dateOfBirth`, `sex`, `maritalStatus`, `nationality`, `visaTypeRequired`, `numberOfEntries`, `botswanaAddressTownVillage`, `occupation`, `reasonForTravel`, `passportNumber`, and `preferredCommunicationMethod`; an invalid `visaTypeRequired` enum value; and an unknown top-level field) are committed under `conformance/bw/dic/visa-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all fixtures: all 3 valid scenarios at 0 errors, all mutation controls each raising exactly 1 error. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-22"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "applicant_identity",
+      "title": "1-3. Name, Age/Date of Birth, Sex/Marital Status, Nationality",
+      "fields": ["surname", "firstName", "middleName", "previousMaidenSurname", "age", "dateOfBirth", "countryOfBirth", "placeOfBirth", "sex", "maritalStatus", "nationality"],
+      "next": "visa_details"
+    },
+    {
+      "id": "visa_details",
+      "title": "4. Type of Visa and Number of Entries",
+      "fields": ["visaTypeRequired", "numberOfEntries"],
+      "next": "addresses"
+    },
+    {
+      "id": "addresses",
+      "title": "5-6. Address in Botswana and Country of Domicile",
+      "fields": ["botswanaAddressTownVillage", "botswanaAddressStreetWard", "botswanaAddressPlotHouseNo", "domicileCountry", "domicileTownVillage", "domicileStreetWard", "domicilePlotHouseNo"],
+      "next": "occupation"
+    },
+    {
+      "id": "occupation",
+      "title": "7. Occupation",
+      "fields": ["occupation", "qualifications"],
+      "next": "travel_details"
+    },
+    {
+      "id": "travel_details",
+      "title": "8-9. Proposed Length of Stay and Reasons for Travel",
+      "fields": ["proposedLengthOfStayDays", "reasonForTravel"],
+      "next": "visa_validity"
+    },
+    {
+      "id": "visa_validity",
+      "title": "10. Requested Validity Period of Visa",
+      "fields": ["requestedValidityFrom", "requestedValidityTo"],
+      "next": "references"
+    },
+    {
+      "id": "references",
+      "title": "11. References in Country of Destination",
+      "fields": ["reference1Details", "reference2Details"],
+      "next": "financial_means"
+    },
+    {
+      "id": "financial_means",
+      "title": "12. Money or Cash at Disposal",
+      "fields": ["amountUSD", "amountEUR", "amountZAR", "otherCurrencyName", "otherCurrencyAmount"],
+      "next": "passport_details"
+    },
+    {
+      "id": "passport_details",
+      "title": "13. Particulars of Passport or Other Travel Documents",
+      "fields": ["passportNumber", "passportPlaceOfIssue", "passportDateOfIssue", "passportDateOfExpiry", "passportValidUntil", "returnVisaTo"],
+      "next": "communication"
+    },
+    {
+      "id": "communication",
+      "title": "14. Preferred Method of Communication",
+      "fields": ["preferredCommunicationMethod", "emailAddress", "cellPhoneNumber", "telephoneNumber", "postalAddressCountry", "postalAddressTownVillage", "postalAddressPOBoxOrBag", "postalAddressPostOfficeLocation"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": ["declarationDate", "signature"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 1, Name (in full) — \"Surname:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "firstName",
+      "label": "First Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 1, Name (in full) — \"First Name:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "middleName",
+      "label": "Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Item 1, Name (in full) — \"Middle Name:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "previousMaidenSurname",
+      "label": "Previous/Maiden Surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Item 1, Name (in full) — \"Previous/Maiden Surname:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "age",
+      "label": "Age",
+      "type": "integer",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 2 for the disclosed ambiguity in this field's printed box format relative to dateOfBirth.",
+      "sourceRef": "Item 2 — \"Age:\"",
+      "validation": { "minimum": 0, "maximum": 130 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Item 2 — \"Date of Birth:\""
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 2 — \"Country of Birth:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 2 — \"Place of Birth:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "See this schema's own verification.notes Finding 1 for the disclosed printed-checkbox asymmetry (only \"Female\" carries a printed box).",
+      "sourceRef": "Item 2 — \"Sex: Male / Female\"",
+      "validation": {
+        "enum": ["MALE", "FEMALE"]
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital Status",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Item 2 — \"Marital Status: Single / Married / Divorced / Separated / Widowed\"",
+      "validation": {
+        "enum": ["SINGLE", "MARRIED", "DIVORCED", "SEPARATED", "WIDOWED"]
+      }
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality (state name of country)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 3 — \"Nationality (state name of country):\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "visaTypeRequired",
+      "label": "Type of Visa required",
+      "type": "enum",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 3 for the single-selection-enum treatment of this checkbox row.",
+      "sourceRef": "Item 4(a) — \"Type of Visa required\"",
+      "validation": {
+        "enum": ["DIPLOMATIC", "OFFICIAL", "EMPLOYMENT", "BUSINESS", "INVESTMENT", "TOURIST", "VISITOR", "STUDY", "TRANSIT", "EMERGENCY"]
+      }
+    },
+    {
+      "name": "numberOfEntries",
+      "label": "Number of Entries",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Item 4(b) — \"Number of Entries: Single / Multiple\"",
+      "validation": {
+        "enum": ["SINGLE", "MULTIPLE"]
+      }
+    },
+    {
+      "name": "botswanaAddressTownVillage",
+      "label": "Address in Botswana — Town/Village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 5 — \"Address in Botswana: Town/Village:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "botswanaAddressStreetWard",
+      "label": "Address in Botswana — Street/Ward",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 5 — \"Street/Ward:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "botswanaAddressPlotHouseNo",
+      "label": "Address in Botswana — Plot/House No.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 5 — \"Plot/House No.\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "domicileCountry",
+      "label": "Address in Country of Domicile — Country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 6 — \"Address in Country of Domicile: Country:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "domicileTownVillage",
+      "label": "Address in Country of Domicile — Town/Village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 6 — \"Town/Village:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "domicileStreetWard",
+      "label": "Address in Country of Domicile — Street/Ward",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 6 — \"Street/Ward:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "domicilePlotHouseNo",
+      "label": "Address in Country of Domicile — Plot/House No.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 6 — \"Plot/House No.\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 7 — \"Occupation:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "qualifications",
+      "label": "Qualifications",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Item 7 — \"Qualifications:\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "proposedLengthOfStayDays",
+      "label": "Proposed Length of Stay (days)",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Item 8 — \"Proposed Length of Stay on whether travelling in transit without break of journey: ___ days.\"",
+      "validation": { "minimum": 0, "maximum": 9999 }
+    },
+    {
+      "name": "reasonForTravel",
+      "label": "Reasons in full for wishing to travel to the Republic of Botswana",
+      "type": "string",
+      "required": true,
+      "description": "Satisfactory evidence will be required as to the object of the proposed journey. Employees of firms or persons acting on behalf of firms must produce certificates from their employers as to the nature and physical address of the business on which they are proceeding abroad. Bankers reference may be required.",
+      "sourceRef": "Item 9 — \"Reasons in full for wishing to travel to the Republic of Botswana\"",
+      "validation": { "maxLength": 1000 }
+    },
+    {
+      "name": "requestedValidityFrom",
+      "label": "Requested Validity Period of Visa — From",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Item 10 — \"Requested Validity Period of Visa: From:\""
+    },
+    {
+      "name": "requestedValidityTo",
+      "label": "Requested Validity Period of Visa — To",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Item 10 — \"To:\""
+    },
+    {
+      "name": "reference1Details",
+      "label": "Reference (1) in Country of Destination",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 4. Combines Name, Physical Address, Telephone No, Residence Permit No, and ID No into one free-text field, per the source's own unlabelled combined box.",
+      "sourceRef": "Item 11 — \"References in Country of Destination (with Names, Physical Address, Telephone No, Residence Permit No, ID No): (1)\"",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "reference2Details",
+      "label": "Reference (2) in Country of Destination",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See reference1Details and this schema's own verification.notes Finding 4.",
+      "sourceRef": "Item 11 — \"(2)\"",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "amountUSD",
+      "label": "Money or Cash at Disposal — USD",
+      "type": "number",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 5 for why this is modelled as four independent amount fields rather than a single-select currency enum.",
+      "sourceRef": "Item 12 — \"USD\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "amountEUR",
+      "label": "Money or Cash at Disposal — EUR",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 12 — \"EUR\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "amountZAR",
+      "label": "Money or Cash at Disposal — ZAR",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 12 — \"ZAR\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "otherCurrencyName",
+      "label": "Money or Cash at Disposal — Other Currency",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Item 12 — \"Other: ……\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "otherCurrencyAmount",
+      "label": "Money or Cash at Disposal — Other Currency Amount",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Item 12 — \"Other: ……\" amount box",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Particulars of Passport — Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Item 13 — \"Number:\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "passportPlaceOfIssue",
+      "label": "Particulars of Passport — Place of Issue",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 13 — \"Place of Issue:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "passportDateOfIssue",
+      "label": "Particulars of Passport — Date of Issue",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Item 13 — \"Date of Issue:\""
+    },
+    {
+      "name": "passportDateOfExpiry",
+      "label": "Particulars of Passport — Date of Expiry",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Item 13 — \"Date of Expiry:\""
+    },
+    {
+      "name": "passportValidUntil",
+      "label": "Particulars of Passport — Valid Until",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "See this schema's own verification.notes Finding 6 for the disclosed ambiguity relative to passportDateOfExpiry and requestedValidityTo.",
+      "sourceRef": "Item 13 — \"Valid Until:\""
+    },
+    {
+      "name": "returnVisaTo",
+      "label": "Return Visa to",
+      "type": "string",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 6.",
+      "sourceRef": "Item 13 — \"Return Visa to:\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "preferredCommunicationMethod",
+      "label": "Preferred method of communication",
+      "type": "enum",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 7 for why the contact-detail fields below are unconditionally optional rather than requiredWhen-gated on this selection.",
+      "sourceRef": "Item 14 — \"Preferred method of communication: E-mail / SMS / Post\"",
+      "validation": {
+        "enum": ["EMAIL", "SMS", "POST"]
+      }
+    },
+    {
+      "name": "emailAddress",
+      "label": "E-mail",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Item 14 — \"E-mail\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "cellPhoneNumber",
+      "label": "Cell phone Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Item 14 — \"Cell phone Number:\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "telephoneNumber",
+      "label": "Telephone Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Item 14 — \"Telephone Number:\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "postalAddressCountry",
+      "label": "Present Postal Address — Country",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Item 14 — \"Present Postal Address: Country:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "postalAddressTownVillage",
+      "label": "Present Postal Address — Town/Village",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Item 14 — \"Town/Village:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "postalAddressPOBoxOrBag",
+      "label": "Present Postal Address — P.O. Box/P. Bag",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Item 14 — \"P.O. Box/P. Bag:\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "postalAddressPostOfficeLocation",
+      "label": "Present Postal Address — Post Office Location",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Item 14 — \"Post Office Location:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Declaration — \"Date:\""
+    },
+    {
+      "name": "signature",
+      "label": "Signature of Applicant",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Declaration — \"Signature of Applicant:\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "photograph",
+      "label": "Photo",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 1 — \"Photo 3cm x 4cm\" placeholder box"
+    }
+  ]
+}
