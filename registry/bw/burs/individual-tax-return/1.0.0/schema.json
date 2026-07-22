@@ -1,0 +1,908 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "bw/burs/individual-tax-return",
+  "version": "1.0.0",
+  "title": "Botswana Individual Tax Return (BURS Form ITA 20/96)",
+  "description": "The Botswana Unified Revenue Service's (BURS) \"Tax Return and Return of Other Information of an Individual\" (Form ITA 20/96), used by an individual taxpayer to declare personal particulars and all sources of income (business, farming, rental, employment, interest, property disposals, other income, and foreign investments), claim exempt income and deductible contributions/premiums, declare tax credits already deducted, answer general information questions, and make the accompanying signed declaration, for the tax year ended 30th June. Opens Botswana as the registry's 80th jurisdiction (Taxes, 1 of 6). This schema does not file the return itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Botswana or the Botswana Unified Revenue Service.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "BW",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Botswana Unified Revenue Service",
+    "abbreviation": "BURS",
+    "url": "https://www.burs.org.bw/"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.burs.org.bw/phocadownload/individual%20blank%20return.pdf",
+    "retrievedAt": "2026-07-22",
+    "documentRef": "Form ITA 20/96, \"Tax Return and Return of Other Information of an Individual\", Botswana Unified Revenue Service, 6 pages (2-page return form plus a 4-page completion guide), native (searchable-text) PDF."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-22",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-22",
+    "notes": "## Candidate selection\n\nGOV-4307 (\"GovSchema Standard Research\"). This cycle's own Known Gaps\nre-scan found the registry's existing 79-jurisdiction backlog largely\nresolved to confirmed dead ends at every near-complete jurisdiction\nscreened (AE Passport, BR/CH/PL/SK Visa, CZ Passport, GR National ID, NO\nPassport — all previously re-confirmed weak/dead-end across 2+ prior\ncycles each), so this cycle scouted new-jurisdiction candidates instead,\nper the standing routine's own \"prefer deepening an open backlog item;\notherwise scout new jurisdictions in parallel\" heuristic. Three\ncandidates were screened in parallel via independent research agents:\nBotswana, Uganda, and Bolivia, across all six verticals each. Botswana\ncame back the strongest by a wide margin — 4 of 6 verticals\n(Taxes, Visa, DMV, Passport) confirmed STRONG on first pass, only\nBusiness Formation (CIPA's initial registration is portal-gated; only\npost-incorporation maintenance forms are downloadable) and National ID\n(Omang, in-person only) dead ends. Uganda came back 3 of 6 STRONG\n(Business Formation, National ID, DMV); Bolivia came back weak (only a\nJPG-scanned Taxes form, every other vertical a hard SPA/login/timeout\nwall). Botswana was picked as the new 80th jurisdiction; its Taxes form\nwas chosen to author first per the scouting agent's own recommendation\n(cleanest unauthenticated 200 response, richest field set, and a\nbuilt-in Guide explaining every field) — see the Known Gaps section for\nBotswana's other three disclosed-STRONG verticals, left as open backlog\nfor a future cycle.\n\n## Reaching the live source\n\nIndependently re-fetched\n`https://www.burs.org.bw/phocadownload/individual%20blank%20return.pdf`\ndirectly (not just trusting the scouting agent's report):\n\n- HTTP 200, 148,353 bytes, no login/CAPTCHA/WAF gate — a plain\n  unauthenticated `curl` with a realistic desktop User-Agent reached it\n  cleanly.\n- sha256\n  `5480c72c7a78cae21ac8942855e5e74fccf04540522d185ebd38d2b3321f9ec8`.\n- PDF header `%PDF-1.6` at byte 0 — a genuine native (searchable-text)\n  PDF, confirmed by clean `pdfjs-dist` text-layer extraction across all 6\n  pages (no OCR/scan-image fallback needed).\n\n## Extraction method\n\nExtracted with `pdfjs-dist` (vendored from an existing scratch install at\n`/tmp/node_modules`, CommonJS build at `legacy/build/pdf.js`), reading\neach text item's raw string and its `transform` x/y position across all 6\npages. Also rendered pages 1-2 to PNG via `node-canvas`\n(`/tmp/node_modules/canvas`) at 2.5x scale to visually confirm table/grid\nrow structure — this environment's embedded-font glyph outlines did not\nrasterize (blank text, grid lines only), the same known limitation\ndocumented in this registry's `zm/zra/individual-income-tax-return`\nprecedent, so the rendered images were used only to inspect ruled-line\nrow counts, never as a substitute for the clean text-layer extraction\n(which read every field label correctly).\n\n## Document structure\n\nThe 6-page PDF is Form ITA 20/96 itself (pages 1-2, footer-unstamped)\nfollowed by its own 4-page \"Form ITA 20 (GUIDE) (2011)\" completion guide\n(pages 3-6). Page 1 covers Section A (Declaration of Personal\nParticulars) and the start of Section B (Income): B.1 Business, B.2\nFarming. Page 2 continues Section B: B.3 Rental Income, B.4 Employment\n(Remuneration and Benefits/Allowances), B.5 Interest (Building Society/\nBank/Other), B.6 Property Disposals, B.7 Other Income (three lettered\nrows, a=Pension/Annuity fixed, b/c free), B.8 Income from Foreign\nInvestments (three rows: Interest, Dividends, Business — for Botswana\ncitizens only); then Section C (Exempt Income), Section D (Claims:\nPension Fund Contributions, Retirement Annuity Premiums), Section E (Tax\nCredits), Section F (General Information, two Yes/No questions), and\nSection G (Declaration).\n\n## Scope\n\nModels the full 2-page return (Sections A-G) — unlike this registry's\nlarger multi-schedule tax-return precedents (e.g. Zambia's 19-page ITF\n46_1, Ukraine's DPS declaration with 10 companion schedules), this form's\nentire income-declaration structure fits on a single page (page 2) with\nno separate business/farming computation schedule to defer, so no\nfollow-on-schedule scoping exclusion was needed. Every printed section is\nmodelled; no section is deferred as out-of-scope.\n\nPer the Guide's own instruction (\"All numbered parts of [Section B] to be\ncompleted entering the word 'NONE' if you have no income from any\nparticular source\"), every Section B income-category field is modelled\n`required: false` — a GovSchema-driven submission's own omission of these\nfields is the machine equivalent of the source form's manual \"NONE\"\nconvention; this registry does not fabricate a value to represent\nabsence.\n\n## Disclosed findings and interpretation choices\n\n1. **`residentialAddress` collapses the form's own two alternative\n   printed formats into one field** — the source prints \"(a) House/Plot\n   Number, Name of Street, Name of Town — if you stay in town\" and \"(b)\n   House/Plot Number, Name of Ward, Name of Village — if you stay in a\n   village\" as two blank-line continuations of the same Sr No 2 item, not\n   two separate addresses; there is no printed town/village indicator\n   distinguishing two distinct values.\n2. **`daysPresentInBotswana`'s own printed sentence repeats \"...during\n   the year ended 30th June, ....\"**, which this schema treats as\n   referring to the same tax year already captured in `taxYearEnded`\n   (the form's own header blank), not a second, independent year field.\n3. **`employmentRemunerationPeriodEmployed` is modelled as free text**,\n   not a From/To date pair, since Section B.4(a)'s own column header\n   prints only \"Period Employed\" (unlike Section B.3 Rental Income's\n   explicit \"Period Let From/To\", which this schema does split into two\n   `date` fields).\n4. **Section B.7 Other Income's three lettered rows (a/b/c) are modelled\n   as three distinct field groups**, since the source genuinely prints\n   three separate blank rows lettered a/b/c — row a's \"Nature of Income\"\n   is fixed as \"Pension/Annuity\" per the printed label; rows b/c are\n   fully blank/free-text, per the Guide's own instruction to specify the\n   nature of any other income \"not disclosed in Part 1-6\" (excluding\n   dividends).\n5. **Section B.8 Income from Foreign Investments prints all three rows\n   labelled \"a.\"** (\"a. Interest\", \"a. Dividends\", \"a. Business\") rather\n   than a/b/c — read as a bullet-style list-marker artifact of the source\n   PDF's own layout, not literal repeated sub-item lettering, since each\n   row's own \"Nature of Income\" column value (Interest/Dividends/\n   Business) is already distinct and printed. Modelled as three\n   independent field groups keyed by that printed nature, consistent with\n   Section B.5's Interest a/b/c treatment. No `requiredWhen` gate ties\n   these to `countryOfCitizenship`, since the section's own \"(for\n   Botswana citizens only)\" qualifier is prose guidance, not a printed\n   boolean/checkbox this schema could condition on, and\n   `countryOfCitizenship` is free text rather than a Botswana/non-Botswana\n   enum.\n6. **`signedByAuthorisedAgent` is a disclosed directly-supplied boolean**,\n   modelling the source's own \"Taxpayer/Authorised Agent* *Delete as\n   appropriate\" manual strike-through convention — the same\n   no-printed-checkbox pattern this registry's `et/ics/passport-application`\n   and `zm/zra/individual-income-tax-return` (Tax Agent block) already use\n   for their own analogous fields.\n7. **The Section G declaration's own printed \"...of...\" blank is not\n   modelled as a second address field** — read as the same \"Address for\n   Service of Notice\" value already captured in Section A (Sr No 2.b),\n   restated within the sworn-declaration sentence's own grammar, not a\n   newly-collected value.\n8. **Excluded as official-use-only fields, not applicant-supplied data:**\n   page 1's \"For Office Use Only\" block (Issued From/Office Address\n   Stamp, Received/Tax Office Date Stamp).\n\n## Conformance\n\n3 valid mock scenarios — `valid-employment-and-interest-income` (an\nindividual with Section B.4 Employment income from one employer, Section\nB.5 Bank interest, and a signed declaration, no business/farming/rental\nincome populated); `valid-business-and-rental-income` (an individual with\nSection B.1 Business income, Section B.3 Rental income, Section D\nPension Fund contributions, and both Section F questions answered \"NO\");\nand `valid-agent-signed-with-gifted-property` (an amended-style return\nsigned by an authorised agent, exercising `signedByAuthorisedAgent`'s and\nboth Section F questions' `requiredWhen`-gated fields) — plus 9\nmutation-control fixtures (one missing statically-required field from\neach of `taxYearEnded`, `fullName`, `residentialAddress`,\n`countryOfCitizenship`, `daysPresentInBotswana`,\n`usedRentedPropertyInTaxYear`, `movablePropertyTransferredByGift`,\n`declarationDate`, `declarationSignature` — 9 fixtures) and one\nunknown-field-rejected fixture, committed under\n`conformance/bw/burs/individual-tax-return/1.0.0/`.\n\nAn ephemeral, from-scratch conformance checker (deriving required/\nrequiredWhen rules directly from this schema's own `fields[]`, discarded\nafter use, not committed) ran all 13 fixtures: all 3 valid scenarios at 0\nerrors, all 9 static-required mutation controls each raising exactly 1\nerror, the unknown-field fixture correctly rejected, and confirmed every\n`requiredWhen` field reference resolves to a real field name (0 dangling\nreferences). Validated clean with `node tools/validate.mjs` and\n`node tools/validate-ajv.mjs`, individually and as part of the full\nregistry run.\n"
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-22"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "personal_particulars",
+      "title": "Section A: Declaration of Personal Particulars",
+      "fields": [
+        "taxYearEnded",
+        "fullName",
+        "residentialAddress",
+        "addressForServiceOfNotice",
+        "telephoneWork",
+        "telephoneHome",
+        "spouseFullName",
+        "spousePostalAddress",
+        "countryOfCitizenship",
+        "nationalIdentityCardNumber",
+        "daysPresentInBotswana",
+        "lastReturnYearEnded",
+        "lastReturnTaxOffice"
+      ],
+      "next": "business_and_farming_income"
+    },
+    {
+      "id": "business_and_farming_income",
+      "title": "Section B.1-2: Business and Farming Income",
+      "fields": [
+        "businessNameAndAddress",
+        "businessNatureOfBusiness",
+        "businessProfitLossPerAccounts",
+        "businessChargeableIncomeOrLoss",
+        "farmingLocationOfFarm",
+        "farmingNatureOfFarming",
+        "farmingProfitLossPerAccounts",
+        "farmingChargeableIncomeOrLoss"
+      ],
+      "next": "other_income_categories"
+    },
+    {
+      "id": "other_income_categories",
+      "title": "Section B.3-8: Rental, Employment, Interest, Property Disposal, Other and Foreign Investment Income",
+      "fields": [
+        "rentalPropertyAddress",
+        "rentalPeriodLetFrom",
+        "rentalPeriodLetTo",
+        "rentalGrossRent",
+        "rentalChargeableIncomeOrLoss",
+        "employmentRemunerationEmployerName",
+        "employmentRemunerationPeriodEmployed",
+        "employmentNatureOfEmployment",
+        "employmentRemunerationBeforeTax",
+        "employmentBenefitsEmployerName",
+        "employmentBenefitsDescription",
+        "interestBuildingSocietyPayerName",
+        "interestBuildingSocietyGrossIncome",
+        "interestBuildingSocietyChargeableIncome",
+        "interestBankPayerName",
+        "interestBankGrossIncome",
+        "interestBankChargeableIncome",
+        "interestOtherPayerName",
+        "interestOtherGrossIncome",
+        "interestOtherChargeableIncome",
+        "propertyDisposalDescription",
+        "propertyDisposalDate",
+        "propertyDisposalSellingPrice",
+        "propertyDisposalChargeableIncome",
+        "otherIncomePensionAnnuityPayerName",
+        "otherIncomePensionAnnuityGrossIncome",
+        "otherIncomePensionAnnuityChargeableIncome",
+        "otherIncomeLine2NatureOfIncome",
+        "otherIncomeLine2PayerName",
+        "otherIncomeLine2GrossIncome",
+        "otherIncomeLine2ChargeableIncome",
+        "otherIncomeLine3NatureOfIncome",
+        "otherIncomeLine3PayerName",
+        "otherIncomeLine3GrossIncome",
+        "otherIncomeLine3ChargeableIncome",
+        "foreignInvestmentInterestGrossIncome",
+        "foreignInvestmentInterestAmountBroughtIntoBotswana",
+        "foreignInvestmentInterestChargeableIncome",
+        "foreignInvestmentDividendsGrossIncome",
+        "foreignInvestmentDividendsAmountBroughtIntoBotswana",
+        "foreignInvestmentDividendsChargeableIncome",
+        "foreignInvestmentBusinessGrossIncome",
+        "foreignInvestmentBusinessAmountBroughtIntoBotswana",
+        "foreignInvestmentBusinessChargeableIncome"
+      ],
+      "next": "exempt_income_and_claims"
+    },
+    {
+      "id": "exempt_income_and_claims",
+      "title": "Section C-D: Exempt Income and Claims",
+      "fields": [
+        "exemptIncomePayerName",
+        "exemptIncomeNature",
+        "exemptIncomeTotalAmount",
+        "pensionFundEmployerName",
+        "pensionFundName",
+        "pensionFundContributionsInTaxYear",
+        "retirementAnnuityInsurerName",
+        "retirementAnnuityPolicyNumber",
+        "retirementAnnuityPremiumsPaidInTaxYear"
+      ],
+      "next": "tax_credits_and_general_information"
+    },
+    {
+      "id": "tax_credits_and_general_information",
+      "title": "Section E-F: Tax Credits and General Information",
+      "fields": [
+        "taxCreditEmployerOrIncomeSourceName",
+        "taxCreditNatureOfIncome",
+        "taxCreditAmountOfTax",
+        "usedRentedPropertyInTaxYear",
+        "rentedPropertyDetails",
+        "movablePropertyTransferredByGift",
+        "giftedPropertyTransferorNameAndAddress"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Section G: Declaration",
+      "fields": [
+        "declarantFullName",
+        "declarationDate",
+        "declarationSignature",
+        "signedByAuthorisedAgent",
+        "authorisedAgentFullName"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "taxYearEnded",
+      "label": "Tax Year Ended 30th June",
+      "type": "integer",
+      "required": true,
+      "validation": {
+        "minimum": 1996
+      },
+      "sourceRef": "Page 1 header — \"TAX RETURN AND RETURN OF OTHER INFORMATION OF AN INDIVIDUAL FOR TAX YEAR ENDED 30TH JUNE, ....\""
+    },
+    {
+      "name": "fullName",
+      "label": "Full Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section A, Sr No 1 — \"FULL NAME:\""
+    },
+    {
+      "name": "residentialAddress",
+      "label": "Residential Address (not Postal Address)",
+      "type": "string",
+      "required": true,
+      "description": "The form prints two alternative blank-line formats for this single address: (a) House/Plot Number, Name of Street, Name of Town — if the filer stays in town; (b) House/Plot Number, Name of Ward, Name of Village — if the filer stays in a village. Modelled as one free-text field covering whichever format applies, since the form provides no separate town/village indicator distinguishing two distinct addresses.",
+      "sourceRef": "Page 1, Section A, Sr No 2.a — \"Residential Address (not Postal Address)\""
+    },
+    {
+      "name": "addressForServiceOfNotice",
+      "label": "Address for Service of Notice",
+      "type": "string",
+      "required": false,
+      "description": "Optional per the form's own layout: printed as a distinct blank beneath the residential address with no explicit mandatory marker, for filers whose notice address differs from their residential address.",
+      "sourceRef": "Page 1, Section A, Sr No 2.b — \"Address for Service of Notice\""
+    },
+    {
+      "name": "telephoneWork",
+      "label": "Telephone (Work)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section A, Sr No 3 — \"Telephone(W)\""
+    },
+    {
+      "name": "telephoneHome",
+      "label": "Telephone (Home)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section A, Sr No 3 — \"Telephone(H)\""
+    },
+    {
+      "name": "spouseFullName",
+      "label": "Full Name of Spouse (Mr/Mrs)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section A, Sr No 4 — \"Full Name of Spouse (Mr/Mrs)\""
+    },
+    {
+      "name": "spousePostalAddress",
+      "label": "Postal Address of Spouse",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section A, Sr No 4 — \"Postal Address\" (same line as spouse's full name)"
+    },
+    {
+      "name": "countryOfCitizenship",
+      "label": "Country of Citizenship",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, Section A, Sr No 5 — \"Country of Citizenship\""
+    },
+    {
+      "name": "nationalIdentityCardNumber",
+      "label": "National Identity Card No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Modelled optional: not every filer (e.g. a non-citizen resident taxpayer) necessarily holds a Botswana National Identity Card.",
+      "sourceRef": "Page 1, Section A, Sr No 5 — \"National Identity Card No.\""
+    },
+    {
+      "name": "daysPresentInBotswana",
+      "label": "Days present in Botswana during the tax year",
+      "type": "integer",
+      "required": true,
+      "validation": {
+        "minimum": 0,
+        "maximum": 366
+      },
+      "description": "The form's own printed sentence continues \"...during the year ended 30th June, ....\" — the same tax year already captured in taxYearEnded, so no separate year field is modelled here.",
+      "sourceRef": "Page 1, Section A, Sr No 6 — \"I was present in Botswana for ... days during the year ended 30th June, ...\""
+    },
+    {
+      "name": "lastReturnYearEnded",
+      "label": "Year ended 30th June of last Botswana Tax Return lodged",
+      "type": "integer",
+      "required": false,
+      "validation": {
+        "minimum": 1990
+      },
+      "description": "Left blank for a filer's first-ever Botswana tax return.",
+      "sourceRef": "Page 1, Section A, Sr No 7 — \"My last Botswana Tax Return for year ended 30th June ... was lodged in the ... Tax Office\""
+    },
+    {
+      "name": "lastReturnTaxOffice",
+      "label": "Tax Office where last return was lodged",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section A, Sr No 7 — \"...was lodged in the ... Tax Office\""
+    },
+    {
+      "name": "businessNameAndAddress",
+      "label": "Name and Address of Business",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section B.1 BUSINESS (Trade, Profession and Location) — \"Name and Address of Business\""
+    },
+    {
+      "name": "businessNatureOfBusiness",
+      "label": "Nature of Business",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section B.1 — \"Nature of Business\""
+    },
+    {
+      "name": "businessProfitLossPerAccounts",
+      "label": "Business Profit/Loss Per Accounts",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Page 1, Section B.1 — \"Profit/Loss Per Accounts\""
+    },
+    {
+      "name": "businessChargeableIncomeOrLoss",
+      "label": "Business Chargeable Income/Loss",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Page 1, Section B.1 — \"Chargeable Income/Loss\""
+    },
+    {
+      "name": "farmingLocationOfFarm",
+      "label": "Location of Farm",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section B.2 FARMING — \"Location of Farm\""
+    },
+    {
+      "name": "farmingNatureOfFarming",
+      "label": "Nature of Farming",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section B.2 — \"Nature of Farming\""
+    },
+    {
+      "name": "farmingProfitLossPerAccounts",
+      "label": "Farming Profit/Loss per Accounts",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Page 1, Section B.2 — \"Profit/Loss per Accounts\""
+    },
+    {
+      "name": "farmingChargeableIncomeOrLoss",
+      "label": "Farming Chargeable Income/Loss",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Page 1, Section B.2 — \"Chargeable Income/Loss\""
+    },
+    {
+      "name": "rentalPropertyAddress",
+      "label": "Address of Property (Rental Income)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section B.3 RENTAL INCOME — \"Address of Property\""
+    },
+    {
+      "name": "rentalPeriodLetFrom",
+      "label": "Rental Period Let — From",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Page 2, Section B.3 — \"Period Let From/To\""
+    },
+    {
+      "name": "rentalPeriodLetTo",
+      "label": "Rental Period Let — To",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Page 2, Section B.3 — \"Period Let From/To\""
+    },
+    {
+      "name": "rentalGrossRent",
+      "label": "Gross Rent",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.3 — \"Gross Rent\""
+    },
+    {
+      "name": "rentalChargeableIncomeOrLoss",
+      "label": "Rental Chargeable Income/Loss",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Page 2, Section B.3 — \"Chargeable Income/Loss\""
+    },
+    {
+      "name": "employmentRemunerationEmployerName",
+      "label": "Employer Name (Remuneration)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section B.4(a) EMPLOYMENT Remuneration — \"Name of Employer\""
+    },
+    {
+      "name": "employmentRemunerationPeriodEmployed",
+      "label": "Period Employed",
+      "type": "string",
+      "required": false,
+      "description": "Modelled as free text: the form prints a single \"Period Employed\" column header with no separate From/To sub-labels (unlike Section B.3's Rental Income, which does print \"Period Let From/To\").",
+      "sourceRef": "Page 2, Section B.4(a) — \"Period Employed\""
+    },
+    {
+      "name": "employmentNatureOfEmployment",
+      "label": "Nature of Employment",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section B.4(a) — \"Nature of Employment\""
+    },
+    {
+      "name": "employmentRemunerationBeforeTax",
+      "label": "Remuneration before Tax",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.4(a) — \"Remuneration before Tax\""
+    },
+    {
+      "name": "employmentBenefitsEmployerName",
+      "label": "Employer Name (Benefits and Allowances)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section B.4(b) EMPLOYMENT Benefits and Allowances — \"Name of Employer\""
+    },
+    {
+      "name": "employmentBenefitsDescription",
+      "label": "Description of Benefits and Allowances granted by the employer",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section B.4(b) — \"Description of Benefits and Allowances granted by the employer\""
+    },
+    {
+      "name": "interestBuildingSocietyPayerName",
+      "label": "Name of Payer — Building Society Interest",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section B.5.a INTEREST — \"Building Society\" / \"Name of Payer\""
+    },
+    {
+      "name": "interestBuildingSocietyGrossIncome",
+      "label": "Gross Income — Building Society Interest",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.5.a — \"Gross Income\""
+    },
+    {
+      "name": "interestBuildingSocietyChargeableIncome",
+      "label": "Chargeable Income — Building Society Interest",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.5.a — \"Chargeable Income\""
+    },
+    {
+      "name": "interestBankPayerName",
+      "label": "Name of Payer — Bank Interest",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section B.5.b INTEREST — \"Bank\" / \"Name of Payer\""
+    },
+    {
+      "name": "interestBankGrossIncome",
+      "label": "Gross Income — Bank Interest",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.5.b — \"Gross Income\""
+    },
+    {
+      "name": "interestBankChargeableIncome",
+      "label": "Chargeable Income — Bank Interest",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.5.b — \"Chargeable Income\""
+    },
+    {
+      "name": "interestOtherPayerName",
+      "label": "Name of Payer — Other Interest",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section B.5.c INTEREST — \"Other\" / \"Name of Payer\""
+    },
+    {
+      "name": "interestOtherGrossIncome",
+      "label": "Gross Income — Other Interest",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.5.c — \"Gross Income\""
+    },
+    {
+      "name": "interestOtherChargeableIncome",
+      "label": "Chargeable Income — Other Interest",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.5.c — \"Chargeable Income\""
+    },
+    {
+      "name": "propertyDisposalDescription",
+      "label": "Description of Property (Property Disposal)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section B.6 PROPERTY DISPOSALS (OTHER THAN GIFTED PROPERTY) — \"Description of Property\""
+    },
+    {
+      "name": "propertyDisposalDate",
+      "label": "Date of Disposal",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Page 2, Section B.6 — \"Date of Disposal\""
+    },
+    {
+      "name": "propertyDisposalSellingPrice",
+      "label": "Selling Price",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.6 — \"Selling Price\""
+    },
+    {
+      "name": "propertyDisposalChargeableIncome",
+      "label": "Chargeable Income (Property Disposal)",
+      "type": "number",
+      "required": false,
+      "sourceRef": "Page 2, Section B.6 — \"Chargeable Income\""
+    },
+    {
+      "name": "otherIncomePensionAnnuityPayerName",
+      "label": "Name of Payer — Pension/Annuity",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section B.7.a OTHER INCOME — \"Pension/Annuity\" / \"Name of Payer\""
+    },
+    {
+      "name": "otherIncomePensionAnnuityGrossIncome",
+      "label": "Gross Income — Pension/Annuity",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.7.a — \"Gross Income\""
+    },
+    {
+      "name": "otherIncomePensionAnnuityChargeableIncome",
+      "label": "Chargeable Income — Pension/Annuity",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.7.a — \"Chargeable Income\""
+    },
+    {
+      "name": "otherIncomeLine2NatureOfIncome",
+      "label": "Nature of Income (Other Income, line b)",
+      "type": "string",
+      "required": false,
+      "description": "Section B.7's own instruction (\"specify nature of income excluding dividends, see Guide\") applies: unlike line a (fixed as \"Pension/Annuity\"), this second blank row (\"b.\") carries no printed nature, so the filer supplies it.",
+      "sourceRef": "Page 2, Section B.7.b OTHER INCOME — \"Nature of Income\""
+    },
+    {
+      "name": "otherIncomeLine2PayerName",
+      "label": "Name of Payer (Other Income, line b)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section B.7.b — \"Name of Payer\""
+    },
+    {
+      "name": "otherIncomeLine2GrossIncome",
+      "label": "Gross Income (Other Income, line b)",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.7.b — \"Gross Income\""
+    },
+    {
+      "name": "otherIncomeLine2ChargeableIncome",
+      "label": "Chargeable Income (Other Income, line b)",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.7.b — \"Chargeable Income\""
+    },
+    {
+      "name": "otherIncomeLine3NatureOfIncome",
+      "label": "Nature of Income (Other Income, line c)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section B.7.c OTHER INCOME — \"Nature of Income\""
+    },
+    {
+      "name": "otherIncomeLine3PayerName",
+      "label": "Name of Payer (Other Income, line c)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section B.7.c — \"Name of Payer\""
+    },
+    {
+      "name": "otherIncomeLine3GrossIncome",
+      "label": "Gross Income (Other Income, line c)",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.7.c — \"Gross Income\""
+    },
+    {
+      "name": "otherIncomeLine3ChargeableIncome",
+      "label": "Chargeable Income (Other Income, line c)",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.7.c — \"Chargeable Income\""
+    },
+    {
+      "name": "foreignInvestmentInterestGrossIncome",
+      "label": "Gross Income — Foreign Investment Interest",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Section B.8 is explicitly scoped \"(for Botswana citizens only)\" on the form itself; not gated to countryOfCitizenship since that field is free text, not a Botswana/non-Botswana boolean.",
+      "sourceRef": "Page 2, Section B.8 INCOME FROM FOREIGN INVESTMENTS (for Botswana citizens only) — row \"Interest\", \"Gross Income\""
+    },
+    {
+      "name": "foreignInvestmentInterestAmountBroughtIntoBotswana",
+      "label": "Amount brought into Botswana — Foreign Investment Interest",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.8 — row \"Interest\", \"Amount brought into Botswana\""
+    },
+    {
+      "name": "foreignInvestmentInterestChargeableIncome",
+      "label": "Chargeable Income — Foreign Investment Interest",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.8 — row \"Interest\", \"Chargeable Income\""
+    },
+    {
+      "name": "foreignInvestmentDividendsGrossIncome",
+      "label": "Gross Income — Foreign Investment Dividends",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.8 — row \"Dividends\", \"Gross Income\""
+    },
+    {
+      "name": "foreignInvestmentDividendsAmountBroughtIntoBotswana",
+      "label": "Amount brought into Botswana — Foreign Investment Dividends",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.8 — row \"Dividends\", \"Amount brought into Botswana\""
+    },
+    {
+      "name": "foreignInvestmentDividendsChargeableIncome",
+      "label": "Chargeable Income — Foreign Investment Dividends",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.8 — row \"Dividends\", \"Chargeable Income\""
+    },
+    {
+      "name": "foreignInvestmentBusinessGrossIncome",
+      "label": "Gross Income — Foreign Investment Business",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.8 — row \"Business\", \"Gross Income\""
+    },
+    {
+      "name": "foreignInvestmentBusinessAmountBroughtIntoBotswana",
+      "label": "Amount brought into Botswana — Foreign Investment Business",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.8 — row \"Business\", \"Amount brought into Botswana\""
+    },
+    {
+      "name": "foreignInvestmentBusinessChargeableIncome",
+      "label": "Chargeable Income — Foreign Investment Business",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section B.8 — row \"Business\", \"Chargeable Income\""
+    },
+    {
+      "name": "exemptIncomePayerName",
+      "label": "Name of Payer (Exempt Income)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section C GROSS INCOME CLAIMED TO BE EXEMPT FROM TAX — \"Name of Payer\""
+    },
+    {
+      "name": "exemptIncomeNature",
+      "label": "Nature of Income (Exempt Income)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section C — \"Nature of Income\""
+    },
+    {
+      "name": "exemptIncomeTotalAmount",
+      "label": "Total Amount (Exempt Income)",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section C — \"Total Amount\""
+    },
+    {
+      "name": "pensionFundEmployerName",
+      "label": "Name of Employer (Pension Fund Contributions)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section D.1 CONTRIBUTIONS TO AN APPROVED PENSION FUND — \"Name of Employer\""
+    },
+    {
+      "name": "pensionFundName",
+      "label": "Name of Fund (Pension Fund Contributions)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section D.1 — \"Name of Fund\""
+    },
+    {
+      "name": "pensionFundContributionsInTaxYear",
+      "label": "Contributions made in the Tax Year",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "sourceRef": "Page 2, Section D.1 — \"Contributions made in the Tax Year: P...\""
+    },
+    {
+      "name": "retirementAnnuityInsurerName",
+      "label": "Name of Insurer (Retirement Annuity Scheme)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section D.2 PREMIUMS PAID TO AN APPROVED RETIREMENT ANNUITY SCHEME — \"Name of Insurer\""
+    },
+    {
+      "name": "retirementAnnuityPolicyNumber",
+      "label": "Policy Number (Retirement Annuity Scheme)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section D.2 — \"Policy Number\""
+    },
+    {
+      "name": "retirementAnnuityPremiumsPaidInTaxYear",
+      "label": "Premiums paid in the Tax Year",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "The form directs the filer to \"Please enclose receipt\" — the receipt itself is a supporting document outside this schema's field-level scope.",
+      "sourceRef": "Page 2, Section D.2 — \"Premiums paid in the Tax Year P... (Please enclose receipt)\""
+    },
+    {
+      "name": "taxCreditEmployerOrIncomeSourceName",
+      "label": "Name of Employer or Income Source (Tax Credits)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section E TAX CREDITS — INCOME TAX DEDUCTED — \"Name of Employer or Income Source\""
+    },
+    {
+      "name": "taxCreditNatureOfIncome",
+      "label": "Nature of Income (Tax Credits)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section E — \"Nature of Income\""
+    },
+    {
+      "name": "taxCreditAmountOfTax",
+      "label": "Amount of Tax (Tax Credits)",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "The form directs the filer to enclose certificates or other evidence of tax withheld/paid, and notes credit is not available for tax withheld on dividends — both are sourcing/supporting-evidence notes, not further fields.",
+      "sourceRef": "Page 2, Section E — \"Amount of Tax\""
+    },
+    {
+      "name": "usedRentedPropertyInTaxYear",
+      "label": "Did you use rented property for residential or business purposes in the tax year?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Page 2, Section F GENERAL INFORMATION, Q1 — \"Did you use rented property for residential or business purposes in the tax year?\""
+    },
+    {
+      "name": "rentedPropertyDetails",
+      "label": "Rented property details (address, landlord, rent, premium, annual rental)",
+      "type": "string",
+      "required": false,
+      "description": "Collapses the form's own multi-part instruction into one free-text field: \"state in the case of each property its address, the name and address of the landlord, the rent paid in the year, any premium paid in the year and the annual rental\" — the printed blank lines carry no further sub-labels of their own.",
+      "requiredWhen": {
+        "field": "usedRentedPropertyInTaxYear",
+        "equals": true
+      },
+      "sourceRef": "Page 2, Section F, Q1 follow-up blank lines"
+    },
+    {
+      "name": "movablePropertyTransferredByGift",
+      "label": "Was any movable property transferred to you during the year by gift, inheritance or similar disposition?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Page 2, Section F, Q2 — \"Was any movable property transferred to you during the year by gift, inheritance or similar disposition?\""
+    },
+    {
+      "name": "giftedPropertyTransferorNameAndAddress",
+      "label": "Name and Address of the Transferor",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "movablePropertyTransferredByGift",
+        "equals": true
+      },
+      "sourceRef": "Page 2, Section F, Q2 follow-up — \"state for each case the Name and Address of the Transferor\""
+    },
+    {
+      "name": "declarantFullName",
+      "label": "Full Name of Declarant",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The declaration's own printed address blank (\"...of...\") repeats Section A's Address for Service of Notice within the sworn-declaration sentence; not modelled as a second field.",
+      "sourceRef": "Page 2, Section G DECLARATION — \"I......of...... FULL NAME\""
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Page 2, Section G — \"Date............\""
+    },
+    {
+      "name": "declarationSignature",
+      "label": "Signature",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The form states no explicit \"return will not be accepted unless signed\" warning (unlike some sibling registry schemas), but Section G's own heading requires the declaration \"to be completed and signed by the Taxpayer or his authorised agent.\"",
+      "sourceRef": "Page 2, Section G — \"Signature................\""
+    },
+    {
+      "name": "signedByAuthorisedAgent",
+      "label": "Signed by an Authorised Agent (rather than the Taxpayer)",
+      "type": "boolean",
+      "required": false,
+      "description": "Disclosed interpretation: the form prints \"Taxpayer/Authorised Agent* *Delete as appropriate\", a manual strike-through convention rather than a printed checkbox. Modelled as a directly-supplied boolean flag.",
+      "sourceRef": "Page 2, Section G — \"Taxpayer/Authorised Agent* *Delete as appropriate\""
+    },
+    {
+      "name": "authorisedAgentFullName",
+      "label": "Full name of Authorised Agent",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": {
+        "field": "signedByAuthorisedAgent",
+        "equals": true
+      },
+      "sourceRef": "Page 2, Section G — \"...if signed by an Agent enter his full name below\""
+    }
+  ]
+}
