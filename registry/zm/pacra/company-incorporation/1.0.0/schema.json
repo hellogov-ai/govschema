@@ -1,0 +1,2669 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "zm/pacra/company-incorporation",
+  "version": "1.0.0",
+  "title": "Zambia Company Incorporation Application (PACRA Form 3)",
+  "description": "The Patents and Companies Registration Agency's (PACRA) \"Form 3 — Application for Incorporation\" (Regulation 4 of the Companies (Prescribed Forms) Regulations, 2018, made under sections 12, 13 and 94 of the Companies Act, 2017, Act No. 10 of 2017), used to incorporate a new company in Zambia as a Private Company Limited By Shares, Private Company Limited By Guarantee, Public Limited Company, or Unlimited Private Company. It models the company's own identity, address, and share/guarantee-capital particulars (Part A); a first director (bounded to two director slots, matching the Companies Act's own two/three-director minimum for private/public companies respectively; a third director for a public company, or any company naming more than two directors, requires a further physical replication of Part B beyond this schema's scope) and their consent to act (Part B); a first shareholder, applicable to every company type except one limited by guarantee, including the alternative natural-person/body-corporate identification fields the form itself prints (Part C); a first beneficial owner and the shared beneficial-ownership disclosures the form requires under section 94 (nature of ownership, date acquired, and politically-exposed-person status), following the same bounded-to-one-slot approach and the form's own explicit \"two before replication\" anchor (Part D); a first guarantor, applicable only to a company limited by guarantee (Part E); a first company secretary, always required (Part F); the declaration of compliance made by a legal practitioner, first director, or first secretary (Part G); and the particulars of the person lodging the application (Part H). Filing this form is an incorporation action performed with the Patents and Companies Registration Agency (via its online PACRA e-Services portal, or in person); this schema does not file the application itself, and the live source and PACRA's own current e-Services requirements are always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by Zambia or the Patents and Companies Registration Agency.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ZM",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Patents and Companies Registration Agency",
+    "abbreviation": "PACRA",
+    "url": "https://www.pacra.org.zm"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.pacra.org.zm/files/forms/companies/CompaniesForm3.docx",
+    "retrievedAt": "2026-07-22",
+    "documentRef": "\"Form 3 (Regulation 4) — Application for Incorporation\", The Patents and Companies Registration Agency, The Companies Act, 2017 (Act No. 10 of 2017), The Companies (Prescribed Forms) Regulations, 2018 (Section 12, 13 and 94), native .docx, docProps/core.xml dcterms:modified 2019-03-25T08:11:00Z"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-22",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-22",
+    "notes": "GOV-4271 (\"GovSchema Standard Research\"). Scouted Panama, Albania, and Zambia in parallel — three jurisdictions entirely absent from the 76-jurisdiction registry — across all 6 priority verticals; Zambia returned 3 independently STRONG candidates (this Business Formation form, a Passport form, and a Taxes form), the strongest of the three scouted countries, so this cycle opens Zambia as the 77th jurisdiction via PACRA's Form 3. Fetched https://www.pacra.org.zm/files/forms/companies/CompaniesForm3.docx directly: HTTP 200, application/vnd.openxmlformats-officedocument.wordprocessingml.document, 59,454 bytes, sha256 4cc18372b569d50c48ae590a1bd1b5998cbc299cff4e37d25ab45e632de2f276, no login/CAPTCHA/WAF gate. Confirmed a genuine Office Open XML .docx via its own zip local-file-header magic (50 4b 03 04), not a scanned image or legacy OLE2 .doc. An older URL for the same file (wp-content/uploads path) now 404s, consistent with PACRA's site having migrated to a Next.js front end; the current path was found via live web search, not SPA crawling. The form's title and current-in-force status are independently corroborated by third-party Zambian business-registration sources describing the same form under the same name with the same two/three-director statutory minimum this schema's numberOfDirectors field cites.\n\nExtracted with Python's stdlib zipfile + xml.etree.ElementTree reading word/document.xml directly, walking <w:p>/<w:tbl> body children in document order and each table's <w:tr>/<w:tc> cells together with their gridSpan/vMerge attributes to recover true column structure rather than a flattened text dump — this is what surfaced that \"Gender\" is a plain fill-in-the-blank label with no printed options (modelled string, not enum), while \"Identity Type\" prints an explicit enumerated vocabulary in its own sub-text (\"For Zambians: NRC. For non-Zambians: NRC/Passport/Driver's Licence/Resident Permit\") and \"Type of Company\"/\"Company Category\"/\"Whether Articles Restrict Nature of Business\"/\"Type of Articles\"/\"Class of Shares\" are genuine multi-column checkbox groups (modelled enum with the exact printed option text).\n\nModels 190 fields[] across 8 steps (Company Details; First Directors; Shareholders; Beneficial Ownership; Guarantors; Company Secretary; Declaration of Compliance; Particulars of Person Lodging Application). Seven disclosed scoping decisions (full detail in VERIFICATION.md): (1) no global asterisk/mandatory convention on this source, so requiredness was assigned by engineering judgment against Zambian company-law necessity; (2) Parts B/C/E/F each end with an unbounded \"Replicate Part X to add more Y\" instruction with no printed maximum (unlike this registry's prior bounded-repeating-group precedents, which all had a literal printed row count) — this schema bounds Directors at 2 slots (matching the form's own printed \"minimum of two...private, three...public\" note), and Shareholders/Guarantors/Company-Secretary at 1 slot each, every slot beyond the first gated requiredWhen its own supplied numberOfX count field; Part D (Beneficial Ownership) is the one part with an explicit printed anchor (\"more than two\"), and this schema deliberately models only 1 of that 2-slot base capacity given this cycle's field-count budget, disclosed as the top future-PATCH candidate alongside a director3 slot; (3) Part D's three nested \"body corporate\" sub-tables (a beneficial owner that is itself a body corporate, disclosing that body corporate's own directors/shareholders/beneficial owners) are excluded from v1.0.0 as a disclosed scoping decision; (4) notEquals \"\" is never used as a requiredWhen gate against an optional field, per this registry's own standing lesson — the two places this would otherwise apply are modelled bare-optional instead; (5) checkbox-group fields use validation.enum with exact printed option text; (6) Gender is modelled string, not enum, since no options are printed anywhere in the source (contrast se/skatteverket/samordningsnummer-ansokan's own genuine two-option gender field); (7) each Shareholder/Beneficial-Owner/Guarantor/Company-Secretary block adds an isBodyCorporate boolean discriminator not printed on the form, since the source prints natural-person and body-corporate identity fields side by side with no explicit either/or signal — natural-person fields are requiredWhen !isBodyCorporate, NameOfBodyCorporate is requiredWhen isBodyCorporate, each combined with the block's own outer applicability condition.\n\n4 valid mock scenarios (a minimal 2-director Private-Limited-by-Shares company with natural-person shareholder/beneficial-owner; the same company type fully populated with every optional field plus a body-corporate shareholder; a Private-Limited-by-Guarantee company with a guarantor and no shareholder/beneficial-ownership section; a Public Limited Company with companyCategory Financial Institution) plus 14 mutation-control fixtures (one missing-required fixture per step across all 8 steps, an invalid-type fixture, an out-of-range fixture, two further missing-required fixtures exercising requiredWhen-gated fields, a missing-required fixture for a second Part G field, and an unknown-field-rejected fixture) are committed under conformance/zm/pacra/company-incorporation/1.0.0/. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own fields[], discarded after use, not committed) ran all 18: all 4 valid scenarios at 0 errors, all 14 mutation controls each raising exactly 1 error, 0 dangling requiredWhen references. Validated clean with node tools/validate.mjs and node tools/validate-ajv.mjs, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-22"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "company_details",
+      "title": "Part A — Company Details",
+      "fields": [
+        "companyType",
+        "companyCategory",
+        "companyCategoryOtherSpecify",
+        "companyName",
+        "principalBusinessActivity",
+        "otherBusinessActivities",
+        "articlesRestrictNatureOfBusiness",
+        "articlesType",
+        "registeredOfficePlotHouseVillage",
+        "registeredOfficeStreet",
+        "registeredOfficeArea",
+        "registeredOfficeTown",
+        "registeredOfficeProvince",
+        "postalAddressPostBox",
+        "postalAddressArea",
+        "postalAddressTown",
+        "postalAddressProvince",
+        "companyMobilePhone",
+        "companyLandlinePhone",
+        "companyEmailAddress",
+        "nominalCapitalOrGuaranteedAmount",
+        "ordinarySharesCount",
+        "ordinarySharesParValueZmw",
+        "preferentialSharesCount",
+        "preferentialSharesParValueZmw",
+        "otherClassOfSharesSpecify",
+        "otherSharesCount",
+        "otherSharesParValueZmw",
+        "financialYearEnd",
+        "pledgedInvestmentAmount"
+      ],
+      "next": "directors"
+    },
+    {
+      "id": "directors",
+      "title": "Part B — First Directors",
+      "fields": [
+        "numberOfDirectors",
+        "director1FirstName",
+        "director1Surname",
+        "director1Gender",
+        "director1DateOfBirth",
+        "director1Nationality",
+        "director1IdentityType",
+        "director1IdentityNumber",
+        "director1MobilePhone",
+        "director1LandlinePhone",
+        "director1Email",
+        "director1AddressPlotHouseVillage",
+        "director1AddressStreet",
+        "director1AddressArea",
+        "director1AddressTown",
+        "director1AddressProvince",
+        "director1AddressCountry",
+        "director1ConsentSignature",
+        "director1ConsentSignatureDate",
+        "director2FirstName",
+        "director2Surname",
+        "director2Gender",
+        "director2DateOfBirth",
+        "director2Nationality",
+        "director2IdentityType",
+        "director2IdentityNumber",
+        "director2MobilePhone",
+        "director2LandlinePhone",
+        "director2Email",
+        "director2AddressPlotHouseVillage",
+        "director2AddressStreet",
+        "director2AddressArea",
+        "director2AddressTown",
+        "director2AddressProvince",
+        "director2AddressCountry",
+        "director2ConsentSignature",
+        "director2ConsentSignatureDate"
+      ],
+      "next": "shareholders"
+    },
+    {
+      "id": "shareholders",
+      "title": "Part C — Shareholders",
+      "fields": [
+        "numberOfShareholders",
+        "shareholder1IsBodyCorporate",
+        "shareholder1FirstName",
+        "shareholder1Surname",
+        "shareholder1Gender",
+        "shareholder1DateOfBirth",
+        "shareholder1Nationality",
+        "shareholder1IdentityType",
+        "shareholder1IdentityNumber",
+        "shareholder1NameOfBodyCorporate",
+        "shareholder1NatureOfBodyCorporate",
+        "shareholder1BodyCorporateRegistrationDetails",
+        "shareholder1MobilePhone",
+        "shareholder1LandlinePhone",
+        "shareholder1Email",
+        "shareholder1AddressPlotHouseVillage",
+        "shareholder1AddressStreet",
+        "shareholder1AddressArea",
+        "shareholder1AddressTown",
+        "shareholder1AddressProvince",
+        "shareholder1AddressCountry",
+        "shareholder1SharesCount",
+        "shareholder1ClassOfShares",
+        "shareholder1ConsentSignature",
+        "shareholder1ConsentSignatureDate"
+      ],
+      "next": "beneficial_ownership"
+    },
+    {
+      "id": "beneficial_ownership",
+      "title": "Part D — Beneficial Ownership",
+      "fields": [
+        "numberOfBeneficialOwners",
+        "beneficialOwner1IsBodyCorporate",
+        "beneficialOwner1FirstName",
+        "beneficialOwner1Surname",
+        "beneficialOwner1Gender",
+        "beneficialOwner1DateOfBirth",
+        "beneficialOwner1Nationality",
+        "beneficialOwner1IdentityType",
+        "beneficialOwner1IdentityNumber",
+        "beneficialOwner1Occupation",
+        "beneficialOwner1NameOfBodyCorporate",
+        "beneficialOwner1NatureOfBodyCorporate",
+        "beneficialOwner1BodyCorporateRegistrationDetails",
+        "beneficialOwner1MobilePhone",
+        "beneficialOwner1LandlinePhone",
+        "beneficialOwner1Email",
+        "beneficialOwner1AddressPlotHouseVillage",
+        "beneficialOwner1AddressStreet",
+        "beneficialOwner1AddressArea",
+        "beneficialOwner1AddressTown",
+        "beneficialOwner1AddressProvince",
+        "beneficialOwner1AddressCountry",
+        "beneficialOwner1SharesCount",
+        "beneficialOwner1ClassOfShares",
+        "natureOfBeneficialOwnership",
+        "dateBeneficialInterestAcquired",
+        "isPoliticallyExposedPerson",
+        "politicallyExposedPersonDetails"
+      ],
+      "next": "guarantors"
+    },
+    {
+      "id": "guarantors",
+      "title": "Part E — Guarantors",
+      "fields": [
+        "numberOfGuarantors",
+        "guarantor1IsBodyCorporate",
+        "guarantor1FirstName",
+        "guarantor1Surname",
+        "guarantor1Gender",
+        "guarantor1DateOfBirth",
+        "guarantor1Nationality",
+        "guarantor1IdentityType",
+        "guarantor1IdentityNumber",
+        "guarantor1NameOfBodyCorporate",
+        "guarantor1NatureOfBodyCorporate",
+        "guarantor1BodyCorporateRegistrationDetails",
+        "guarantor1MobilePhone",
+        "guarantor1LandlinePhone",
+        "guarantor1Email",
+        "guarantor1AddressPlotHouseVillage",
+        "guarantor1AddressStreet",
+        "guarantor1AddressArea",
+        "guarantor1AddressTown",
+        "guarantor1AddressProvince",
+        "guarantor1AddressCountry",
+        "guarantor1GuaranteedAmountZmw",
+        "guarantor1ConsentSignature",
+        "guarantor1ConsentSignatureDate"
+      ],
+      "next": "company_secretary"
+    },
+    {
+      "id": "company_secretary",
+      "title": "Part F — Company Secretary",
+      "fields": [
+        "numberOfSecretaries",
+        "secretary1IsBodyCorporate",
+        "secretary1FirstName",
+        "secretary1Surname",
+        "secretary1Gender",
+        "secretary1DateOfBirth",
+        "secretary1Nationality",
+        "secretary1IdentityType",
+        "secretary1IdentityNumber",
+        "secretary1NameOfBodyCorporate",
+        "secretary1NatureOfBodyCorporate",
+        "secretary1BodyCorporateRegistrationDetails",
+        "secretary1MobilePhone",
+        "secretary1LandlinePhone",
+        "secretary1Email",
+        "secretary1AddressPlotHouseVillage",
+        "secretary1AddressStreet",
+        "secretary1AddressArea",
+        "secretary1AddressTown",
+        "secretary1AddressProvince",
+        "secretary1AddressCountry",
+        "secretary1ConsentSignature",
+        "secretary1ConsentSignatureDate"
+      ],
+      "next": "declaration_of_compliance"
+    },
+    {
+      "id": "declaration_of_compliance",
+      "title": "Part G — Declaration of Compliance",
+      "fields": [
+        "declarantName",
+        "declarantRole",
+        "declarationPlace",
+        "declarationDate",
+        "declarantSignature"
+      ],
+      "next": "person_lodging_application"
+    },
+    {
+      "id": "person_lodging_application",
+      "title": "Part H — Particulars of Person Lodging Application",
+      "fields": [
+        "lodgerFirstName",
+        "lodgerSurname",
+        "lodgerGender",
+        "lodgerDateOfBirth",
+        "lodgerNationality",
+        "lodgerIdentityType",
+        "lodgerIdentityNumber",
+        "lodgerMobilePhone",
+        "lodgerLandlinePhone",
+        "lodgerEmail",
+        "lodgerAddressPlotHouseVillage",
+        "lodgerAddressStreet",
+        "lodgerAddressArea",
+        "lodgerAddressTown",
+        "lodgerAddressProvince",
+        "lodgerAddressCountry",
+        "lodgerSignature",
+        "lodgerSignatureDate"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "companyType",
+      "label": "Type of Company",
+      "type": "enum",
+      "required": true,
+      "description": "The type of company being incorporated, selected by marking one of four printed options with an \"X\". Determines which later sections of this form apply (e.g. shareholders/beneficial ownership for share-capital companies, guarantors for a guarantee company).",
+      "sourceRef": "Part A, \"Type of Company — Select one type of Company by marking with “X”\"",
+      "validation": {
+        "enum": [
+          "Private Company Limited By Shares",
+          "Private Company Limited By Guarantee",
+          "Public Limited Company",
+          "Unlimited Private Company"
+        ]
+      }
+    },
+    {
+      "name": "companyCategory",
+      "label": "Company Category",
+      "type": "enum",
+      "required": false,
+      "description": "The specially-regulated category of company, if any, selected by marking one of the printed options with an \"X\". Left unselected (absent) by companies that do not fall into any of these regulated categories.",
+      "sourceRef": "Part A, \"Company Category — Select category of Company by marking with “X”\"",
+      "validation": {
+        "enum": [
+          "Local Bank",
+          "Foreign Bank",
+          "Insurance Company",
+          "Re-Insurance Company",
+          "Bureau De Change",
+          "Financial Institution",
+          "Other"
+        ]
+      }
+    },
+    {
+      "name": "companyCategoryOtherSpecify",
+      "label": "Company Category — Other (Specify)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyCategory",
+        "equals": "Other"
+      },
+      "description": "Free-text description of the company's regulated category, printed immediately after the \"Other (Specify)\" checkbox option.",
+      "sourceRef": "Part A, Company Category, \"Other (Specify)\""
+    },
+    {
+      "name": "companyName",
+      "label": "Company Name",
+      "type": "string",
+      "required": true,
+      "description": "The company's proposed name, which must be captured exactly as approved by the Companies Registry (via a separate name-reservation process) and not yet expired.",
+      "sourceRef": "Part A, \"Company Name — Ensure that the name is captured exactly as approved by Company Registry and has not expired\""
+    },
+    {
+      "name": "principalBusinessActivity",
+      "label": "Principal Business Activity",
+      "type": "string",
+      "required": true,
+      "description": "The company's main business activity, to be classified in accordance with the International Standard Industrial Classification (ISIC); PACRA publishes a full list of trade classification codes on its own website.",
+      "sourceRef": "Part A, \"Principal Business Activity — Business activity to be classified in accordance with the ISIC Classification\""
+    },
+    {
+      "name": "otherBusinessActivities",
+      "label": "Other Business Activities",
+      "type": "string",
+      "required": false,
+      "description": "Any further business activities the company will carry on, beyond the principal activity.",
+      "sourceRef": "Part A, \"Other Business Activities\""
+    },
+    {
+      "name": "articlesRestrictNatureOfBusiness",
+      "label": "Whether Articles Restrict Nature of Business",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the company's articles of association restrict the nature of business it may carry on, marked by an \"X\" against a printed \"NO\"/\"YES\" pair.",
+      "sourceRef": "Part A, \"Whether Articles Restrict Nature of Business — Mark with “X” As Appropriate\" (\"NO\" / \"YES\")"
+    },
+    {
+      "name": "articlesType",
+      "label": "Type of Articles",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the company adopts the standard articles of association prescribed under the Companies Act, or its own non-standard articles, marked by an \"X\".",
+      "sourceRef": "Part A, \"Type of Articles — Mark With “X” As Appropriate\" (\"STANDARD\" / \"NON-STANDARD\")",
+      "validation": {
+        "enum": [
+          "Standard",
+          "Non-Standard"
+        ]
+      }
+    },
+    {
+      "name": "registeredOfficePlotHouseVillage",
+      "label": "Physical Address (Registered Office) — Plot/House/Village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The company's registered office address (Plot/House/Village), as required by the Companies Act.",
+      "sourceRef": "Part A, \"Physical Address — State the registered office of the Company\" — \"Plot/House/Village\""
+    },
+    {
+      "name": "registeredOfficeStreet",
+      "label": "Physical Address (Registered Office) — Street",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The company's registered office address (Street), as required by the Companies Act.",
+      "sourceRef": "Part A, \"Physical Address — State the registered office of the Company\" — \"Street\""
+    },
+    {
+      "name": "registeredOfficeArea",
+      "label": "Physical Address (Registered Office) — Area",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The company's registered office address (Area), as required by the Companies Act.",
+      "sourceRef": "Part A, \"Physical Address — State the registered office of the Company\" — \"Area\""
+    },
+    {
+      "name": "registeredOfficeTown",
+      "label": "Physical Address (Registered Office) — Town",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The company's registered office address (Town), as required by the Companies Act.",
+      "sourceRef": "Part A, \"Physical Address — State the registered office of the Company\" — \"Town\""
+    },
+    {
+      "name": "registeredOfficeProvince",
+      "label": "Physical Address (Registered Office) — Province",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The company's registered office address (Province), as required by the Companies Act.",
+      "sourceRef": "Part A, \"Physical Address — State the registered office of the Company\" — \"Province\""
+    },
+    {
+      "name": "postalAddressPostBox",
+      "label": "Postal Address (Notification Address) — Post Box",
+      "type": "string",
+      "required": true,
+      "description": "The company's notification (postal) address (Post Box), used by PACRA for official correspondence.",
+      "sourceRef": "Part A, \"Postal Address — State the notification address of the Company\" — \"Post Box\""
+    },
+    {
+      "name": "postalAddressArea",
+      "label": "Postal Address (Notification Address) — Area",
+      "type": "string",
+      "required": true,
+      "description": "The company's notification (postal) address (Area), used by PACRA for official correspondence.",
+      "sourceRef": "Part A, \"Postal Address — State the notification address of the Company\" — \"Area\""
+    },
+    {
+      "name": "postalAddressTown",
+      "label": "Postal Address (Notification Address) — Town",
+      "type": "string",
+      "required": true,
+      "description": "The company's notification (postal) address (Town), used by PACRA for official correspondence.",
+      "sourceRef": "Part A, \"Postal Address — State the notification address of the Company\" — \"Town\""
+    },
+    {
+      "name": "postalAddressProvince",
+      "label": "Postal Address (Notification Address) — Province",
+      "type": "string",
+      "required": true,
+      "description": "The company's notification (postal) address (Province), used by PACRA for official correspondence.",
+      "sourceRef": "Part A, \"Postal Address — State the notification address of the Company\" — \"Province\""
+    },
+    {
+      "name": "companyMobilePhone",
+      "label": "Phone Number — Mobile",
+      "type": "string",
+      "required": true,
+      "description": "The company's mobile phone number, including the international code (e.g. +260 for Zambia).",
+      "sourceRef": "Part A, \"Phone Number — Include the international code (e.g. +260 for Zambia)\" — \"Mobile\""
+    },
+    {
+      "name": "companyLandlinePhone",
+      "label": "Phone Number — Landline",
+      "type": "string",
+      "required": false,
+      "description": "The company's landline phone number, including the international code, if it has one.",
+      "sourceRef": "Part A, \"Phone Number\" — \"Landline\""
+    },
+    {
+      "name": "companyEmailAddress",
+      "label": "Email Address",
+      "type": "string",
+      "required": true,
+      "description": "The company's email address for official correspondence.",
+      "sourceRef": "Part A, \"Email Address\""
+    },
+    {
+      "name": "nominalCapitalOrGuaranteedAmount",
+      "label": "Nominal Capital or Guaranteed Amount",
+      "type": "number",
+      "required": true,
+      "description": "The company's nominal share capital (for a share-capital company) or guaranteed amount (for a company limited by guarantee), in Zambian Kwacha (ZMW). Must not be less than the prescribed statutory minimum.",
+      "sourceRef": "Part A, \"Nominal Capital or Guaranteed Amount — Nominal Capital or Guaranteed amount must not be less than the prescribed minimum\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "ordinarySharesCount",
+      "label": "Ordinary Shares — Number of Shares",
+      "type": "integer",
+      "required": false,
+      "description": "Number of ordinary shares, printed under the \"Class of Shares\" table. Not applicable to companies limited by guarantee.",
+      "sourceRef": "Part A, \"Class of Shares\" / \"Number of Shares\" — \"ORDINARY\" column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "ordinarySharesParValueZmw",
+      "label": "Ordinary Shares — Par Value (ZMW)",
+      "type": "number",
+      "required": false,
+      "description": "Par (nominal) value per ordinary share, in Zambian Kwacha (ZMW). Not applicable to companies limited by guarantee.",
+      "sourceRef": "Part A, \"Class of Shares\" / \"Par Value\" — \"ORDINARY\" column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "preferentialSharesCount",
+      "label": "Preferential Shares — Number of Shares",
+      "type": "integer",
+      "required": false,
+      "description": "Number of preferential shares, printed under the \"Class of Shares\" table. Not applicable to companies limited by guarantee.",
+      "sourceRef": "Part A, \"Class of Shares\" / \"Number of Shares\" — \"PREFERENTIAL\" column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "preferentialSharesParValueZmw",
+      "label": "Preferential Shares — Par Value (ZMW)",
+      "type": "number",
+      "required": false,
+      "description": "Par (nominal) value per preferential share, in Zambian Kwacha (ZMW). Not applicable to companies limited by guarantee.",
+      "sourceRef": "Part A, \"Class of Shares\" / \"Par Value\" — \"PREFERENTIAL\" column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherClassOfSharesSpecify",
+      "label": "Class of Shares — Other (Specify)",
+      "type": "string",
+      "required": false,
+      "description": "Free-text description of a further class of shares beyond Ordinary/Preferential, printed as an \"OTHER\" column with its own \"if other indicate the specific class of shares\" instruction.",
+      "sourceRef": "Part A, \"Class of Shares — If other indicate the specific class of shares\" — \"OTHER\" column"
+    },
+    {
+      "name": "otherSharesCount",
+      "label": "Other Class of Shares — Number of Shares",
+      "type": "integer",
+      "required": false,
+      "description": "Number of shares of the other class named in otherClassOfSharesSpecify, if any (applicable only when otherClassOfSharesSpecify is filled in; no requiredWhen gate is modelled since the trigger field is itself optional free text).",
+      "sourceRef": "Part A, \"Class of Shares\" / \"Number of Shares\" — \"OTHER\" column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherSharesParValueZmw",
+      "label": "Other Class of Shares — Par Value (ZMW)",
+      "type": "number",
+      "required": false,
+      "description": "Par (nominal) value per share of the other class named in otherClassOfSharesSpecify, in Zambian Kwacha (ZMW), if any (applicable only when otherClassOfSharesSpecify is filled in; no requiredWhen gate is modelled since the trigger field is itself optional free text).",
+      "sourceRef": "Part A, \"Class of Shares\" / \"Par Value\" — \"OTHER\" column",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "financialYearEnd",
+      "label": "Financial Year End",
+      "type": "string",
+      "required": true,
+      "description": "The day and month on which the company's financial year ends (e.g. \"31 December\"). The first financial year end must not be more than 12 months from the date of incorporation.",
+      "sourceRef": "Part A, \"Financial Year End — The first financial year end must not be more than 12 months from the date of incorporation\""
+    },
+    {
+      "name": "pledgedInvestmentAmount",
+      "label": "Pledged Investment Amount",
+      "type": "string",
+      "required": false,
+      "description": "For foreign investors only: the amount and period pledged for investment. Free text, since the form asks for an amount together with a period in a single answer.",
+      "sourceRef": "Part A, \"Pledged Investment Amount — In case of Foreign Investors state the amount and period for pledged investment\""
+    },
+    {
+      "name": "numberOfDirectors",
+      "label": "Number of Directors",
+      "type": "integer",
+      "required": true,
+      "description": "Total number of directors being appointed. The Companies Act requires a minimum of two directors for a private company and three for a public company, with at least half of all directors resident in Zambia; the source form itself carries no field for this count, but instructs applicants to \"Replicate Part B to add more first directors\" (i.e. photocopy the block again) for each director beyond the first. This schema models director1/director2 as bounded slots; a public company's statutory third director (or any company naming more than two directors) requires a further physical Part B replication beyond this schema's v1.0.0 scope — see VERIFICATION.md.",
+      "sourceRef": "Part B header note — \"Minimum of two Directors for private and three for public limited companies. The number of directors resident in Zambia shall not be less than half the number of directors appointed\" (count field itself not printed on the form; supplied for completeness)",
+      "validation": {
+        "minimum": 2
+      }
+    },
+    {
+      "name": "director1FirstName",
+      "label": "Director 1 — First Name",
+      "type": "string",
+      "classification": "pii",
+      "description": "First name of the director 1.",
+      "sourceRef": "Part B — First Directors, \"First Name\"",
+      "required": true
+    },
+    {
+      "name": "director1Surname",
+      "label": "Director 1 — Surname",
+      "type": "string",
+      "classification": "pii",
+      "description": "Surname of the director 1.",
+      "sourceRef": "Part B — First Directors, \"Surname\"",
+      "required": true
+    },
+    {
+      "name": "director1Gender",
+      "label": "Director 1 — Gender",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "Gender of the director 1, as a free-text entry — the source form prints a blank fill-in line with no enumerated options.",
+      "sourceRef": "Part B — First Directors, \"Gender\"",
+      "required": true
+    },
+    {
+      "name": "director1DateOfBirth",
+      "label": "Director 1 — Date of Birth",
+      "type": "date",
+      "classification": "pii",
+      "description": "Date of birth of the director 1.",
+      "sourceRef": "Part B — First Directors, \"Date of Birth\"",
+      "required": true
+    },
+    {
+      "name": "director1Nationality",
+      "label": "Director 1 — Nationality",
+      "type": "string",
+      "classification": "pii",
+      "description": "Nationality of the director 1.",
+      "sourceRef": "Part B — First Directors, \"Nationality\"",
+      "required": true
+    },
+    {
+      "name": "director1IdentityType",
+      "label": "Director 1 — Identity Type",
+      "type": "enum",
+      "classification": "pii",
+      "description": "The kind of identity document held by the director 1. For Zambian nationals, only the National Registration Card (NRC) is accepted; non-Zambians may instead present an NRC (if held), passport, driver's licence, or resident permit.",
+      "sourceRef": "Part B — First Directors, \"Identity Type — For Zambians: NRC. For non-Zambians: NRC/Passport/Driver's Licence/Resident Permit\"",
+      "validation": {
+        "enum": [
+          "NRC",
+          "Passport",
+          "Driver's Licence",
+          "Resident Permit"
+        ]
+      },
+      "required": true
+    },
+    {
+      "name": "director1IdentityNumber",
+      "label": "Director 1 — Identity Number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "The identity document number corresponding to director1IdentityType.",
+      "sourceRef": "Part B — First Directors, \"Identity Number\"",
+      "required": true
+    },
+    {
+      "name": "director1MobilePhone",
+      "label": "Director 1 — Phone Number (Mobile)",
+      "type": "string",
+      "description": "Mobile phone number of the director 1, including the international code (e.g. +260 for Zambia).",
+      "sourceRef": "Part B — First Directors, \"Phone Number\" — \"Mobile\"",
+      "required": true
+    },
+    {
+      "name": "director1LandlinePhone",
+      "label": "Director 1 — Phone Number (Landline)",
+      "type": "string",
+      "required": false,
+      "description": "Landline phone number of the director 1, if any. Always bare-optional regardless of outer block applicability, since it is a secondary contact method.",
+      "sourceRef": "Part B — First Directors, \"Phone Number\" — \"Landline\""
+    },
+    {
+      "name": "director1Email",
+      "label": "Director 1 — Email Address",
+      "type": "string",
+      "description": "Email address of the director 1.",
+      "sourceRef": "Part B — First Directors, \"Email Address\"",
+      "required": true
+    },
+    {
+      "name": "director1AddressPlotHouseVillage",
+      "label": "Director 1 — Physical Address (Plot/House/Village)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the director 1 (Plot/House/Village).",
+      "sourceRef": "Part B — First Directors, \"Physical Address\" — \"Plot/House/Village\"",
+      "required": true
+    },
+    {
+      "name": "director1AddressStreet",
+      "label": "Director 1 — Physical Address (Street)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the director 1 (Street).",
+      "sourceRef": "Part B — First Directors, \"Physical Address\" — \"Street\"",
+      "required": true
+    },
+    {
+      "name": "director1AddressArea",
+      "label": "Director 1 — Physical Address (Area)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the director 1 (Area).",
+      "sourceRef": "Part B — First Directors, \"Physical Address\" — \"Area\"",
+      "required": true
+    },
+    {
+      "name": "director1AddressTown",
+      "label": "Director 1 — Physical Address (Town)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the director 1 (Town).",
+      "sourceRef": "Part B — First Directors, \"Physical Address\" — \"Town\"",
+      "required": true
+    },
+    {
+      "name": "director1AddressProvince",
+      "label": "Director 1 — Physical Address (Province)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the director 1 (Province).",
+      "sourceRef": "Part B — First Directors, \"Physical Address\" — \"Province\"",
+      "required": true
+    },
+    {
+      "name": "director1AddressCountry",
+      "label": "Director 1 — Physical Address (Country)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the director 1 (Country).",
+      "sourceRef": "Part B — First Directors, \"Physical Address\" — \"Country\"",
+      "required": true
+    },
+    {
+      "name": "director1ConsentSignature",
+      "label": "Director 1 — Consent Signature",
+      "type": "string",
+      "description": "Declaration for consent to act as director: \"We, whose name(s) and particulars appear above, consent to act as director(s) for the above mentioned company\" Modelled as a signature-name attestation.",
+      "sourceRef": "Part B — First Directors, \"Declaration for consent to act as director: \\\"We, whose name(s) and particulars appear above, consent to act as director(s) for the above mentioned company\\\"\" — \"Signature\"",
+      "required": true
+    },
+    {
+      "name": "director1ConsentSignatureDate",
+      "label": "Director 1 — Consent Signature Date",
+      "type": "date",
+      "description": "Date the consent declaration above was signed.",
+      "sourceRef": "Part B — First Directors, \"Declaration for consent to act as director: \\\"We, whose name(s) and particulars appear above, consent to act as director(s) for the above mentioned company\\\"\" — \"Date\"",
+      "required": true
+    },
+    {
+      "name": "director2FirstName",
+      "label": "Director 2 — First Name",
+      "type": "string",
+      "classification": "pii",
+      "description": "First name of the director 2. Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"First Name\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2Surname",
+      "label": "Director 2 — Surname",
+      "type": "string",
+      "classification": "pii",
+      "description": "Surname of the director 2. Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Surname\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2Gender",
+      "label": "Director 2 — Gender",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "Gender of the director 2, as a free-text entry — the source form prints a blank fill-in line with no enumerated options. Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Gender\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2DateOfBirth",
+      "label": "Director 2 — Date of Birth",
+      "type": "date",
+      "classification": "pii",
+      "description": "Date of birth of the director 2. Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Date of Birth\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2Nationality",
+      "label": "Director 2 — Nationality",
+      "type": "string",
+      "classification": "pii",
+      "description": "Nationality of the director 2. Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Nationality\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2IdentityType",
+      "label": "Director 2 — Identity Type",
+      "type": "enum",
+      "classification": "pii",
+      "description": "The kind of identity document held by the director 2. For Zambian nationals, only the National Registration Card (NRC) is accepted; non-Zambians may instead present an NRC (if held), passport, driver's licence, or resident permit. Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Identity Type — For Zambians: NRC. For non-Zambians: NRC/Passport/Driver's Licence/Resident Permit\"",
+      "validation": {
+        "enum": [
+          "NRC",
+          "Passport",
+          "Driver's Licence",
+          "Resident Permit"
+        ]
+      },
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2IdentityNumber",
+      "label": "Director 2 — Identity Number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "The identity document number corresponding to director2IdentityType. Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Identity Number\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2MobilePhone",
+      "label": "Director 2 — Phone Number (Mobile)",
+      "type": "string",
+      "description": "Mobile phone number of the director 2, including the international code (e.g. +260 for Zambia). Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Phone Number\" — \"Mobile\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2LandlinePhone",
+      "label": "Director 2 — Phone Number (Landline)",
+      "type": "string",
+      "required": false,
+      "description": "Landline phone number of the director 2, if any. Always bare-optional regardless of outer block applicability, since it is a secondary contact method.",
+      "sourceRef": "Part B — First Directors, \"Phone Number\" — \"Landline\""
+    },
+    {
+      "name": "director2Email",
+      "label": "Director 2 — Email Address",
+      "type": "string",
+      "description": "Email address of the director 2. Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Email Address\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2AddressPlotHouseVillage",
+      "label": "Director 2 — Physical Address (Plot/House/Village)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the director 2 (Plot/House/Village). Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Physical Address\" — \"Plot/House/Village\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2AddressStreet",
+      "label": "Director 2 — Physical Address (Street)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the director 2 (Street). Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Physical Address\" — \"Street\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2AddressArea",
+      "label": "Director 2 — Physical Address (Area)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the director 2 (Area). Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Physical Address\" — \"Area\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2AddressTown",
+      "label": "Director 2 — Physical Address (Town)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the director 2 (Town). Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Physical Address\" — \"Town\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2AddressProvince",
+      "label": "Director 2 — Physical Address (Province)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the director 2 (Province). Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Physical Address\" — \"Province\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2AddressCountry",
+      "label": "Director 2 — Physical Address (Country)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the director 2 (Country). Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Physical Address\" — \"Country\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2ConsentSignature",
+      "label": "Director 2 — Consent Signature",
+      "type": "string",
+      "description": "Declaration for consent to act as director: \"We, whose name(s) and particulars appear above, consent to act as director(s) for the above mentioned company\" Modelled as a signature-name attestation. Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Declaration for consent to act as director: \\\"We, whose name(s) and particulars appear above, consent to act as director(s) for the above mentioned company\\\"\" — \"Signature\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "director2ConsentSignatureDate",
+      "label": "Director 2 — Consent Signature Date",
+      "type": "date",
+      "description": "Date the consent declaration above was signed. Required when numberOfDirectors is 2 or more.",
+      "sourceRef": "Part B — First Directors, \"Declaration for consent to act as director: \\\"We, whose name(s) and particulars appear above, consent to act as director(s) for the above mentioned company\\\"\" — \"Date\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "numberOfDirectors",
+        "greaterThanOrEqual": 2
+      }
+    },
+    {
+      "name": "numberOfShareholders",
+      "label": "Number of Shareholders",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      },
+      "description": "Total number of shareholders. Applicable to a Public Company, Private Company Limited by Shares, and Unlimited Private Company (not applicable to a company limited by guarantee, which has guarantors instead — see Part E). The source form carries no count field itself; it instructs applicants to \"Replicate Part C to add more Shareholders\" for each shareholder beyond the first.",
+      "sourceRef": "Part C footer — \"Replicate Part C to add more Shareholders\" (count field itself not printed on the form; supplied for completeness)",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "shareholder1IsBodyCorporate",
+      "label": "Shareholder 1 — Is a Body Corporate",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      },
+      "description": "Whether the shareholder 1 is a body corporate (company, co-operative, trust, society, etc.) rather than a natural person. The source form prints separate natural-person and body-corporate identification blocks side by side with no explicit either/or checkbox; this discriminator is supplied by this schema (not printed on the form) to determine which of the two identification blocks below applies.",
+      "sourceRef": "Part C — Shareholders, implicit choice between the natural-person fields (First Name, Surname, ...) and \"Name of Body Corporate — Where applicant is a Body Corporate\" (discriminator field itself not printed on the form; supplied for completeness)"
+    },
+    {
+      "name": "shareholder1FirstName",
+      "label": "Shareholder 1 — First Name",
+      "type": "string",
+      "classification": "pii",
+      "description": "First name of the shareholder 1.",
+      "sourceRef": "Part C — Shareholders, \"First Name\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "shareholder1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "shareholder1Surname",
+      "label": "Shareholder 1 — Surname",
+      "type": "string",
+      "classification": "pii",
+      "description": "Surname of the shareholder 1.",
+      "sourceRef": "Part C — Shareholders, \"Surname\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "shareholder1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "shareholder1Gender",
+      "label": "Shareholder 1 — Gender",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "Gender of the shareholder 1, as a free-text entry — the source form prints a blank fill-in line with no enumerated options.",
+      "sourceRef": "Part C — Shareholders, \"Gender\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "shareholder1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "shareholder1DateOfBirth",
+      "label": "Shareholder 1 — Date of Birth",
+      "type": "date",
+      "classification": "pii",
+      "description": "Date of birth of the shareholder 1.",
+      "sourceRef": "Part C — Shareholders, \"Date of Birth\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "shareholder1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "shareholder1Nationality",
+      "label": "Shareholder 1 — Nationality",
+      "type": "string",
+      "classification": "pii",
+      "description": "Nationality of the shareholder 1.",
+      "sourceRef": "Part C — Shareholders, \"Nationality\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "shareholder1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "shareholder1IdentityType",
+      "label": "Shareholder 1 — Identity Type",
+      "type": "enum",
+      "classification": "pii",
+      "description": "The kind of identity document held by the shareholder 1. For Zambian nationals, only the National Registration Card (NRC) is accepted; non-Zambians may instead present an NRC (if held), passport, driver's licence, or resident permit.",
+      "sourceRef": "Part C — Shareholders, \"Identity Type — For Zambians: NRC. For non-Zambians: NRC/Passport/Driver's Licence/Resident Permit\"",
+      "validation": {
+        "enum": [
+          "NRC",
+          "Passport",
+          "Driver's Licence",
+          "Resident Permit"
+        ]
+      },
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "shareholder1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "shareholder1IdentityNumber",
+      "label": "Shareholder 1 — Identity Number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "The identity document number corresponding to shareholder1IdentityType.",
+      "sourceRef": "Part C — Shareholders, \"Identity Number\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "shareholder1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "shareholder1NameOfBodyCorporate",
+      "label": "Shareholder 1 — Name of Body Corporate",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "field": "shareholder1IsBodyCorporate",
+            "equals": true
+          }
+        ]
+      },
+      "description": "Name of the body corporate, where the shareholder 1 is itself a body corporate rather than a natural person.",
+      "sourceRef": "Part C — Shareholders, \"Name of Body Corporate — Where applicant is a Body Corporate\""
+    },
+    {
+      "name": "shareholder1NatureOfBodyCorporate",
+      "label": "Shareholder 1 — Nature of Body Corporate",
+      "type": "string",
+      "required": false,
+      "description": "Nature of the body corporate — e.g. Company, Co-operative, Trust, Society, etc. Applicable where shareholder1IsBodyCorporate is true; modelled bare-optional (no requiredWhen gate) since this is a secondary descriptive detail, not the primary identification field.",
+      "sourceRef": "Part C — Shareholders, \"Nature of Body Corporate — indicate whether applicant is a Company, Co-operative, Trust, Society, Etc.\""
+    },
+    {
+      "name": "shareholder1BodyCorporateRegistrationDetails",
+      "label": "Shareholder 1 — Registration Number, Date and Country of Incorporation of Body Corporate",
+      "type": "string",
+      "required": false,
+      "description": "The body corporate's registration number, registration date, and country of incorporation, printed together as a single answer. Applicable where shareholder1IsBodyCorporate is true; modelled bare-optional (no requiredWhen gate) since this is a secondary descriptive detail, not the primary identification field.",
+      "sourceRef": "Part C — Shareholders, \"Registration Number, Date and Country of Incorporation of Body Corporate\""
+    },
+    {
+      "name": "shareholder1MobilePhone",
+      "label": "Shareholder 1 — Phone Number (Mobile)",
+      "type": "string",
+      "description": "Mobile phone number of the shareholder 1, including the international code (e.g. +260 for Zambia).",
+      "sourceRef": "Part C — Shareholders, \"Phone Number\" — \"Mobile\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "shareholder1LandlinePhone",
+      "label": "Shareholder 1 — Phone Number (Landline)",
+      "type": "string",
+      "required": false,
+      "description": "Landline phone number of the shareholder 1, if any. Always bare-optional regardless of outer block applicability, since it is a secondary contact method.",
+      "sourceRef": "Part C — Shareholders, \"Phone Number\" — \"Landline\""
+    },
+    {
+      "name": "shareholder1Email",
+      "label": "Shareholder 1 — Email Address",
+      "type": "string",
+      "description": "Email address of the shareholder 1.",
+      "sourceRef": "Part C — Shareholders, \"Email Address\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "shareholder1AddressPlotHouseVillage",
+      "label": "Shareholder 1 — Physical Address (Plot/House/Village)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the shareholder 1 (Plot/House/Village).",
+      "sourceRef": "Part C — Shareholders, \"Physical Address\" — \"Plot/House/Village\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "shareholder1AddressStreet",
+      "label": "Shareholder 1 — Physical Address (Street)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the shareholder 1 (Street).",
+      "sourceRef": "Part C — Shareholders, \"Physical Address\" — \"Street\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "shareholder1AddressArea",
+      "label": "Shareholder 1 — Physical Address (Area)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the shareholder 1 (Area).",
+      "sourceRef": "Part C — Shareholders, \"Physical Address\" — \"Area\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "shareholder1AddressTown",
+      "label": "Shareholder 1 — Physical Address (Town)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the shareholder 1 (Town).",
+      "sourceRef": "Part C — Shareholders, \"Physical Address\" — \"Town\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "shareholder1AddressProvince",
+      "label": "Shareholder 1 — Physical Address (Province)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the shareholder 1 (Province).",
+      "sourceRef": "Part C — Shareholders, \"Physical Address\" — \"Province\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "shareholder1AddressCountry",
+      "label": "Shareholder 1 — Physical Address (Country)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the shareholder 1 (Country).",
+      "sourceRef": "Part C — Shareholders, \"Physical Address\" — \"Country\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "shareholder1SharesCount",
+      "label": "Shareholder 1 — Number of Shares",
+      "type": "integer",
+      "description": "Number of shares held by this shareholder.",
+      "sourceRef": "Part C — Shareholders, \"Number of Shares\"",
+      "validation": {
+        "minimum": 0
+      },
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "shareholder1ClassOfShares",
+      "label": "Shareholder 1 — Class of Shares",
+      "type": "string",
+      "description": "Class of shares held by this shareholder (e.g. Ordinary, Preferential, or another class named in the company's own Part A class-of-shares table).",
+      "sourceRef": "Part C — Shareholders, \"Class of Shares\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "shareholder1ConsentSignature",
+      "label": "Shareholder 1 — Consent Signature",
+      "type": "string",
+      "description": "Legal owner(s) to sign if not the Beneficial Owner Modelled as a signature-name attestation.",
+      "sourceRef": "Part C — Shareholders, \"Legal owner(s) to sign if not the Beneficial Owner\" — \"Signature\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "shareholder1ConsentSignatureDate",
+      "label": "Shareholder 1 — Consent Signature Date",
+      "type": "date",
+      "description": "Date the consent declaration above was signed.",
+      "sourceRef": "Part C — Shareholders, \"Legal owner(s) to sign if not the Beneficial Owner\" — \"Date\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "numberOfBeneficialOwners",
+      "label": "Number of Beneficial Owners",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      },
+      "description": "Total number of beneficial owners being disclosed. Applicable to a Public Company, Private Company Limited by Shares, and Unlimited Private Company. The source form's own footer reads \"Replicate Part D if the Beneficial Owners are more than two\" — an explicit two-slot base capacity, unlike Parts B/C/E/F which give no numeric anchor.",
+      "sourceRef": "Part D footer — \"Replicate Part D if the Beneficial Owners are more than two\"",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "beneficialOwner1IsBodyCorporate",
+      "label": "Beneficial Owner 1 — Is a Body Corporate",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      },
+      "description": "Whether the beneficial owner 1 is a body corporate (company, co-operative, trust, society, etc.) rather than a natural person. The source form prints separate natural-person and body-corporate identification blocks side by side with no explicit either/or checkbox; this discriminator is supplied by this schema (not printed on the form) to determine which of the two identification blocks below applies.",
+      "sourceRef": "Part D — Beneficial Ownership, implicit choice between the natural-person fields (First Name, Surname, ...) and \"Name of Body Corporate — Where applicant is a Body Corporate\" (discriminator field itself not printed on the form; supplied for completeness)"
+    },
+    {
+      "name": "beneficialOwner1FirstName",
+      "label": "Beneficial Owner 1 — First Name",
+      "type": "string",
+      "classification": "pii",
+      "description": "First name of the beneficial owner 1.",
+      "sourceRef": "Part D — Beneficial Ownership, \"First Name\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "beneficialOwner1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "beneficialOwner1Surname",
+      "label": "Beneficial Owner 1 — Surname",
+      "type": "string",
+      "classification": "pii",
+      "description": "Surname of the beneficial owner 1.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Surname\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "beneficialOwner1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "beneficialOwner1Gender",
+      "label": "Beneficial Owner 1 — Gender",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "Gender of the beneficial owner 1, as a free-text entry — the source form prints a blank fill-in line with no enumerated options.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Gender\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "beneficialOwner1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "beneficialOwner1DateOfBirth",
+      "label": "Beneficial Owner 1 — Date of Birth",
+      "type": "date",
+      "classification": "pii",
+      "description": "Date of birth of the beneficial owner 1.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Date of Birth\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "beneficialOwner1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "beneficialOwner1Nationality",
+      "label": "Beneficial Owner 1 — Nationality",
+      "type": "string",
+      "classification": "pii",
+      "description": "Nationality of the beneficial owner 1.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Nationality\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "beneficialOwner1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "beneficialOwner1IdentityType",
+      "label": "Beneficial Owner 1 — Identity Type",
+      "type": "enum",
+      "classification": "pii",
+      "description": "The kind of identity document held by the beneficial owner 1. For Zambian nationals, only the National Registration Card (NRC) is accepted; non-Zambians may instead present an NRC (if held), passport, driver's licence, or resident permit.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Identity Type — For Zambians: NRC. For non-Zambians: NRC/Passport/Driver's Licence/Resident Permit\"",
+      "validation": {
+        "enum": [
+          "NRC",
+          "Passport",
+          "Driver's Licence",
+          "Resident Permit"
+        ]
+      },
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "beneficialOwner1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "beneficialOwner1IdentityNumber",
+      "label": "Beneficial Owner 1 — Identity Number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "The identity document number corresponding to beneficialOwner1IdentityType.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Identity Number\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "beneficialOwner1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "beneficialOwner1Occupation",
+      "label": "Beneficial Owner 1 — Occupation",
+      "type": "string",
+      "classification": "pii",
+      "description": "Occupation of the beneficial owner 1.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Occupation\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "beneficialOwner1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "beneficialOwner1NameOfBodyCorporate",
+      "label": "Beneficial Owner 1 — Name of Body Corporate",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "notEquals": "Private Company Limited By Guarantee"
+          },
+          {
+            "field": "beneficialOwner1IsBodyCorporate",
+            "equals": true
+          }
+        ]
+      },
+      "description": "Name of the body corporate, where the beneficial owner 1 is itself a body corporate rather than a natural person.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Name of Body Corporate — Where applicant is a Body Corporate\""
+    },
+    {
+      "name": "beneficialOwner1NatureOfBodyCorporate",
+      "label": "Beneficial Owner 1 — Nature of Body Corporate",
+      "type": "string",
+      "required": false,
+      "description": "Nature of the body corporate — e.g. Company, Co-operative, Trust, Society, etc. Applicable where beneficialOwner1IsBodyCorporate is true; modelled bare-optional (no requiredWhen gate) since this is a secondary descriptive detail, not the primary identification field.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Nature of Body Corporate — indicate whether applicant is a Company, Co-operative, Trust, Society, Etc.\""
+    },
+    {
+      "name": "beneficialOwner1BodyCorporateRegistrationDetails",
+      "label": "Beneficial Owner 1 — Registration Number, Date and Country of Incorporation of Body Corporate",
+      "type": "string",
+      "required": false,
+      "description": "The body corporate's registration number, registration date, and country of incorporation, printed together as a single answer. Applicable where beneficialOwner1IsBodyCorporate is true; modelled bare-optional (no requiredWhen gate) since this is a secondary descriptive detail, not the primary identification field.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Registration Number, Date and Country of Incorporation of Body Corporate\""
+    },
+    {
+      "name": "beneficialOwner1MobilePhone",
+      "label": "Beneficial Owner 1 — Phone Number (Mobile)",
+      "type": "string",
+      "description": "Mobile phone number of the beneficial owner 1, including the international code (e.g. +260 for Zambia).",
+      "sourceRef": "Part D — Beneficial Ownership, \"Phone Number\" — \"Mobile\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "beneficialOwner1LandlinePhone",
+      "label": "Beneficial Owner 1 — Phone Number (Landline)",
+      "type": "string",
+      "required": false,
+      "description": "Landline phone number of the beneficial owner 1, if any. Always bare-optional regardless of outer block applicability, since it is a secondary contact method.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Phone Number\" — \"Landline\""
+    },
+    {
+      "name": "beneficialOwner1Email",
+      "label": "Beneficial Owner 1 — Email Address",
+      "type": "string",
+      "description": "Email address of the beneficial owner 1.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Email Address\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "beneficialOwner1AddressPlotHouseVillage",
+      "label": "Beneficial Owner 1 — Physical/Registered Office Address (Plot/House/Village)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical/Registered Office Address of the beneficial owner 1 (Plot/House/Village).",
+      "sourceRef": "Part D — Beneficial Ownership, \"Physical/Registered Office Address\" — \"Plot/House/Village\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "beneficialOwner1AddressStreet",
+      "label": "Beneficial Owner 1 — Physical/Registered Office Address (Street)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical/Registered Office Address of the beneficial owner 1 (Street).",
+      "sourceRef": "Part D — Beneficial Ownership, \"Physical/Registered Office Address\" — \"Street\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "beneficialOwner1AddressArea",
+      "label": "Beneficial Owner 1 — Physical/Registered Office Address (Area)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical/Registered Office Address of the beneficial owner 1 (Area).",
+      "sourceRef": "Part D — Beneficial Ownership, \"Physical/Registered Office Address\" — \"Area\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "beneficialOwner1AddressTown",
+      "label": "Beneficial Owner 1 — Physical/Registered Office Address (Town)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical/Registered Office Address of the beneficial owner 1 (Town).",
+      "sourceRef": "Part D — Beneficial Ownership, \"Physical/Registered Office Address\" — \"Town\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "beneficialOwner1AddressProvince",
+      "label": "Beneficial Owner 1 — Physical/Registered Office Address (Province)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical/Registered Office Address of the beneficial owner 1 (Province).",
+      "sourceRef": "Part D — Beneficial Ownership, \"Physical/Registered Office Address\" — \"Province\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "beneficialOwner1AddressCountry",
+      "label": "Beneficial Owner 1 — Physical/Registered Office Address (Country)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical/Registered Office Address of the beneficial owner 1 (Country).",
+      "sourceRef": "Part D — Beneficial Ownership, \"Physical/Registered Office Address\" — \"Country\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "beneficialOwner1SharesCount",
+      "label": "Beneficial Owner 1 — Number of Shares (If Any)",
+      "type": "integer",
+      "required": false,
+      "description": "Number of shares held by/attributable to this beneficial owner, if any (a beneficial owner need not hold shares directly, e.g. where influence is exercised through other means).",
+      "sourceRef": "Part D — Beneficial Ownership, \"Number of Shares (if any)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "beneficialOwner1ClassOfShares",
+      "label": "Beneficial Owner 1 — Class of Shares (If Any)",
+      "type": "string",
+      "required": false,
+      "description": "Class of shares held by/attributable to this beneficial owner, if any.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Class of Shares (if any)\""
+    },
+    {
+      "name": "natureOfBeneficialOwnership",
+      "label": "Nature of Beneficial Ownership",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      },
+      "description": "A brief explanation of the nature of the beneficial ownership disclosed above (e.g. trust, other legal arrangement) including how ownership, control, or economic interest is maintained.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Nature of Beneficial Ownership — Briefly explain the nature of beneficial ownership (whether trust, legal arrangement etc.) including how ownership control or economic interest is maintained\""
+    },
+    {
+      "name": "dateBeneficialInterestAcquired",
+      "label": "Date Beneficial Interest Was Acquired",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "notEquals": "Private Company Limited By Guarantee"
+      },
+      "description": "Date on which the disclosed beneficial interest was acquired.",
+      "sourceRef": "Part D — Beneficial Ownership, \"Date when beneficial interest was acquired\""
+    },
+    {
+      "name": "isPoliticallyExposedPerson",
+      "label": "Politically Exposed Person (PEP)",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the beneficial owner is a politically exposed person (PEP) as defined in the Financial Intelligence Centre Act No. 46 of 2010.",
+      "sourceRef": "Part D — Beneficial Ownership, \"If beneficial owner is a politically exposed person (PEP) as defined in the Financial Intelligence Act No. 46 of 2010, provide details (e.g. position held)\""
+    },
+    {
+      "name": "politicallyExposedPersonDetails",
+      "label": "Politically Exposed Person — Details",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "isPoliticallyExposedPerson",
+        "equals": true
+      },
+      "description": "Details of the beneficial owner's status as a politically exposed person (e.g. position held), required when isPoliticallyExposedPerson is true.",
+      "sourceRef": "Part D — Beneficial Ownership, \"...provide details (e.g. position held)\""
+    },
+    {
+      "name": "numberOfGuarantors",
+      "label": "Number of Guarantors",
+      "type": "integer",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "equals": "Private Company Limited By Guarantee"
+      },
+      "description": "Total number of guarantors. Applicable only to a Private Company Limited by Guarantee. The source form carries no count field itself; it instructs applicants to \"Replicate Part E to add more Guarantors\" for each guarantor beyond the first.",
+      "sourceRef": "Part E footer — \"Replicate Part E to add more Guarantors\" (count field itself not printed on the form; supplied for completeness)",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "guarantor1IsBodyCorporate",
+      "label": "Guarantor 1 — Is a Body Corporate",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "equals": "Private Company Limited By Guarantee"
+      },
+      "description": "Whether the guarantor 1 is a body corporate (company, co-operative, trust, society, etc.) rather than a natural person. The source form prints separate natural-person and body-corporate identification blocks side by side with no explicit either/or checkbox; this discriminator is supplied by this schema (not printed on the form) to determine which of the two identification blocks below applies.",
+      "sourceRef": "Part E — Guarantors, implicit choice between the natural-person fields (First Name, Surname, ...) and \"Name of Body Corporate — Where applicant is a Body Corporate\" (discriminator field itself not printed on the form; supplied for completeness)"
+    },
+    {
+      "name": "guarantor1FirstName",
+      "label": "Guarantor 1 — First Name",
+      "type": "string",
+      "classification": "pii",
+      "description": "First name of the guarantor 1.",
+      "sourceRef": "Part E — Guarantors, \"First Name\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "equals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "guarantor1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "guarantor1Surname",
+      "label": "Guarantor 1 — Surname",
+      "type": "string",
+      "classification": "pii",
+      "description": "Surname of the guarantor 1.",
+      "sourceRef": "Part E — Guarantors, \"Surname\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "equals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "guarantor1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "guarantor1Gender",
+      "label": "Guarantor 1 — Gender",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "Gender of the guarantor 1, as a free-text entry — the source form prints a blank fill-in line with no enumerated options.",
+      "sourceRef": "Part E — Guarantors, \"Gender\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "equals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "guarantor1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "guarantor1DateOfBirth",
+      "label": "Guarantor 1 — Date of Birth",
+      "type": "date",
+      "classification": "pii",
+      "description": "Date of birth of the guarantor 1.",
+      "sourceRef": "Part E — Guarantors, \"Date of Birth\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "equals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "guarantor1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "guarantor1Nationality",
+      "label": "Guarantor 1 — Nationality",
+      "type": "string",
+      "classification": "pii",
+      "description": "Nationality of the guarantor 1.",
+      "sourceRef": "Part E — Guarantors, \"Nationality\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "equals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "guarantor1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "guarantor1IdentityType",
+      "label": "Guarantor 1 — Identity Type",
+      "type": "enum",
+      "classification": "pii",
+      "description": "The kind of identity document held by the guarantor 1. For Zambian nationals, only the National Registration Card (NRC) is accepted; non-Zambians may instead present an NRC (if held), passport, driver's licence, or resident permit.",
+      "sourceRef": "Part E — Guarantors, \"Identity Type — For Zambians: NRC. For non-Zambians: NRC/Passport/Driver's Licence/Resident Permit\"",
+      "validation": {
+        "enum": [
+          "NRC",
+          "Passport",
+          "Driver's Licence",
+          "Resident Permit"
+        ]
+      },
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "equals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "guarantor1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "guarantor1IdentityNumber",
+      "label": "Guarantor 1 — Identity Number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "The identity document number corresponding to guarantor1IdentityType.",
+      "sourceRef": "Part E — Guarantors, \"Identity Number\"",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "equals": "Private Company Limited By Guarantee"
+          },
+          {
+            "not": {
+              "field": "guarantor1IsBodyCorporate",
+              "equals": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "guarantor1NameOfBodyCorporate",
+      "label": "Guarantor 1 — Name of Body Corporate",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "all": [
+          {
+            "field": "companyType",
+            "equals": "Private Company Limited By Guarantee"
+          },
+          {
+            "field": "guarantor1IsBodyCorporate",
+            "equals": true
+          }
+        ]
+      },
+      "description": "Name of the body corporate, where the guarantor 1 is itself a body corporate rather than a natural person.",
+      "sourceRef": "Part E — Guarantors, \"Name of Body Corporate — Where applicant is a Body Corporate\""
+    },
+    {
+      "name": "guarantor1NatureOfBodyCorporate",
+      "label": "Guarantor 1 — Nature of Body Corporate",
+      "type": "string",
+      "required": false,
+      "description": "Nature of the body corporate — e.g. Company, Co-operative, Trust, Society, etc. Applicable where guarantor1IsBodyCorporate is true; modelled bare-optional (no requiredWhen gate) since this is a secondary descriptive detail, not the primary identification field.",
+      "sourceRef": "Part E — Guarantors, \"Nature of Body Corporate — indicate whether applicant is a Company, Co-operative, Trust, Society, Etc.\""
+    },
+    {
+      "name": "guarantor1BodyCorporateRegistrationDetails",
+      "label": "Guarantor 1 — Registration Number, Date and Country of Incorporation of Body Corporate",
+      "type": "string",
+      "required": false,
+      "description": "The body corporate's registration number, registration date, and country of incorporation, printed together as a single answer. Applicable where guarantor1IsBodyCorporate is true; modelled bare-optional (no requiredWhen gate) since this is a secondary descriptive detail, not the primary identification field.",
+      "sourceRef": "Part E — Guarantors, \"Registration Number, Date and Country of Incorporation of Body Corporate\""
+    },
+    {
+      "name": "guarantor1MobilePhone",
+      "label": "Guarantor 1 — Phone Number (Mobile)",
+      "type": "string",
+      "description": "Mobile phone number of the guarantor 1, including the international code (e.g. +260 for Zambia).",
+      "sourceRef": "Part E — Guarantors, \"Phone Number\" — \"Mobile\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "equals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "guarantor1LandlinePhone",
+      "label": "Guarantor 1 — Phone Number (Landline)",
+      "type": "string",
+      "required": false,
+      "description": "Landline phone number of the guarantor 1, if any. Always bare-optional regardless of outer block applicability, since it is a secondary contact method.",
+      "sourceRef": "Part E — Guarantors, \"Phone Number\" — \"Landline\""
+    },
+    {
+      "name": "guarantor1Email",
+      "label": "Guarantor 1 — Email Address",
+      "type": "string",
+      "description": "Email address of the guarantor 1.",
+      "sourceRef": "Part E — Guarantors, \"Email Address\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "equals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "guarantor1AddressPlotHouseVillage",
+      "label": "Guarantor 1 — Physical Address (Plot/House/Village)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the guarantor 1 (Plot/House/Village).",
+      "sourceRef": "Part E — Guarantors, \"Physical Address\" — \"Plot/House/Village\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "equals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "guarantor1AddressStreet",
+      "label": "Guarantor 1 — Physical Address (Street)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the guarantor 1 (Street).",
+      "sourceRef": "Part E — Guarantors, \"Physical Address\" — \"Street\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "equals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "guarantor1AddressArea",
+      "label": "Guarantor 1 — Physical Address (Area)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the guarantor 1 (Area).",
+      "sourceRef": "Part E — Guarantors, \"Physical Address\" — \"Area\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "equals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "guarantor1AddressTown",
+      "label": "Guarantor 1 — Physical Address (Town)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the guarantor 1 (Town).",
+      "sourceRef": "Part E — Guarantors, \"Physical Address\" — \"Town\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "equals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "guarantor1AddressProvince",
+      "label": "Guarantor 1 — Physical Address (Province)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the guarantor 1 (Province).",
+      "sourceRef": "Part E — Guarantors, \"Physical Address\" — \"Province\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "equals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "guarantor1AddressCountry",
+      "label": "Guarantor 1 — Physical Address (Country)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the guarantor 1 (Country).",
+      "sourceRef": "Part E — Guarantors, \"Physical Address\" — \"Country\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "equals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "guarantor1GuaranteedAmountZmw",
+      "label": "Guarantor 1 — Guaranteed Amount (ZMW)",
+      "type": "number",
+      "description": "The amount, in Zambian Kwacha (ZMW), that this guarantor undertakes to contribute if the company is wound up.",
+      "sourceRef": "Part E — Guarantors, \"Guaranteed Amount\"",
+      "validation": {
+        "minimum": 0
+      },
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "equals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "guarantor1ConsentSignature",
+      "label": "Guarantor 1 — Consent Signature",
+      "type": "string",
+      "description": "Guarantor's declaration: \"We, whose name(s) and particulars appear above, hereby undertake to contribute the guaranteed amount(s) specified\" Modelled as a signature-name attestation.",
+      "sourceRef": "Part E — Guarantors, \"Guarantor's declaration: \\\"We, whose name(s) and particulars appear above, hereby undertake to contribute the guaranteed amount(s) specified\\\"\" — \"Signature\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "equals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "guarantor1ConsentSignatureDate",
+      "label": "Guarantor 1 — Consent Signature Date",
+      "type": "date",
+      "description": "Date the consent declaration above was signed.",
+      "sourceRef": "Part E — Guarantors, \"Guarantor's declaration: \\\"We, whose name(s) and particulars appear above, hereby undertake to contribute the guaranteed amount(s) specified\\\"\" — \"Date\"",
+      "required": false,
+      "requiredWhen": {
+        "field": "companyType",
+        "equals": "Private Company Limited By Guarantee"
+      }
+    },
+    {
+      "name": "numberOfSecretaries",
+      "label": "Number of Company Secretaries",
+      "type": "integer",
+      "required": true,
+      "description": "Total number of company secretaries being appointed (every Zambian company must appoint at least one). The source form carries no count field itself; it instructs applicants to \"Replicate Part F to add more Secretaries\" where joint secretaries are appointed.",
+      "sourceRef": "Part F footer — \"Replicate Part F to add more Secretaries\" (count field itself not printed on the form; supplied for completeness)",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "secretary1IsBodyCorporate",
+      "label": "Company Secretary 1 — Is a Body Corporate",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the company secretary 1 is a body corporate (company, co-operative, trust, society, etc.) rather than a natural person. The source form prints separate natural-person and body-corporate identification blocks side by side with no explicit either/or checkbox; this discriminator is supplied by this schema (not printed on the form) to determine which of the two identification blocks below applies.",
+      "sourceRef": "Part F — Company Secretary, implicit choice between the natural-person fields (First Name, Surname, ...) and \"Name of Body Corporate — Where applicant is a Body Corporate\" (discriminator field itself not printed on the form; supplied for completeness)"
+    },
+    {
+      "name": "secretary1FirstName",
+      "label": "Company Secretary 1 — First Name",
+      "type": "string",
+      "classification": "pii",
+      "description": "First name of the company secretary 1.",
+      "sourceRef": "Part F — Company Secretary, \"First Name\"",
+      "required": false,
+      "requiredWhen": {
+        "not": {
+          "field": "secretary1IsBodyCorporate",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "secretary1Surname",
+      "label": "Company Secretary 1 — Surname",
+      "type": "string",
+      "classification": "pii",
+      "description": "Surname of the company secretary 1.",
+      "sourceRef": "Part F — Company Secretary, \"Surname\"",
+      "required": false,
+      "requiredWhen": {
+        "not": {
+          "field": "secretary1IsBodyCorporate",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "secretary1Gender",
+      "label": "Company Secretary 1 — Gender",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "Gender of the company secretary 1, as a free-text entry — the source form prints a blank fill-in line with no enumerated options.",
+      "sourceRef": "Part F — Company Secretary, \"Gender\"",
+      "required": false,
+      "requiredWhen": {
+        "not": {
+          "field": "secretary1IsBodyCorporate",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "secretary1DateOfBirth",
+      "label": "Company Secretary 1 — Date of Birth",
+      "type": "date",
+      "classification": "pii",
+      "description": "Date of birth of the company secretary 1.",
+      "sourceRef": "Part F — Company Secretary, \"Date of Birth\"",
+      "required": false,
+      "requiredWhen": {
+        "not": {
+          "field": "secretary1IsBodyCorporate",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "secretary1Nationality",
+      "label": "Company Secretary 1 — Nationality",
+      "type": "string",
+      "classification": "pii",
+      "description": "Nationality of the company secretary 1.",
+      "sourceRef": "Part F — Company Secretary, \"Nationality\"",
+      "required": false,
+      "requiredWhen": {
+        "not": {
+          "field": "secretary1IsBodyCorporate",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "secretary1IdentityType",
+      "label": "Company Secretary 1 — Identity Type",
+      "type": "enum",
+      "classification": "pii",
+      "description": "The kind of identity document held by the company secretary 1. For Zambian nationals, only the National Registration Card (NRC) is accepted; non-Zambians may instead present an NRC (if held), passport, driver's licence, or resident permit.",
+      "sourceRef": "Part F — Company Secretary, \"Identity Type — For Zambians: NRC. For non-Zambians: NRC/Passport/Driver's Licence/Resident Permit\"",
+      "validation": {
+        "enum": [
+          "NRC",
+          "Passport",
+          "Driver's Licence",
+          "Resident Permit"
+        ]
+      },
+      "required": false,
+      "requiredWhen": {
+        "not": {
+          "field": "secretary1IsBodyCorporate",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "secretary1IdentityNumber",
+      "label": "Company Secretary 1 — Identity Number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "The identity document number corresponding to secretary1IdentityType.",
+      "sourceRef": "Part F — Company Secretary, \"Identity Number\"",
+      "required": false,
+      "requiredWhen": {
+        "not": {
+          "field": "secretary1IsBodyCorporate",
+          "equals": true
+        }
+      }
+    },
+    {
+      "name": "secretary1NameOfBodyCorporate",
+      "label": "Company Secretary 1 — Name of Body Corporate",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "secretary1IsBodyCorporate",
+        "equals": true
+      },
+      "description": "Name of the body corporate, where the company secretary 1 is itself a body corporate rather than a natural person.",
+      "sourceRef": "Part F — Company Secretary, \"Name of Body Corporate — Where applicant is a Body Corporate\""
+    },
+    {
+      "name": "secretary1NatureOfBodyCorporate",
+      "label": "Company Secretary 1 — Nature of Body Corporate",
+      "type": "string",
+      "required": false,
+      "description": "Nature of the body corporate — e.g. Company, Co-operative, Trust, Society, etc. Applicable where secretary1IsBodyCorporate is true; modelled bare-optional (no requiredWhen gate) since this is a secondary descriptive detail, not the primary identification field.",
+      "sourceRef": "Part F — Company Secretary, \"Nature of Body Corporate — indicate whether applicant is a Company, Co-operative, Trust, Society, Etc.\""
+    },
+    {
+      "name": "secretary1BodyCorporateRegistrationDetails",
+      "label": "Company Secretary 1 — Registration Number, Date and Country of Incorporation of Body Corporate",
+      "type": "string",
+      "required": false,
+      "description": "The body corporate's registration number, registration date, and country of incorporation, printed together as a single answer. Applicable where secretary1IsBodyCorporate is true; modelled bare-optional (no requiredWhen gate) since this is a secondary descriptive detail, not the primary identification field.",
+      "sourceRef": "Part F — Company Secretary, \"Registration Number, Date and Country of Incorporation of Body Corporate\""
+    },
+    {
+      "name": "secretary1MobilePhone",
+      "label": "Company Secretary 1 — Phone Number (Mobile)",
+      "type": "string",
+      "description": "Mobile phone number of the company secretary 1, including the international code (e.g. +260 for Zambia).",
+      "sourceRef": "Part F — Company Secretary, \"Phone Number\" — \"Mobile\"",
+      "required": true
+    },
+    {
+      "name": "secretary1LandlinePhone",
+      "label": "Company Secretary 1 — Phone Number (Landline)",
+      "type": "string",
+      "required": false,
+      "description": "Landline phone number of the company secretary 1, if any. Always bare-optional regardless of outer block applicability, since it is a secondary contact method.",
+      "sourceRef": "Part F — Company Secretary, \"Phone Number\" — \"Landline\""
+    },
+    {
+      "name": "secretary1Email",
+      "label": "Company Secretary 1 — Email Address",
+      "type": "string",
+      "description": "Email address of the company secretary 1.",
+      "sourceRef": "Part F — Company Secretary, \"Email Address\"",
+      "required": true
+    },
+    {
+      "name": "secretary1AddressPlotHouseVillage",
+      "label": "Company Secretary 1 — Physical Address (Plot/House/Village)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the company secretary 1 (Plot/House/Village).",
+      "sourceRef": "Part F — Company Secretary, \"Physical Address\" — \"Plot/House/Village\"",
+      "required": true
+    },
+    {
+      "name": "secretary1AddressStreet",
+      "label": "Company Secretary 1 — Physical Address (Street)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the company secretary 1 (Street).",
+      "sourceRef": "Part F — Company Secretary, \"Physical Address\" — \"Street\"",
+      "required": true
+    },
+    {
+      "name": "secretary1AddressArea",
+      "label": "Company Secretary 1 — Physical Address (Area)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the company secretary 1 (Area).",
+      "sourceRef": "Part F — Company Secretary, \"Physical Address\" — \"Area\"",
+      "required": true
+    },
+    {
+      "name": "secretary1AddressTown",
+      "label": "Company Secretary 1 — Physical Address (Town)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the company secretary 1 (Town).",
+      "sourceRef": "Part F — Company Secretary, \"Physical Address\" — \"Town\"",
+      "required": true
+    },
+    {
+      "name": "secretary1AddressProvince",
+      "label": "Company Secretary 1 — Physical Address (Province)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the company secretary 1 (Province).",
+      "sourceRef": "Part F — Company Secretary, \"Physical Address\" — \"Province\"",
+      "required": true
+    },
+    {
+      "name": "secretary1AddressCountry",
+      "label": "Company Secretary 1 — Physical Address (Country)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the company secretary 1 (Country).",
+      "sourceRef": "Part F — Company Secretary, \"Physical Address\" — \"Country\"",
+      "required": true
+    },
+    {
+      "name": "secretary1ConsentSignature",
+      "label": "Company Secretary 1 — Consent Signature",
+      "type": "string",
+      "description": "Declaration for consent to act as Company Secretary: \"I/We, whose name(s) and particulars appear above, consent to act as Company secretary(s) for this Company\" Modelled as a signature-name attestation.",
+      "sourceRef": "Part F — Company Secretary, \"Declaration for consent to act as Company Secretary: \\\"I/We, whose name(s) and particulars appear above, consent to act as Company secretary(s) for this Company\\\"\" — \"Signature\"",
+      "required": true
+    },
+    {
+      "name": "secretary1ConsentSignatureDate",
+      "label": "Company Secretary 1 — Consent Signature Date",
+      "type": "date",
+      "description": "Date the consent declaration above was signed.",
+      "sourceRef": "Part F — Company Secretary, \"Declaration for consent to act as Company Secretary: \\\"I/We, whose name(s) and particulars appear above, consent to act as Company secretary(s) for this Company\\\"\" — \"Date\"",
+      "required": true
+    },
+    {
+      "name": "declarantName",
+      "label": "Declarant's Full Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of the person making the declaration of compliance.",
+      "sourceRef": "Part G — Declaration of Compliance, \"I, ......... do solemnly and sincerely declare...\""
+    },
+    {
+      "name": "declarantRole",
+      "label": "Declarant's Role",
+      "type": "enum",
+      "required": true,
+      "description": "The declarant's own stated capacity: a legal practitioner engaged in the company's formation, the first director named in the application, or the first secretary named in the application. The form prints all three options with an instruction to delete whichever do not apply.",
+      "sourceRef": "Part G — Declaration of Compliance, \"...that I am: a legal practitioner engaged in the formation of the Company / a first director named in the application for incorporation / or the first secretary named in the application for incorporation (delete whichever is not applicable)\"",
+      "validation": {
+        "enum": [
+          "Legal Practitioner",
+          "First Director",
+          "First Secretary"
+        ]
+      }
+    },
+    {
+      "name": "declarationPlace",
+      "label": "Declared At",
+      "type": "string",
+      "required": true,
+      "description": "The place where the declaration of compliance was made.",
+      "sourceRef": "Part G — Declaration of Compliance, \"Declared at ....\""
+    },
+    {
+      "name": "declarationDate",
+      "label": "Declaration Date",
+      "type": "date",
+      "required": true,
+      "description": "The date the declaration of compliance was made.",
+      "sourceRef": "Part G — Declaration of Compliance, \"...the ..... day of ....., 20.....\""
+    },
+    {
+      "name": "declarantSignature",
+      "label": "Declarant's Signature",
+      "type": "string",
+      "required": true,
+      "description": "Signature of the declarant, modelled as a signature-name attestation.",
+      "sourceRef": "Part G — Declaration of Compliance, \"Signature: ....\""
+    },
+    {
+      "name": "lodgerFirstName",
+      "label": "Person Lodging Application — First Name",
+      "type": "string",
+      "classification": "pii",
+      "description": "First name of the person lodging application.",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"First Name\"",
+      "required": true
+    },
+    {
+      "name": "lodgerSurname",
+      "label": "Person Lodging Application — Surname",
+      "type": "string",
+      "classification": "pii",
+      "description": "Surname of the person lodging application.",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Surname\"",
+      "required": true
+    },
+    {
+      "name": "lodgerGender",
+      "label": "Person Lodging Application — Gender",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "Gender of the person lodging application, as a free-text entry — the source form prints a blank fill-in line with no enumerated options.",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Gender\"",
+      "required": true
+    },
+    {
+      "name": "lodgerDateOfBirth",
+      "label": "Person Lodging Application — Date of Birth",
+      "type": "date",
+      "classification": "pii",
+      "description": "Date of birth of the person lodging application.",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Date of Birth\"",
+      "required": true
+    },
+    {
+      "name": "lodgerNationality",
+      "label": "Person Lodging Application — Nationality",
+      "type": "string",
+      "classification": "pii",
+      "description": "Nationality of the person lodging application.",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Nationality\"",
+      "required": true
+    },
+    {
+      "name": "lodgerIdentityType",
+      "label": "Person Lodging Application — Identity Type",
+      "type": "enum",
+      "classification": "pii",
+      "description": "The kind of identity document held by the person lodging application. For Zambian nationals, only the National Registration Card (NRC) is accepted; non-Zambians may instead present an NRC (if held), passport, driver's licence, or resident permit.",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Identity Type — For Zambians: NRC. For non-Zambians: NRC/Passport/Driver's Licence/Resident Permit\"",
+      "validation": {
+        "enum": [
+          "NRC",
+          "Passport",
+          "Driver's Licence",
+          "Resident Permit"
+        ]
+      },
+      "required": true
+    },
+    {
+      "name": "lodgerIdentityNumber",
+      "label": "Person Lodging Application — Identity Number",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "description": "The identity document number corresponding to lodgerIdentityType.",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Identity Number\"",
+      "required": true
+    },
+    {
+      "name": "lodgerMobilePhone",
+      "label": "Person Lodging Application — Phone Number (Mobile)",
+      "type": "string",
+      "description": "Mobile phone number of the person lodging application, including the international code (e.g. +260 for Zambia).",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Phone Number\" — \"Mobile\"",
+      "required": true
+    },
+    {
+      "name": "lodgerLandlinePhone",
+      "label": "Person Lodging Application — Phone Number (Landline)",
+      "type": "string",
+      "required": false,
+      "description": "Landline phone number of the person lodging application, if any. Always bare-optional regardless of outer block applicability, since it is a secondary contact method.",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Phone Number\" — \"Landline\""
+    },
+    {
+      "name": "lodgerEmail",
+      "label": "Person Lodging Application — Email Address",
+      "type": "string",
+      "description": "Email address of the person lodging application.",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Email Address\"",
+      "required": true
+    },
+    {
+      "name": "lodgerAddressPlotHouseVillage",
+      "label": "Person Lodging Application — Physical Address (Plot/House/Village)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the person lodging application (Plot/House/Village).",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Physical Address\" — \"Plot/House/Village\"",
+      "required": true
+    },
+    {
+      "name": "lodgerAddressStreet",
+      "label": "Person Lodging Application — Physical Address (Street)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the person lodging application (Street).",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Physical Address\" — \"Street\"",
+      "required": true
+    },
+    {
+      "name": "lodgerAddressArea",
+      "label": "Person Lodging Application — Physical Address (Area)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the person lodging application (Area).",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Physical Address\" — \"Area\"",
+      "required": true
+    },
+    {
+      "name": "lodgerAddressTown",
+      "label": "Person Lodging Application — Physical Address (Town)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the person lodging application (Town).",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Physical Address\" — \"Town\"",
+      "required": true
+    },
+    {
+      "name": "lodgerAddressProvince",
+      "label": "Person Lodging Application — Physical Address (Province)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the person lodging application (Province).",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Physical Address\" — \"Province\"",
+      "required": true
+    },
+    {
+      "name": "lodgerAddressCountry",
+      "label": "Person Lodging Application — Physical Address (Country)",
+      "type": "string",
+      "classification": "pii",
+      "description": "Physical Address of the person lodging application (Country).",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Physical Address\" — \"Country\"",
+      "required": true
+    },
+    {
+      "name": "lodgerSignature",
+      "label": "Person Lodging Application — Signature",
+      "type": "string",
+      "required": true,
+      "description": "Signature of the person lodging the application, modelled as a signature-name attestation.",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Signature\""
+    },
+    {
+      "name": "lodgerSignatureDate",
+      "label": "Person Lodging Application — Signature Date",
+      "type": "date",
+      "required": true,
+      "description": "Date the application was lodged/signed.",
+      "sourceRef": "Part H — Particulars of Person Lodging Application, \"Date\""
+    }
+  ]
+}
