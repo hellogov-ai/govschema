@@ -60,24 +60,31 @@ Albania's Law No. 29/2023 "Për tatimin mbi të ardhurat", effective
 2024-01-01, which overhauled the personal income tax framework), this cycle
 specifically checked whether the specimen's box numbering is still current:
 
-- `tatime.gov.al/c/3/10/16/formulari-i-deklarimit`, fetched fresh this cycle
-  (2026-07-22, HTTP 200, unauthenticated), states in its own live prose: the
-  tax withheld by an employer is compared against "shënuar në kutinë 4" (the
-  amount noted in box 4) and "shënuar në kutinë 22" (the amount noted in box
-  22) of the declaration. Both box numbers match this schema's own
-  `sourceRef`s for box 4 (excluded, a rate-table computation — see below) and
-  box 22 (`employmentIncomeTaxWithheld`) exactly, in the specimen's own
-  layout — direct, independent confirmation from the regulator's own current,
-  live page that the specimen's box numbering has not changed.
+- The `id=11427` PDF — the same government-hosted brochure already disclosed
+  in finding 2 above, re-fetched fresh this cycle (2026-07-22, HTTP 200,
+  byte-identical at 315,258 bytes) — states in its own prose: the tax withheld
+  by an employer is compared against "shënuar në kutinë 4" (the amount noted
+  in box 4) and "shënuar në kutinë 22" (the amount noted in box 22) of the
+  declaration. Both box numbers match this schema's own `sourceRef`s for box
+  4 (excluded, a rate-table computation — see below) and box 22
+  (`employmentIncomeTaxWithheld`) exactly, in the specimen's own layout —
+  confirmation from a currently-live, government-hosted document that the
+  specimen's box numbering has not changed. This is the same file already
+  counted in finding 2, not a second, independent source:
+  `tatime.gov.al`'s prose guidance pages themselves (cited in finding 1,
+  `/c/3/10/652/deklarata-individuale-vjetore-e-te-ardhurave` and
+  `/c/3/10/16/formulari-i-deklarimit`) contain zero box-number references
+  when re-fetched fresh this cycle.
 - Public reporting on Law No. 29/2023's rollout (checked this cycle) states
   that for the 2024 filing year — the first under the new law — "the
   declaration will use the existing model format," corroborating that the
   box layout survived the broader legal overhaul.
 
 This is disclosed as a genuine, non-ideal provenance chain (a private firm's
-specimen, cross-corroborated against the regulator's own live prose rather
-than a byte-identical government-hosted copy) rather than presented as
-equivalent to this registry's usual direct-government-PDF sourcing. `status`
+specimen, corroborated by a directly government-hosted guidance PDF rather
+than a byte-identical government-hosted copy of the form itself) rather than
+presented as equivalent to this registry's usual direct-government-PDF
+sourcing. `status`
 remains `draft` and `nextReviewBy` is set to 3 months (rather than this
 registry's more typical 6) to reflect the elevated staleness risk.
 
