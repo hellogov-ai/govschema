@@ -4,7 +4,37 @@
 
 ## Executive Summary
 
-**77 jurisdictions** | **593 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**78 jurisdictions** | **594 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4293, "GovSchema Standard Research"): Panama
+> opens as the registry's 78th jurisdiction — Visa (1 of 6)**, via
+> `pa/migracion/tourist-visa-application@1.0.0` — the Servicio Nacional de
+> Migración's (part of the Ministerio de Gobierno) "Solicitud de Visa de
+> Turista / Requesting a Visa as a Tourist" form. This was the GOV-4271-cycle-
+> banked "Panama" STRONG candidate (see the Known Gaps section below);
+> Panama's other five verticals (DMV, Business Formation, Passport, Taxes,
+> National ID) each route exclusively into a login-gated online portal with
+> no static application-form document, per that same cycle's screening.
+> Fetched `migracion.gob.pa`'s own directly-hosted PDF (HTTP 200, 313,700
+> bytes, no login/CAPTCHA/WAF gate), a genuine native (searchable-text)
+> bilingual Spanish/English 3-page PDF. Models 50 fields across 10 steps
+> (Applicant's Identity; Travel Document; Marital Status and Family;
+> Residence and Contact; Occupation; Contacts and Accommodation in Panama;
+> Journey Details; Panama Visa History; Future Intentions and Other
+> Residency; Declaration). The source form's own numbering genuinely skips
+> from item 20 to item 22 (confirmed via direct text-position inspection,
+> not a missed extraction); this schema does not model a field numbered 21,
+> since none exists. Per the page-1 instruction to never leave a box blank
+> and write "N/A" when a question does not apply, most fields are modelled
+> `required: true`, with `requiredWhen` reserved for fields the form itself
+> gates on a narrower condition (marital status driving spouse details; the
+> purpose-of-travel enum driving its own conditional free-text lines;
+> Yes/No-gated visa-history and residency follow-up fields). The form's own
+> final section, reserved for applications filed from within Panama and
+> requiring an attorney's signature/Cédula/idoneidad, is excluded as
+> administration-facing, in-country-specific submission content. See the
+> document's own VERIFICATION.md for the full sourcing record and 5
+> disclosed findings.
 
 > **Update (2026-07-22, GOV-4287, "GovSchema Standard Research"): Zambia
 > deepens to 3/6 via its Taxes vertical**, via
@@ -13912,7 +13942,7 @@
 
 ## By Vertical
 
-### Passport (54/77 jurisdictions — 70%)
+### Passport (54/78 jurisdictions — 69%)
 
 > **Update (2026-07-22, GOV-4278, "GovSchema Standard Research"): Zambia
 > opens this vertical (2/6 for the jurisdiction)**, via
@@ -14461,7 +14491,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (58/77 jurisdictions — 75%)
+### DMV — Vehicle Registration, Licensing, Permits (58/78 jurisdictions — 74%)
 
 > **Update (2026-07-21, GOV-4239, "GovSchema Standard Research"): Malta's
 > DMV vertical opens (5 of 6)**, via
@@ -15046,7 +15076,7 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (71/77 jurisdictions — 92%)
+### Business Formation — Incorporation, LLC, Company Registration (71/78 jurisdictions — 91%)
 
 > **Update (2026-07-22, GOV-4271, "GovSchema Standard Research"): Zambia
 > opens its first Business Formation schema, opening Zambia as the
@@ -16164,7 +16194,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (65/77 jurisdictions — 84%)
+### Taxes — Income Tax Return, Tax Filing (65/78 jurisdictions — 83%)
 
 > **Update (2026-07-22, GOV-4287, "GovSchema Standard Research"): Zambia
 > opens this vertical (3/6 for the jurisdiction)**, via
@@ -18032,7 +18062,12 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (63/77 jurisdictions — 82%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (64/78 jurisdictions — 82%)
+
+> **Update (2026-07-22, GOV-4293, "GovSchema Standard Research"): Panama
+> opens as the registry's 78th jurisdiction, via this vertical**, via
+> `pa/migracion/tourist-visa-application` — see the Executive Summary update
+> above for the full sourcing record. Numerator moves from 63/77 to 64/78.
 
 > **Update (2026-07-21, GOV-4230, "GovSchema Standard Research"): Malta's
 > Visa vertical opens**, via `mt/identita/long-stay-visa-application` — see
@@ -18798,7 +18833,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (52/77 jurisdictions — 68%)
+### National ID & Civic Documents (52/78 jurisdictions — 67%)
 
 > **Update (2026-07-21, GOV-4223, "GovSchema Standard Research"): Malta's
 > National ID & Civic Documents vertical opens (3 of 6)**, via
@@ -19564,6 +19599,7 @@ now closed.
 | **NO** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NP** | 4 | ✓ | ✗ | ✓ | ✗ | ✓ | ✓ |
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **PA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PK** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
@@ -19882,8 +19918,8 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 0d. **Pre-scouted candidates banked this cycle (GOV-4271, 2026-07-22) —
     Zambia Business Formation, Passport, and Taxes now all authored
     (Passport via GOV-4278, Taxes via GOV-4287, closing Zambia's disclosed
-    backlog from this entry), Panama and Albania each screened but not
-    authored:**
+    backlog from this entry), Panama Visa now also authored (GOV-4293),
+    Albania screened but not authored:**
     - **Zambia Passport** — authored (GOV-4278), see
       `zm/dnrpc/passport-application@1.0.0` and the Executive Summary's
       GOV-4278 update above.
@@ -19902,7 +19938,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       portal with no static application-form document. Not authored this
       cycle, since Zambia's own three-candidate showing was stronger;
       left as open backlog for a future new-jurisdiction cycle (would open
-      Panama as a new jurisdiction via Visa).
+      Panama as a new jurisdiction via Visa). **Update (GOV-4293,
+      2026-07-22): now authored** as
+      `pa/migracion/tourist-visa-application@1.0.0` — see the Executive
+      Summary and Visa vertical updates above. Opens Panama as the
+      registry's 78th jurisdiction (1/6). Panama's other five verticals
+      (DMV, Business Formation, Passport, Taxes, National ID) remain
+      confirmed dead ends per this same GOV-4271 screening pass, each
+      routing exclusively through a login-gated online portal with no
+      static application-form document.
     - **Albania** — screened across all 6 verticals, unauthenticated and
       not gated. Taxes (the Drejtoria e Përgjithshme e Tatimeve's
       "Deklarata Individuale Vjetore e të Ardhurave," Form D1, a genuine
