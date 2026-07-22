@@ -4,7 +4,37 @@
 
 ## Executive Summary
 
-**82 jurisdictions** | **604 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**82 jurisdictions** | **605 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4376, "GovSchema Standard Research"): Jamaica's
+> DMV vertical opens (3 of 6)**, via
+> `jm/taj/driving-licence-application@1.0.0` — Tax Administration Jamaica's
+> (TAJ) "Form F1, Application for Driver's Licence" under the Road Traffic
+> Act (I.R. 66), a genuine interactive AcroForm (18 named widgets — 15
+> data-bearing text fields plus 3 non-data buttons — independently
+> re-fetched and re-hashed at `jamaicatax.gov.jm`, 100,795 bytes, sha256
+> `3a496534...`). Consumes the DMV candidate banked by the GOV-4360 cycle
+> (see the Known Gaps entry 0f below), chosen this cycle over the two
+> other open Jamaica candidates (Visa, Taxes) for its genuine AcroForm
+> field layer — the only one of the three with a machine-fillable widget
+> layer, making extraction mechanical rather than requiring manual layout
+> reconstruction from flat text. Models 16 `fields[]` across 3 steps
+> (Declaration to the Licensing Authority; Personal Particulars; Driver's
+> Licence History) plus 4 `documents[]` entries, excluding the form's own
+> "For Departmental use only"/"REMARKS" staff section and both of its own
+> unwidgeted signature/witness lines, and excluding the form's own second
+> page ("Form F3, Certificate of Character") in its entirety as a
+> third-party Justice-of-the-Peace/police attestation, modelled as a
+> `documents[]` entry instead. See the document's own VERIFICATION.md for
+> the full sourcing record and all 4 disclosed source-fidelity findings,
+> including a printed-but-unwidgeted licence-type choice (Finding 1) and a
+> verbatim-quoted source typo in the Form F3 attestation text (Finding 4).
+> Both validators pass at 605/605; `verify-sources.mjs` scoped to this
+> schema's directory reports all 3 cited URLs clear; 19 conformance
+> fixtures (3 valid + 16 mutation-control) committed, all reproduced via a
+> from-scratch mock validator. **Jamaica now stands at 3 of 6 verticals**
+> (Business Formation, Passport, DMV); Visa and Taxes remain open, STRONG
+> banked backlog (National ID is a confirmed dead end).
 
 > **Update (2026-07-22, GOV-4367, "GovSchema Standard Research"): Jamaica's
 > Passport vertical opens (2 of 6)**, via
@@ -14835,7 +14865,19 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (60/81 jurisdictions — 74%)
+### DMV — Vehicle Registration, Licensing, Permits (61/82 jurisdictions — 74%)
+
+> **Update (2026-07-22, GOV-4376, "GovSchema Standard Research"): Jamaica's
+> DMV vertical opens (3 of 6 for the jurisdiction)**, via
+> `jm/taj/driving-licence-application@1.0.0` — Tax Administration Jamaica's
+> "Form F1, Application for Driver's Licence." See the Executive Summary's
+> GOV-4376 update above and the document's own VERIFICATION.md for the full
+> sourcing record, including the 4 disclosed source-fidelity findings.
+> Jamaica's other two open verticals (Visa, Taxes) remain STRONG banked
+> backlog. Numerator updated from 60 to 61; denominator corrected from 81
+> to 82 — Jamaica (GOV-4360) had opened via a non-DMV vertical without
+> this section's own denominator being bumped, the same stale-denominator
+> class of fix prior cycles have already applied elsewhere.
 
 > **Update (2026-07-22, GOV-4335/GOV-4337, "GovSchema Standard Research"):
 > Uganda's DMV vertical opens (1 of 6), opening Uganda as the registry's
@@ -20497,8 +20539,12 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       ~15-20 fields; a companion learner's-permit Form H3A is separately
       hosted at `mtm.gov.jm` (the Island Traffic Authority/Ministry of
       Transport and Mining) and would need ToUnicode CMap decoding to
-      extract cleanly (not yet attempted this cycle). Open, STRONG banked
-      backlog for a future cycle.
+      extract cleanly (not yet attempted this cycle). **Update (GOV-4376,
+      2026-07-22): now authored** as
+      `jm/taj/driving-licence-application@1.0.0`, opening Jamaica's DMV
+      vertical (3 of 6) — see the Executive Summary and DMV vertical
+      updates above. The companion Form H3A learner's-permit remains open
+      backlog for a future cycle if a distinct schema is warranted.
     - **Visa** — the Jamaican Embassy in Washington, D.C.'s own
       diplomatic-mission-hosted "Visa Application Form J",
       `embassyofjamaica.org`, ~94KB, an estimated ~16 fields. Note: this is
