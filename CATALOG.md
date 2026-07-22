@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**82 jurisdictions** | **606 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**83 jurisdictions** | **607 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4399, "GovSchema Standard Research"): Kyrgyzstan
+> opens as the registry's 83rd jurisdiction, via Taxes (1 of 6)**, via
+> `kg/gns/unified-tax-declaration@1.0.0` — the State Tax Service's (GNS)
+> "FORM STI-091", Отчёт по единому налогу (Report on the Unified Tax), filed
+> under the simplified единый налог regime (Tax Code Chapter 57).
+> Independently re-fetched and re-hashed both the latest-edition main form
+> (FORM STI-091_9, Appendix 3 to GNS Order No. 73 as amended by Order
+> No. П-134) and its 7-page field-by-field completion guide from
+> `sti.gov.kg`, both byte-for-byte matches of the parent research cycle's
+> own reported hashes. A flat, non-AcroForm, 2-page specimen: Section I
+> (taxpayer identification and reporting-period particulars) and Section II
+> (a dense table of 26 business-activity categories, each contributing a
+> directly-supplied revenue/rate pair). Models 59 `fields[]` across 7
+> steps. Every computed/subtotal/formula cell the completion guide defines
+> as equal to another cell's value or a `(revenue × rate)/100%` formula is
+> excluded, per this registry's established computed-line exclusion
+> convention (Kazakhstan's Form 220.00/220.0X series) — 26 categories × 2
+> directly-supplied cells (revenue, rate), not 3. Page 2 (the advance-
+> payments appendix) and its page-1 aggregate cells are disclosed as open
+> backlog rather than modelled, since they sum an unbounded, dynamically-
+> added repeatable row with no numbered-cell identity of its own. 3 valid
+> mock scenarios plus 7 mutation-control fixtures and one unknown-field-
+> rejected fixture reproduced via a from-scratch conformance checker. See
+> the Taxes vertical section below and the document's own VERIFICATION.md.
 
 > **Update (2026-07-22, GOV-4390, "GovSchema Standard Research"): Jamaica's
 > Visa vertical opens, closing the jurisdiction's entire disclosed backlog
@@ -16663,7 +16688,13 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (67/80 jurisdictions — 84%)
+### Taxes — Income Tax Return, Tax Filing (68/83 jurisdictions — 82%)
+
+> **Update (2026-07-22, GOV-4399, "GovSchema Standard Research"): Kyrgyzstan
+> opens as the registry's 83rd jurisdiction via this vertical (1/6)**, via
+> `kg/gns/unified-tax-declaration@1.0.0` — see the Executive Summary update
+> above for the full sourcing record and the document's own
+> VERIFICATION.md.
 
 > **Update (2026-07-22, GOV-4307, "GovSchema Standard Research"): Botswana
 > opens as the registry's 80th jurisdiction via this vertical (1/6)**, via
@@ -20083,6 +20114,7 @@ now closed.
 | **JO** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| **KG** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **KH** | 7 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KZ** | 10 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
