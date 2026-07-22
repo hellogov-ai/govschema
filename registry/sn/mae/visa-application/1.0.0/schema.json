@@ -1,0 +1,372 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "sn/mae/visa-application",
+  "version": "1.0.0",
+  "title": "Senegal Short-Stay Visa Application (Demande de Visa de Moins de Trois Mois)",
+  "description": "The Ministry of Foreign Affairs' bilingual French/English \"Demande de Visa de Moins de Trois Mois\" (Application for less than three months), served by the Consulate General of Senegal in Paris and completed at any Senegalese consular post or embassy overseas. Opens Senegal as the registry's 84th jurisdiction. A flat, two-page, non-AcroForm specimen: every field is a ruled fill-in-the-blank line, none backed by an interactive PDF widget. Models the applicant's personal particulars, present/original nationality, civil status, address and occupation, passport particulars, travelling companions, purpose of trip (with business/congress/study sub-detail), prior residence in Senegal, references and accommodation in Senegal, and method of travel. Excludes the \"Emplacement Reservé à l'Administration\" (For Official Use Only) block on page 1 and the \"Avis du Chef de Poste\" (Authority's decision) line on page 2 (both consular-staff-completed, not applicant-supplied). Filing this application is an applicant's own action performed with the Ministry of Foreign Affairs through the relevant Senegalese consular post; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Senegal or its Ministry of Foreign Affairs.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SN",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of Foreign Affairs",
+    "abbreviation": "MAE",
+    "url": "https://www.diplomatie.gouv.sn"
+  },
+  "process": {
+    "type": "application",
+    "language": "fr"
+  },
+  "source": {
+    "url": "https://consulsen-paris.gouv.sn/wp-content/uploads/2022/08/visaform.pdf",
+    "retrievedAt": "2026-07-22",
+    "documentRef": "\"Demande de Visa de Moins de Trois Mois\" / \"Application for less than three months\", Consulat Général du Sénégal à Paris, Ministère des Affaires Étrangères. Flat (non-AcroForm), two pages."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-22",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-22",
+    "notes": "GOV-4417 (\"GovSchema Standard Research\"). A research agent first scouted this candidate; independently re-fetched and re-hashed rather than trusted from that report alone: `https://consulsen-paris.gouv.sn/wp-content/uploads/2022/08/visaform.pdf`, HTTP 200, `Content-Type: application/pdf`, 159,674 bytes, sha256 `ee29181d206219a12e3d97fb70e1bb543d62efb4c86e09558c0171d5a090ff72`. No login/CAPTCHA/WAF gate; a plain unauthenticated `curl` reached it cleanly. Current-edition corroboration: the consulate's own live page `https://consulsen-paris.gouv.sn/demande-de-visa/` (independently re-fetched, HTTP 200) links this exact file under a \"Télécharger le formulaire\" / \"FORMULAIRE VISA\" heading, and the same domain carries an actively-maintained 2025 information post, indicating the page is current rather than a stale archive copy.\n\nExtraction method: `pdfjs-dist` (vendored at `/tmp/node_modules/pdfjs-dist`) `getTextContent()` read every text item's raw string and its `transform` y-coordinate to reconstruct line-by-line layout across both pages. No `/Widget` annotations are present (a flat specimen, not a fillable AcroForm); no checkbox/radio glyph appears anywhere in the document's own character set, so every field is a ruled fill-in-the-blank line.\n\n## Document structure\n\nPage 1: an office/administration header; the bilingual title; the applicant's personal particulars (name, maiden name, DOB/place of birth, present/original nationality, civil status, address, city/country, occupation, home phone); a photo box; passport number; then an \"Emplacement Reservé à l'Administration / For Official Use Only\" block of 7 numbered administrative items (visa number, authority, visa type, issue/expiry dates, authorized duration/entries, and a prior-consultation reference) — excluded, consular-staff-completed. Page 2: whether travelling alone or accompanied (with companions' names/passport numbers); purpose of trip, with three conditional sub-detail prompts (business contacts, congress/conference particulars, study/training particulars); prior residence in Senegal exceeding three months (with date/place if so); references in Senegal; accommodation address/phone during the stay, including an optional host name and the host's phone; method of travel; a standard declaration paragraph (not modelled as a field, since it states no information the applicant supplies, only an undertaking the applicant accepts by signing); a list of required supporting documents; the signature/date line; and an \"Avis du Chef de Poste / Authority's decision\" line — excluded, consular-staff-completed after submission.\n\n## Disclosed findings and interpretation choices\n\n1. **`nationalityOriginal` (item on the nationality line) is modelled required, not optional**, unlike this registry's usual treatment of a former-name/former-nationality pair (e.g. `jm/mfaft/visa-application` Finding — formerName/nationalityFormer both optional \"if different from above\"). This form prints \"Nationalité actuelle\" (Present Nationality) and \"Nationalité d'origine\" (Original Nationality) side by side with no \"if different\" qualifier on either — both are asked unconditionally, most plausibly to surface naturalization history for every applicant, not only those who have changed nationality.\n2. **`maritalStatus` is modelled as a free-text field, not an enum**, unlike the analogous Jamaica schema's own `maritalStatus`. The source prints only \"Situation de famille (Civil Status)\" as a plain blank with no parenthetical option list anywhere on the form — a genuine structural difference from the Jamaica specimen, not an omission.\n3. **No sex/gender field is modelled.** Unlike this registry's Jamaica/Botswana consular visa schemas, this form prints no sex/gender line anywhere on either page — confirmed by reading every line of both pages' extracted text.\n4. **`travelCompanionsDetails` collapses the compound question-plus-instruction (\"Voyagez-vous seul ou accompagné\" / \"Indiquez leurs Noms, Prénoms et N° Passeport\") into a single required free-text field.** The source prints no checkbox distinguishing \"alone\" from \"accompanied\"; an applicant travelling alone is expected to write as much in the same blank (e.g. \"seul\"/\"alone\"), the same single-blank-answers-a-compound-question pattern this registry applies elsewhere when a form asks a yes/no question and its detail on one ruled line with no separate checkbox.\n5. **`businessContactsNamesAddresses`, `congressDetails`, and `studyDetails` are modelled as unconditionally optional free-text fields, not gated by `requiredWhen` on `purposeOfTrip`.** The source's own sub-prompts (\"Si Voyage d'Affaires...\", \"Si Participation à un congrès...\", \"Si Etudes universitaires...\") are printed conditionals, but `purposeOfTrip` itself is a free-text blank with no enumerated option list to serve as a `requiredWhen` discriminator, and the three purposes named are illustrative, not exhaustive (the form does not restrict trips to only these three categories, e.g. tourism or family visits are also plainly in scope per the form's own closing declaration about accepting no paid employment during the stay). Disclosed rather than fabricating a discriminator enum the source does not itself print.\n6. **`priorResidenceInSenegalDetails` collapses \"Avez-vous déjà résidé au Sénégal Pendant plus de trois mois\" and its own follow-up \"Précisez à quelle date et où\" into a single optional free-text field**, the same compound-question-single-blank pattern as Finding 4 — the source prints these as one continuous item with no separate yes/no checkbox.\n7. **`referencesInSenegal` is modelled as a single optional free-text field**, not split into named sub-fields, since the source prints one ruled blank beneath \"Références au Sénégal (Name of person to be visited, other references in Senegal)\" — confirmed via each text item's own y-coordinate — unlike Jamaica's two side-by-side numbered reference slots.\n8. **`hostName` and `hostPhone` are modelled optional**, since an applicant may already have supplied their own accommodation address in the required `accommodationAddressAndPhone` field without necessarily staying with a named host (\"Chez Mr/Mme\" is printed as a sub-line, not a mandatory branch).\n9. **Required supporting documents are modelled as `documents[]`, not fields**, transcribing the source's own \"Pièces à fournir\" list: a residence-permit photocopy, a passport photocopy, an identity photo (the source's own parenthetical ties this specifically to \"visa avec consultation\"), and a flight ticket/reservation (tied to \"visa sans consultation\"). Since whether a given applicant's visa requires prior consultation (\"Consultation Préalable\", referenced in the excluded administrative block's own item 7) depends on Senegal's own nationality-based visa policy rather than anything the applicant declares on this form, the photo and flight-ticket entries are each disclosed as conditionally-described but modelled as `required: true` (the safer default: most applicants should expect to need both, since neither the \"avec\"/\"sans consultation\" distinction nor an applicant's own consultation status is knowable from the form itself), rather than fabricating a `requiredWhen` discriminator the source does not supply.\n10. **The declaration paragraph beginning \"Je m'engage à n'accepter aucun emploi rémunéré...\" is not modelled as a field or a `documents[]` attestation entry.** Unlike an attestation the applicant affirmatively checks or signs a distinct line for, this paragraph is folded into the ordinary act of signing the form (`applicantSignature`); no separate acknowledgement mechanism is printed.\n11. **Excluded as office/consular-staff-completed, not applicant-supplied data:** the page-1 \"Emplacement Reservé à l'Administration / For Official Use Only\" block (7 numbered items covering visa number, authority, type, dates, duration, entries, and prior-consultation reference) and the page-2 \"Avis du Chef de Poste / Authority's decision\" line.\n\n## Conformance\n\n3 valid mock scenarios — `valid-tourist-first-time-applicant` (a first-time tourist applicant travelling alone, no prior Senegal residence, minimal optional fields); `valid-business-applicant-with-prior-residence` (a business-purpose applicant declaring prior residence in Senegal and a named accommodation host); and `valid-student-with-companion` (a study-purpose applicant travelling with one named companion and providing full accommodation/host detail) — plus 17 mutation-control fixtures, one per statically-required field (`surname`, `firstNames`, `dateOfBirth`, `placeOfBirth`, `nationalityPresent`, `nationalityOriginal`, `maritalStatus`, `address`, `cityAndCountry`, `occupation`, `passportNumber`, `travelCompanionsDetails`, `purposeOfTrip`, `accommodationAddressAndPhone`, `methodOfTravel`, `applicantSignature`, `declarationDate`), and one unknown-field-rejected fixture, committed under `conformance/sn/mae/visa-application/1.0.0/`.\n\nAn ephemeral, from-scratch conformance checker (deriving required rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all 21 fixtures: all 3 valid scenarios at 0 errors, all 17 mutation controls each raising exactly 1 error, and the unknown-field fixture correctly rejected. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-22"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "applicant_particulars",
+      "title": "Applicant Particulars",
+      "fields": [
+        "surname",
+        "firstNames",
+        "maidenName",
+        "dateOfBirth",
+        "placeOfBirth",
+        "nationalityPresent",
+        "nationalityOriginal",
+        "maritalStatus"
+      ],
+      "next": "contact_and_occupation"
+    },
+    {
+      "id": "contact_and_occupation",
+      "title": "Address and Occupation",
+      "fields": [
+        "address",
+        "cityAndCountry",
+        "occupation",
+        "telephoneHome"
+      ],
+      "next": "passport_particulars"
+    },
+    {
+      "id": "passport_particulars",
+      "title": "Passport Particulars",
+      "fields": [
+        "passportNumber"
+      ],
+      "next": "travel_companions_and_purpose"
+    },
+    {
+      "id": "travel_companions_and_purpose",
+      "title": "Travelling Companions and Purpose of Trip",
+      "fields": [
+        "travelCompanionsDetails",
+        "purposeOfTrip",
+        "businessContactsNamesAddresses",
+        "congressDetails",
+        "studyDetails"
+      ],
+      "next": "senegal_history_and_references"
+    },
+    {
+      "id": "senegal_history_and_references",
+      "title": "Prior Residence in Senegal and References",
+      "fields": [
+        "priorResidenceInSenegalDetails",
+        "referencesInSenegal"
+      ],
+      "next": "accommodation_and_travel"
+    },
+    {
+      "id": "accommodation_and_travel",
+      "title": "Accommodation and Method of Travel",
+      "fields": [
+        "accommodationAddressAndPhone",
+        "hostName",
+        "hostPhone",
+        "methodOfTravel"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Signature of Applicant"
+    }
+  ],
+  "fields": [
+    {
+      "name": "surname",
+      "label": "Family Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"NOM (en capitale) / FAMILY NAME (in block capitals)\""
+    },
+    {
+      "name": "firstNames",
+      "label": "Christian Names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"PRENOMS (très lisiblement en français) / CHRISTIAN NAMES\""
+    },
+    {
+      "name": "maidenName",
+      "label": "Maiden Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "\"Nom de jeune fille (en capitale) / Maiden name\""
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Né(e) le / Date of birth\""
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"À / Place of birth\""
+    },
+    {
+      "name": "nationalityPresent",
+      "label": "Present Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Nationalité actuelle / Present Nationality\""
+    },
+    {
+      "name": "nationalityOriginal",
+      "label": "Original Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 1.",
+      "sourceRef": "\"Nationalité d'origine / Original Nationality\""
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Civil Status",
+      "type": "string",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 2.",
+      "sourceRef": "\"Situation de famille (Civil Status)\""
+    },
+    {
+      "name": "address",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Adresse (Address)\""
+    },
+    {
+      "name": "cityAndCountry",
+      "label": "City and Country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Ville et Pays (City and Country)\""
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation or Position",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"Profession ou Qualité (Occupation)\""
+    },
+    {
+      "name": "telephoneHome",
+      "label": "Home Telephone",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "\"Téléphone (Phone) Domicile (Home)\""
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Passeport N° / Passeport Number\""
+    },
+    {
+      "name": "travelCompanionsDetails",
+      "label": "Travelling Alone or Accompanied — Names and Passport Numbers",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 4.",
+      "sourceRef": "\"Voyagez-vous seul ou accompagné ... Indiquez leurs Noms, Prénoms et N° Passeport\""
+    },
+    {
+      "name": "purposeOfTrip",
+      "label": "Purpose of Your Trip",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"Motif du Voyage (Purpose of your trip)\""
+    },
+    {
+      "name": "businessContactsNamesAddresses",
+      "label": "Business Trip — Names and Addresses of Companies to Visit",
+      "type": "string",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 5.",
+      "sourceRef": "\"Si Voyage d'Affaires, indiquez les noms et Adresses des industriels que vous désirez rencontrer\""
+    },
+    {
+      "name": "congressDetails",
+      "label": "Congress/Conference — Organisation, Place, Date and Duration",
+      "type": "string",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 5.",
+      "sourceRef": "\"Si Participation à un congrès, Manifestation, Conférence, etc, indiquez l'organisation, le lieu, la date, la durée\""
+    },
+    {
+      "name": "studyDetails",
+      "label": "University Studies/Technical Training — Institutions, Places, Date and Duration",
+      "type": "string",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 5.",
+      "sourceRef": "\"Si Etudes universitaires ou Stages techniques, indiquez les établissements fréquentés, lieux, date, durée\""
+    },
+    {
+      "name": "priorResidenceInSenegalDetails",
+      "label": "Prior Residence in Senegal Over Three Months — Date and Place",
+      "type": "string",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 6.",
+      "sourceRef": "\"Avez-vous déjà résidé au Sénégal Pendant plus de trois mois ... Précisez à quelle date et où\""
+    },
+    {
+      "name": "referencesInSenegal",
+      "label": "References in Senegal",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 7.",
+      "sourceRef": "\"Références au Sénégal (Name of person to be visited, other references in Senegal)\""
+    },
+    {
+      "name": "accommodationAddressAndPhone",
+      "label": "Address and Telephone Number While Staying in Senegal",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Indication de vos Adresses et Numéro de téléphone, Pendant votre Séjour et Conditions de votre Hébergement\""
+    },
+    {
+      "name": "hostName",
+      "label": "Staying With (Mr/Mrs)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 8.",
+      "sourceRef": "\"Chez Mr/Mme\""
+    },
+    {
+      "name": "hostPhone",
+      "label": "Host's Telephone Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 8.",
+      "sourceRef": "\"Téléphone de l'hébergeant\""
+    },
+    {
+      "name": "methodOfTravel",
+      "label": "Method of Travel",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"Moyen de transport utilisé (Method of travel)\""
+    },
+    {
+      "name": "applicantSignature",
+      "label": "Signature",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"Signature\""
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date (at Paris)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "\"Paris le\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "residencePermitCopy",
+      "label": "Photocopy of Residence Permit",
+      "category": "supporting-evidence",
+      "required": true,
+      "sourceRef": "\"Pièces à fournir: Photocopie Titre de séjour\""
+    },
+    {
+      "id": "passportCopy",
+      "label": "Photocopy of Passport",
+      "category": "identity-document",
+      "required": true,
+      "sourceRef": "\"Pièces à fournir: Photocopie du Passeport\""
+    },
+    {
+      "id": "identityPhoto",
+      "label": "Identity Photo",
+      "category": "supporting-evidence",
+      "required": true,
+      "handling": "The source ties this specifically to \"visa avec consultation\"; see this schema's own verification.notes Finding 9.",
+      "sourceRef": "\"Une Photo d'identité (pour visa avec consultation)\""
+    },
+    {
+      "id": "flightTicketOrReservation",
+      "label": "Flight Ticket or Reservation",
+      "category": "supporting-evidence",
+      "required": true,
+      "handling": "The source ties this specifically to \"Visas Sans Consultation\"; see this schema's own verification.notes Finding 9.",
+      "sourceRef": "\"le billet ou la Réservation d'avion Pour les Visas Sans Consultation\""
+    },
+    {
+      "id": "visaFee",
+      "label": "Visa Fee",
+      "category": "payment",
+      "required": true,
+      "amount": {
+        "currency": "EUR",
+        "value": 15.25
+      },
+      "sourceRef": "\"Frais de Visa: 15,25 Euros\""
+    }
+  ]
+}
