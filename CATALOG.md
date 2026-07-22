@@ -1,10 +1,37 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-21** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-22** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**76 jurisdictions** | **586 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**76 jurisdictions** | **588 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4255, "GovSchema Standard Research"): Georgia's
+> Business Formation vertical opens (2/6)**, via
+> `ge/napr/llc-founding-agreement-standard-statute@1.0.0` — the National
+> Agency of Public Registry's (NAPR) English-language template Founding
+> Agreement for registering a Limited Liability Company under Georgia's
+> standard, Minister-of-Justice-approved statute. This was the
+> GOV-4246-cycle-banked "Georgia Business Formation" candidate (see this
+> catalog's own Known Gaps entry 0c below); fetched directly and
+> unauthenticated as a native `.docx` (no login/CAPTCHA/WAF gate),
+> distinguished from 18 sibling NAPR business-registration templates by its
+> own `aria-label` ("LLC – Founding Agreement under the Standard Statute",
+> the only LLC entry with no "(Amended Registration)"/"(Registration of
+> Amendments)" suffix). Models 46 `fields[]` across 8 steps: company
+> identity, capital, up to three initial partners and their share
+> participation, an optional later placement of authorized shares with a
+> full redistribution table (again up to three partners), the governing
+> body (up to three members), the person authorized for management and
+> representation, optional general commercial representative/partner's-
+> share-manager fields, and up to three signature blocks. See the document's
+> own VERIFICATION.md for the full sourcing record, including why partner/
+> member/signatory slots are bounded to three with no synthetic count
+> discriminator invented (the source prints no "number of partners" field
+> and no continuation instruction, unlike `mn/gasr`'s UB-03 form). Georgia's
+> other four open verticals (DMV, Passport, National ID, and a re-attempt of
+> Taxes with a more targeted search) remain open backlog per the GOV-4246
+> cycle's own findings.
 
 > **Update (2026-07-21, GOV-4246, "GovSchema Standard Research"): Ethiopia's
 > Taxes vertical opens (2/6)**, via `et/mor/individual-tin-registration@1.0.0`
@@ -14874,7 +14901,15 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (69/76 jurisdictions — 91%)
+### Business Formation — Incorporation, LLC, Company Registration (70/76 jurisdictions — 92%)
+
+> **Update (2026-07-22, GOV-4255, "GovSchema Standard Research"): Georgia
+> gains its first Business Formation schema**, via
+> `ge/napr/llc-founding-agreement-standard-statute` — NAPR's LLC Founding
+> Agreement under the Standard Statute. See the Executive Summary's
+> GOV-4255 update above for the full sourcing record. Numerator updated
+> from 69 to 70; denominator unchanged at 76 (Georgia was already counted
+> as a jurisdiction via `ge/mfa/evisa-application`).
 
 > **Update (2026-07-21, GOV-4208, "GovSchema Standard Research"): Cyprus
 > gains its first Business Formation schema**, via
@@ -19314,7 +19349,7 @@ now closed.
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **GE** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
+| **GE** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
 | **GH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GR** | 4 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -19597,9 +19632,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       and this document are now this registry's two examples of the
       individual-owner-scoped business-name-registration pattern.
 0c. **Pre-scouted candidates banked this cycle (GOV-4246, 2026-07-21) —
-    Ethiopia Taxes now authored, Georgia Business Formation and Ethiopia
-    Business Formation/Passport remain open backlog, Uzbekistan confirmed a
-    full dead end:**
+    Ethiopia Taxes and (GOV-4255, 2026-07-22) Georgia Business Formation now
+    authored, Ethiopia Business Formation/Passport remain open backlog,
+    Uzbekistan confirmed a full dead end:**
     - **Ethiopia Taxes** — Ministry of Revenue "Individual Taxpayers
       Registration Application" (TIN registration), `mor.gov.et/api/forms`
       form id 8 — served unauthenticated, no login/CAPTCHA/WAF gate.
@@ -19628,15 +19663,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Registry's (NAPR) downloadable "Founding Agreement" `.docx` template
       for LLC registration (`napr.gov.ge/en/page/sample-documents/business-registration`),
       unauthenticated, genuine field-level structure (legal form, firm
-      name, capital, a partners table, governing body). Would open Georgia
-      to 2/6 (Visa, `ge/mfa/evisa-application`, already published). Not
-      authored this cycle; open backlog. Georgia's Taxes vertical came back
-      weak (a real Ministry-of-Finance-ordered declaration form likely
-      exists in law, but current rendered field content wasn't pinned down
-      this cycle — worth a future re-attempt with a more targeted search);
-      National ID, Passport, and DMV are all confirmed dead ends (prose-only
-      process pages or exam-booking-only, no downloadable form, real filing
-      is via a login-gated e-service).
+      name, capital, a partners table, governing body). **Update (GOV-4255,
+      2026-07-22): now authored** as
+      `ge/napr/llc-founding-agreement-standard-statute` — see the Executive
+      Summary and Business Formation vertical updates above. Opens Georgia
+      to 2/6 (Visa, `ge/mfa/evisa-application`, already published). Georgia's
+      Taxes vertical remains weak backlog (a real Ministry-of-Finance-ordered
+      declaration form likely exists in law, but current rendered field
+      content wasn't pinned down as of the GOV-4246 cycle — worth a future
+      re-attempt with a more targeted search); National ID, Passport, and
+      DMV are all confirmed dead ends (prose-only process pages or
+      exam-booking-only, no downloadable form, real filing is via a
+      login-gated e-service).
     - **Uzbekistan — confirmed a full dead end across all 5 remaining
       verticals this cycle.** `my.gov.uz`'s services are consistently
       unauthenticated at the description/overview level but require a
