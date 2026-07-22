@@ -6,6 +6,21 @@
 
 **83 jurisdictions** | **608 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-22, GOV-4410, "GovSchema Standard Research"): no new
+> schema authored this cycle — Kyrgyzstan's remaining five verticals were
+> scouted, but its strongest lead (Business Formation, GNS Form STI-163)
+> could not be independently re-verified.** `sti.gov.kg`'s document-
+> streaming endpoint returned HTTP 500 for every file tested (confirmed
+> across 10+ attempts via two separate fetch mechanisms over several
+> minutes) — a genuine site-side outage, not a source or gating issue.
+> Rather than author from a single unverified report, the candidate is
+> banked as open backlog (see Known Gaps entry 0g below) for a future
+> cycle once the endpoint recovers. DMV (Tunduk e-gov, authenticated-only)
+> and Visa (`evisa.e-gov.kg`, login-gated) are confirmed dead ends this
+> cycle; Passport and National ID remain inconclusive since `grs.gov.kg`
+> was fully unreachable throughout this cycle. Registry remains at 83
+> jurisdictions / 608 schemas.
+
 > **Update (2026-07-22, GOV-4383, "GovSchema Standard Research"): Jamaica's
 > Taxes vertical opens (4 of 6 for the jurisdiction at authoring time; now
 > 5 of 6 following the already-merged Visa update below)**, via
@@ -20690,6 +20705,62 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       both issue identity credentials exclusively through in-person
       enrollment/portal workflows; no downloadable, fillable static form was
       found for either.
+0g. **Kyrgyzstan's remaining five verticals scouted (GOV-4410, 2026-07-22),
+    following the GOV-4399 cycle that opened the jurisdiction via Taxes
+    (1 of 6):**
+    - **Business Formation — STRONG candidate identified but not yet
+      verifiable this cycle.** The State Tax Service's (GNS) own forms
+      listing at `sti.gov.kg/section/0/формы_заявлений` (fetched directly,
+      HTTP 200, 304,694 bytes) links a "STI-163" individual-entrepreneur
+      registration form
+      (`/section/view-pdf?filePath=websti%2F2026%2F01%2F23%2FDOC%20STI-163%20(русский).pdf`),
+      alongside sibling companion forms STI-164 (deregistration) and
+      STI-024/025 (registration card). However, `sti.gov.kg`'s document-
+      streaming endpoint (`/section/view-pdf`) is returning HTTP 500
+      ("Ошибка при получении файла") for **every** file tested on that
+      endpoint this cycle — not just STI-163 — confirmed via more than ten
+      independent fetch attempts across two different fetch mechanisms
+      (raw `curl` and the harness's own web-fetch tool) over several
+      minutes, ruling out a one-off blip or a file-specific problem. This
+      is a genuine site-side outage on the file-serving backend, distinct
+      from the main site (which serves listing pages normally) and from
+      the already-published GOV-4399 Taxes schema (fetched and merged
+      before this outage began). **Not authored this cycle** — per this
+      registry's source-of-truth-fidelity standard, a schema is not
+      authored from a single unverified fetch report when independent
+      re-verification is possible but fails. Banked as the single most
+      likely next candidate for Kyrgyzstan; re-fetch
+      `sti.gov.kg/section/view-pdf?filePath=websti%2F2026%2F01%2F23%2FDOC%20STI-163%20(русский).pdf`
+      fresh once the endpoint recovers before authoring.
+    - **DMV — confirmed dead end.** Kyrgyzstan's driving-licence process has
+      moved fully onto the Tunduk e-government portal (`portal.tunduk.kg` /
+      `tunduk.gov.kg`), requiring Unified-ID authentication, an uploaded
+      electronic Form-083/У medical certificate, live photo capture, and
+      online payment — no static blank application form exists. The only
+      directly-fetchable PDF found
+      (`backend.tsvs.kg/media/pdf/1._Стандарты_гос_услуг_выдача_ВУНО_Русс.pdf`,
+      HTTP 200, 164,098 bytes, 9 pages) is a regulatory service-standard/SLA
+      document describing the procedure, not a fillable citizen blank.
+      `mvd.gov.kg` itself presents a mismatched TLS certificate
+      (`e.mvd.kg`) and its one plausible normative-acts page 404s.
+    - **Visa — confirmed dead end.** The Ministry of Foreign Affairs' e-visa
+      system (`evisa.e-gov.kg`, fetched directly, HTTP 200, 12,985 bytes) is
+      a login-gated application dashboard with card payment; no downloadable
+      static visa-application form is linked anywhere on the page or from
+      `mfa.gov.kg`'s electronic-visa page.
+    - **Passport and National ID — inconclusive; `grs.gov.kg` unreachable
+      this cycle.** Both route through the State Registration Service
+      (`grs.gov.kg/ru/epassport/documents/` and `grs.gov.kg/ru/eid/
+      documents/`); the entire host failed to connect across six repeated
+      attempts (curl exit 000, i.e. connection-level failure, not an HTTP
+      error) at two different points in this cycle roughly ten minutes
+      apart. Independent of the outage, secondary sources describing the
+      actual process for both epassport and eID state the application
+      form ("анкета-заявление") is completed by ЦОН/civil-registry staff
+      on-site rather than self-served by the applicant — this registry's
+      usual staff-completed-form dead-end pattern — so these two verticals
+      are likely, but not yet confirmed, dead ends. Re-check `grs.gov.kg`
+      fresh in a future cycle before ruling out definitively.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
