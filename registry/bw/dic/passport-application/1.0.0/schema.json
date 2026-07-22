@@ -1,0 +1,789 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "bw/dic/passport-application",
+  "version": "1.0.0",
+  "title": "Botswana Passport Application (Form PP1 Rev)",
+  "description": "The Department of Immigration and Citizenship's (DIC) \"Passport Application\" (Form PP1 Rev), used only for a person's first Botswana passport (replacements or renewals use the separate Form PP2, out of scope for this schema). Closes Botswana's own pre-scouted, STRONG banked backlog (see bw/dic/visa-application, Visa; bw/burs/individual-tax-return, Taxes; bw/drts/driving-licence-application, DMV), opening the Passport vertical (4 of 6). This schema models the requested passport type and delivery preference; the applicant's personal details and physical description (Section 1); both parents' particulars (Section 2, always required per the form's own layout); a next-of-kin emergency contact (Section 3); the applicant's traditional-authority particulars — Chief, Headman, Ward, Kgotla/Town/Village, District (Section 4); the Parent or Legal Guardian's Consent section (Section 5, gated on a directly-supplied `applicantIsMinor` boolean, since the section's own header states it applies only to applicants under 21 years of age and the form prints no age-arithmetic checkbox of its own); and the applicant's own declaration and signature (Section 6). It also models the two supporting identity documents disclosed in the form's own completion notes — a National Registration Identity Card (Omang) for applicants over 16, or a birth certificate/affidavit otherwise — plus the required passport photographs and specimen-signature attachment. It excludes page 7's entire \"For Official Use Only\" section (fee, receipt, application-checked-by, and previous-passport office record) and Section 6's Commissioner of Oaths/official-stamp block, none of which the applicant supplies. Filing this application is an applicant's own action performed with the Department of Immigration and Citizenship; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Botswana or the Department of Immigration and Citizenship.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "BW",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Immigration and Citizenship",
+    "abbreviation": "DIC",
+    "url": "https://www.gov.bw"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.botswanaembassy.org/sites/default/files/documents/Botswana_Passport_Application_Form.pdf",
+    "retrievedAt": "2026-07-22",
+    "documentRef": "Form PP1 Rev, \"Passport Application\", Department of Immigration and Citizenship, native (searchable-text) PDF, 7 pages."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-22",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-22",
+    "notes": "GOV-4328 (\"GovSchema Standard Research\"). Closes Botswana's own pre-scouted, STRONG banked backlog left open by the GOV-4307 cycle (see CATALOG.md's Known Gaps entry 0e) — Form PP1 Rev, the last of four disclosed-STRONG Botswana verticals (Taxes, Visa, DMV, Passport) remaining unauthored after GOV-4321 authored Visa. Opens Botswana's Passport vertical (4 of 6); Botswana's other two screened verticals (Business Formation, National ID) remain confirmed dead ends per the GOV-4307 cycle's own six-vertical screening pass.\n\nIndependently re-fetched and re-hashed rather than trusted from the prior cycle's own banked report alone: `https://www.botswanaembassy.org/sites/default/files/documents/Botswana_Passport_Application_Form.pdf`, HTTP 200, `Content-Type: application/pdf`, 123,496 bytes (byte-for-byte match with the GOV-4307 cycle's own reported size), sha256 `7ea390948b63c0a43aeae95432f5b7abbef62faff999db9e1499c54020abada7`, begins `%PDF-1.4`. `gov.bw` itself WAF-blocks this particular form's own hosting path directly (per the GOV-4307 cycle's own disclosed finding); this Botswana-embassy mirror is unauthenticated and ungated, and its own letterhead, form number (PP1 Rev), and section structure match the Department of Immigration and Citizenship's other Botswana-government-hosted forms (Form 1 Visa, Form DL1) in layout convention, corroborating it as the standard specimen rather than a stale or altered mirror. Confirmed mechanically: zero `/AcroForm`, `/Widget`, and `/FT` occurrences in the raw bytes (a flat, print-and-fill specimen), and exactly 7 `/Type/Page` objects.\n\nExtraction method: text extracted via `pdfjs-dist`'s `getTextContent()` API (vendored at `/tmp/node_modules/pdfjs-dist` from prior cycles), grouped by y-coordinate row and sorted by x-coordinate. All 7 pages additionally rendered to PNG at 2.5x scale via `pdfjs-dist` + `node-canvas` (vendored at `/tmp/node_modules/canvas`) and visually cross-checked against the extracted text for every checkbox grid and box-grouping described in the findings below — this form's dense multi-column box layout (e.g. Section 2's Father/Mother columns, Section 4's Chief/Headman box grid) is materially under-represented by text position alone.\n\nModels 72 `fields[]` across 8 steps (Eligibility Gates; Passport Type and Delivery; Section 1 Personal Details; Section 2 Parents' Details; Section 3 Next of Kin; Section 4 Traditional Authority; Section 5 Parent or Legal Guardian's Consent; Section 6 Declaration) plus 4 `documents[]` entries.\n\n## Disclosed source-fidelity findings\n\n1. **`passportType` confirmed via rendered image as a genuine 2x2 checkbox grid (Local/Official/National/Diplomatic), each with its own printed box** — the raw text layer alone (\"Local Official\" / \"National Diplomatic\" as two text rows) under-represents the true 4-option single-select structure; a targeted crop of the rendered PNG confirms all four options each carry their own checkbox glyph, unlike the sibling `bw/dic/visa-application`'s Sex row (only one option of two printed a box). Modelled as a required 4-value enum.\n2. **`passportSentToName`/`passportSentToAddress` and `collectedByName`/`collectedByAddress` modelled as two independent, unconditionally optional blocks, with no selector gating one on the other.** Page 1 prints \"Passport to be sent to (Name)/Address\" and \"Or Collected by sent to (Name)/Address\" as two side-by-side box groups with no checkbox choosing between them — an applicant fills in whichever delivery method applies and leaves the other blank. This registry's own established disclose-rather-than-fabricate convention (e.g. `bw/dic/visa-application` Finding 7) is followed rather than inventing an unprinted `deliveryMethod` selector or an either/or validation rule the source does not state. The signature/date line beneath these blocks (\"To be signed by the person collecting the Passport at the time of collection\") is excluded — it is completed later, at physical collection, not at application time.\n3. **`applicantIsMinor` is a directly-supplied, unprinted boolean eligibility gate, not derived from `dateOfBirth`.** Section 5's own header reads \"Consent of Parent or Legal Guardian: (To be completed if the applicant is under 21 years of age)\" — the same unprinted-condition convention this registry's Zambia (`zm/dnrpc/passport-application`), Ethiopia, Malta, and Cyprus passport schemas use for their own section-applicability gates, since GSP-0013's `Condition` grammar has no date-arithmetic/age-derivation operator to compute this from `dateOfBirth` directly. Note 3 on page 2 of the source's own completion notes cites this same conditional but mislabels it \"Section 1b\" (\"Legal Guardian's consent (Section 1b) to be completed when the applicant is a minor under the age of 21 years\") — the actual guardian-consent section is unambiguously Section 5 per its own printed heading; this cross-reference mismatch is disclosed here as a printed error in the source's own notes, not resolved or silently corrected.\n4. **`applicantOverSixteen` is a second directly-supplied, unprinted boolean eligibility gate, drawn from the form's own completion notes rather than a section header.** Notes page item 1 (page 2 of the source) reads \"All applications for Botswana passports in respect of applicants over 16 years must be supported by a National Registration Identity Card (O Mang). Only in extremely exceptional circumstances shall a birth certificate or an affidavit in lieu of birth certificate completed by a parent on behalf of the applicant and attested by Commissioner of Oaths, be accepted.\" This gates two mutually exclusive `documents[]` entries (`nationalIdOmang` requiredWhen true; `birthCertificateOrAffidavit` requiredWhen false) rather than modelling a single ambiguous \"identity evidence\" document.\n5. **Section 2 (Parents' Details) fields are modelled as required for both Father and Mother, except `fatherPreviousNationality`/`motherPreviousNationality`, left optional.** The source prints no optionality marker anywhere in Section 2, unlike Section 5's own explicit age-based conditional — but \"Previous Nationality\" only logically applies to a parent whose nationality changed (e.g. through naturalization), so it is modelled optional as a disclosed judgment call, while every other Section 2 field (name, address, date/place/country of birth, present nationality) is modelled required per the source's own lack of an optionality marker.\n6. **Section 4 (traditional-authority particulars: Chief, Headman, Ward, Kgotla/Town/Village, District) is modelled as unconditionally required**, since the source prints no \"if applicable\" annotation distinguishing it from Sections 1-3 — disclosed here since an urban applicant without a personal Chief/Headman affiliation may find this section's universal requiredness a practical burden the source itself does not address.\n7. **`distinguishingMarks` modelled as the sole optional field within Section 1's personal-description block.** Unlike height/colour-of-hair/colour-of-eyes (universal physical descriptors every applicant has an answer for), not every applicant has a distinguishing mark — the source prints no optionality marker, but this is the same judgment-call convention this registry applies to comparable \"identifying marks\" fields elsewhere (disclosed rather than silently defaulted).\n8. **`heightMetres`/`heightCentimetres` modelled as two separate integer fields**, matching the source's own two adjacent boxes (\"Height: [box] Metres [box] Cm\") and this registry's established precedent for the same split in `zm/dnrpc/passport-application`.\n9. **`detailsOfLegalCustody` modelled bare-optional, not gated on `applicantIsMinor`.** Section 5 prints \"(If relationship not father or mother circumstances and proof of legal custody must be provided)\" as a free-standing conditional instruction with no separate checkbox of its own — the same disclosed no-printed-signal treatment this registry's Zambia/Ethiopia passport schemas use for their own analogous ungated optional fields (e.g. `zm/dnrpc/passport-application`'s `sponsoringGovernmentDepartment`).\n10. **Page 7's entire \"For Official Use Only\" section is excluded, including its own \"APPLICANT'S IDENTIFYING DOCUMENTS\" checklist** (Birth Certificate/National Reg. ID/Marriage Particulars/Adoption Papers/Others tick-boxes) — despite its heading naming the applicant's documents, the whole page sits beneath the page's own \"For Official Use Only\" banner and is completed by DIC staff recording which documents were physically produced, receipt/fee particulars, and application-checked-by sign-off, none of which is applicant-supplied data.\n\n## Conformance\n\n3 valid mock scenarios (an adult applicant with National ID Omang identity evidence and no guardian consent triggered; a minor applicant under 21 triggering full guardian consent, with birth-certificate identity evidence; an adult applicant using the collected-by delivery method with a distinguishing mark disclosed) plus 14 mutation-control fixtures (a missing statically-required field for each of `passportType`, `title`, `surname`, `dateOfBirth`, `nationalStatus`, `fatherSurname`, `motherSurname`, `nextOfKinSurname`, `nameOfChief`, `district`, and `applicantSignature`; a missing `requiredWhen`-true `guardianSurname` while `applicantIsMinor` is true; an invalid `passportType` enum value; and an unknown top-level field) are committed under `conformance/bw/dic/passport-application/1.0.0/`, matching this registry's established fixture convention of validating `fields[]` values only (the `documents[]` array's own two conditional entries, `nationalIdOmang`/`birthCertificateOrAffidavit`, are exercised by the two `applicantOverSixteen` branches already covered across the 3 valid scenarios, not by separate mutation fixtures, since this registry's fixture format has no document-satisfaction representation). An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all 17 fixtures: all 3 valid scenarios at 0 errors, all 14 mutation controls each raising exactly 1 error, and confirmed every `requiredWhen` field reference resolves (0 dangling references). Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-22"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "eligibility_gates",
+      "title": "Eligibility Gates",
+      "fields": ["applicantIsMinor", "applicantOverSixteen"],
+      "next": "passport_type_and_delivery"
+    },
+    {
+      "id": "passport_type_and_delivery",
+      "title": "Passport Type and Delivery",
+      "fields": ["passportType", "passportSentToName", "passportSentToAddress", "collectedByName", "collectedByAddress"],
+      "next": "personal_details"
+    },
+    {
+      "id": "personal_details",
+      "title": "Section 1: Personal Details",
+      "fields": ["title", "surname", "firstNames", "colourOfHair", "placeOfBirth", "countryOfBirth", "dateOfBirth", "occupation", "postalAddressPOBoxPrivateBag", "postalAddressTownVillage", "heightMetres", "heightCentimetres", "residentialAddressPlotNumber", "residentialAddressKgotlaTownVillage", "colourOfEyes", "distinguishingMarks", "nationalStatus"],
+      "next": "parents_details"
+    },
+    {
+      "id": "parents_details",
+      "title": "Section 2: Parents' Details",
+      "fields": ["fatherSurname", "fatherFirstNames", "fatherPresentAddress", "fatherPOBoxPrivateBag", "fatherPlotNumber", "fatherTownVillage", "fatherDateOfBirth", "fatherPlaceOfBirth", "fatherCountryOfBirth", "fatherPresentNationality", "fatherPreviousNationality", "motherSurname", "motherFirstNames", "motherPresentAddress", "motherPOBoxPrivateBag", "motherPlotNumber", "motherTownVillage", "motherDateOfBirth", "motherPlaceOfBirth", "motherCountryOfBirth", "motherPresentNationality", "motherPreviousNationality"],
+      "next": "next_of_kin"
+    },
+    {
+      "id": "next_of_kin",
+      "title": "Section 3: Next of Kin",
+      "fields": ["nextOfKinSurname", "nextOfKinFirstNames", "nextOfKinContactAddress", "nextOfKinPOBoxPrivateBag", "nextOfKinPlotNumber", "nextOfKinTownVillage", "nextOfKinRelationship", "nextOfKinTelephoneNumber"],
+      "next": "traditional_authority"
+    },
+    {
+      "id": "traditional_authority",
+      "title": "Section 4: Traditional Authority",
+      "fields": ["nameOfChief", "nameOfHeadman", "nameOfWard", "kgotlaTownVillage", "district"],
+      "next": "guardian_consent"
+    },
+    {
+      "id": "guardian_consent",
+      "title": "Section 5: Parent or Legal Guardian's Consent",
+      "fields": ["guardianSurname", "guardianFirstName", "guardianAddress", "guardianPOBoxPrivateBag", "guardianPlotNumber", "guardianTownVillage", "guardianTelephoneNumber", "guardianRelationship", "detailsOfLegalCustody", "guardianSignature", "guardianConsentDate"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Section 6: Declaration",
+      "fields": ["declarationDate", "applicantSignature"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "applicantIsMinor",
+      "label": "Applicant is under 21 years of age",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Not a printed checkbox. Section 5's own header reads \"Consent of Parent or Legal Guardian: (To be completed if the applicant is under 21 years of age)\" — this directly-supplied boolean gates Section 5, the same unprinted-condition convention this registry's Zambia/Ethiopia/Malta/Cyprus passport schemas use for their own section-applicability gates. See this schema's own verification.notes Finding 3.",
+      "sourceRef": "Form PP1 Rev, page 5, Section 5 header"
+    },
+    {
+      "name": "applicantOverSixteen",
+      "label": "Applicant is over 16 years of age",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Not a printed checkbox. Drawn from the form's own completion notes (page 2): \"All applications for Botswana passports in respect of applicants over 16 years must be supported by a National Registration Identity Card (O Mang).\" Gates which of the two mutually exclusive supporting-identity documents[] entries is required. See this schema's own verification.notes Finding 4.",
+      "sourceRef": "Form PP1 Rev, page 2, Notes item 1"
+    },
+    {
+      "name": "passportType",
+      "label": "Passport Type",
+      "type": "enum",
+      "required": true,
+      "description": "Confirmed via rendered image as a genuine 4-option checkbox grid, each with its own printed box. See this schema's own verification.notes Finding 1.",
+      "sourceRef": "Form PP1 Rev, page 1 — \"PASSPORT TYPE: (Please tick appropriate box) Local / Official / National / Diplomatic\"",
+      "validation": {
+        "enum": ["LOCAL", "OFFICIAL", "NATIONAL", "DIPLOMATIC"]
+      }
+    },
+    {
+      "name": "passportSentToName",
+      "label": "Passport to be sent to (Name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 2 for why this and the three sibling delivery fields are unconditionally optional with no selector gating one on the other.",
+      "sourceRef": "Form PP1 Rev, page 1 — \"Passport to be sent to (Name)\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "passportSentToAddress",
+      "label": "Passport to be sent to (Address)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 1 — \"Address\" (beneath \"Passport to be sent to\")",
+      "validation": { "maxLength": 400 }
+    },
+    {
+      "name": "collectedByName",
+      "label": "Or Collected by sent to (Name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 1 — \"Or Collected by sent to (Name)\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "collectedByAddress",
+      "label": "Or Collected by sent to (Address)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 1 — \"Address\" (beneath \"Or Collected by\")",
+      "validation": { "maxLength": 400 }
+    },
+    {
+      "name": "title",
+      "label": "Title",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"Mr. Mrs. Miss\"",
+      "validation": {
+        "enum": ["MR", "MRS", "MISS"]
+      }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"Surname :\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "firstNames",
+      "label": "First Names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"First Names :\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "colourOfHair",
+      "label": "Colour of Hair",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"Colour of Hair:\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"Place of Birth :\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"Country of Birth :\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"Date of Birth : (Day Month Year)\""
+    },
+    {
+      "name": "occupation",
+      "label": "Profession/Occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"Profession/Occupation:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "postalAddressPOBoxPrivateBag",
+      "label": "Postal Address — P.O. Box/Private Bag",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"Postal Address: P. O. Box/Private Bag:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "postalAddressTownVillage",
+      "label": "Postal Address — Town/Village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"Town/Village:\" (beneath Postal Address)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "heightMetres",
+      "label": "Height — Metres",
+      "type": "integer",
+      "required": true,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 8 for the two-field split.",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"Height: ... Metres\"",
+      "validation": { "minimum": 0, "maximum": 3 }
+    },
+    {
+      "name": "heightCentimetres",
+      "label": "Height — Centimetres",
+      "type": "integer",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"... Cm\"",
+      "validation": { "minimum": 0, "maximum": 99 }
+    },
+    {
+      "name": "residentialAddressPlotNumber",
+      "label": "Residential Address — Plot Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"Residential Address: Plot Number:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "residentialAddressKgotlaTownVillage",
+      "label": "Residential Address — Kgotla/Town/Village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"Kgotla/Town/Village:\" (beneath Residential Address)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "colourOfEyes",
+      "label": "Colour of Eyes",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"Colour of eyes: (Please Specify)\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "distinguishingMarks",
+      "label": "Distinguishing Marks",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 7 for why this is the sole optional field within Section 1's personal-description block.",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"Distinguishing Marks:\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "nationalStatus",
+      "label": "National Status — I am a citizen of Botswana by",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 1 — \"National Status: I am a citizen of Botswana by: - Birth, Registration, Naturalization (tick whichever is applicable)\"",
+      "validation": {
+        "enum": ["BIRTH", "REGISTRATION", "NATURALIZATION"]
+      }
+    },
+    {
+      "name": "fatherSurname",
+      "label": "Father — Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3-4, Section 2, Father — \"Surname:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "fatherFirstNames",
+      "label": "Father — First Names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3-4, Section 2, Father — \"First Names:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "fatherPresentAddress",
+      "label": "Father — Present Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 2, Father — \"Present Address:\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "fatherPOBoxPrivateBag",
+      "label": "Father — P.O. Box/Private Bag",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 2, Father — \"P O Box/Private Bag:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "fatherPlotNumber",
+      "label": "Father — Plot Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 2, Father — \"Plot Number:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "fatherTownVillage",
+      "label": "Father — Town/Village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 3, Section 2, Father — \"Town/Village:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "fatherDateOfBirth",
+      "label": "Father — Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Father — \"Date of Birth:\""
+    },
+    {
+      "name": "fatherPlaceOfBirth",
+      "label": "Father — Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Father — \"Place of Birth:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "fatherCountryOfBirth",
+      "label": "Father — Country of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Father — \"Country of Birth:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "fatherPresentNationality",
+      "label": "Father — Present Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Father — \"Present Nationality:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "fatherPreviousNationality",
+      "label": "Father — Previous Nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 5 for why this field alone is modelled optional within Section 2.",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Father — \"Previous Nationality:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "motherSurname",
+      "label": "Mother — Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Mother — \"Surname:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "motherFirstNames",
+      "label": "Mother — First Names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Mother — \"First Names:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "motherPresentAddress",
+      "label": "Mother — Present Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Mother — \"Present Address:\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "motherPOBoxPrivateBag",
+      "label": "Mother — P.O. Box/Private Bag",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Mother — \"P O Box/Private Bag:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "motherPlotNumber",
+      "label": "Mother — Plot Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Mother — \"Plot Number:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "motherTownVillage",
+      "label": "Mother — Town/Village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Mother — \"Town/Village:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "motherDateOfBirth",
+      "label": "Mother — Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Mother — \"Date of Birth:\""
+    },
+    {
+      "name": "motherPlaceOfBirth",
+      "label": "Mother — Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Mother — \"Place of Birth:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "motherCountryOfBirth",
+      "label": "Mother — Country of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Mother — \"Country of Birth:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "motherPresentNationality",
+      "label": "Mother — Present Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Mother — \"Present Nationality:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "motherPreviousNationality",
+      "label": "Mother — Previous Nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 5.",
+      "sourceRef": "Form PP1 Rev, page 4, Section 2, Mother — \"Previous Nationality:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nextOfKinSurname",
+      "label": "Next of Kin — Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 3 — \"Surname:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nextOfKinFirstNames",
+      "label": "Next of Kin — First Names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 3 — \"First Names:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "nextOfKinContactAddress",
+      "label": "Next of Kin — Contact Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 3 — \"Contact Address:\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "nextOfKinPOBoxPrivateBag",
+      "label": "Next of Kin — P.O. Box/Private Bag",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 3 — \"P O Box/Private Bag:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nextOfKinPlotNumber",
+      "label": "Next of Kin — Plot Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 3 — \"Plot Number:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nextOfKinTownVillage",
+      "label": "Next of Kin — Town/Village",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 3 — \"Town/Village:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "nextOfKinRelationship",
+      "label": "Next of Kin — Relationship",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form PP1 Rev, page 4, Section 3 — \"Relationship:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nextOfKinTelephoneNumber",
+      "label": "Next of Kin — Telephone Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4, Section 3 — \"Telephone Number:\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "nameOfChief",
+      "label": "Name of Chief",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 6 for why Section 4 is modelled unconditionally required.",
+      "sourceRef": "Form PP1 Rev, page 4-5, Section 4 — \"Name of Chief:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "nameOfHeadman",
+      "label": "Name of Headman",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 4-5, Section 4 — \"Name of Headman:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "nameOfWard",
+      "label": "Name of Ward",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form PP1 Rev, page 4-5, Section 4 — \"Name of Ward:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "kgotlaTownVillage",
+      "label": "Kgotla/Town/Village",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form PP1 Rev, page 4-5, Section 4 — \"Kgotla/Town/Village:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "district",
+      "label": "District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form PP1 Rev, page 5, Section 4 — \"District:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "guardianSurname",
+      "label": "Parent/Guardian — Surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form PP1 Rev, page 5, Section 5 — \"Surname:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "guardianFirstName",
+      "label": "Parent/Guardian — First Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form PP1 Rev, page 5, Section 5 — \"First Name:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "guardianAddress",
+      "label": "Parent/Guardian — Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form PP1 Rev, page 5, Section 5 — \"Address:\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "guardianPOBoxPrivateBag",
+      "label": "Parent/Guardian — P.O. Box/Private Bag",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form PP1 Rev, page 5, Section 5 — \"P O Box/Private Bag:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "guardianPlotNumber",
+      "label": "Parent/Guardian — Plot Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form PP1 Rev, page 5, Section 5 — \"Plot Number:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "guardianTownVillage",
+      "label": "Parent/Guardian — Town/Village",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form PP1 Rev, page 5, Section 5 — \"Town/Village:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "guardianTelephoneNumber",
+      "label": "Parent/Guardian — Telephone Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form PP1 Rev, page 5, Section 5 — \"Telephone Number:\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "guardianRelationship",
+      "label": "Parent/Guardian — Relationship",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "description": "If the relationship is not father or mother, circumstances and proof of legal custody must be provided — see detailsOfLegalCustody.",
+      "sourceRef": "Form PP1 Rev, page 5, Section 5 — \"Relationship: (If relationship not father or mother circumstances and proof of legal custody must be provided)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "detailsOfLegalCustody",
+      "label": "Details of Legal Custody",
+      "type": "string",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 9 for why this field is bare-optional rather than gated on applicantIsMinor.",
+      "sourceRef": "Form PP1 Rev, page 5, Section 5 — \"Details of Legal Custody: __________\"",
+      "validation": { "maxLength": 600 }
+    },
+    {
+      "name": "guardianSignature",
+      "label": "Signature of Parent/Guardian",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form PP1 Rev, page 5, Section 5 — \"Signature of Parent/Guardian:\""
+    },
+    {
+      "name": "guardianConsentDate",
+      "label": "Date (Parent/Guardian Consent)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "sourceRef": "Form PP1 Rev, page 5, Section 5 — \"Date:\""
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Form PP1 Rev, page 6, Section 6 — \"Applicant's Signature : ... Date : ...\""
+    },
+    {
+      "name": "applicantSignature",
+      "label": "Applicant's Signature",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form PP1 Rev, page 6, Section 6 — \"Applicant's Signature :\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "photographs",
+      "label": "Two identical passport photographs",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form PP1 Rev, page 2, Notes item 2 — full-face photographs, 63mm x 50mm to 52mm x 37mm, certified by the Commissioner of Oaths who administers the Section 6 oath."
+    },
+    {
+      "id": "specimenSignature",
+      "label": "Applicant's specimen signature (signed twice)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form PP1 Rev, pages 5-6 — \"Sign your name once in each of the spaces below. This will be attached to your Passport when issued.\""
+    },
+    {
+      "id": "nationalIdOmang",
+      "label": "National Registration Identity Card (Omang)",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "requiredWhen": { "field": "applicantOverSixteen", "equals": true },
+      "sourceRef": "Form PP1 Rev, page 2, Notes item 1"
+    },
+    {
+      "id": "birthCertificateOrAffidavit",
+      "label": "Birth certificate, or affidavit in lieu of birth certificate",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "requiredWhen": { "field": "applicantOverSixteen", "equals": false },
+      "sourceRef": "Form PP1 Rev, page 2, Notes item 1 — \"Only in extremely exceptional circumstances shall a birth certificate or an affidavit in lieu of birth certificate completed by a parent on behalf of the applicant and attested by Commissioner of Oaths, be accepted.\""
+    }
+  ]
+}

@@ -4,7 +4,39 @@
 
 ## Executive Summary
 
-**80 jurisdictions** | **598 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**80 jurisdictions** | **599 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4328, "GovSchema Standard Research"): Botswana
+> Passport opens (4 of 6)**, via `bw/dic/passport-application@1.0.0` — the
+> Department of Immigration and Citizenship's "Passport Application" (Form
+> PP1 Rev), used only for a person's first Botswana passport (replacements
+> and renewals use the separate Form PP2, out of scope for this schema).
+> Closes Botswana's own pre-scouted, STRONG banked backlog left open by the
+> GOV-4307 cycle below — the last of four disclosed-STRONG Botswana
+> verticals (Taxes, Visa, DMV, Passport) remaining unauthored after GOV-4321
+> authored Visa. Independently re-fetched and re-hashed
+> (`https://www.botswanaembassy.org/sites/default/files/documents/Botswana_Passport_Application_Form.pdf`,
+> HTTP 200, 123,496 bytes, byte-for-byte match with the prior cycle's own
+> reported size) and extracted via `pdfjs-dist`, with all 7 pages rendered
+> to PNG via `node-canvas` for visual checkbox-grid confirmation. Models 72
+> fields across 8 steps plus 4 `documents[]` entries, covering the passport
+> type and delivery preference, applicant personal details and physical
+> description, both parents' particulars, next-of-kin emergency contact,
+> traditional-authority particulars (Chief/Headman/Ward/Kgotla/District),
+> a directly-supplied-boolean-gated Parent or Legal Guardian's Consent
+> section (mirroring `zm/dnrpc/passport-application`'s own unprinted
+> age-gate convention, since GSP-0013's `Condition` grammar has no
+> date-arithmetic operator), and the applicant's declaration. See the
+> document's own VERIFICATION.md for the full sourcing record and 10
+> disclosed findings, including a genuine 4-option passport-type checkbox
+> grid and a disclosed cross-reference typo in the source's own completion
+> notes ("Section 1b" where the form's own heading reads "Section 5").
+> Botswana's remaining two verticals (Business Formation, National ID)
+> are confirmed dead ends per the GOV-4307 cycle's own six-vertical
+> screening pass — this closes Botswana's disclosed-STRONG backlog.
+> Uganda's own pre-scouted 3-of-6 candidate set (see the Known Gaps section
+> below) remains open backlog for a future new-jurisdiction-deepening
+> cycle.
 
 > **Update (2026-07-22, GOV-4321, "GovSchema Standard Research"): Botswana
 > Visa opens (3 of 6)**, via `bw/dic/visa-application@1.0.0` — the
@@ -14055,7 +14087,18 @@
 
 ## By Vertical
 
-### Passport (54/78 jurisdictions — 69%)
+### Passport (55/80 jurisdictions — 69%)
+
+> **Update (2026-07-22, GOV-4328, "GovSchema Standard Research"): Botswana
+> opens this vertical (4/6 for the jurisdiction)**, via
+> `bw/dic/passport-application@1.0.0` — the Department of Immigration and
+> Citizenship's "Passport Application" (Form PP1 Rev). This vertical's own
+> denominator is also corrected here from 78 to 80 — Albania (GOV-4300) and
+> Botswana (GOV-4307) had each opened via a non-Passport vertical without
+> this section's own denominator being bumped, the same stale-denominator
+> class of fix the GOV-4321 cycle applied to the Visa vertical section.
+> See the Executive Summary's GOV-4328 update above for the full sourcing
+> record and disclosed findings.
 
 > **Update (2026-07-22, GOV-4278, "GovSchema Standard Research"): Zambia
 > opens this vertical (2/6 for the jurisdiction)**, via
@@ -19700,7 +19743,7 @@ now closed.
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **BW** | 3 | ✗ | ✓ | ✗ | ✓ | ✓ | ✗ |
+| **BW** | 4 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 14 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
@@ -20118,9 +20161,10 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       per this same GOV-4271 screening pass.
 0e. **New-jurisdiction candidates scouted the GOV-4307 cycle (2026-07-22)
     — Botswana opened via Taxes, then deepened to DMV (GOV-4314,
-    2026-07-22) and Visa (GOV-4321, 2026-07-22); Passport remains STRONG
-    banked backlog; Uganda screened as a ready-to-author 3-of-6 candidate for
-    a future cycle; Bolivia confirmed weak:**
+    2026-07-22), Visa (GOV-4321, 2026-07-22), and Passport (GOV-4328,
+    2026-07-22), closing its disclosed-STRONG backlog; Uganda screened as a
+    ready-to-author 3-of-6 candidate for a future cycle; Bolivia confirmed
+    weak:**
     - **Botswana** — screened across all six verticals via an independent
       research agent, then independently re-verified. Four verticals came
       back STRONG, unauthenticated and ungated: **Taxes** (BURS Form ITA
@@ -20140,7 +20184,10 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Immigration and Citizenship, mirrored unauthenticated on Botswana's
       own embassy site since `gov.bw` WAF-blocks that particular path
       directly — `botswanaembassy.org/sites/default/files/documents/
-      Botswana_Passport_Application_Form.pdf`, HTTP 200, 123KB, 7 pages).
+      Botswana_Passport_Application_Form.pdf`, HTTP 200, 123KB, 7 pages —
+      **now authored (GOV-4328, 2026-07-22)** as
+      `bw/dic/passport-application@1.0.0`, see the Executive Summary and
+      Passport vertical updates above).
       **Business Formation** (CIPA's initial company registration routes
       exclusively through the login-gated OBRS e-service; only
       post-incorporation maintenance/IP forms are downloadable from
@@ -20148,8 +20195,10 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       only at civil registration offices, no downloadable form found) are
       confirmed dead ends. **Update (GOV-4314, 2026-07-22): DMV is now
       authored**, see above. **Update (GOV-4321, 2026-07-22): Visa is now
-      authored**, see above. Passport remains open, STRONG, ready-to-author
-      backlog for a future cycle.
+      authored**, see above. **Update (GOV-4328, 2026-07-22): Passport is now
+      authored**, see above — this closes Botswana's disclosed-STRONG
+      backlog at 4/6 (Business Formation and National ID remain confirmed
+      dead ends).
     - **Uganda** — screened across all six verticals. Three verticals came
       back STRONG: **Business Formation** (URSB's "Statement of
       Particulars" individual business-name registration,
