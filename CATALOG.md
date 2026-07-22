@@ -24,15 +24,19 @@
 > `37e7df2b2800bd6e2e210944cd02f1c08ed265c924b2775fedc1b70cb54e4623` —
 > byte-for-byte match with both prior cycles' own reported figures) and
 > extracted via `pdfjs-dist` across all 4 pages, cross-checking layout
-> ambiguities by rendering pages 1-2 to PNG. Models 165 fields across 12
+> ambiguities by rendering pages 1-2 to PNG. Models 166 fields across 12
 > steps, covering the applicant's personal particulars, place of
 > residence/birth/origin and citizenship, Part B's Adult-only voter
 > information and spouse details, Part C's family particulars (father,
 > mother, a Grandparent/Introducer fallback, and 4 bounded slots for the
 > applicant's own children), and the Part E declaration — excluding Part D
 > (the registration officer's own retained duplicate) and Part F ("FOR
-> OFFICIAL USE ONLY") in full. See the document's own VERIFICATION.md for
-> the full sourcing record, including 8 disclosed source-fidelity findings
+> OFFICIAL USE ONLY") in full. A concurrent duplicate authoring run of this
+> same issue (PR #657) caught a real omission this schema's first pass
+> missed — `motherMaidenNames`, printed on the source's own Part C.8 block —
+> patched in during reconciliation (165→166 fields); see the document's own
+> VERIFICATION.md for the full sourcing record, including 8 disclosed
+> source-fidelity findings
 > (notably: the Spouse Details block's marital-status gate is a disclosed
 > judgment call, not source-stated; the Spouse block prints no Citizenship
 > Certificate Number field, an asymmetry versus the applicant's/Father's/

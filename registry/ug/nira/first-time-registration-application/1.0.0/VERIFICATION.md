@@ -61,9 +61,22 @@ pages 1 and 2 to PNG via `pdfjs-dist` + `node-canvas` at 2.5x scale:
   address grids, to confirm the 2-column vs 3-column row layouts described
   in Finding 8 below.
 
-Models 165 `fields[]` across 12 steps, all applicant-supplied (per the
+Models 166 `fields[]` across 12 steps, all applicant-supplied (per the
 page-4 guide's own "REGN OFFICER" attribution for every field this schema
 excludes).
+
+**Post-authoring correction (GOV-4351 duplicate-run reconciliation):** this
+schema originally omitted `motherMaidenNames` — the source's own Part C.8
+"Mother's details" block prints Surname, Given Names, Other Names,
+**Maiden Names**, Previous Names as five distinct printed labels, matching
+the same maiden-name convention already given to the applicant's own Part
+A.1 block and to Spouse Details (Part B.6); Father's details prints no
+equivalent line. A concurrent duplicate authoring run of this same issue
+(PR #657) modelled this field independently; cross-checked directly against
+the raw extracted page-2 text before adding it here (`fields[]` count
+165→166, `mother_details` step's field order also corrected to match the
+source's own printed order: Surname, Given Names, Other Names, Maiden
+Names, Previous Names, National ID Number...).
 
 ## What's excluded, and why
 
