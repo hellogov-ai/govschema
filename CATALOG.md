@@ -4,7 +4,44 @@
 
 ## Executive Summary
 
-**81 jurisdictions** | **602 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**82 jurisdictions** | **603 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4360, "GovSchema Standard Research"): Jamaica
+> opens as the registry's 82nd jurisdiction**, via
+> `jm/orc/business-name-registration-individual@1.0.0` (Business Formation, 1
+> of 6) — the Office of the Registrar of Companies' (ORC, operating as the
+> Companies Office of Jamaica) "Form BN 1 Rev 1.2011, Application for
+> Registration by Sole Proprietor" under the Registration of Business Names
+> Act, the individual/sole-proprietor variant, distinct from ORC's sibling
+> "Form BN 2, Application for Registration by Partnership" (fetched for
+> comparison but out of scope here). `orcjamaica.com` sits behind an Oracle
+> Cloud WAF (ZENEDGE) that SERVFAILs under the sandbox's default resolver and
+> serves a JS-challenge stub for its own HTML pages, but the underlying
+> static PDF assets are themselves unauthenticated once DNS is resolved
+> directly (Cloudflare DoH lookup, then `curl --resolve`) — no login/CAPTCHA
+> gate on the document itself. Independently re-fetched and re-hashed: HTTP
+> 200, `application/pdf`, 135,017 bytes, sha256
+> `114f76d039d8ae7c74cfac03c90b54991d28437ccebc26313d904bee03ba1b84`,
+> extracted cleanly via `pdfjs-dist` across all 3 pages, with pages 1-2 also
+> rendered to raster images via `pdfjs-dist` + `node-canvas` to confirm the
+> printed box/table layout. Models 51 fields across 7 steps (business
+> name/commencement; principal address and contact; branches; certification;
+> applicant particulars; declaration; filer particulars), including two
+> unprinted boolean gates for conditions the form implies but does not print
+> as a yes/no checkbox (`isRenewalApplication`, gating the adjacent
+> "REGISTRATION # (FOR RENEWALS)" box; `certificationApplicable`, gating
+> Section B's own "Only to be completed by applicants required to present
+> certification..." heading), and a disclosed, deliberately un-gated optional
+> field (`otherProposedBusinessNames`) for the one printed condition — "IF THE
+> NAME AT ITEM 1 IS REFUSED" — that depends on a future Registrar decision the
+> applicant cannot know in advance. Confirmed single-applicant scope (as
+> opposed to a partnership) against the sibling Form BN 2, whose own Section C
+> is structurally built for two-or-more partners with an "additional partners"
+> schedule checkbox absent anywhere in Form BN 1. See the document's own
+> VERIFICATION.md for the full sourcing record and disclosed scoping
+> decisions. Jamaica's other five verticals were scouted this cycle and
+> banked as open backlog (DMV, Visa, Passport, Taxes) or confirmed dead end
+> (National ID) — see the Known Gaps section below.
 
 > **Update (2026-07-22, GOV-4353, "GovSchema Standard Research"): Uganda
 > National ID opens (3 of 6)**, via
@@ -15359,7 +15396,21 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (72/78 jurisdictions — 92%)
+### Business Formation — Incorporation, LLC, Company Registration (73/79 jurisdictions — 92%)
+
+> **Update (2026-07-22, GOV-4360, "GovSchema Standard Research"): Jamaica
+> opens its first Business Formation schema, opening Jamaica as the
+> registry's 82nd jurisdiction**, via
+> `jm/orc/business-name-registration-individual` — the Office of the
+> Registrar of Companies' Form BN 1, "Application for Registration by Sole
+> Proprietor". See the Executive Summary's GOV-4360 update above for the
+> full sourcing record, including the disclosed scoping rationale for
+> excluding a repeating-partner concept (confirmed via comparison against
+> the sibling Form BN 2 partnership variant). Numerator updated from 72 to
+> 73; denominator updated from 78 to 79 (a new jurisdiction). Jamaica's DMV,
+> Visa, Passport, and Taxes verticals remain open, STRONG, banked backlog
+> for a future cycle; National ID is a confirmed dead end — see the Known
+> Gaps section below.
 
 > **Update (2026-07-22, GOV-4343, "GovSchema Standard Research"): Uganda
 > gains its first Business Formation schema**, via
@@ -20385,6 +20436,45 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       JS-rendered Angular SPA with no static fallback content. Not a
       priority new-jurisdiction candidate without a materially different
       source or OCR tooling.
+0f. **Jamaica scouted as a brand-new jurisdiction (GOV-4360, 2026-07-22) —
+    opened via Business Formation, four verticals banked STRONG backlog,
+    National ID confirmed dead end:**
+    - **Business Formation** — ORC's Form BN 1, "Application for
+      Registration by Sole Proprietor" (Rev 1.2011),
+      `orcjamaica.com/CompForms/bn1%20rev%201.2011.pdf`, HTTP 200, 135,017
+      bytes — **now authored** as
+      `jm/orc/business-name-registration-individual@1.0.0`, see the
+      Executive Summary and Business Formation vertical updates above.
+    - **DMV** — Tax Administration Jamaica's Form F1/F3 driver's licence
+      application, hosted at `jamaicatax.gov.jm`, ~100KB, an estimated
+      ~15-20 fields; a companion learner's-permit Form H3A is separately
+      hosted at `mtm.gov.jm` (the Island Traffic Authority/Ministry of
+      Transport and Mining) and would need ToUnicode CMap decoding to
+      extract cleanly (not yet attempted this cycle). Open, STRONG banked
+      backlog for a future cycle.
+    - **Visa** — the Jamaican Embassy in Washington, D.C.'s own
+      diplomatic-mission-hosted "Visa Application Form J",
+      `embassyofjamaica.org`, ~94KB, an estimated ~16 fields. Note: this is
+      a `.org` diplomatic-mission domain, not a `.gov.jm` one, but it is the
+      official embassy of the Jamaican state, the same class of source this
+      registry has accepted elsewhere for embassy-hosted consular forms.
+      Open, STRONG banked backlog for a future cycle.
+    - **Passport** — the Passport, Immigration and Citizenship Agency's
+      (PICA) own genuine AcroForm, `pica.gov.jm`, ~776KB, 152 typed form
+      fields — the richest and cleanest source of all six Jamaican
+      verticals scouted this cycle, a true fillable AcroForm rather than a
+      flat/scanned specimen. Open, STRONG banked backlog for a future
+      cycle, and the single most attractive next Jamaica candidate given
+      its field-level typing.
+    - **Taxes** — Tax Administration Jamaica's Form IT01, "Return of Income
+      — Individuals", `jamaicatax.gov.jm`, ~174KB, dozens of line items
+      (a full annual individual income tax return). Open, STRONG banked
+      backlog for a future cycle.
+    - **National ID — confirmed dead end.** Jamaica's National Identification
+      and Registration Authority (NIRA) and the Electoral Office of Jamaica
+      both issue identity credentials exclusively through in-person
+      enrollment/portal workflows; no downloadable, fillable static form was
+      found for either.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
