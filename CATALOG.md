@@ -4,7 +4,55 @@
 
 ## Executive Summary
 
-**76 jurisdictions** | **590 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**77 jurisdictions** | **591 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4271, "GovSchema Standard Research"): Zambia
+> opens as the registry's 77th jurisdiction — Business Formation (1 of
+> 6)**, via `zm/pacra/company-incorporation@1.0.0` — the Patents and
+> Companies Registration Agency's (PACRA) "Form 3 — Application for
+> Incorporation," used to incorporate a Private Company Limited By Shares,
+> Private Company Limited By Guarantee, Public Limited Company, or Unlimited
+> Private Company. This cycle scouted three jurisdictions entirely absent
+> from the registry in parallel — Panama, Albania, and Zambia — across all
+> 6 priority verticals; Zambia returned three independently STRONG
+> candidates (this Business Formation form, a Ministry of Foreign Affairs
+> Passport form, and a ZRA Individual Income Tax Return), the strongest of
+> the three scouted countries, so this cycle opens Zambia via the strongest
+> of its own three candidates. Fetched
+> `https://www.pacra.org.zm/files/forms/companies/CompaniesForm3.docx`
+> directly (HTTP 200, no login/CAPTCHA/WAF gate, a genuine Office Open XML
+> `.docx` confirmed by its own zip local-file-header magic); an older URL
+> for the same file now 404s, consistent with PACRA's site having migrated
+> to a Next.js front end since. Models 190 fields across 8 steps (Company
+> Details; First Directors; Shareholders; Beneficial Ownership; Guarantors;
+> Company Secretary; Declaration of Compliance; Particulars of Person
+> Lodging Application). The source form instructs applicants to physically
+> replicate (photocopy) Parts B/C/D/E/F for additional directors,
+> shareholders, beneficial owners, guarantors, or secretaries, with no
+> printed maximum for four of those five parts (Part D alone anchors at
+> "more than two"); this schema bounds Directors at 2 slots (matching the
+> form's own printed private-company minimum) and Shareholders/Beneficial-
+> Owner/Guarantor/Secretary at 1 slot each, every slot beyond the first
+> gated on its own supplied `numberOfX` count field, with the shortfall
+> (a third director, a second beneficial owner, and Part D's own nested
+> nested body-corporate sub-tables for a body-corporate-owned beneficial
+> owner)
+> disclosed as backlog for a future PATCH rather than silently dropped. Each
+> Shareholder/Beneficial-Owner/Guarantor/Company-Secretary block also adds
+> an `isBodyCorporate` boolean discriminator (not printed on the form,
+> which prints natural-person and body-corporate identity fields side by
+> side with no explicit either/or signal) so that exactly one identity path
+> is required at a time. See the Business Formation vertical section below
+> and the document's own VERIFICATION.md for the full sourcing record.
+> Zambia's Passport (a Ministry of Foreign Affairs "Form A with Form N"
+> PDF) and Taxes (ZRA's Individual Income Tax Return) candidates are left
+> as disclosed, pre-scouted STRONG backlog for a future cycle — see the
+> Known Gaps section below. Panama's strongest candidate (a Migración
+> Panamá tourist-visa PDF) and Albania's strongest candidate (a Tax
+> Authority individual-income-declaration PDF) were both screened but not
+> authored this cycle, in favor of Zambia's stronger three-candidate
+> showing; both remain open, unscreened-elsewhere backlog for a future
+> new-jurisdiction cycle.
 
 > **Update (2026-07-22, GOV-4264, "GovSchema Standard Research"): Ethiopia's
 > Passport vertical opens (3/6)**, via
@@ -13805,7 +13853,7 @@
 
 ## By Vertical
 
-### Passport (53/76 jurisdictions — 70%)
+### Passport (53/77 jurisdictions — 69%)
 
 > **Update (2026-07-22, GOV-4264, "GovSchema Standard Research"): Ethiopia
 > deepens to 3/6 via this vertical**, via `et/ics/passport-application@1.0.0`
@@ -14346,7 +14394,7 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (58/76 jurisdictions — 76%)
+### DMV — Vehicle Registration, Licensing, Permits (58/77 jurisdictions — 75%)
 
 > **Update (2026-07-21, GOV-4239, "GovSchema Standard Research"): Malta's
 > DMV vertical opens (5 of 6)**, via
@@ -14931,7 +14979,15 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (70/76 jurisdictions — 92%)
+### Business Formation — Incorporation, LLC, Company Registration (71/77 jurisdictions — 92%)
+
+> **Update (2026-07-22, GOV-4271, "GovSchema Standard Research"): Zambia
+> opens its first Business Formation schema, opening Zambia as the
+> registry's 77th jurisdiction**, via `zm/pacra/company-incorporation` —
+> PACRA's Form 3, "Application for Incorporation". See the Executive
+> Summary's GOV-4271 update above for the full sourcing record. Numerator
+> updated from 70 to 71; denominator updated from 76 to 77 (a new
+> jurisdiction).
 
 > **Update (2026-07-22, GOV-4255, "GovSchema Standard Research"): Georgia
 > gains its first Business Formation schema**, via
@@ -16041,7 +16097,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (64/76 jurisdictions — 84%)
+### Taxes — Income Tax Return, Tax Filing (64/77 jurisdictions — 83%)
 
 > **Update (2026-07-21, GOV-4202, "GovSchema Standard Research"): Latvia
 > adds the Declaration DK pielikums as a further top-level Taxes document**,
@@ -17878,7 +17934,7 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (63/76 jurisdictions — 83%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (63/77 jurisdictions — 82%)
 
 > **Update (2026-07-21, GOV-4230, "GovSchema Standard Research"): Malta's
 > Visa vertical opens**, via `mt/identita/long-stay-visa-application` — see
@@ -18644,7 +18700,7 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (52/76 jurisdictions — 68%)
+### National ID & Civic Documents (52/77 jurisdictions — 68%)
 
 > **Update (2026-07-21, GOV-4223, "GovSchema Standard Research"): Malta's
 > National ID & Civic Documents vertical opens (3 of 6)**, via
@@ -19430,6 +19486,7 @@ now closed.
 | **UZ** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **VN** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **ZM** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 
 "Schemas (top-level dirs)" counts distinct `<agency>/<process-name>` entries
 under `registry/<jurisdiction>/`, not every version/edition. US is
@@ -19724,6 +19781,44 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Licence alike. This extends and confirms a prior cycle's own partial
       finding (which had only checked some of these) to cover all 5. Do not
       re-attempt without a genuinely new source.
+0d. **Pre-scouted candidates banked this cycle (GOV-4271, 2026-07-22) —
+    Zambia Business Formation now authored, Zambia Passport and Taxes
+    remain open STRONG backlog, Panama and Albania each screened but not
+    authored:**
+    - **Zambia Passport** — Ministry of Foreign Affairs and International
+      Cooperation's Diaspora Portal hosts an unauthenticated, genuine
+      text-layer PDF, `PASSPORT-FORM-A-WITH-FORM-N.pdf` ("Form A with
+      Form N"), HTTP 200, no login/CAPTCHA/WAF gate. Not authored this
+      cycle; open backlog for a future cycle to open Zambia's Passport
+      vertical (2 of 6).
+    - **Zambia Taxes** — the Zambia Revenue Authority (ZRA) publishes an
+      unauthenticated, genuine text-layer PDF, `Income-Tax-Return-for-
+      Individuals.pdf` (Form ITF 46_1 V001), a 19-page individual income
+      tax return with TPIN/address/rental-income/balance-sheet fields,
+      HTTP 200, no login/CAPTCHA/WAF gate. Not authored this cycle (its
+      19-page scope is a substantially larger undertaking than the
+      Passport candidate above); open backlog for a future cycle.
+    - **Panama** — screened across all 6 verticals, unauthenticated and
+      not gated. Visa (Migración Panamá's tourist-visa PDF,
+      `migracion.gob.pa/wp-content/uploads/10-Formulario_visa_de_turista.pdf`,
+      HTTP 200, ~30 fields, bilingual Spanish/English) was the strongest
+      candidate found — DMV, Business Formation, Passport, Taxes, and
+      National ID each funnel exclusively into a login-gated online
+      portal with no static application-form document. Not authored this
+      cycle, since Zambia's own three-candidate showing was stronger;
+      left as open backlog for a future new-jurisdiction cycle (would open
+      Panama as a new jurisdiction via Visa).
+    - **Albania** — screened across all 6 verticals, unauthenticated and
+      not gated. Taxes (the Drejtoria e Përgjithshme e Tatimeve's
+      "Deklarata Individuale Vjetore e të Ardhurave," Form D1, a genuine
+      text-layer, non-fillable printable PDF with ~35-40 numbered boxes
+      plus its own field-by-field completion guide) was the strongest
+      candidate found — DMV, Business Formation, Visa, Passport, and
+      National ID all route exclusively through the login-gated
+      e-Albania SSO portal or in-person kiosks, with no statically
+      reachable form document. Not authored this cycle; left as open
+      backlog for a future new-jurisdiction cycle (would open Albania as
+      a new jurisdiction via Taxes).
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
