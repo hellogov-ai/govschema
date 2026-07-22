@@ -4,7 +4,35 @@
 
 ## Executive Summary
 
-**79 jurisdictions** | **595 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**80 jurisdictions** | **596 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4307, "GovSchema Standard Research"): Botswana
+> opens as the registry's 80th jurisdiction — Taxes (1 of 6)**, via
+> `bw/burs/individual-tax-return@1.0.0` — the Botswana Unified Revenue
+> Service's (BURS) "Tax Return and Return of Other Information of an
+> Individual" (Form ITA 20/96). This cycle scouted three new-jurisdiction
+> candidates in parallel (Botswana, Uganda, Bolivia) since the existing
+> 79-jurisdiction backlog's near-complete jurisdictions (AE Passport, BR/CH/
+> PL/SK Visa, CZ Passport, GR National ID, NO Passport) were all already
+> re-confirmed dead ends across 2+ prior cycles each. Botswana came back the
+> strongest by a wide margin — 4 of 6 verticals (Taxes, Visa, DMV, Passport)
+> confirmed STRONG, unauthenticated and unblocked by any login/CAPTCHA/WAF
+> gate; only Business Formation (CIPA's initial registration is
+> login-gated; only post-incorporation maintenance forms are downloadable)
+> and National ID (Omang, in-person only) came back dead ends. Fetched
+> directly (`https://www.burs.org.bw/phocadownload/individual%20blank%20return.pdf`,
+> HTTP 200, 148,353 bytes, no gate) and extracted via `pdfjs-dist`. Models
+> 86 fields across 6 steps (Declaration of Personal Particulars; Business
+> and Farming Income; Rental/Employment/Interest/Property-Disposal/Other/
+> Foreign-Investment Income; Exempt Income and Claims; Tax Credits and
+> General Information; Declaration) covering the form's full 2-page return
+> in one pass — unlike this registry's larger multi-schedule tax-return
+> precedents, this form's entire income-declaration structure fits on a
+> single page with no separate computation schedule to defer. Botswana's
+> other three disclosed-STRONG verticals (Visa, DMV, Passport) remain open
+> backlog for a future cycle — see the Known Gaps section below. See the
+> document's own VERIFICATION.md for the full sourcing record and 8
+> disclosed findings.
 
 > **Update (2026-07-22, GOV-4300, "GovSchema Standard Research"): Albania
 > opens as the registry's 79th jurisdiction — Taxes (1 of 6)**, via
@@ -16227,7 +16255,14 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (66/79 jurisdictions — 84%)
+### Taxes — Income Tax Return, Tax Filing (67/80 jurisdictions — 84%)
+
+> **Update (2026-07-22, GOV-4307, "GovSchema Standard Research"): Botswana
+> opens as the registry's 80th jurisdiction via this vertical (1/6)**, via
+> `bw/burs/individual-tax-return@1.0.0` — the Botswana Unified Revenue
+> Service's (BURS) "Tax Return and Return of Other Information of an
+> Individual" (Form ITA 20/96) — see the Executive Summary update above for
+> the full sourcing record and the document's own VERIFICATION.md.
 
 > **Update (2026-07-22, GOV-4300, "GovSchema Standard Research"): Albania
 > opens as the registry's 79th jurisdiction via this vertical (1/6)**, via
@@ -19593,6 +19628,7 @@ now closed.
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **BW** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 14 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
@@ -20008,6 +20044,67 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       VERIFICATION.md). Albania's other five verticals (DMV, Business
       Formation, Visa, Passport, National ID) remain confirmed dead ends
       per this same GOV-4271 screening pass.
+0e. **New-jurisdiction candidates scouted this cycle (GOV-4307, 2026-07-22)
+    — Botswana now opened via Taxes, its other three STRONG verticals left
+    as banked backlog; Uganda screened as a ready-to-author 3-of-6
+    candidate for a future cycle; Bolivia confirmed weak:**
+    - **Botswana** — screened across all six verticals via an independent
+      research agent, then independently re-verified. Four verticals came
+      back STRONG, unauthenticated and ungated: **Taxes** (BURS Form ITA
+      20/96, `burs.org.bw/phocadownload/individual%20blank%20return.pdf`,
+      HTTP 200, 148,353 bytes — **now authored**, see the Executive Summary
+      and Taxes vertical updates above); **Visa** (Form 1, "Application for
+      a Visa" under the Immigration Act, `gov.bw/sites/default/files/2026-03/
+      Application%20for%20a%20VISA%20Form%201_2.pdf`, HTTP 200, 477KB, 14
+      numbered fields); **DMV** (Form DL1, "Application for a Botswana
+      Driving Licence/Permit," Department of Road Transport and Safety,
+      `gov.bw/sites/default/files/2019-12/Form_DL1_1.pdf`, HTTP 200, 38KB,
+      full vehicle-class table); **Passport** (Form PP1 Rev, Department of
+      Immigration and Citizenship, mirrored unauthenticated on Botswana's
+      own embassy site since `gov.bw` WAF-blocks that particular path
+      directly — `botswanaembassy.org/sites/default/files/documents/
+      Botswana_Passport_Application_Form.pdf`, HTTP 200, 123KB, 7 pages).
+      **Business Formation** (CIPA's initial company registration routes
+      exclusively through the login-gated OBRS e-service; only
+      post-incorporation maintenance/IP forms are downloadable from
+      `cipa.co.bw/forms-downloads-2`) and **National ID** (Omang, in-person
+      only at civil registration offices, no downloadable form found) are
+      confirmed dead ends. Visa, DMV, and Passport remain open, STRONG,
+      ready-to-author backlog for a future cycle.
+    - **Uganda** — screened across all six verticals. Three verticals came
+      back STRONG: **Business Formation** (URSB's "Statement of
+      Particulars" individual business-name registration,
+      `ursb.go.ug/wp-content/uploads/2025/01/business-name-registration-individual-1639049617.pdf`,
+      HTTP 200, 273KB, confirmed via `pdfjs-dist` text extraction);
+      **National ID** (NIRA Form 3, First-Time Registration,
+      `nira.go.ug/media/2025/07/Form-3-NIRA-First-Time-Registration-Form.pdf`,
+      HTTP 200, 313KB, dozens of fields across Parts A-C — reachable only
+      with `curl -k` due to an incomplete TLS certificate chain, a server
+      misconfiguration rather than a login/WAF gate); **DMV** (Ministry of
+      Works driving-licence application form, `udls.co.ug/wp-content/
+      uploads/Driver-licence-application-form.pdf`, HTTP 200, 92KB, ~15
+      fields). **Visa** and **Passport** are dead ends: both route through
+      mandatory JS-rendered SPA portals (`visas.immigration.go.ug`,
+      `passports.go.ug/start`) with only scanned-image (zero text-layer)
+      PDFs available as static fallbacks. **Taxes** is a dead end: URA's
+      individual income tax return is issued only as an Excel template
+      after e-Services portal login, no static PDF exists. Uganda is a
+      ready-to-author 3-of-6 new-jurisdiction candidate for a future cycle,
+      not authored this cycle since Botswana's stronger 4-of-6 showing was
+      prioritized.
+    - **Bolivia — confirmed weak, not prioritized.** Only Taxes came back
+      even borderline-viable: SIN's Form 110 V3 (quarterly RC-IVA
+      individual income declaration) is published solely as a JPG scan
+      (`impuestos.gob.bo/wp-content/uploads/2025/10/f110v3-scaled.jpg`),
+      not a PDF/DOCX, which would need OCR/manual transcription. DMV and
+      National ID (SEGIP) are in-person-only info pages with no attached
+      form; Business Formation (Fundempresa/SEPREC) is unreachable/
+      login-gated, with only third-party-aggregator-hosted copies of the
+      real form found (excluded by this registry's sourcing criteria);
+      Visa and Passport both route through `migracion.gob.bo`, a fully
+      JS-rendered Angular SPA with no static fallback content. Not a
+      priority new-jurisdiction candidate without a materially different
+      source or OCR tooling.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
