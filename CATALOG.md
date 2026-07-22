@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**82 jurisdictions** | **605 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**82 jurisdictions** | **606 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4390, "GovSchema Standard Research"): Jamaica's
+> Visa vertical opens, closing the jurisdiction's entire disclosed backlog
+> from the GOV-4360 cycle (5 of 6; National ID remains a confirmed dead
+> end)**, via `jm/mfaft/visa-application@1.0.0` — the Ministry of Foreign
+> Affairs and Foreign Trade's (MFAFT) "Form J" Visa Application, served by
+> the Jamaican Embassy in Washington, D.C. Independently re-fetched and
+> re-hashed rather than trusted from the GOV-4376 cycle's own scouting
+> report alone: `embwashington.mfaft.gov.jm/pdf/Visa-Application-Form.pdf`,
+> HTTP 200, 525,611 bytes (byte-for-byte match), sha256 `b89d32ef...`. A
+> flat, single-page, non-AcroForm specimen with no checkbox/radio glyph
+> anywhere in its character set — every one of its 17 numbered items is a
+> ruled fill-in-the-blank line. Models 35 `fields[]` across 7 steps:
+> applicant particulars, travel history and accompanying minor children,
+> present/permanent address and marital status, visit details, passport
+> and return-visa particulars, two references resident in Jamaica, and a
+> declaration/signature. Notably models `sex` and `maritalStatus` as enums
+> despite neither carrying a printed checkbox (the same no-printed-option-
+> list convention this registry's `mx/ine/credencial-para-votar-application`
+> already established), and discloses several ambiguous items (the
+> "Arrived in ... on ... coming from ..." line, the "Return visa to ...
+> valid until ..." line) as unconditionally optional rather than guessing
+> their intended semantics. 3 valid mock scenarios plus 12 mutation-control
+> fixtures and one unknown-field-rejected fixture reproduced via a
+> from-scratch mock validator. **Jamaica now stands at 5 of 6 verticals**
+> (Business Formation, Passport, DMV, Taxes — pending merge via GOV-4383 —
+> and Visa; only National ID remains, a confirmed dead end per the
+> GOV-4360 cycle's own screening). See the Visa vertical update and
+> CATALOG.md's Known Gaps entry 0f below.
 
 > **Update (2026-07-22, GOV-4376, "GovSchema Standard Research"): Jamaica's
 > DMV vertical opens (3 of 6)**, via
@@ -18517,7 +18546,15 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (65/80 jurisdictions — 81%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (66/82 jurisdictions — 80%)
+
+> **Update (2026-07-22, GOV-4390, "GovSchema Standard Research"): Jamaica's
+> Visa vertical opens**, via `jm/mfaft/visa-application` — see the
+> Executive Summary update above for the full sourcing record. This also
+> corrects the denominator: Uganda (GOV-4337, 81st jurisdiction) and
+> Jamaica (GOV-4360, 82nd jurisdiction) each opened via a non-Visa vertical
+> without this section's own denominator being bumped at the time;
+> numerator moves from 65/80 to 66/82.
 
 > **Update (2026-07-22, GOV-4321, "GovSchema Standard Research"): Botswana's
 > Visa vertical opens (3/6)**, via `bw/dic/visa-application` — see the
@@ -20527,7 +20564,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       source or OCR tooling.
 0f. **Jamaica scouted as a brand-new jurisdiction (GOV-4360, 2026-07-22) —
     opened via Business Formation, four verticals banked STRONG backlog,
-    National ID confirmed dead end:**
+    National ID confirmed dead end. Update (GOV-4390, 2026-07-22): all
+    four banked candidates now authored (Visa the last of them) — item
+    fully closed; National ID remains the sole confirmed dead end:**
     - **Business Formation** — ORC's Form BN 1, "Application for
       Registration by Sole Proprietor" (Rev 1.2011),
       `orcjamaica.com/CompForms/bn1%20rev%201.2011.pdf`, HTTP 200, 135,017
@@ -20551,7 +20590,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       a `.org` diplomatic-mission domain, not a `.gov.jm` one, but it is the
       official embassy of the Jamaican state, the same class of source this
       registry has accepted elsewhere for embassy-hosted consular forms.
-      Open, STRONG banked backlog for a future cycle.
+      **Update (GOV-4376, 2026-07-22): the host had migrated to
+      `embwashington.mfaft.gov.jm` and the specimen had grown to 525,611
+      bytes**, re-confirmed flat/non-AcroForm; not authored that cycle
+      (DMV was chosen instead for its genuine AcroForm widget layer).
+      **Update (GOV-4390, 2026-07-22): now authored** as
+      `jm/mfaft/visa-application@1.0.0`, opening Jamaica's Visa vertical
+      (5 of 6) — see the Executive Summary and Visa vertical updates
+      above. This closes the entire disclosed Jamaica backlog from this
+      entry.
     - **Passport** — the Passport, Immigration and Citizenship Agency's
       (PICA) own genuine AcroForm, `pica.gov.jm`, ~776KB, 152 typed form
       fields — the richest and cleanest source of all six Jamaican
@@ -20562,8 +20609,10 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       vertical updates above.
     - **Taxes** — Tax Administration Jamaica's Form IT01, "Return of Income
       — Individuals", `jamaicatax.gov.jm`, ~174KB, dozens of line items
-      (a full annual individual income tax return). Open, STRONG banked
-      backlog for a future cycle.
+      (a full annual individual income tax return). **Update (GOV-4383,
+      2026-07-22): authored** as
+      `jm/taj/individual-income-tax-return@1.0.0`, pending merge (PR #663,
+      review gate GOV-4385) as of this entry.
     - **National ID — confirmed dead end.** Jamaica's National Identification
       and Registration Authority (NIRA) and the Electoral Office of Jamaica
       both issue identity credentials exclusively through in-person

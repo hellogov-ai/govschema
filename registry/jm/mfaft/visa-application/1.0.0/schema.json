@@ -1,0 +1,378 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "jm/mfaft/visa-application",
+  "version": "1.0.0",
+  "title": "Jamaica Visa Application Form (Form J)",
+  "description": "The Ministry of Foreign Affairs and Foreign Trade's (MFAFT) \"Form J\" visa application, served by the Jamaican Embassy in Washington, D.C. and completed at any Jamaican consular post or High Commission overseas. Closes the last open, STRONG banked backlog vertical from the GOV-4360 cycle's Jamaica scouting (see CATALOG.md Known Gaps entry 0f: Business Formation, Passport, and DMV were opened in prior cycles; National ID is a confirmed dead end). A flat, single-page, non-AcroForm specimen: every field is a ruled fill-in-the-blank line, none backed by an interactive PDF widget. Models the applicant's personal particulars, travel history, present/permanent address, marital status, purpose and duration of visit, passport particulars, and up to two references resident in Jamaica. Excludes the \"FOR OFFICIAL USE ONLY\" block (consular-staff-completed, not applicant-supplied) and the office-stamp box at the top of the form. Filing this application is an applicant's own action performed with the Ministry of Foreign Affairs and Foreign Trade through the relevant Jamaican consular post; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Jamaica or the Ministry of Foreign Affairs and Foreign Trade.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "JM",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of Foreign Affairs and Foreign Trade",
+    "abbreviation": "MFAFT",
+    "url": "https://mfaft.gov.jm"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://embwashington.mfaft.gov.jm/pdf/Visa-Application-Form.pdf",
+    "retrievedAt": "2026-07-22",
+    "documentRef": "\"Form J\", Visa Application, Ministry of Foreign Affairs and Foreign Trade, served by the Jamaican Embassy in Washington, D.C. Flat (non-AcroForm), single page."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-22",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-22",
+    "notes": "GOV-4390 (\"GovSchema Standard Research\"), authored per the GOV-4360 cycle's own banked Jamaica backlog entry (CATALOG.md Known Gaps entry 0f), most recently re-scouted (but not authored) by the GOV-4376 cycle. Closes the last open Jamaican vertical of the six originally scouted: Business Formation (jm/orc), Passport (jm/pica), and DMV (jm/taj) were authored in prior cycles, Taxes (jm/taj/individual-income-tax-return) is authored and pending merge, and National ID is a confirmed dead end (GOV-4360's own screening).\n\nIndependently re-fetched and re-hashed rather than trusted from the GOV-4376 cycle's own report alone: `https://embwashington.mfaft.gov.jm/pdf/Visa-Application-Form.pdf`, HTTP 200, `Content-Type: application/pdf`, 525,611 bytes (byte-for-byte match with the GOV-4376 cycle's own reported size), `Last-Modified: Fri, 07 Nov 2025`. sha256 of the retrieved bytes: `b89d32efbf3f1ac3698704b47981a856e93700107eba4e14675f541c23627fa4`. No login/CAPTCHA/WAF gate; a plain unauthenticated `curl` with a realistic desktop User-Agent reached it cleanly. The originally-banked `embassyofjamaica.org` host (recorded in the GOV-4360 cycle's own note) now redirects to this current `embwashington.mfaft.gov.jm` domain, the embassy's live one.\n\nExtraction method: `pdfjs-dist` (vendored at `/tmp/node_modules/pdfjs-dist`) `getAnnotations()` confirmed zero `/Widget` annotations on the document's single page — a genuine flat specimen, not a fillable form. `getTextContent()` then read every text item's raw string and its `transform` x/y position to reconstruct line-by-line layout; the document's own character set carries no checkbox/radio glyph anywhere (confirmed by enumerating every distinct Unicode code point present), so every field on this form is a ruled fill-in-the-blank line, not a tick-one-of-many selection.\n\n## Document structure\n\nA single page: a consular-post office-stamp box (top, excluded); the \"FORM J / VISA APPLICATION\" heading; 17 numbered items (1-17) covering the applicant's particulars, travel history, address, marital status, purpose/duration of visit, passport particulars, and a prior/return visa line; an unheaded \"References in Jamaica\" block with two side-by-side reference slots; a signature/date line; and a \"FOR OFFICIAL USE ONLY\" strip at the very bottom (excluded, consular-staff-completed).\n\n## Disclosed findings and interpretation choices\n\n1. **`sex` (item 4) is modelled as a required enum (`MALE`, `FEMALE`) despite the source printing a plain blank (\"Sex.............\") with no option list at all** — the same no-printed-option-list convention this registry's `mx/ine/credencial-para-votar-application` already applies to its own analogous blank \"Sexo\" field, since no other value appears anywhere else on this form.\n2. **`maritalStatus` (item 9) is modelled as a required enum with exactly the three values the source itself prints in parentheses** — \"Marital Status (Married, Single, Divorced)\" — rather than a free-text field, since the form explicitly enumerates the intended answer set even though the entry itself is a blank line, not a tick-box.\n3. **Item 5 (\"Arrived in ... on ... coming from ...\") is modelled as three independent, unconditionally optional fields (`arrivalLocation`, `arrivalDate`, `arrivalOrigin`)**, since the item's meaning (most plausibly: the applicant's most recent arrival at their current, non-Jamaican location, relevant to a consular post processing an application from someone already abroad) is not explained anywhere on the form, and not every applicant necessarily has a prior arrival to report (e.g. someone applying from their own country of residence). Disclosed rather than fabricating a firmer interpretation.\n4. **Item 6 (\"Name(s), date(s) and place(s) of birth of minor child(ren) accompanying you\") is modelled as two independent, unconditionally optional combined free-text fields (`accompanyingChild1Details`, `accompanyingChild2Details`)**, one per the two ruled blank lines the source prints beneath the header — matching this registry's established convention for an unlabelled repeatable block (e.g. `bw/dic/visa-application`'s own `reference1Details`/`reference2Details`, `pa/migracion/tourist-visa-application`'s own `relative1NameRelationAddress`/`relative2NameRelationAddress`), since the header covers all three attributes (name, date, place of birth) without any further column sub-division.\n5. **`telephoneNumber` (item 7) is modelled as optional, while `presentAddress` on the same numbered item is modelled required.** The item prints both on one line (\"Present Address... Telephone No...\") with no distinguishing marker between them, but a present address is core identifying information for any visa applicant while a telephone number is ordinary optional contact information, the same disclosed judgment call this registry's Botswana/Zambia consular forms apply to comparable unmarked contact-detail pairs.\n6. **`permanentAddress` (item 8) is modelled optional**, per the source's own qualifier \"(if different from above)\" — the field is only completed when it differs from the required `presentAddress` (item 7), the same qualifier-anchored-to-the-conditional-field convention this registry's `jm/taj/individual-income-tax-return` (Finding 4) already applies to its own analogous Home/Business Mailing Address pair.\n7. **Item 11 (\"Date(s) of previous visit(s) to Jamaica and address(es) at which stayed\") is modelled as a single, unconditionally optional combined free-text field (`previousVisitDetails`)**, since the source prints only one ruled blank line beneath the header (confirmed via each text item's own y-coordinate), not a repeatable block — not every applicant has previously visited Jamaica.\n8. **`meansOfDisposalForVisit` (item 15) is modelled as a single required free-text field**, transcribing the source's own literal (if awkwardly phrased) caption \"Means of Applicant's disposal for visit\" without attempting to normalize or reinterpret its wording.\n9. **Item 17 (\"Return visa to ... valid until ...\") is modelled as two independent, unconditionally optional fields (`returnVisaDestination`, `returnVisaValidUntil`)**, since neither the source's own wording nor any other item on the form clarifies whether this refers to a distinct return-trip visa request or something else — not every first-time applicant will have an answer for it, and the item carries no explicit conditional marker either way. Disclosed rather than fabricated.\n10. **\"References in Jamaica\" (two side-by-side slots, each with its own printed \"Name\"/\"Address\" sub-labels) is modelled as four independent, unconditionally optional free-text fields** (`reference1Name`, `reference1Address`, `reference2Name`, `reference2Address`) — each address collapses the block's own multiple ruled continuation lines (confirmed via y-coordinate: three stacked lines per reference) into one generously-sized field, the same multi-line-collapse convention this registry's AcroForm passport schemas (e.g. `jm/pica/passport-application` Finding 4) already use for stacked same-label widgets. Both references are modelled optional since the source prints no marker distinguishing either as mandatory, the same disclosed judgment call `bw/dic/visa-application` Finding 4 applies to its own analogous reference block.\n11. **Excluded as office/consular-staff-completed, not applicant-supplied data:** the top-of-page office-stamp box (\"Consular Post or High Commissioner's Office (to affix office stamp here)\") and the bottom \"FOR OFFICIAL USE ONLY\" / \"DATE\" / \"REMARKS\" strip.\n\n## Conformance\n\n3 valid mock scenarios — `valid-tourist-first-time-applicant` (a first-time tourist applicant with no accompanying children, no prior Jamaica visits, and both references supplied); `valid-business-applicant-with-prior-visit` (a business-purpose applicant declaring a prior visit to Jamaica and a different permanent address from their present one); and `valid-family-visit-with-accompanying-children` (an applicant travelling with two minor children, requesting a return visa) — plus 12 mutation-control fixtures (one missing statically-required field from each of `surname`, `firstNames`, `nationalityPresent`, `dateOfBirth`, `placeOfBirth`, `sex`, `presentAddress`, `maritalStatus`, `destinationInJamaica`, `occupation`, `passportNumber`, `applicantSignature`) and one unknown-field-rejected fixture, committed under `conformance/jm/mfaft/visa-application/1.0.0/`.\n\nAn ephemeral, from-scratch conformance checker (deriving required rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all 16 fixtures: all 3 valid scenarios at 0 errors, all 12 mutation controls each raising exactly 1 error, and the unknown-field fixture correctly rejected. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-22"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "applicant_particulars",
+      "title": "Items 1-4: Applicant Particulars",
+      "fields": ["surname", "firstNames", "formerName", "nationalityFormer", "nationalityPresent", "dateOfBirth", "placeOfBirth", "sex"],
+      "next": "travel_history"
+    },
+    {
+      "id": "travel_history",
+      "title": "Items 5-6: Travel History and Accompanying Minor Children",
+      "fields": ["arrivalLocation", "arrivalDate", "arrivalOrigin", "accompanyingChild1Details", "accompanyingChild2Details"],
+      "next": "address_and_status"
+    },
+    {
+      "id": "address_and_status",
+      "title": "Items 7-9: Address and Marital Status",
+      "fields": ["presentAddress", "telephoneNumber", "permanentAddress", "maritalStatus"],
+      "next": "visit_details"
+    },
+    {
+      "id": "visit_details",
+      "title": "Items 10-15: Visit Details",
+      "fields": ["destinationInJamaica", "previousVisitDetails", "occupation", "reasonForJourney", "durationOfProposedStay", "meansOfDisposalForVisit"],
+      "next": "passport_and_visa"
+    },
+    {
+      "id": "passport_and_visa",
+      "title": "Items 16-17: Passport and Return Visa Particulars",
+      "fields": ["passportNumber", "passportIssuedAt", "passportIssueDate", "passportValidUntil", "returnVisaDestination", "returnVisaValidUntil"],
+      "next": "references_in_jamaica"
+    },
+    {
+      "id": "references_in_jamaica",
+      "title": "References in Jamaica",
+      "fields": ["reference1Name", "reference1Address", "reference2Name", "reference2Address"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Signature of Applicant",
+      "fields": ["applicantSignature", "declarationDate"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 1 — \"Surname\" (In Block Letters)"
+    },
+    {
+      "name": "firstNames",
+      "label": "Christian or First Names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 1 — \"Christian or First Names\" (In Block Letters)"
+    },
+    {
+      "name": "formerName",
+      "label": "Former Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Item 2 — \"Former name (where different from above)\""
+    },
+    {
+      "name": "nationalityFormer",
+      "label": "Nationality (former)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Item 3 — \"Nationality (former)\""
+    },
+    {
+      "name": "nationalityPresent",
+      "label": "Nationality (at present)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 3 — \"at present\""
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 4 — \"Date and Place of Birth\""
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 4 — \"Date and Place of Birth\""
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The source prints a plain blank with no option list. See this schema's own verification.notes Finding 1.",
+      "sourceRef": "Item 4 — \"Sex\"",
+      "validation": {
+        "enum": ["MALE", "FEMALE"]
+      }
+    },
+    {
+      "name": "arrivalLocation",
+      "label": "Arrived in",
+      "type": "string",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 3.",
+      "sourceRef": "Item 5 — \"Arrived in\""
+    },
+    {
+      "name": "arrivalDate",
+      "label": "Arrival Date",
+      "type": "date",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 3.",
+      "sourceRef": "Item 5 — \"on\""
+    },
+    {
+      "name": "arrivalOrigin",
+      "label": "Coming From",
+      "type": "string",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 3.",
+      "sourceRef": "Item 5 — \"coming from\""
+    },
+    {
+      "name": "accompanyingChild1Details",
+      "label": "Accompanying Minor Child (1) — Name, Date and Place of Birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 4.",
+      "sourceRef": "Item 6 — \"Name(s), date(s) and place(s) of birth of minor child(ren) accompanying you\" (line 1)"
+    },
+    {
+      "name": "accompanyingChild2Details",
+      "label": "Accompanying Minor Child (2) — Name, Date and Place of Birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 4.",
+      "sourceRef": "Item 6 — \"Name(s), date(s) and place(s) of birth of minor child(ren) accompanying you\" (line 2)"
+    },
+    {
+      "name": "presentAddress",
+      "label": "Present Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 7 — \"Present Address\""
+    },
+    {
+      "name": "telephoneNumber",
+      "label": "Telephone No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 5.",
+      "sourceRef": "Item 7 — \"Telephone No\""
+    },
+    {
+      "name": "permanentAddress",
+      "label": "Permanent Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Only completed if different from Present Address; the source prints no checkbox to gate on. See this schema's own verification.notes Finding 6.",
+      "sourceRef": "Item 8 — \"Permanent Address (if different from above)\""
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital Status",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Item 9 — \"Marital Status (Married, Single, Divorced)\"",
+      "validation": {
+        "enum": ["MARRIED", "SINGLE", "DIVORCED"]
+      }
+    },
+    {
+      "name": "destinationInJamaica",
+      "label": "Visa Required For",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 10 — \"Visa required for (state destination in Jamaica)\""
+    },
+    {
+      "name": "previousVisitDetails",
+      "label": "Previous Visit(s) to Jamaica — Dates and Addresses",
+      "type": "string",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 7.",
+      "sourceRef": "Item 11 — \"Date(s) of previous visit(s) to Jamaica and address(es) at which stayed\""
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 12 — \"Occupation (Specifying current post)\""
+    },
+    {
+      "name": "reasonForJourney",
+      "label": "Reason for Journey",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 13 — \"Reason for Journey\""
+    },
+    {
+      "name": "durationOfProposedStay",
+      "label": "Duration of Proposed Stay",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 14 — \"Duration of proposed stay\""
+    },
+    {
+      "name": "meansOfDisposalForVisit",
+      "label": "Means of Applicant's Disposal for Visit",
+      "type": "string",
+      "required": true,
+      "classification": "financial",
+      "description": "See this schema's own verification.notes Finding 8.",
+      "sourceRef": "Item 15 — \"Means of Applicant's disposal for visit\""
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 16 — \"Passport Number\""
+    },
+    {
+      "name": "passportIssuedAt",
+      "label": "Passport Issued At",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Item 16 — \"issued at\""
+    },
+    {
+      "name": "passportIssueDate",
+      "label": "Passport Issue Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Item 16 — \"on\""
+    },
+    {
+      "name": "passportValidUntil",
+      "label": "Passport Valid Until",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Item 16 — \"valid until\""
+    },
+    {
+      "name": "returnVisaDestination",
+      "label": "Return Visa To",
+      "type": "string",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 9.",
+      "sourceRef": "Item 17 — \"Return visa to\""
+    },
+    {
+      "name": "returnVisaValidUntil",
+      "label": "Return Visa Valid Until",
+      "type": "date",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 9.",
+      "sourceRef": "Item 17 — \"valid until\""
+    },
+    {
+      "name": "reference1Name",
+      "label": "Reference (1) in Jamaica — Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 10.",
+      "sourceRef": "\"References in Jamaica\" — \"(1) Name\""
+    },
+    {
+      "name": "reference1Address",
+      "label": "Reference (1) in Jamaica — Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 10.",
+      "sourceRef": "\"References in Jamaica\" — \"(1) Address\""
+    },
+    {
+      "name": "reference2Name",
+      "label": "Reference (2) in Jamaica — Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 10.",
+      "sourceRef": "\"References in Jamaica\" — \"(2) Name\""
+    },
+    {
+      "name": "reference2Address",
+      "label": "Reference (2) in Jamaica — Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 10.",
+      "sourceRef": "\"References in Jamaica\" — \"(2) Address\""
+    },
+    {
+      "name": "applicantSignature",
+      "label": "Signature of Applicant",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"Signature of Applicant\""
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "\"Date\" (beside Signature of Applicant)"
+    }
+  ]
+}
