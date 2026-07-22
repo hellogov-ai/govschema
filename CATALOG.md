@@ -4,7 +4,30 @@
 
 ## Executive Summary
 
-**76 jurisdictions** | **588 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**76 jurisdictions** | **590 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4264, "GovSchema Standard Research"): Ethiopia's
+> Passport vertical opens (3/6)**, via
+> `et/ics/passport-application@1.0.0` — the Immigration And Citizenship
+> Service's (ICS, formerly the "Main Department for Immigration &
+> Nationality Affairs", whose letterhead the form still carries) bilingual
+> application form for a Passport, Laissez-Passer, Pilgrim travel document,
+> or document Reissue. This was the GOV-4246-cycle-banked "Ethiopia
+> Passport" candidate (see this catalog's own Known Gaps entry 0c below);
+> fetched directly and unauthenticated as a genuine PDF (no login/CAPTCHA/
+> WAF gate) from an Ethiopian embassy mirror, cross-corroborated via web
+> search as the standard, widely-mirrored official form. The sibling
+> Ethiopia Business Formation candidate (Investment Commission's
+> Investment Permit form) was re-screened and re-confirmed a legacy OLE2
+> binary `.doc` with no extraction path in this environment, so it remains
+> open backlog. Models 48 fields across 6 steps (Document Type; Applicant;
+> Family Information; Marital Status; Residence Address; Application
+> Presented By) plus 1 declaration document; the applicant's three-part
+> Ethiopian patronymic name (given/father's/grandfather's) is modelled
+> twice each, once in Amharic and once in Latin transliteration, per the
+> form's own bilingual dual-row layout. See the Passport vertical section
+> and the document's own VERIFICATION.md for the full sourcing record and
+> disclosed findings.
 
 > **Update (2026-07-22, GOV-4255, "GovSchema Standard Research"): Georgia's
 > Business Formation vertical opens (2/6)**, via
@@ -13782,7 +13805,14 @@
 
 ## By Vertical
 
-### Passport (52/76 jurisdictions — 68%)
+### Passport (53/76 jurisdictions — 70%)
+
+> **Update (2026-07-22, GOV-4264, "GovSchema Standard Research"): Ethiopia
+> deepens to 3/6 via this vertical**, via `et/ics/passport-application@1.0.0`
+> — the Immigration And Citizenship Service's bilingual Passport/Laissez-
+> Passer/Pilgrim/Reissue application form. See the Executive Summary's
+> GOV-4264 update above for the full sourcing record and disclosed
+> findings.
 
 > **Update (2026-07-21, GOV-4217, "GovSchema Standard Research"): Malta
 > opens this vertical (2/6 for the jurisdiction)**, via
@@ -19345,7 +19375,7 @@ now closed.
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EG** | 2 | ✗ | ✗ | ✗ | ✓ | ✗ | ✓ |
 | **ES** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **ET** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
+| **ET** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -19632,9 +19662,10 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       and this document are now this registry's two examples of the
       individual-owner-scoped business-name-registration pattern.
 0c. **Pre-scouted candidates banked this cycle (GOV-4246, 2026-07-21) —
-    Ethiopia Taxes and (GOV-4255, 2026-07-22) Georgia Business Formation now
-    authored, Ethiopia Business Formation/Passport remain open backlog,
-    Uzbekistan confirmed a full dead end:**
+    Ethiopia Taxes, (GOV-4255, 2026-07-22) Georgia Business Formation, and
+    (GOV-4264, 2026-07-22) Ethiopia Passport now authored, Ethiopia
+    Business Formation remains open backlog, Uzbekistan confirmed a full
+    dead end:**
     - **Ethiopia Taxes** — Ministry of Revenue "Individual Taxpayers
       Registration Application" (TIN registration), `mor.gov.et/api/forms`
       form id 8 — served unauthenticated, no login/CAPTCHA/WAF gate.
@@ -19655,8 +19686,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       ~40+ fields. The current domestic online-portal variant
       (`ethiopianpassportservices.gov.et`) could not be reached from this
       cycle's tooling (DNS failure) to confirm it's still the current form
-      revision — flagged as a caveat to check before authoring. Not
-      authored this cycle; open backlog. Ethiopia's National ID (Fayda,
+      revision — flagged as a caveat to check before authoring. **Update
+      (GOV-4264, 2026-07-22): now authored** as
+      `et/ics/passport-application` — see the Executive Summary and
+      Passport vertical updates above. Opens Ethiopia's Passport vertical
+      (3/6). The domestic online-portal variant (now found to be
+      `passport.ics.gov.et`, linked from `ics.gov.et`, which does resolve
+      and return HTTP 200 unlike the immigration/passport-services
+      subdomains previously checked) remained unreachable this cycle too
+      — re-confirmed, not newly resolved; a future cycle with different
+      network access should re-check it. Ethiopia's National ID (Fayda,
       in-person biometric enrollment only) and Driving Licence (no
       field-level form found at any level) both remain confirmed dead ends.
     - **Georgia Business Formation** — the National Agency of Public
