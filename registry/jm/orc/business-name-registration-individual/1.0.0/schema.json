@@ -1,0 +1,581 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "jm/orc/business-name-registration-individual",
+  "version": "1.0.0",
+  "title": "Jamaica Business Name Registration by a Sole Proprietor (ORC Form BN 1)",
+  "description": "Register (or renew the registration of) a business name under the Registration of Business Names Act, filed with Jamaica's Companies Office (a division of the Office of the Registrar of Companies, ORC) as \"Form BN 1 — Application for Registration by Sole Proprietor\" (Rev 1.2011). This is the individual/sole-proprietor variant of the form, used when the business is owned outright by one natural person, as distinct from ORC's separate \"Form BN 2 — Application for Registration by Partnership\" used when the business is owned by two or more partners (individuals and/or companies). It does not submit the registration; the live orcjamaica.com source and the Office of the Registrar of Companies are always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by Jamaica or ORC.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "JM",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Office of the Registrar of Companies",
+    "abbreviation": "ORC",
+    "url": "https://www.orcjamaica.com"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.orcjamaica.com/CompForms/bn1%20rev%201.2011.pdf",
+    "retrievedAt": "2026-07-22",
+    "documentRef": "Form BN 1 Rev 1.2011, \"Registration of Business Names Act — Application for Registration by Sole Proprietor (Pursuant to Section 3)\", Office of the Registrar of Companies (Companies Office of Jamaica), native (searchable-text) PDF, 3 pages, served unauthenticated from orcjamaica.com's own CompForms document store."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-22",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-22",
+    "notes": "GOV-4360, the recurring \"GovSchema Standard Research\" cycle. Jamaica was scouted this cycle as a brand-new jurisdiction not yet present under registry/jm/; ORC's Form BN 1 was banked as a STRONG, unauthenticated candidate opening Business Formation. orcjamaica.com sits behind an Oracle Cloud WAF (ZENEDGE) that returns SERVFAIL under the sandbox's default resolver and serves a JS-challenge stub for its own HTML pages (homepage, forms-listing page); the underlying static PDF assets are themselves unauthenticated and served cleanly once DNS is resolved directly (Cloudflare DoH: orcjamaica.com -> 147.154.3.128) and fetched with curl --resolve plus a standard desktop User-Agent — no login or CAPTCHA gate on the PDF itself. Independently re-fetched and re-hashed the source (HTTP 200, application/pdf, 135,017 bytes, sha256 114f76d039d8ae7c74cfac03c90b54991d28437ccebc26313d904bee03ba1b84) and extracted all 3 pages' text with pdfjs-dist (legacy Node build), walking each page's text-run items grouped by y-position to reconstruct the form's own printed line order; all 3 pages extracted cleanly with no glyph-mapping failures. Also rendered pages 1 and 2 to raster images via pdfjs-dist + node-canvas to visually confirm the printed table/box layout referenced in 'Scope narrowing and why' below (in particular, that the address and branch-address blocks are each four separately boxed/labelled rows, not a single free-text writing area). See 'Companion form fetched for comparison' below for the sibling BN 2 (Partnership) form used to resolve scope."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "businessName",
+      "label": "Name of the business",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"1. NAME OF THE BUSINESS\"",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "dateOfCommencement",
+      "label": "Date of commencement",
+      "type": "date",
+      "required": true,
+      "description": "Printed on the form as three separate DD / MM / YY boxes rather than a single date field; the form's own instruction states this must not be a future date.",
+      "sourceRef": "\"2. DATE OF COMMENCEMENT (Not a future date)\" — DD MM YY"
+    },
+    {
+      "name": "otherProposedBusinessNames",
+      "label": "Other proposed name(s) of the business (if the name at item 1 is refused)",
+      "type": "string",
+      "required": false,
+      "description": "A registrar-driven contingency (the Registrar refusing the name at item 1), not a condition the applicant can declare in advance at filing time, so this is modelled as a plain optional field rather than gated behind an unprinted boolean — consistent with this registry's practice of only introducing an unprinted `requiredWhen` gate for conditions the applicant themself already knows the answer to at filing time.",
+      "sourceRef": "\"1B OTHER PROPOSED NAMES OF THE BUSINESS ( IF THE NAME AT ITEM 1 IS REFUSED)\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "isRenewalApplication",
+      "label": "Is this a renewal of an existing business name registration?",
+      "type": "boolean",
+      "required": true,
+      "description": "Not printed as a checkbox; modelled as an unprinted boolean gate for the adjacent \"REGISTRATION # (FOR RENEWALS)\" box, since (unlike the name-refusal contingency above) whether an application is a fresh registration or a renewal of an existing one is something the applicant themself already knows when filing.",
+      "sourceRef": "\"REGISTRATION # (FOR RENEWALS)\" box, printed beside item 2"
+    },
+    {
+      "name": "renewalRegistrationNumber",
+      "label": "Existing registration number (for renewals)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "isRenewalApplication", "equals": true },
+      "sourceRef": "\"REGISTRATION # (FOR RENEWALS)\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "otherBusinessNameCarriedOutUnder",
+      "label": "Other business name under which business will be carried out (this name will also appear on the certificate)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"1C. OTHER BUSINESS NAME UNDER WHICH BUSINESS WILL BE CARRIED OUT: THIS NAME WILL ALSO APPEAR ON THE CERTIFICATE (Where applicable)\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "businessNameJustification",
+      "label": "Justification of proposed business name (where applicable)",
+      "type": "string",
+      "required": false,
+      "description": "Per the form's own instructions (page 3), only required where the proposed name uses words suggesting a connection with the Crown, Royal patronage, a Government department, or a Commonwealth/foreign government, and must then be justified to the Registrar's satisfaction.",
+      "sourceRef": "\"3. JUSTIFICATION OF PROPOSED BUSINESS NAME (where applicable)\"",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "natureOfBusinessSaleOf",
+      "label": "General nature of business — sale of",
+      "type": "string",
+      "required": false,
+      "description": "Item 4 prints two alternative sub-boxes (4A \"Sale of\" and 4B \"Type of Service\") joined by the word \"OR\", i.e. the applicant fills in whichever describes their business, not necessarily both. GovSchema v0.3's `crossFieldValidation`/`exclusivityGroups` machinery (GSP-0013) does not include an \"at least one of these string fields must be non-empty\" primitive, so this OR relationship is disclosed here and in VERIFICATION.md rather than mechanically enforced; both fields are modelled as independently optional.",
+      "sourceRef": "\"4A. Sale of:\"",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "natureOfBusinessServiceType",
+      "label": "General nature of business — type of service",
+      "type": "string",
+      "required": false,
+      "description": "See `natureOfBusinessSaleOf` — the form's own \"OR\" between 4A and 4B means an applicant ordinarily completes one of these two, not both.",
+      "sourceRef": "\"4B. Type of Service:\"",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "principalAddressStreetDistrict",
+      "label": "Principal address of the business — street/district/shop #/plaza",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"5. PRINCIPAL ADDRESS OF THE BUSINESS: Street/District/ Shop #/ Plaza\"",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "principalAddressPostOffice",
+      "label": "Principal address of the business — post office",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"5. PRINCIPAL ADDRESS OF THE BUSINESS: Post Office\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "principalAddressCityTown",
+      "label": "Principal address of the business — city/town",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"5. PRINCIPAL ADDRESS OF THE BUSINESS: City/Town\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "principalAddressParish",
+      "label": "Principal address of the business — parish",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"5. PRINCIPAL ADDRESS OF THE BUSINESS: Parish\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "businessContactTelephone",
+      "label": "Business contact telephone number",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"6. CONTACT NUMBERS: Tel #\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "businessContactTelephone2",
+      "label": "Business contact telephone number 2",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"6. CONTACT NUMBERS: Tel #2\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "businessContactFax",
+      "label": "Business contact fax number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"6. CONTACT NUMBERS: Fax#\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "hasBranches",
+      "label": "Are there branches from which the business will be/is being conducted?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "\"7. BRANCHES FOR THE BUSINESS: Are there branches from which the business will be/ is being conducted? YES NO\"",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "branchName",
+      "label": "Name under which branch will operate",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasBranches", "equals": true },
+      "description": "The form provides for particulars of only the first branch (7A/7B/7C); the form's own instruction directs that additional branches be provided on an annexed schedule, which this document does not attempt to model as a repeating group (GovSchema v0.3 has no array/repeating-group field construct).",
+      "sourceRef": "\"7A. Name under which branch will operate\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "branchAddressStreetDistrict",
+      "label": "Branch address — street/district/shop #/plaza",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasBranches", "equals": true },
+      "sourceRef": "\"7b Address where branch will conduct trade: Street/District/ Shop #/ Plaza\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "branchAddressPostOffice",
+      "label": "Branch address — post office",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasBranches", "equals": true },
+      "sourceRef": "\"7b Address where branch will conduct trade: Post office\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "branchAddressTown",
+      "label": "Branch address — town",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasBranches", "equals": true },
+      "sourceRef": "\"7b Address where branch will conduct trade: Town\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "branchAddressParish",
+      "label": "Branch address — parish",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasBranches", "equals": true },
+      "sourceRef": "\"7b Address where branch will conduct trade: Parish\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "branchNatureOfBusiness",
+      "label": "Nature of business to be conducted by branch",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "hasBranches", "equals": true },
+      "sourceRef": "\"7c. Nature of business to be conducted by branch\"",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "certificationApplicable",
+      "label": "Does the business name include a word requiring certification from a professional or regulatory body?",
+      "type": "boolean",
+      "required": true,
+      "description": "Not printed as a checkbox; modelled as an unprinted boolean gate for Section B, which the form's own heading states is \"Only to be completed by applicants required to present certification from a Professional or Regulatory body when certain words referring to a trade, profession or occupation form part of the business name\" (with examples given: MEDICAL, UNIVERSITY, CAMBIO, LEGAL, DENTAL, BANK, PHARMACY, ENGINEER/ENGINEERING, DAYCARE, ACCOUNTING).",
+      "sourceRef": "\"SECTION B. CERTIFICATION. Only to be completed by applicants required to present certification from a Professional or Regulatory body when certain words referring to a trade, profession or, occupation form part of the business name.\"",
+      "fieldRole": "eligibility"
+    },
+    {
+      "name": "certificationFieldOrProfession",
+      "label": "Field or profession",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "certificationApplicable", "equals": true },
+      "sourceRef": "\"Field or profession:\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "certificationExpiryDate",
+      "label": "Certification expiry date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "certificationApplicable", "equals": true },
+      "sourceRef": "\"Expiry Date: dd/mm/yy\""
+    },
+    {
+      "name": "certifyingBody",
+      "label": "Certifying body",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "certificationApplicable", "equals": true },
+      "sourceRef": "\"Certifying Body:\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "certificationNumber",
+      "label": "Certification number",
+      "type": "string",
+      "required": false,
+      "description": "Explicitly marked optional on the form itself, independent of whether certification otherwise applies.",
+      "sourceRef": "\"Certification # (optional)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "certificationProvided",
+      "label": "Have you provided the relevant certification as a part of your application?",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "field": "certificationApplicable", "equals": true },
+      "sourceRef": "\"Have you provided the relevant certification as a part of your application? Yes No\""
+    },
+    {
+      "name": "applicantChristianName",
+      "label": "Applicant's Christian (first) name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"SECTION C. PARTICULARS OF APPLICANT. 1. Name of Applicant — Christian\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "applicantMiddleName",
+      "label": "Applicant's middle name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "\"1. Name of Applicant — Middle\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "applicantSurname",
+      "label": "Applicant's surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"1. Name of Applicant — Surname\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "applicantFormerChristianName",
+      "label": "Any former Christian (first) name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "\"1a. Any Former Christian or surname — First/ Christian Name:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "applicantFormerSurname",
+      "label": "Any former surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "\"1a. Any Former Christian or surname — Last Name/Surname:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "applicantFormerNameChangeReason",
+      "label": "Reason for former name (if any)",
+      "type": "enum",
+      "required": false,
+      "classification": "pii",
+      "description": "Printed as two checkboxes next to the former-name boxes, for the reason the applicant's name changed.",
+      "sourceRef": "\"1a. Any Former Christian or surname\" — ☐ Marriage ☐ Deed poll",
+      "validation": { "enum": ["Marriage", "Deed poll"] }
+    },
+    {
+      "name": "applicantResidentialAddressStreetDistrict",
+      "label": "Place of residence — street/district",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The form's own heading notes verification is required (a valid driver's licence, passport, or utility bill per the page-3 instructions), which is a supporting-document requirement on the applicant, not a data point this field itself captures.",
+      "sourceRef": "\"2. Place of residence (Verification required) — Street/District\"",
+      "validation": { "minLength": 1, "maxLength": 200 }
+    },
+    {
+      "name": "applicantResidentialAddressPostOffice",
+      "label": "Place of residence — post office",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"2. Place of residence — Post Office\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "applicantResidentialAddressTown",
+      "label": "Place of residence — town",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"2. Place of residence — Town\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "applicantResidentialAddressParish",
+      "label": "Place of residence — parish",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"2. Place of residence — Parish\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "applicantContactTelephone",
+      "label": "Applicant's contact telephone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"3. Contact Numbers — Tel #\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "applicantContactTelephone2",
+      "label": "Applicant's contact telephone number 2",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "\"3. Contact Numbers — Tel #2\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "applicantTRN",
+      "label": "Taxpayer Registration Number (TRN)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"4. Taxpayer Registration Number (TRN)\"",
+      "validation": { "pattern": "^\\d{3}-?\\d{3}-?\\d{3}$" }
+    },
+    {
+      "name": "applicantOtherOccupation",
+      "label": "Other business occupation (if any)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "\"5. Other business occupation (if any):\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "applicantNationality",
+      "label": "Present nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The form's own footnote states that, except for nationals of the CARICOM Single Market Economy member states, all non-Jamaican nationals must present a valid work permit along with the application — a supporting-document requirement, not modelled as a separate data field here.",
+      "sourceRef": "\"6. Present Nationality*\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "applicantNationalityOfOrigin",
+      "label": "Nationality of origin (if different from present nationality)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "\"6a. Nationality of origin* (if different from present nationality)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "applicantSignature",
+      "label": "Applicant's signature",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"7. I, the undersigned, hereby apply for registration... Signature ___________\""
+    },
+    {
+      "name": "applicationDate",
+      "label": "Date of this application",
+      "type": "date",
+      "required": true,
+      "sourceRef": "\"Signature ___________________________Date _____________________________\""
+    },
+    {
+      "name": "filerName",
+      "label": "Name of individual/company filing form with the Registrar",
+      "type": "string",
+      "required": false,
+      "description": "Section D is not marked \"(if applicable)\" or otherwise as optional on the form, but nothing on the form or its page-3 instructions clarifies whether it must always be completed (e.g. duplicating the applicant's own particulars when the applicant self-files) or is meant only for a third-party filer (an attorney or agent submitting on the applicant's behalf) — see 'What is NOT yet independently verified' in VERIFICATION.md. Modelled as optional pending that clarification.",
+      "sourceRef": "\"SECTION D: Particulars of individual/company filing form with the Registrar — Name\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "filerAddress",
+      "label": "Address of individual/company filing form with the Registrar",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"SECTION D... — Address\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "filerContactNumber",
+      "label": "Contact number of individual/company filing form with the Registrar",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"SECTION D... — Contact\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "filerEmailAddress",
+      "label": "Email address of individual/company filing form with the Registrar",
+      "type": "string",
+      "required": false,
+      "sourceRef": "\"SECTION D... — Email address\"",
+      "validation": { "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "maxLength": 200 }
+    }
+  ],
+  "steps": [
+    {
+      "id": "business_information",
+      "title": "Business name and commencement",
+      "fields": [
+        "businessName",
+        "dateOfCommencement",
+        "otherProposedBusinessNames",
+        "isRenewalApplication",
+        "renewalRegistrationNumber",
+        "otherBusinessNameCarriedOutUnder",
+        "businessNameJustification",
+        "natureOfBusinessSaleOf",
+        "natureOfBusinessServiceType"
+      ],
+      "next": "business_address_and_contact"
+    },
+    {
+      "id": "business_address_and_contact",
+      "title": "Principal address and contact numbers",
+      "fields": [
+        "principalAddressStreetDistrict",
+        "principalAddressPostOffice",
+        "principalAddressCityTown",
+        "principalAddressParish",
+        "businessContactTelephone",
+        "businessContactTelephone2",
+        "businessContactFax"
+      ],
+      "next": "branches"
+    },
+    {
+      "id": "branches",
+      "title": "Branches",
+      "fields": [
+        "hasBranches",
+        "branchName",
+        "branchAddressStreetDistrict",
+        "branchAddressPostOffice",
+        "branchAddressTown",
+        "branchAddressParish",
+        "branchNatureOfBusiness"
+      ],
+      "next": "certification"
+    },
+    {
+      "id": "certification",
+      "title": "Certification (where the business name requires it)",
+      "fields": [
+        "certificationApplicable",
+        "certificationFieldOrProfession",
+        "certificationExpiryDate",
+        "certifyingBody",
+        "certificationNumber",
+        "certificationProvided"
+      ],
+      "next": "applicant_particulars"
+    },
+    {
+      "id": "applicant_particulars",
+      "title": "Particulars of applicant",
+      "fields": [
+        "applicantChristianName",
+        "applicantMiddleName",
+        "applicantSurname",
+        "applicantFormerChristianName",
+        "applicantFormerSurname",
+        "applicantFormerNameChangeReason",
+        "applicantResidentialAddressStreetDistrict",
+        "applicantResidentialAddressPostOffice",
+        "applicantResidentialAddressTown",
+        "applicantResidentialAddressParish",
+        "applicantContactTelephone",
+        "applicantContactTelephone2",
+        "applicantTRN",
+        "applicantOtherOccupation",
+        "applicantNationality",
+        "applicantNationalityOfOrigin"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": [
+        "applicantSignature",
+        "applicationDate"
+      ],
+      "next": "filer_particulars"
+    },
+    {
+      "id": "filer_particulars",
+      "title": "Particulars of individual/company filing form with the Registrar",
+      "fields": [
+        "filerName",
+        "filerAddress",
+        "filerContactNumber",
+        "filerEmailAddress"
+      ]
+    }
+  ]
+}
