@@ -139,14 +139,16 @@ cites it inline in `sourceRef` instead.
    own `profitLossForYear` field (that document's Finding 8). Every other
    Section B/C/D money field is a plain income/expense/credit amount and is
    constrained `minimum: 0`.
-4. **`homeAddress` (Item 3a) is modelled `required: false`**, per the
-   source's own qualifier "(if different from 3b.)" — the field is only
-   completed when it differs from the required `businessMailingAddress`
-   (Item 3b), and the source prints no separate boolean/checkbox this schema
-   could gate on, the same no-printed-signal treatment
-   `zm/zra/individual-income-tax-return`'s own Tax Agent block (that
-   document's Finding 6) already uses for its own analogous ungated optional
-   fields.
+4. **`businessMailingAddress` (Item 3b) is modelled `required: false`**, per
+   the source's own qualifier "(if different from 3a.)" — the qualifier
+   phrase sits at the x-coordinate directly under item 3b's own label (not
+   3a's), confirmed by re-checking each text item's x-position rather than
+   trusting a y-grouped merged line — the field is only completed when it
+   differs from the required `homeAddress` (Item 3a), and the source prints
+   no separate boolean/checkbox this schema could gate on, the same
+   no-printed-signal treatment `zm/zra/individual-income-tax-return`'s own
+   Tax Agent block (that document's Finding 6) already uses for its own
+   analogous ungated optional fields.
 5. **`newAddressIndicated` and `isRevisedReturn` (Item 6) are modelled as
    two independent booleans, not a mutually-exclusive enum**, since the
    source prints them as two separate tick boxes ("New Address" / "Revised
@@ -185,7 +187,7 @@ superannuation deductions, and PAYE tax credited); and
 exercising `isRevisedReturn`, `dividendsReceivedResidentCompanies` /
 `incomeAtNilRateThreshold`, and the full Representative's Details block) —
 plus 7 mutation-control fixtures (one missing statically-required field from
-each of `yearOfAssessment`, `name`, `trn`, `businessMailingAddress`,
+each of `yearOfAssessment`, `name`, `trn`, `homeAddress`,
 `occupation`, `taxpayerSignature`, `declarationDate`) and one
 unknown-field-rejected fixture, committed under
 `conformance/jm/taj/individual-income-tax-return/1.0.0/`.
