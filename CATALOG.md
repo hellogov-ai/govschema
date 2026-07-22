@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**81 jurisdictions** | **601 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**81 jurisdictions** | **602 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4353, "GovSchema Standard Research"): Uganda
+> National ID opens (3 of 6)**, via
+> `ug/nira/first-time-registration-application@1.0.0` — the National
+> Identification and Registration Authority's (NIRA) "Form 3", "Application
+> for Registration and National Identification Card" under the Registration
+> of Persons Act, 2015, used for a person's first-time registration into
+> Uganda's National Identification Register (a single combined form for
+> child and adult registrations, gated by a printed CHILD/ADULT tickbox).
+> Closes Uganda's last remaining pre-scouted STRONG candidate, banked since
+> the GOV-4307 cycle (see the Known Gaps section below) — the two prior
+> re-check cycles (GOV-4335, GOV-4343) both failed to connect against the
+> bare `nira.go.ug` host; this cycle found the `www` subdomain resolves and
+> serves the PDF normally (bare-host connection timeout independently
+> re-confirmed as a genuine host-routing quirk, not a transient outage).
+> Independently re-fetched and re-hashed via `curl -k` (the TLS certificate
+> chain is incomplete, a server misconfiguration rather than a login/WAF
+> gate): HTTP 200, 312,831 bytes, sha256
+> `37e7df2b2800bd6e2e210944cd02f1c08ed265c924b2775fedc1b70cb54e4623`, matching
+> the banked candidate record exactly. A flat (non-AcroForm), 4-page,
+> cleanly-extractable specimen confirmed via `pdfjs-dist`. Models 166 fields
+> across 11 steps, with a `transitions` branch gating PART B (Voter
+> Information, Marital Status, Spouse Details) to adult registrations only,
+> per the form's own printed "(to be filled for Adult registration only)"
+> instruction; PART C (Father's/Mother's Details, a conditional
+> Grandparent(s)/Introducer block, and a bounded 4-row "Particulars of
+> Applicant's Children" repeating group) applies uniformly to both child and
+> adult registrations. Excludes PART A's Registration Location Code/
+> Application ID, PART D (a condensed officer-retained duplicate of Parts
+> A/B), and PART F ("FOR OFFICIAL USE ONLY"), all assigned to "REGN OFFICER"
+> per the form's own page-4 filling guide. See the document's own
+> VERIFICATION.md for the full sourcing record and 9 disclosed
+> source-fidelity findings, including a font-embedding issue in the source
+> PDF itself that made rendered-PNG text illegible, resolved instead by
+> directly counting the children table's own vector-drawn rule lines in the
+> PDF content stream. Uganda now stands at 3 of 6 verticals (DMV, Business
+> Formation, National ID); Visa, Passport, and Taxes remain confirmed dead
+> ends per the GOV-4307 cycle's own six-vertical screening pass.
 
 > **Update (2026-07-22, GOV-4343, "GovSchema Standard Research"): Uganda
 > Business Formation opens (2 of 6)**, via
@@ -19902,7 +19940,7 @@ now closed.
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
-| **UG** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
+| **UG** | 3 | ✗ | ✓ | ✓ | ✗ | ✗ | ✓ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **UZ** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -20325,7 +20363,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       the Executive Summary and Business Formation vertical updates above.
       National ID (NIRA Form 3) remains open, banked backlog; `nira.go.ug`
       again failed to connect (connection timeout) when re-checked this
-      cycle, the same failure the GOV-4335 cycle also hit.
+      cycle, the same failure the GOV-4335 cycle also hit. **Update
+      (GOV-4353, 2026-07-22): National ID is now authored** as
+      `ug/nira/first-time-registration-application@1.0.0` (3 of 6) — the
+      bare `nira.go.ug` host still times out, but the `www` subdomain
+      resolves and serves the PDF normally, resolving the blocker that
+      stalled the two prior re-check cycles. See the Executive Summary and
+      National ID vertical updates above. Uganda's disclosed-STRONG backlog
+      is now fully closed at 3/6 (Visa, Passport, and Taxes remain confirmed
+      dead ends).
     - **Bolivia — confirmed weak, not prioritized.** Only Taxes came back
       even borderline-viable: SIN's Form 110 V3 (quarterly RC-IVA
       individual income declaration) is published solely as a JPG scan
