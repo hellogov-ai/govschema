@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**80 jurisdictions** | **597 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**80 jurisdictions** | **598 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4321, "GovSchema Standard Research"): Botswana
+> Visa opens (3 of 6)**, via `bw/dic/visa-application@1.0.0` — the
+> Department of Immigration and Citizenship's "Application for a Visa"
+> (Form 1), under the Immigration Act (Cap. 25:02, Regulation 7(1)). Rather
+> than scouting a new jurisdiction from scratch, this cycle deepened
+> Botswana's own pre-scouted, STRONG banked backlog left open by the
+> GOV-4307 cycle below — the last of two remaining STRONG-but-unauthored
+> Botswana verticals (Visa, Passport) after GOV-4314 authored DMV.
+> Independently re-fetched and re-hashed
+> (`https://www.gov.bw/sites/default/files/2026-03/Application%20for%20a%20VISA%20Form%201_2.pdf`,
+> HTTP 200, 477,256 bytes, byte-for-byte match with the prior cycle's own
+> reported size) and extracted via `pdfjs-dist`, with both pages additionally
+> rendered to PNG via `node-canvas` for visual checkbox-grid confirmation
+> (no glyph-mapping failure this time, unlike the sibling DL1 PDF). Models 49
+> fields across 11 steps plus 1 `documents[]` photo entry, covering identity,
+> visa type/entries, Botswana and domicile addresses, occupation, travel
+> reasons, requested validity period, destination references, funds at
+> disposal, passport particulars, preferred communication method, and
+> declaration. See the document's own VERIFICATION.md for the full sourcing
+> record and 9 disclosed findings, including a printed Sex-checkbox
+> asymmetry (only "Female" carries a box) and the four-independent-currency
+> treatment of the "money or cash at disposal" item. Botswana's last
+> disclosed-STRONG vertical (Passport) remains open backlog for a future
+> cycle — see the Known Gaps section below.
 
 > **Update (2026-07-22, GOV-4314, "GovSchema Standard Research"): Botswana
 > DMV opens (2 of 6)**, via `bw/drts/driving-licence-application@1.0.0` —
@@ -18177,7 +18202,15 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (64/78 jurisdictions — 82%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (65/80 jurisdictions — 81%)
+
+> **Update (2026-07-22, GOV-4321, "GovSchema Standard Research"): Botswana's
+> Visa vertical opens (3/6)**, via `bw/dic/visa-application` — see the
+> Executive Summary update above for the full sourcing record. This also
+> corrects the denominator: Albania (GOV-4300, 79th jurisdiction) and
+> Botswana (GOV-4307, 80th jurisdiction) each opened via a non-Visa vertical
+> without this section's own denominator being bumped at the time; numerator
+> moves from 64/78 to 65/80.
 
 > **Update (2026-07-22, GOV-4293, "GovSchema Standard Research"): Panama
 > opens as the registry's 78th jurisdiction, via this vertical**, via
@@ -19667,7 +19700,7 @@ now closed.
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BR** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **BW** | 2 | ✗ | ✓ | ✗ | ✓ | ✗ | ✗ |
+| **BW** | 3 | ✗ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 14 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
@@ -20085,9 +20118,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       per this same GOV-4271 screening pass.
 0e. **New-jurisdiction candidates scouted the GOV-4307 cycle (2026-07-22)
     — Botswana opened via Taxes, then deepened to DMV (GOV-4314,
-    2026-07-22); Visa and Passport remain STRONG banked backlog; Uganda
-    screened as a ready-to-author 3-of-6 candidate for a future cycle;
-    Bolivia confirmed weak:**
+    2026-07-22) and Visa (GOV-4321, 2026-07-22); Passport remains STRONG
+    banked backlog; Uganda screened as a ready-to-author 3-of-6 candidate for
+    a future cycle; Bolivia confirmed weak:**
     - **Botswana** — screened across all six verticals via an independent
       research agent, then independently re-verified. Four verticals came
       back STRONG, unauthenticated and ungated: **Taxes** (BURS Form ITA
@@ -20096,7 +20129,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       and Taxes vertical updates above); **Visa** (Form 1, "Application for
       a Visa" under the Immigration Act, `gov.bw/sites/default/files/2026-03/
       Application%20for%20a%20VISA%20Form%201_2.pdf`, HTTP 200, 477KB, 14
-      numbered fields); **DMV** (Form DL1, "Application for a Botswana
+      numbered items — **now authored (GOV-4321, 2026-07-22)** as
+      `bw/dic/visa-application@1.0.0`, see the Executive Summary and Visa
+      vertical updates above); **DMV** (Form DL1, "Application for a Botswana
       Driving Licence/Permit," Department of Road Transport and Safety,
       `gov.bw/sites/default/files/2019-12/Form_DL1_1.pdf`, HTTP 200, 38KB,
       full vehicle-class table — **now authored (GOV-4314, 2026-07-22)** as
@@ -20112,8 +20147,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       `cipa.co.bw/forms-downloads-2`) and **National ID** (Omang, in-person
       only at civil registration offices, no downloadable form found) are
       confirmed dead ends. **Update (GOV-4314, 2026-07-22): DMV is now
-      authored**, see above. Visa and Passport remain open, STRONG,
-      ready-to-author backlog for a future cycle.
+      authored**, see above. **Update (GOV-4321, 2026-07-22): Visa is now
+      authored**, see above. Passport remains open, STRONG, ready-to-author
+      backlog for a future cycle.
     - **Uganda** — screened across all six verticals. Three verticals came
       back STRONG: **Business Formation** (URSB's "Statement of
       Particulars" individual business-name registration,
