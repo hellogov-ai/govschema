@@ -1,0 +1,176 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ug/mowt/driving-licence-application",
+  "version": "1.0.0",
+  "title": "Uganda Driving Licence Application (Ministry of Works and Transport)",
+  "description": "The Ministry of Works and Transport's (MoWT) \"Application Form for Driving Licence,\" under the Traffic and Road Safety Act, 1998 (Amendment 2020), used by an individual to apply for a full driving licence, a licence renewal, a foreign-licence exchange, a duplicate licence, or a class extension. Opens Uganda as the registry's 81st jurisdiction, via the DMV vertical (1 of 6). This schema models the applicant's own personal particulars, type-of-application and licence-duration selection, and final declaration/signature. It excludes the form's own \"Medical Examination Report (To be completed by Medical Doctor)\" section in its entirety — eye examination, hearing level, general medical fitness, and the examining doctor's own declaration, registration number, signature, date, and stamp — since none of this is applicant-supplied data; it is a licensed medical practitioner's own clinical assessment and certification, structurally analogous to the police-officer and driving-test-examiner blocks this registry's own `bw/drts/driving-licence-application` schema excludes for the same reason. Filing this application is an applicant's own action performed with the Ministry of Works and Transport; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Uganda or the Ministry of Works and Transport.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "UG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of Works and Transport",
+    "abbreviation": "MoWT",
+    "url": "https://www.works.go.ug"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://udls.co.ug/wp-content/uploads/Driver-licence-application-form.pdf",
+    "retrievedAt": "2026-07-22",
+    "documentRef": "\"Application Form for Driving Licence\", Ministry of Works and Transport, native (searchable-text) PDF, single page, served unauthenticated via the Uganda Driver Licensing System (UDLS) portal at udls.co.ug."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-22",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-22",
+    "notes": "GOV-4335 (\"GovSchema Standard Research\"), authored via child issue GOV-4337. Rather than re-scouting from scratch, consumed one of two remaining pre-scouted new-jurisdiction candidates the GOV-4307 cycle banked for Uganda (CATALOG.md Known Gaps entry 0e) — Business Formation (URSB individual business-name registration), National ID (NIRA Form 3 first-time registration), and DMV (this form) all came back STRONG. DMV was chosen this cycle for the smallest source file and a single-page layout, the lowest-risk choice for a single-cycle authoring budget; Business Formation and National ID remain open, STRONG, ready-to-author backlog for a future cycle.\n\nIndependently re-fetched and re-hashed rather than trusted from the prior cycle's own report alone: `https://udls.co.ug/wp-content/uploads/Driver-licence-application-form.pdf`, HTTP 200, `Content-Type: application/pdf`, 92,504 bytes (byte-for-byte match with the GOV-4307 cycle's own reported size). sha256 of the retrieved bytes: `eea579f8cc7d15832b6d56489c49f814b2638caf581fb00283353f46dff5dad6`. Confirmed mechanically: the retrieved bytes begin `%PDF-1.6` and contain zero `/AcroForm`, `/Widget`, and `/FT` occurrences — a flat, print-and-fill specimen, not an interactive AcroForm PDF.\n\nExtraction method: text extracted via `pdfjs-dist`'s `getTextContent()` API (vendored at `/tmp/node_modules/pdfjs-dist`), grouped by y-coordinate and sorted by x-coordinate. Font rendering was clean, so the extraction was independently cross-checked by rendering the single page to a PNG via `pdfjs-dist` + `node-canvas` at 2.5x scale and visually inspecting three crops (letterhead/personal-details; application-type checkbox grid; medical-report/declaration footer) against the extracted text — all fields, labels, and checkbox layouts matched exactly.\n\nModels 12 `fields[]` across 3 steps, all applicant-supplied. Excludes the entire \"Medical Examination Report (To be completed by Medical Doctor)\" section (Eye Examination: visual acuity, funduscopy, colour vision, visual fields; Hearing level; General Medical Fitness: mental condition, other, general recommendations; and the doctor's own declaration, surname, other names, practitioner's registration number, signature, and date/stamp) — a licensed medical practitioner's own clinical assessment and certification, not applicant-supplied data, the same treatment this registry's own `bw/drts/driving-licence-application` gives to that form's police-officer and driving-test-examiner blocks.\n\n## Disclosed source-fidelity findings\n\n1. **`applicationType` x `licenceDuration` cross-tab reconstructed from a 5-row x 3-column checkbox grid, only 3 of the 5 rows carrying a duration choice.** The \"Application for (Tick Appropriate box)\" table prints three column headers (\"1 Year\", \"3 Year\", \"5 Year\") over five row labels (\"Full Driving Licence\", \"Licence Renewal\", \"Foreign Licence Exchange\", \"Duplicate Licence\", \"Class Extension\") — confirmed visually via the rendered PNG's grid lines. Only the first three rows carry a checkbox under all three duration columns; \"Duplicate Licence\" and \"Class Extension\" each carry exactly one checkbox, with no duration columns printed for either row, consistent with neither transaction resetting a licence's own term length. Modelled as a required enum `applicationType` (5 values: `FULL_DRIVING_LICENCE`, `LICENCE_RENEWAL`, `FOREIGN_LICENCE_EXCHANGE`, `DUPLICATE_LICENCE`, `CLASS_EXTENSION`) plus a separate enum `licenceDuration` (`ONE_YEAR`/`THREE_YEARS`/`FIVE_YEARS`) gated `requiredWhen` `applicationType` is `in` `[FULL_DRIVING_LICENCE, LICENCE_RENEWAL, FOREIGN_LICENCE_EXCHANGE]` — the same tick-one-of-many single-select-enum treatment this registry's own `sg/spf/driving-licence-application` and `my/jpj/driving-licence-application` established for a comparable grid, since GSP-0009's field-type vocabulary has no multi-select/array primitive.\n\n2. **`nationalIdPassportOrRefugeeId` modelled as a single required string, not three separate fields.** The source prints one combined label and one blank — \"National ID(NIN)/Passport No./Refugee ID No:\" — with no separate lines or checkboxes distinguishing which identifier type is supplied (unlike, e.g., this registry's own `bw/drts/driving-licence-application`, which prints citizen/non-citizen ID fields on two visually separate lines). Modelled as one field per the source's own single-blank layout, with the field's own description disclosing that any one of the three identifier types is acceptable.\n\n3. **`prn` (Payment Registration Number) modelled as optional.** The source prints \"PRN:\" alongside the otherwise-required personal-details fields with no explicit optionality marker of its own, but a PRN is generated by a separate Uganda Revenue Authority e-payment step that logically precedes and is independent of filling out this form; modelled as optional per this registry's general convention of not fabricating a requiredness the source does not itself state for a field that depends on an external prerequisite process.\n\n4. **`drivingLicenceNumber` modelled as optional, per its own explicit printed qualifier.** The source prints \"Driving Licence No (Where applicable):\", an explicit conditional marker (relevant only where the applicant already holds a licence, e.g. for `LICENCE_RENEWAL`/`FOREIGN_LICENCE_EXCHANGE`/`DUPLICATE_LICENCE`/`CLASS_EXTENSION`) with no cross-reference to a specific `applicationType` value; modelled as unconditionally optional rather than fabricating an unprinted conditional tie, per this registry's established \"disclose rather than fabricate\" convention (see, e.g., `bw/drts/driving-licence-application`'s own Finding 4).\n\n## Conformance\n\n3 valid mock scenarios (a first-time full-licence citizen applicant on a 3-year term; a licence-renewal applicant on a 5-year term supplying an existing driving-licence number and PRN; a duplicate-licence applicant, no duration field populated) plus 12 mutation-control fixtures (a missing statically-required field for each of `surname`, `otherNames`, `nationalIdPassportOrRefugeeId`, `gender`, `dateOfBirth`, `phoneNumber`, `applicationType`, `signature`, and `date`; an invalid `applicationType` enum value; a missing conditionally-required `licenceDuration` when `applicationType` is `FULL_DRIVING_LICENCE`; and an unknown top-level field) are committed under `conformance/ug/mowt/driving-licence-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required and `requiredWhen` rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all fixtures: all 3 valid scenarios at 0 errors, all mutation controls each raising exactly 1 error. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-22"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "personal_details",
+      "title": "Personal Details",
+      "fields": ["surname", "otherNames", "nationalIdPassportOrRefugeeId", "gender", "dateOfBirth", "prn", "phoneNumber", "drivingLicenceNumber"],
+      "next": "application_type"
+    },
+    {
+      "id": "application_type",
+      "title": "Application For",
+      "fields": ["applicationType", "licenceDuration"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration of Applicant",
+      "fields": ["signature", "date"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal Details — \"Surname:\""
+    },
+    {
+      "name": "otherNames",
+      "label": "Other Names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal Details — \"Other Names:\""
+    },
+    {
+      "name": "nationalIdPassportOrRefugeeId",
+      "label": "National ID (NIN)/Passport No./Refugee ID No.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Any one of a National Identification Number (NIN), passport number, or refugee ID number, whichever applies. See this schema's own verification.notes Finding 2.",
+      "sourceRef": "Personal Details — \"National ID(NIN)/Passport No./Refugee ID No:\""
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Personal Details — \"Gender: Male: Female:\"",
+      "validation": {
+        "enum": ["MALE", "FEMALE"]
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal Details — \"Date of Birth:\""
+    },
+    {
+      "name": "prn",
+      "label": "PRN",
+      "type": "string",
+      "required": false,
+      "description": "Payment Registration Number, generated by the Uganda Revenue Authority's e-payment system for the associated fee payment. See this schema's own verification.notes Finding 3.",
+      "sourceRef": "Personal Details — \"PRN:\""
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Phone Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal Details — \"Phone Number:\""
+    },
+    {
+      "name": "drivingLicenceNumber",
+      "label": "Driving Licence No (Where applicable)",
+      "type": "string",
+      "required": false,
+      "description": "The applicant's existing driving licence number, where one already exists. See this schema's own verification.notes Finding 4.",
+      "sourceRef": "Personal Details — \"Driving Licence No (Where applicable):\""
+    },
+    {
+      "name": "applicationType",
+      "label": "Application for (Tick Appropriate box)",
+      "type": "enum",
+      "required": true,
+      "description": "The transaction being requested. See this schema's own verification.notes Finding 1 for the reconstruction of this checkbox grid.",
+      "sourceRef": "\"Application for (Tick Appropriate box)\"",
+      "validation": {
+        "enum": ["FULL_DRIVING_LICENCE", "LICENCE_RENEWAL", "FOREIGN_LICENCE_EXCHANGE", "DUPLICATE_LICENCE", "CLASS_EXTENSION"]
+      }
+    },
+    {
+      "name": "licenceDuration",
+      "label": "Licence duration (1 Year/3 Year/5 Year)",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "applicationType",
+        "in": ["FULL_DRIVING_LICENCE", "LICENCE_RENEWAL", "FOREIGN_LICENCE_EXCHANGE"]
+      },
+      "description": "Not applicable to a Duplicate Licence or Class Extension application, per this schema's own verification.notes Finding 1.",
+      "sourceRef": "\"Application for (Tick Appropriate box)\" — column headers \"1 Year\", \"3 Year\", \"5 Year\"",
+      "validation": {
+        "enum": ["ONE_YEAR", "THREE_YEARS", "FIVE_YEARS"]
+      }
+    },
+    {
+      "name": "signature",
+      "label": "Signature",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Declaration of Applicant — \"Signature:\""
+    },
+    {
+      "name": "date",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Declaration of Applicant — \"Date:\""
+    }
+  ]
+}

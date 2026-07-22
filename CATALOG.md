@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**80 jurisdictions** | **599 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**81 jurisdictions** | **600 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4335/GOV-4337, "GovSchema Standard Research"):
+> Uganda opens as the registry's 81st jurisdiction**, via
+> `ug/mowt/driving-licence-application@1.0.0` (DMV, 1 of 6) — the Ministry
+> of Works and Transport's "Application Form for Driving Licence," served
+> unauthenticated through the Uganda Driver Licensing System (UDLS) portal.
+> Consumed one of two remaining pre-scouted new-jurisdiction candidates the
+> GOV-4307 cycle banked for Uganda (see the Known Gaps section below) — DMV
+> was chosen for the smallest source file and simplest, single-page layout.
+> Independently re-fetched and re-hashed
+> (`https://udls.co.ug/wp-content/uploads/Driver-licence-application-form.pdf`,
+> HTTP 200, 92,504 bytes, byte-for-byte match with the prior cycle's own
+> reported size) and cross-checked visually via `pdfjs-dist` + `node-canvas`
+> rendering. Models 12 fields across 3 steps (Personal Details; Application
+> For; Declaration of Applicant), covering the applicant's personal
+> particulars, a 5-row x 3-column application-type/duration checkbox grid
+> (`applicationType` `requiredWhen`-gating `licenceDuration`, since two of
+> the five transaction types print no duration column), and the final
+> declaration/signature. Excludes the form's own "Medical Examination
+> Report (To be completed by Medical Doctor)" section in full — a licensed
+> practitioner's own clinical assessment and certification, not
+> applicant-supplied data, the same treatment `bw/drts/driving-licence-application`
+> gives to that form's police-officer/examiner blocks. See the document's
+> own VERIFICATION.md for the full sourcing record and 4 disclosed
+> findings. Uganda's other two pre-scouted STRONG candidates (Business
+> Formation via URSB, National ID via NIRA Form 3) remain open, ready-to-
+> author backlog for a future cycle; Visa and Passport are confirmed dead
+> ends and Taxes has no static form, per the GOV-4307 cycle's own
+> six-vertical screening pass.
 
 > **Update (2026-07-22, GOV-4328, "GovSchema Standard Research"): Botswana
 > Passport opens (4 of 6)**, via `bw/dic/passport-application@1.0.0` — the
@@ -14647,7 +14676,18 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (59/80 jurisdictions — 74%)
+### DMV — Vehicle Registration, Licensing, Permits (60/81 jurisdictions — 74%)
+
+> **Update (2026-07-22, GOV-4335/GOV-4337, "GovSchema Standard Research"):
+> Uganda's DMV vertical opens (1 of 6), opening Uganda as the registry's
+> 81st jurisdiction**, via `ug/mowt/driving-licence-application@1.0.0` — the
+> Ministry of Works and Transport's "Application Form for Driving Licence."
+> See the Executive Summary's GOV-4335/GOV-4337 update above and the
+> document's own VERIFICATION.md for the full sourcing record, including
+> the 4 disclosed source-fidelity findings. Uganda's other two pre-scouted
+> STRONG candidates (Business Formation, National ID) remain open,
+> ready-to-author backlog. Numerator updated from 59 to 60; denominator
+> updated from 80 to 81.
 
 > **Update (2026-07-22, GOV-4314, "GovSchema Standard Research"): Botswana's
 > DMV vertical opens (2 of 6)**, via
@@ -19808,6 +19848,7 @@ now closed.
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
+| **UG** | 1 | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **UZ** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -20219,7 +20260,12 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       after e-Services portal login, no static PDF exists. Uganda is a
       ready-to-author 3-of-6 new-jurisdiction candidate for a future cycle,
       not authored this cycle since Botswana's stronger 4-of-6 showing was
-      prioritized.
+      prioritized. **Update (GOV-4335/GOV-4337, 2026-07-22): DMV is now
+      authored** as `ug/mowt/driving-licence-application@1.0.0`, opening
+      Uganda as the registry's 81st jurisdiction (1 of 6) — see the
+      Executive Summary and DMV vertical updates above. Business Formation
+      (URSB) and National ID (NIRA Form 3) remain open, STRONG,
+      ready-to-author backlog for a future cycle.
     - **Bolivia — confirmed weak, not prioritized.** Only Taxes came back
       even borderline-viable: SIN's Form 110 V3 (quarterly RC-IVA
       individual income declaration) is published solely as a JPG scan
