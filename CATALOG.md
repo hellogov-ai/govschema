@@ -4,7 +4,44 @@
 
 ## Executive Summary
 
-**81 jurisdictions** | **600 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**81 jurisdictions** | **601 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-22, GOV-4343, "GovSchema Standard Research"): Uganda
+> Business Formation opens (2 of 6)**, via
+> `ug/ursb/business-name-registration-individual@1.0.0` — the Uganda
+> Registration Services Bureau's (URSB) "Statement of Particulars required to
+> be given pursuant to the Business Names Registration Act IN CASE OF AN
+> INDIVIDUAL," the sole-proprietor-scoped variant of URSB's business-name
+> registration form, distinct from its sibling "Business Name Registration
+> (Firm or Corporation)" form (fetched for comparison but out of scope here).
+> Re-scanned Uganda's own banked backlog from the GOV-4307 cycle (below):
+> National ID (NIRA Form 3) again failed to connect (`nira.go.ug` connection
+> timeout, the same failure the GOV-4335 cycle also hit re-checking it), so
+> this cycle authored Business Formation instead, the remaining reachable
+> pre-scouted STRONG candidate. Independently re-fetched and re-hashed
+> (`https://ursb.go.ug/wp-content/uploads/2025/01/business-name-registration-individual-1639049617.pdf`,
+> HTTP 200, 272,844 bytes, sha256
+> `9599391278190fa1438e5bc0ee2f74ca34febe63e2b3613fb94cb94752c65571`) and
+> extracted via `pdfjs-dist`, all 3 pages cleanly. Models 23 fields across 5
+> steps (business name/nature/address; individual applicant's particulars;
+> commencement; declaration; a conditional statutory declaration), covering
+> the business's own particulars, the individual applicant's identity and
+> nationality (including a disclosed, source-quoted colonial-era Business
+> Names Registration Act clause conditioning a father's-name requirement on
+> "non-European origin," modelled as an unprinted boolean gate), and an
+> unprinted boolean gate for whether the Statutory Declaration section (sworn
+> before a Magistrate/Commissioner for Oaths when signed by someone other
+> than the applicant in person) applies. See the document's own
+> VERIFICATION.md for the full sourcing record, including the disclosed
+> reasoning for scoping this document to a single individual applicant
+> despite the source form's own "partners"-plural boilerplate (shared
+> verbatim with the sibling Firm/Corporation form) — resolved via URSB's own
+> forms-listing page, which labels this specific PDF "Business Name
+> Registration (Individual)" as distinct from the Firm/Corporation variant.
+> Uganda's last remaining pre-scouted candidate (National ID, NIRA Form 3)
+> remains open, banked backlog for a future cycle once `nira.go.ug` is
+> reachable; Visa, Passport, and Taxes are confirmed dead ends per the
+> GOV-4307 cycle's own six-vertical screening pass.
 
 > **Update (2026-07-22, GOV-4335/GOV-4337, "GovSchema Standard Research"):
 > Uganda opens as the registry's 81st jurisdiction**, via
@@ -15284,7 +15321,24 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (71/78 jurisdictions — 91%)
+### Business Formation — Incorporation, LLC, Company Registration (72/78 jurisdictions — 92%)
+
+> **Update (2026-07-22, GOV-4343, "GovSchema Standard Research"): Uganda
+> gains its first Business Formation schema**, via
+> `ug/ursb/business-name-registration-individual` — the Uganda Registration
+> Services Bureau's "Statement of Particulars ... IN CASE OF AN INDIVIDUAL,"
+> the sole-proprietor variant of URSB's business-name registration under the
+> Business Names Registration Act (distinct from its sibling "Firm or
+> Corporation" form, out of scope here). Consumed the second of three
+> pre-scouted STRONG new-jurisdiction candidates the GOV-4307 cycle banked
+> for Uganda; National ID (NIRA Form 3) remains open backlog — `nira.go.ug`
+> again failed to connect when re-checked this cycle, the same timeout the
+> GOV-4335 cycle also hit. See the Executive Summary's GOV-4343 update above
+> for the full sourcing record, including the disclosed scoping rationale for
+> treating this as a single-individual-applicant document despite the
+> source's own "partners"-plural boilerplate. Numerator updated from 71 to
+> 72; denominator unchanged at 78 (Uganda was already counted as a
+> jurisdiction via `ug/mowt/driving-licence-application`).
 
 > **Update (2026-07-22, GOV-4271, "GovSchema Standard Research"): Zambia
 > opens its first Business Formation schema, opening Zambia as the
@@ -19848,7 +19902,7 @@ now closed.
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
-| **UG** | 1 | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
+| **UG** | 2 | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **US** | 32+ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UY** | 3 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **UZ** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -20265,7 +20319,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Uganda as the registry's 81st jurisdiction (1 of 6) — see the
       Executive Summary and DMV vertical updates above. Business Formation
       (URSB) and National ID (NIRA Form 3) remain open, STRONG,
-      ready-to-author backlog for a future cycle.
+      ready-to-author backlog for a future cycle. **Update (GOV-4343,
+      2026-07-22): Business Formation is now authored** as
+      `ug/ursb/business-name-registration-individual@1.0.0` (2 of 6) — see
+      the Executive Summary and Business Formation vertical updates above.
+      National ID (NIRA Form 3) remains open, banked backlog; `nira.go.ug`
+      again failed to connect (connection timeout) when re-checked this
+      cycle, the same failure the GOV-4335 cycle also hit.
     - **Bolivia — confirmed weak, not prioritized.** Only Taxes came back
       even borderline-viable: SIN's Form 110 V3 (quarterly RC-IVA
       individual income declaration) is published solely as a JPG scan
