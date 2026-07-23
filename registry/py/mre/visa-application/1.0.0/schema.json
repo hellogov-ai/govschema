@@ -1,0 +1,378 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "py/mre/visa-application",
+  "version": "1.0.0",
+  "title": "Paraguay MRE Formulario de Visa Titular — Diplomatic, Official, and Courtesy Visa Application",
+  "description": "The Ministerio de Relaciones Exteriores's (MRE) Dirección General de Protocolo \"Formulario de Solicitud de Visa Diplomática – Oficial – de Cortesía\" (Titular), the application a foreign diplomatic mission or international organization accredited in Paraguay files on behalf of a diplomat, official, or courtesy-visa beneficiary (the \"Titular\") seeking a new or renewed diplomatic/official/courtesy visa to enter and reside in Paraguay in that capacity. Opens Paraguay's Visa vertical (4 of 6; GOV-4424/GOV-4451, \"GovSchema Standard Research\", CATALOG.md Known Gaps entry 0i). This form is distinct from Paraguay's ordinary tourist/business visa process (a separate login-gated online system) and models only the Titular applicant's own data; a structurally similar companion \"Dependiente\" form for accompanying family members was referenced by the scouting cycle but not independently fetched and is out of scope for this schema. This schema does not file the application itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Paraguay, the Ministerio de Relaciones Exteriores, or its Dirección General de Protocolo.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PY",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Dirección General de Protocolo, Ministerio de Relaciones Exteriores",
+    "abbreviation": "MRE",
+    "url": "https://www.mre.gov.py"
+  },
+  "process": {
+    "type": "application",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://www.mre.gov.py/wp-content/uploads/documentacion-dgp/Formulario_de_Visa_Titular_2021..docx",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "Formulario de Solicitud de Visa Diplomática – Oficial – de Cortesía (Titular), 2021 edition"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "GOV-4451 (\"GovSchema Standard Research\"), authored per the GOV-4424 cycle's own scouting record (CATALOG.md Known Gaps entry 0i), which found Paraguay's Visa vertical STRONG alongside Taxes, Business Formation, and DMV (all three already authored).\n\nIndependently re-fetched rather than trusting the scouting report's byte count alone: `https://www.mre.gov.py/wp-content/uploads/documentacion-dgp/Formulario_de_Visa_Titular_2021..docx`, HTTP 200, `Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document`, 57,591 bytes — matching the banked cycle's own figure exactly. sha256 of the retrieved bytes: `1a85502c1a56c457fdb030b56af3c3198426f54d9f99ed5496298bac8b66a115`. No login/CAPTCHA/WAF gate; a plain unauthenticated `curl` with a desktop User-Agent reached it cleanly.\n\nExtraction method: this is a native Office Open XML `.docx` (unlike this registry's usual scanned/AcroForm PDF specimens), extracted by unzipping the archive with Python's standard-library `zipfile` module (no `pip`/third-party dependency) and parsing `word/document.xml` with `xml.etree.ElementTree`, walking the `w:body`/`w:tbl`/`w:tr`/`w:tc`/`w:p`/`w:r`/`w:t` element tree to recover every printed label and its table position in document order. The document carries zero `w:sdt` content controls, zero legacy `w:ffData` form fields, and zero `w:checkBox` elements anywhere — confirmed by an explicit grep of the raw XML — so, like this registry's own SUACE and MDA Paraguayan specimens, every field is a plain blank table cell meant to be typed into directly, not a structured form-field widget. The only non-text constructs found are decorative `mc:AlternateContent`/`w:pict` VML checkbox-box shapes preceding a small number of printed option labels (Nueva Expedición/Renovación; No/Sí); these are rendered boxes for a human to mark by hand, not machine-readable form fields, and were used only to identify which printed labels are mutually-exclusive checkbox options versus free blank-line fields.\n\n## Document structure\n\nA single page: a photo-attachment placeholder (\"FOTO 5X5 FONDO BLANCO Pegar Aquí\", excluded — a physical photograph, not a data field) and header; a request-date line and \"Misión Diplomática/Org. Int.\" field; a two-way Nueva Expedición/Renovación checkbox pair; a \"DATOS DEL TITULAR\" block (name, place and date of birth, nationality, a Sí/No permanent-residency question with a conditional Cédula de Identidad number, marital status, sex, home address/city, passport type-and-number, passport country, passport validity Desde/Hasta, date of entry into the country, point of entry); a \"DATOS LABORALES\" block (rank/grade, function performed, approximate length of stay, name of predecessor if applicable, work address/city, work phone, email); a signature block (Firma del Titular, Sello de la Misión, Jefe de Misión Firma y Aclaración — all physical signatures/seals with no corresponding data field); a \"Uso exclusivo de la Dirección General de Protocolo\" office-processing block (Procesado por / V°B° Jefe de Asuntos Protocolares / Autorizado, all internal government sign-off); and a \"NÚMERO DE VISA / TIPO DE VISA / VISA VALIDA HASTA\" block recording the visa the government ultimately issues, not applicant input. All five of these — the photo, both signature/seal lines, the office-processing block, and the issued-visa block — are excluded in their entirety as physical attachments, physical signatures, or government-supplied output rather than applicant-entered data, the same class of exclusion this registry's `py/suace/business-formalization-individual` (Finding 8) and `py/dnit/individual-income-tax-return` (Finding 5) already draw around their own \"for official use\" blocks.\n\n## Disclosed findings and interpretation choices\n\n1. **This form is scoped to diplomatic/official/courtesy visas specifically**, per its own printed title (\"VISA DIPLOMÁTICA – OFICIAL – DE CORTESÍA\") — it is not Paraguay's general tourist/business visa, which the GOV-4424 scouting cycle separately confirmed is a distinct login-gated online system excluded from consideration. This form is filed by an accrediting diplomatic mission or international organization on behalf of the Titular (visa beneficiary), not filed directly by an ordinary traveler.\n2. **`sexo` is modelled as an `enum` (`masculino`/`femenino`), not free text**, even though the source prints a plain blank cell with no option list — following this registry's established convention for the identical situation on `py/mda/driving-licence-declaration`'s own `sexo` field (itself following `do/mirex/passport-application`'s precedent).\n3. **`estadoCivil` (marital status) is modelled as free-text `string`, not `enum`**, since the source prints only a plain blank cell with no checkbox group — following `uy/mrree/formulario-unificado-de-visas`'s own explicit precedent for the same distinction (a blank line is free text; a printed checkbox grid, which this form does not have for marital status, would be an enum).\n4. **`tieneResidenciaPermanente` is modelled as `boolean`, not `enum`**, since the source's \"¿Posee residencia permanente en el Paraguay?\" question is a plain two-way Sí/No choice, consistent with this registry's convention of using `boolean` for two-way Sí/No questions (as opposed to `enum` for three-or-more-way or open-vocabulary choices such as `tramiteType`'s Nueva Expedición/Renovación pair, which is not a yes/no question).\n5. **`tipoNumeroPasaporte` combines passport type and number into one field**, since the source prints exactly one blank cell under the single label \"Tipo y N° de Pasaporte\" with no separate boxes — unlike `py/suace/business-formalization-individual`'s own three-document-type row, this source gives the combined label only one cell, so no split is invented.\n6. **`nombreAntecesor` (name of predecessor) is modelled as optional (`required: false`) with no `requiredWhen` gate**, per the source's own footnote instruction \"Indicar en el caso de que corresponda a un nuevo cargo\" (indicate only if this corresponds to a new posting) — a genuinely conditional-on-circumstance field with no other form field it could be gated against.\n7. **`requestDate` (the top-of-form \"Fecha:\" line) is modelled as a required applicant-facing field**, distinct from the separate office-processing block's own internal sign-off dates — it sits in the form's main body immediately after the header, before the office-only block begins, consistent with this being the date the submitting mission completes the form.\n8. **No field in this source carries an asterisk or other explicit required-field marker** (unlike `py/suace/business-formalization-individual`, which marks required fields with `*`). Requiredness here is inferred from the form's own structural purpose: every identity, passport, and employment field that a diplomatic mission would need to supply to support a visa request is modelled as required, except the two fields the source itself marks conditional in wording (`cedulaIdentidadNumero`, gated on `tieneResidenciaPermanente`) or by footnote (`nombreAntecesor`).\n\n## Conformance\n\n3 valid mock scenarios — `valid-nueva-expedicion-sin-residencia` (a new diplomatic-visa request for a Titular with no Paraguayan permanent residency), `valid-renovacion-con-residencia-permanente` (a renewal for a Titular who holds Paraguayan permanent residency, exercising the conditional `cedulaIdentidadNumero`), and `valid-nueva-expedicion-con-antecesor` (a new courtesy-visa request exercising the optional `nombreAntecesor` field for a new posting) — plus 8 mutation-control fixtures (one missing statically-required field from each of `requestDate`, `misionDiplomatica`, `tramiteType`, `nombres`, `fechaNacimiento`, `tieneResidenciaPermanente`, `sexo`, `correoElectronico`) and one unknown-field-rejected fixture, committed under `conformance/py/mre/visa-application/1.0.0/`.\n\nAn ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all fixtures: all 3 valid scenarios at 0 errors, all 8 mutation controls each raising exactly 1 error, and the unknown-field fixture correctly rejected. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "datos-tramite",
+      "title": "Datos del Trámite",
+      "fields": [
+        "requestDate",
+        "misionDiplomatica",
+        "tramiteType"
+      ],
+      "next": "datos-titular"
+    },
+    {
+      "id": "datos-titular",
+      "title": "Datos del Titular",
+      "fields": [
+        "nombres",
+        "apellidos",
+        "paisCiudadNacimiento",
+        "fechaNacimiento",
+        "nacionalidad",
+        "tieneResidenciaPermanente",
+        "cedulaIdentidadNumero",
+        "estadoCivil",
+        "sexo",
+        "domicilioParticularCiudad"
+      ],
+      "next": "datos-pasaporte"
+    },
+    {
+      "id": "datos-pasaporte",
+      "title": "Datos del Pasaporte",
+      "fields": [
+        "tipoNumeroPasaporte",
+        "paisPasaporte",
+        "vigenciaPasaporteDesde",
+        "vigenciaPasaporteHasta",
+        "fechaIngresoAlPais",
+        "puntoDeEntrada"
+      ],
+      "next": "datos-laborales"
+    },
+    {
+      "id": "datos-laborales",
+      "title": "Datos Laborales",
+      "fields": [
+        "rangoOGrado",
+        "funcionQueEjerce",
+        "tiempoAproximadoPermanencia",
+        "nombreAntecesor",
+        "direccionLaboralCiudad",
+        "telefonoLaboral",
+        "correoElectronico"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "requestDate",
+      "label": "Fecha",
+      "type": "date",
+      "required": true,
+      "sourceRef": "\"Fecha:\", top of form",
+      "description": "The date the submitting mission completes the form. See this schema's own verification.notes Finding 7."
+    },
+    {
+      "name": "misionDiplomatica",
+      "label": "Misión Diplomática/Org. Int.",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"Misión Diplomática/Org. Int.:\"",
+      "validation": {
+        "maxLength": 250
+      }
+    },
+    {
+      "name": "tramiteType",
+      "label": "Tipo de Trámite",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Checkbox pair: \"Nueva Expedición\" / \"Renovación\"",
+      "validation": {
+        "enum": [
+          "nueva-expedicion",
+          "renovacion"
+        ]
+      }
+    },
+    {
+      "name": "nombres",
+      "label": "Nombres",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"Nombres\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "apellidos",
+      "label": "Apellidos",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"Apellidos\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "paisCiudadNacimiento",
+      "label": "País y Ciudad de Nacimiento",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"País y Ciudad de Nacimiento\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "fechaNacimiento",
+      "label": "Fecha de Nacimiento",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"Fecha de Nacimiento\""
+    },
+    {
+      "name": "nacionalidad",
+      "label": "Nacionalidad (es)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The source's own footnote (\"Favor indicar todas las nacionalidades en caso de poseer múltiples nacionalidades\") instructs listing every nationality held, e.g. as a comma-separated list, in this single field.",
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"Nacionalidad (es)*\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "tieneResidenciaPermanente",
+      "label": "¿Posee residencia permanente en el Paraguay?",
+      "type": "boolean",
+      "required": true,
+      "description": "Modelled as boolean since the source is a plain two-way Sí/No choice. See this schema's own verification.notes Finding 4.",
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"¿Posee residencia permanente en el Paraguay? (Cédula de Identidad)\": No / Sí"
+    },
+    {
+      "name": "cedulaIdentidadNumero",
+      "label": "C.I. Nro.",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "tieneResidenciaPermanente",
+        "equals": true
+      },
+      "classification": "sensitive-pii",
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"Sí   C.I. Nro.: ...\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "estadoCivil",
+      "label": "Estado Civil",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "A plain blank cell in this source, not an enumerated checkbox group — modelled as free text per the same distinction uy/mrree/formulario-unificado-de-visas draws for its own Estado Civil field. See this schema's own verification.notes Finding 3.",
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"Estado Civil\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "sexo",
+      "label": "Sexo",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The form's own column is a plain blank cell with no printed option list; masculino/femenino is modelled per this registry's established convention for the same situation on py/mda/driving-licence-declaration's own sexo field. See this schema's own verification.notes Finding 2.",
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"Sexo\"",
+      "validation": {
+        "enum": [
+          "masculino",
+          "femenino"
+        ]
+      }
+    },
+    {
+      "name": "domicilioParticularCiudad",
+      "label": "Domicilio Particular – Ciudad",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"Domicilio Particular – Ciudad\"",
+      "validation": {
+        "maxLength": 250
+      }
+    },
+    {
+      "name": "tipoNumeroPasaporte",
+      "label": "Tipo y N° de Pasaporte",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "Combines passport type and number into one field, since the source prints exactly one blank cell under this single combined label. See this schema's own verification.notes Finding 5.",
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"Tipo y N° de Pasaporte\"",
+      "validation": {
+        "maxLength": 60
+      }
+    },
+    {
+      "name": "paisPasaporte",
+      "label": "País de Pasaporte",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"País de Pasaporte\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "vigenciaPasaporteDesde",
+      "label": "Vigencia del Pasaporte — Desde",
+      "type": "date",
+      "required": true,
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"Vigencia del Pasaporte\" — \"Desde:\""
+    },
+    {
+      "name": "vigenciaPasaporteHasta",
+      "label": "Vigencia del Pasaporte — Hasta",
+      "type": "date",
+      "required": true,
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"Vigencia del Pasaporte\" — \"Hasta:\""
+    },
+    {
+      "name": "fechaIngresoAlPais",
+      "label": "Fecha de Ingreso al País",
+      "type": "date",
+      "required": true,
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"Fecha de Ingreso al País\""
+    },
+    {
+      "name": "puntoDeEntrada",
+      "label": "Punto de Entrada",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"DATOS DEL TITULAR\" — \"Punto de Entrada\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "rangoOGrado",
+      "label": "Rango o Grado",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"DATOS LABORALES\" — \"Rango o Grado\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "funcionQueEjerce",
+      "label": "Función que ejerce",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"DATOS LABORALES\" — \"Función que ejerce\"",
+      "validation": {
+        "maxLength": 250
+      }
+    },
+    {
+      "name": "tiempoAproximadoPermanencia",
+      "label": "Tiempo aproximado de Permanencia en el País",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"DATOS LABORALES\" — \"Tiempo aproximado de Permanencia en el País\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "nombreAntecesor",
+      "label": "Nombre del Antecesor",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The source's own footnote (\"Indicar en el caso de que corresponda a un nuevo cargo\") makes this conditional-on-circumstance rather than universally required. See this schema's own verification.notes Finding 6.",
+      "sourceRef": "\"DATOS LABORALES\" — \"Nombre del Antecesor**\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "direccionLaboralCiudad",
+      "label": "Dirección laboral – Ciudad",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"DATOS LABORALES\" — \"Dirección laboral – Ciudad\"",
+      "validation": {
+        "maxLength": 250
+      }
+    },
+    {
+      "name": "telefonoLaboral",
+      "label": "Teléfono laboral",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"DATOS LABORALES\" — \"Teléfono laboral\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "correoElectronico",
+      "label": "Correo Electrónico",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"DATOS LABORALES\" — \"Correo Electrónico\"",
+      "validation": {
+        "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+        "maxLength": 254
+      }
+    }
+  ]
+}
