@@ -1,0 +1,280 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "tt/imd/visa-application",
+  "version": "1.0.0",
+  "title": "Trinidad and Tobago e-Visa Application (Entry Visa)",
+  "description": "The Immigration Division (Ministry of National Security)'s online e-Visa application, operated at evisa.ttservices.online (a Vaadin/Java server-rendered wizard linked from the Immigration Division's own nationalsecurity.gov.tt evisa-online page) and covering entry visas for foreign nationals travelling to Trinidad and Tobago. Opens Trinidad and Tobago's Visa vertical (5 of 6), following the registry's prior tt/imd Passport, tt/mowt DMV, tt/ird Taxes, and tt/rgd Business Formation schemas. A downloadable paper \"Visa Application Form\" PDF also exists on both nationalsecurity.gov.tt and foreign.gov.tt, but foreign.gov.tt's own current \"Visas\" service page (retrieved fresh this cycle) redirects entirely to this e-Visa portal with no remaining reference to a paper form, and a 2024-04-26 Ministry of National Security media release announced the e-Visa portal's launch — confirming the online system, not the legacy paper form, is the current live process this schema models per this registry's source-of-truth-fidelity practice. This schema does not file the application itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of the Republic of Trinidad and Tobago or its Ministry of National Security.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "TT",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Immigration Division, Ministry of National Security",
+    "abbreviation": "IMD",
+    "url": "https://nationalsecurity.gov.tt/divisions/immigrationdivision/evisa-online/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://evisa.ttservices.online/tt-evisa-entitlement-online-ui/",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "Republic of Trinidad and Tobago e-Visa portal, live 7-step application wizard (Getting Started / Enter Details [Application, Personal, Passport, Contact, Additional Information] / Upload Photo / Upload Documents / Review Application / Submit Payment / Confirmation), plus the Ministry of National Security's own \"EVISAS SUPPORTING DOCUMENTS\" checklist PDF."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "See VERIFICATION.md for the full write-up: candidate selection (paper form superseded by the live e-Visa portal), the live Playwright walk-through method, field-by-field disclosed findings, and disclosed scope exclusions (Children Information grid, payment/upload mechanics)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "eligibility_check",
+      "title": "Find Out If You Can Apply Online",
+      "fields": ["nationality", "purposeOfVisit", "intendedPeriodOfVisitDays", "passportValidSixMonths"],
+      "next": "getting_started"
+    },
+    {
+      "id": "getting_started",
+      "title": "Getting Started — Applicant's Information",
+      "fields": ["surname", "givenNames", "dateOfBirth", "passportNumber"],
+      "next": "application_information"
+    },
+    {
+      "id": "application_information",
+      "title": "Enter Details — Application Information",
+      "fields": ["multipleEntryVisa", "intendedEntryDate"],
+      "next": "personal_information"
+    },
+    {
+      "id": "personal_information",
+      "title": "Enter Details — Personal Information",
+      "fields": ["title", "maidenName", "sex", "countryOfBirth", "cityOfBirth", "nationalityAtBirth", "maritalStatus", "occupation", "annualIncomeTTD", "everDeportedFromTT", "deportationDetails", "meansOfSupport", "appliedForVisaBefore", "previousVisaWasIssued", "convictionDetails", "everVisitedTT"],
+      "next": "passport_information"
+    },
+    {
+      "id": "passport_information",
+      "title": "Enter Details — Passport Information",
+      "fields": ["passportIssueDate", "passportExpiryDate", "passportCountryOfIssue"],
+      "next": "contact_information"
+    },
+    {
+      "id": "contact_information",
+      "title": "Enter Details — Contact Information",
+      "fields": ["permanentAddressStreet", "permanentAddressCityTown", "permanentAddressCountry", "primaryPhoneNumber", "secondaryPhoneNumber", "email", "confirmEmail", "employerNameAndAddress", "addressInTTStreet", "addressInTTCityTown"],
+      "next": "additional_information"
+    },
+    {
+      "id": "additional_information",
+      "title": "Enter Details — Additional Information",
+      "fields": ["reference1Surname", "reference1GivenName", "reference1Relationship", "reference1AddressStreet", "reference1AddressCityTown", "reference1AddressCountry", "reference1Nationality", "reference1TelephoneNumber", "reference1Occupation", "reference2Surname", "reference2GivenName", "reference2Relationship", "reference2AddressStreet", "reference2AddressCityTown", "reference2AddressCountry", "reference2Nationality", "reference2TelephoneNumber", "reference2Occupation"],
+      "next": "documents"
+    },
+    {
+      "id": "documents",
+      "title": "Upload Photo & Upload Documents"
+    }
+  ],
+  "fields": [
+    { "name": "nationality", "label": "Nationality", "type": "string", "required": true, "classification": "pii", "description": "Determines eligibility to use this online portal; the source's own selectable list covers essentially every world nationality/demonym as a filterable combo box, not a small closed set, so it is modelled as an open string rather than a fabricated enum.", "sourceRef": "Find Out If You Can Apply Online — \"Nationality\"", "validation": { "maxLength": 100 } },
+    { "name": "purposeOfVisit", "label": "Purpose of visit", "type": "enum", "required": true, "sourceRef": "Find Out If You Can Apply Online / Application Information — \"Purpose of visit\" / \"Purpose of journey\" (same underlying value, re-displayed and re-editable in the later Application Information step)", "validation": { "enum": ["ACCOMPANYING PARENT/S", "ACCOMPANYING SPOUSE", "BUSINESS/CONVENTION", "CARNIVAL", "CRUISE", "DIPLOMATIC/OFFICIAL/SERVICE", "ECOTOURIST", "INCENTIVE VACATION", "INTRANSIT", "LEISURE/BEACH VACATION", "MEDICAL", "MISSIONARY WORK", "OTHER", "PENDING P. R.", "PERSONAL MATTERS", "SCUBA DIVING", "SPORTS/GOLF/GAME FISHING", "STUDY", "VISITING FRIENDS & RELATIVES", "WEDDING/HONEYMOON", "WORK", "YACHTING"] } },
+    { "name": "intendedPeriodOfVisitDays", "label": "Intended period of visit (in days)", "type": "integer", "required": true, "sourceRef": "Find Out If You Can Apply Online / Application Information — \"Intended period of visit (in days)\" (same underlying value, re-displayed and re-editable in the later Application Information step)", "validation": { "minimum": 1 } },
+    { "name": "passportValidSixMonths", "label": "Is the applicant's passport valid for at least six months from their intended date of travel to Trinidad and Tobago?", "type": "boolean", "required": true, "sourceRef": "Find Out If You Can Apply Online — \"Is the applicant's passport valid for at least six months from their intended date of travel to Trinidad and Tobago?\"" },
+
+    { "name": "surname", "label": "Surname", "type": "string", "required": true, "classification": "pii", "description": "Collected once on Getting Started and re-displayed read-only throughout the remaining Enter Details steps.", "sourceRef": "Getting Started — \"Surname:\"" },
+    { "name": "givenNames", "label": "Given name(s)", "type": "string", "required": true, "classification": "pii", "sourceRef": "Getting Started — \"Given name(s):\"" },
+    { "name": "dateOfBirth", "label": "Date of birth", "type": "date", "required": true, "classification": "sensitive-pii", "sourceRef": "Getting Started / Personal Information — \"Date of birth: (dd-mm-yyyy)\"" },
+    { "name": "passportNumber", "label": "Passport number", "type": "string", "required": true, "classification": "sensitive-pii", "sourceRef": "Getting Started / Passport Information — \"Passport number:\"" },
+
+    { "name": "multipleEntryVisa", "label": "Multiple entry visa", "type": "boolean", "required": true, "description": "Pre-filled YES by the source (the e-Visa product itself is described on the Immigration Division's own evisa-online page as a \"Multiple Entry eVisa\"), but rendered as an editable combo box in the wizard rather than a fixed constant.", "sourceRef": "Application Information — \"Multiple entry visa:\"" },
+    { "name": "intendedEntryDate", "label": "Intended entry date", "type": "date", "required": true, "sourceRef": "Application Information — \"Intended entry date: (dd-mm-yyyy)\"" },
+
+    { "name": "title", "label": "Title", "type": "enum", "required": true, "sourceRef": "Personal Information — \"Title:\"", "validation": { "enum": ["MR.", "MRS.", "MS."] } },
+    { "name": "maidenName", "label": "Maiden name", "type": "string", "required": false, "classification": "pii", "sourceRef": "Personal Information — \"Maiden name:\"" },
+    { "name": "sex", "label": "Sex", "type": "enum", "required": true, "classification": "sensitive-pii", "sourceRef": "Personal Information — \"Sex:\"", "validation": { "enum": ["MALE", "FEMALE"] } },
+    { "name": "countryOfBirth", "label": "Country of birth", "type": "string", "required": true, "sourceRef": "Personal Information — \"Country of birth:\"" },
+    { "name": "cityOfBirth", "label": "City of birth", "type": "string", "required": true, "sourceRef": "Personal Information — \"City of birth:\"" },
+    { "name": "nationalityAtBirth", "label": "Nationality at birth", "type": "string", "required": true, "description": "Distinct from the current nationality collected on the eligibility-check step — the source presents both as separate combo boxes drawn from the same country/nationality list.", "sourceRef": "Personal Information — \"Nationality at birth:\"" },
+    { "name": "maritalStatus", "label": "Marital status", "type": "enum", "required": true, "sourceRef": "Personal Information — \"Marital status:\"", "validation": { "enum": ["SINGLE", "MARRIED", "DIVORCED", "LEGALLY SEPARATED", "OTHER"] } },
+    { "name": "occupation", "label": "Occupation", "type": "string", "required": true, "sourceRef": "Personal Information — \"Occupation:\"" },
+    { "name": "annualIncomeTTD", "label": "Annual income (Trinidad and Tobago Dollars)", "type": "number", "required": true, "classification": "financial", "sourceRef": "Personal Information — \"Annual income (Trinidad and Tobago Dollars):\"", "validation": { "minimum": 0 } },
+    { "name": "everDeportedFromTT", "label": "Ever deported from Trinidad and Tobago", "type": "boolean", "required": true, "sourceRef": "Personal Information — \"Ever deported from Trinidad and Tobago:\"" },
+    { "name": "deportationDetails", "label": "Give details if deported from Trinidad and Tobago", "type": "string", "required": false, "sourceRef": "Personal Information, Additional Data — \"Give details if deported from Trinidad and Tobago:\", disabled unless Ever deported from Trinidad and Tobago is YES", "requiredWhen": { "field": "everDeportedFromTT", "equals": true } },
+    { "name": "meansOfSupport", "label": "Means of support for the duration of the stay", "type": "string", "required": true, "sourceRef": "Personal Information — \"Means of support for the duration of the stay:\"" },
+    { "name": "appliedForVisaBefore", "label": "Have you ever applied for a visa before?", "type": "boolean", "required": true, "sourceRef": "Personal Information — \"Have you ever applied for a visa before?:\"" },
+    { "name": "previousVisaWasIssued", "label": "Was the visa issued?", "type": "boolean", "required": false, "sourceRef": "Personal Information — \"Was the visa issued?:\", shown once Have you ever applied for a visa before? is answered", "visibleWhen": { "field": "appliedForVisaBefore", "equals": true }, "requiredWhen": { "field": "appliedForVisaBefore", "equals": true } },
+    { "name": "convictionDetails", "label": "State any convicted offences and conviction date", "type": "string", "required": false, "description": "Presented unconditionally alongside the deportation-details field, not gated behind a yes/no discriminator of its own on this source.", "sourceRef": "Personal Information, Additional Data — \"State any convicted offences and conviction date:\"" },
+    { "name": "everVisitedTT", "label": "Have you ever visited Trinidad and Tobago?", "type": "boolean", "required": true, "sourceRef": "Personal Information, Additional Data — \"Have you ever visited Trinidad and Tobago?:\"" },
+
+    { "name": "passportIssueDate", "label": "Passport issue date", "type": "date", "required": true, "sourceRef": "Passport Information — \"Issue date: (dd-mm-yyyy)\"" },
+    { "name": "passportExpiryDate", "label": "Passport expiry date", "type": "date", "required": true, "sourceRef": "Passport Information — \"Expiry date: (dd-mm-yyyy)\"" },
+    { "name": "passportCountryOfIssue", "label": "Country of issue", "type": "string", "required": true, "sourceRef": "Passport Information — \"Country of issue:\"" },
+
+    { "name": "permanentAddressStreet", "label": "Permanent address (number and street)", "type": "string", "required": true, "classification": "pii", "sourceRef": "Contact Information, Permanent Address — \"Permanent address (number and street):\"" },
+    { "name": "permanentAddressCityTown", "label": "Permanent address (city/town)", "type": "string", "required": true, "classification": "pii", "sourceRef": "Contact Information, Permanent Address — \"Permanent address (city/town):\"" },
+    { "name": "permanentAddressCountry", "label": "Permanent address (country)", "type": "string", "required": true, "classification": "pii", "sourceRef": "Contact Information, Permanent Address — \"Permanent address (country):\"" },
+    { "name": "primaryPhoneNumber", "label": "Primary phone number", "type": "string", "required": true, "classification": "pii", "sourceRef": "Contact Information, Phone Number and Email — \"Primary phone number:\"" },
+    { "name": "secondaryPhoneNumber", "label": "Secondary phone number", "type": "string", "required": false, "classification": "pii", "sourceRef": "Contact Information, Phone Number and Email — \"Secondary phone number:\"" },
+    { "name": "email", "label": "Email", "type": "string", "required": true, "classification": "pii", "sourceRef": "Contact Information, Phone Number and Email — \"Email:\"" },
+    { "name": "confirmEmail", "label": "Confirm email", "type": "string", "required": true, "classification": "pii", "sourceRef": "Contact Information, Phone Number and Email — \"Confirm email:\"" },
+    { "name": "employerNameAndAddress", "label": "Name and address of employer", "type": "string", "required": false, "classification": "pii", "sourceRef": "Contact Information, Other Address — \"Name and address of employer:\"" },
+    { "name": "addressInTTStreet", "label": "Address in Trinidad and Tobago (number and street)", "type": "string", "required": true, "classification": "pii", "sourceRef": "Contact Information, Other Address — \"Address in Trinidad and Tobago (number and street):\"" },
+    { "name": "addressInTTCityTown", "label": "Address in Trinidad and Tobago (city/town)", "type": "string", "required": true, "classification": "pii", "sourceRef": "Contact Information, Other Address — \"Address in Trinidad and Tobago (city/town):\"" },
+
+    { "name": "reference1Surname", "label": "Reference #1 — Surname", "type": "string", "required": false, "classification": "pii", "description": "Neither reference carries a required marker in the source, unlike this registry's otherwise-similar tt/imd Passport schema, whose paper-form references are printed as mandatory — disclosed as a genuine difference between the two Immigration Division source documents, not modelled as required here.", "sourceRef": "Additional Information, Reference #1 Information — \"Surname:\"" },
+    { "name": "reference1GivenName", "label": "Reference #1 — Given name", "type": "string", "required": false, "classification": "pii", "sourceRef": "Additional Information, Reference #1 Information — \"Given name:\"" },
+    { "name": "reference1Relationship", "label": "Reference #1 — Relationship", "type": "string", "required": false, "sourceRef": "Additional Information, Reference #1 Information — \"Relationship:\"" },
+    { "name": "reference1AddressStreet", "label": "Reference #1 — Address (number and street)", "type": "string", "required": false, "classification": "pii", "sourceRef": "Additional Information, Reference #1 Information — \"Address (number and street):\"" },
+    { "name": "reference1AddressCityTown", "label": "Reference #1 — Address (city/town)", "type": "string", "required": false, "classification": "pii", "sourceRef": "Additional Information, Reference #1 Information — \"Address (city/town):\"" },
+    { "name": "reference1AddressCountry", "label": "Reference #1 — Address (country)", "type": "string", "required": false, "classification": "pii", "sourceRef": "Additional Information, Reference #1 Information — \"Address (country):\"" },
+    { "name": "reference1Nationality", "label": "Reference #1 — Nationality", "type": "string", "required": false, "sourceRef": "Additional Information, Reference #1 Information — \"Nationality:\"" },
+    { "name": "reference1TelephoneNumber", "label": "Reference #1 — Telephone number", "type": "string", "required": false, "classification": "pii", "sourceRef": "Additional Information, Reference #1 Information — \"Telephone number:\"" },
+    { "name": "reference1Occupation", "label": "Reference #1 — Occupation", "type": "string", "required": false, "sourceRef": "Additional Information, Reference #1 Information — \"Occupation:\"" },
+    { "name": "reference2Surname", "label": "Reference #2 — Surname", "type": "string", "required": false, "classification": "pii", "sourceRef": "Additional Information, Reference #2 Information — \"Surname:\"" },
+    { "name": "reference2GivenName", "label": "Reference #2 — Given name", "type": "string", "required": false, "classification": "pii", "sourceRef": "Additional Information, Reference #2 Information — \"Given name:\"" },
+    { "name": "reference2Relationship", "label": "Reference #2 — Relationship", "type": "string", "required": false, "sourceRef": "Additional Information, Reference #2 Information — \"Relationship:\"" },
+    { "name": "reference2AddressStreet", "label": "Reference #2 — Address (number and street)", "type": "string", "required": false, "classification": "pii", "sourceRef": "Additional Information, Reference #2 Information — \"Address (number and street):\"" },
+    { "name": "reference2AddressCityTown", "label": "Reference #2 — Address (city/town)", "type": "string", "required": false, "classification": "pii", "sourceRef": "Additional Information, Reference #2 Information — \"Address (city/town):\"" },
+    { "name": "reference2AddressCountry", "label": "Reference #2 — Address (country)", "type": "string", "required": false, "classification": "pii", "sourceRef": "Additional Information, Reference #2 Information — \"Address (country):\"" },
+    { "name": "reference2Nationality", "label": "Reference #2 — Nationality", "type": "string", "required": false, "sourceRef": "Additional Information, Reference #2 Information — \"Nationality:\"" },
+    { "name": "reference2TelephoneNumber", "label": "Reference #2 — Telephone number", "type": "string", "required": false, "classification": "pii", "sourceRef": "Additional Information, Reference #2 Information — \"Telephone number:\"" },
+    { "name": "reference2Occupation", "label": "Reference #2 — Occupation", "type": "string", "required": false, "sourceRef": "Additional Information, Reference #2 Information — \"Occupation:\"" }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "confirmEmailMatchesEmail",
+      "compare": { "field": "confirmEmail", "operator": "equals", "compareTo": "email" }
+    },
+    {
+      "id": "passportExpiryAfterIssue",
+      "compare": { "field": "passportExpiryDate", "operator": "greaterThan", "compareTo": "passportIssueDate" }
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantPhoto",
+      "label": "Digital passport-compliant photo",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Upload Photo — \"My Photo\", per the Immigration Division's own Photo Guide",
+      "constraints": { "maxBytes": 7766016, "mediaTypes": ["image/jpeg", "image/png", "image/bmp"] }
+    },
+    {
+      "id": "passportBioDataPage",
+      "label": "Passport bio data page",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "EVISAS SUPPORTING DOCUMENTS checklist — \"Passport Bio Data Page\""
+    },
+    {
+      "id": "purposeOfVisitSupportingDocuments",
+      "label": "Purpose of Visit – Relevant Supporting Documents",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "EVISAS SUPPORTING DOCUMENTS checklist — \"Purpose of Visit – Relevant Supporting Documents\""
+    },
+    {
+      "id": "minorBirthCertificate",
+      "label": "Birth certificate (minors)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "dependent",
+      "sourceRef": "EVISAS SUPPORTING DOCUMENTS checklist — \"Birth Certificate – minors\""
+    },
+    {
+      "id": "parentGuardianPassportBioDataPage",
+      "label": "Passport bio data page of parent/legal guardian",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "responsible-party",
+      "sourceRef": "EVISAS SUPPORTING DOCUMENTS checklist — \"Passport Bio Data Page of Parent/Legal Guardian\""
+    },
+    {
+      "id": "custodyGuardianshipDocument",
+      "label": "Custody/guardianship document (minors, if applicable)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "responsible-party",
+      "sourceRef": "EVISAS SUPPORTING DOCUMENTS checklist — \"Custody/Guardianship Document if applicable – Minors\""
+    },
+    {
+      "id": "landingDepositOrReturnTicket",
+      "label": "Landing deposit / security bond / valid return ticket",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "EVISAS SUPPORTING DOCUMENTS checklist — \"Landing Deposit /Security Bond/Valid Return Ticket\""
+    },
+    {
+      "id": "accommodationProof",
+      "label": "Accommodation (hotel, guest house, private residence)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "EVISAS SUPPORTING DOCUMENTS checklist — \"Accommodation – Hotel, Guest House, Private Residence\""
+    },
+    {
+      "id": "priorEntryOrExtensionStamp",
+      "label": "Copy of most recent entry/extension stamp",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "EVISAS SUPPORTING DOCUMENTS checklist — \"Copy of most recent Entry/Extension Stamp\""
+    },
+    {
+      "id": "financialStatement",
+      "label": "Financial statement",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "EVISAS SUPPORTING DOCUMENTS checklist — \"Financial Statement\""
+    },
+    {
+      "id": "jobLetter",
+      "label": "Job letter (not older than three months)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "freshness": { "issuedWithin": "P3M" },
+      "sourceRef": "EVISAS SUPPORTING DOCUMENTS checklist — \"Job Letter not older than three (3) months\""
+    },
+    {
+      "id": "invitationOrCompanyLetter",
+      "label": "Invitation/company letter (purpose of visit, address, contact information, financial responsibility)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "other",
+      "sourceRef": "EVISAS SUPPORTING DOCUMENTS checklist — \"Invitation/Company letter stating purpose of visit, address, contact information, financial responsibility\""
+    },
+    {
+      "id": "evisaApplicationFee",
+      "label": "e-Visa non-refundable application fee",
+      "category": "payment",
+      "required": true,
+      "belongsTo": "applicant",
+      "amount": { "currency": "TTD", "value": 800 },
+      "methods": ["visa", "mastercard"],
+      "sourceRef": "Submit Payment — the Immigration Division's own evisa-online page: \"a valid Visa or Mastercard credit/debit card for the 800 TTD non-refundable fee\""
+    }
+  ]
+}
