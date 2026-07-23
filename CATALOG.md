@@ -4,7 +4,20 @@
 
 ## Executive Summary
 
-**85 jurisdictions** | **612 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**85 jurisdictions** | **613 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4446, "GovSchema Standard Research"): patch
+> `py/mda/driving-licence-declaration` to `1.0.1`** — a follow-up to
+> GOV-4443/PR #671 fixing a misattributed citation. 1.0.0's `sexo` field
+> cited `mx/ine/credencial-para-votar-application`'s own `sexo` field as
+> precedent for the `masculino`/`femenino` enum, but that field is actually
+> named `sex` and uses `hombre`/`mujer` — the correct precedent is
+> `do/mirex/passport-application`'s own `sexo` field, which genuinely uses
+> `masculino`/`femenino`. Purely a description/verification-record
+> correction, no data-contract change, published as a PATCH per
+> `VERSIONING.md`'s immutability rule (1.0.0 stays in place unedited). See
+> the document's own `verification.notes` and `VERIFICATION.md` for the
+> full PATCH record.
 
 > **Update (2026-07-23, GOV-4443, "GovSchema Standard Research"): Paraguay's
 > DMV vertical opens (3 of 6)**, via `py/mda/driving-licence-declaration@1.0.0`
@@ -15096,6 +15109,11 @@ dense five-column physical-description ("Filiación") checkbox grid.
 
 ### DMV — Vehicle Registration, Licensing, Permits (62/85 jurisdictions — 73%)
 
+> **Update (2026-07-23, GOV-4446, "GovSchema Standard Research"): patch
+> `py/mda/driving-licence-declaration` to `1.0.1`** — fixes a misattributed
+> `sexo` field citation (see the Executive Summary's GOV-4446 update above).
+> No change to the vertical's own numerator/denominator.
+
 > **Update (2026-07-23, GOV-4443, "GovSchema Standard Research"): Paraguay's
 > DMV vertical opens (3 of 6 for the jurisdiction)**, via
 > `py/mda/driving-licence-declaration@1.0.0` — the Municipalidad de la
@@ -21009,7 +21027,11 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       155,460 bytes) — see the Executive Summary and DMV vertical updates
       above and the document's own VERIFICATION.md for the full scope
       record, including the 10 disclosed findings. Visa remains open,
-      STRONG, ready-to-author backlog for a future cycle.
+      STRONG, ready-to-author backlog for a future cycle. **Update
+      (GOV-4446, 2026-07-23): patched to `1.0.1`** to fix a misattributed
+      `sexo` field citation (independently caught during post-merge
+      cross-checking) — see the Executive Summary and DMV vertical updates
+      above.
     - **Namibia** — **Taxes**: NamRA's "Return of Income for Individuals"
       (Form 6-0/0014C/1), served from the ITAS e-filing subdomain rather
       than NamRA's own site,
