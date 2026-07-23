@@ -4,7 +4,26 @@
 
 ## Executive Summary
 
-**89 jurisdictions** | **622 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**89 jurisdictions** | **623 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4506, "GovSchema Standard Research"): Tajikistan
+> gains its National ID & Civic Documents schema (3 of 6 for the
+> jurisdiction)**, via `tj/vkd/internal-passport-application@1.0.0` — the
+> Passport Registration Service's (ХШБ, `passportvkd.tj`) "Shakli 1"
+> unified internal-passport (шиноснома) application, covering first-time
+> issuance, replacement, and renewal. Picked up from Known Gaps entry
+> 0i/0k's own banked candidate (independently re-fetched byte-identical:
+> 608,357 bytes). Models the base two-sided application (items 1-16,
+> 21-31) plus its numbered continuation sheet Shakli 1/1's own
+> eight-question Саволнома eligibility questionnaire; excludes 1/1's own
+> restatement of already-captured personal data, its system-assigned
+> application number, fingerprint-presence indicators, and payment/
+> office-acceptance blocks — see the document's own VERIFICATION.md for the
+> full scope record and 9 disclosed findings. This closes Tajikistan's
+> entire GOV-4424/GOV-4488 disclosed backlog: Taxes, Business Formation,
+> and National ID are now all authored (3 of 6); DMV, Visa, and foreign
+> Passport remain confirmed dead-end/weak. See the National ID & Civic
+> Documents vertical update below for the full detail.
 
 > **Update (2026-07-23, GOV-4499, "GovSchema Standard Research"): Tajikistan
 > gains its Business Formation schema (2 of 6 for the jurisdiction)**, via
@@ -19950,7 +19969,33 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (52/78 jurisdictions — 67%)
+### National ID & Civic Documents (53/79 jurisdictions — 67%)
+
+> **Update (2026-07-23, GOV-4506, "GovSchema Standard Research"): Tajikistan's
+> National ID & Civic Documents vertical opens (3 of 6)**, via
+> `tj/vkd/internal-passport-application@1.0.0` — the Passport Registration
+> Service's (ХШБ, under the Ministry of Internal Affairs, `passportvkd.tj`)
+> "Shakli 1" (Form 1), the unified application for the internal passport
+> (шиноснома), Tajikistan's national-identity-equivalent document, covering
+> first-time issuance, replacement, and renewal in one form. Picked up from
+> Known Gaps entry 0i/0k's own banked candidate (GOV-4424, 2026-07-22),
+> independently re-fetched byte-identical (608,357 bytes). The live source
+> — `Zamimaho.docx` ("Appendices") — bundles roughly 35 numbered appendix
+> forms for the whole passport service end-to-end; this schema is scoped to
+> just Shakli 1 plus its own numbered continuation sheet Shakli 1/1 (whose
+> eight-question Саволнома eligibility questionnaire is modelled; its
+> restatement of already-captured personal data, system-assigned
+> application number, fingerprint-presence indicators, and payment/
+> office-acceptance blocks are excluded — see the document's own
+> VERIFICATION.md for the full scope record, including 9 disclosed
+> findings, among them three consecutively-numbered, identically-captioned
+> address blanks (items 23-25) modelled as sequential bounded slots rather
+> than an invented 3-address distinction). Numerator updated from 52 to 53;
+> denominator updated from 78 to 79 (Tajikistan had not yet been reached
+> for this vertical). This closes Tajikistan's entire GOV-4424/GOV-4488
+> disclosed backlog: Taxes, Business Formation, and National ID are now all
+> authored (3 of 6); DMV, Visa, and foreign Passport remain confirmed
+> dead-end/weak per the original GOV-4424 scouting pass.
 
 > **Update (2026-07-21, GOV-4223, "GovSchema Standard Research"): Malta's
 > National ID & Civic Documents vertical opens (3 of 6)**, via
@@ -20737,7 +20782,7 @@ now closed.
 | **SK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **SN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **TJ** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **UG** | 3 | ✗ | ✓ | ✓ | ✗ | ✗ | ✓ |
@@ -21537,10 +21582,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       record, including 14 disclosed findings and the exclusion of two
       standalone repeatable annexes (additional farm-household members;
       additional main activity types). Tajikistan is now 2/6.
-    - **National ID**: not re-scouted this cycle. Entry 0i's own prior
-      finding (the internal-passport "Shakli 1" docx at `passportvkd.tj`)
-      remains the best available record — still a ready-to-author
-      3-of-6 backlog item for a future cycle.
+    - **National ID**: entry 0i's own prior finding (the internal-passport
+      "Shakli 1" docx at `passportvkd.tj`) independently re-fetched
+      byte-identical (608,357 bytes). **Update (GOV-4506, 2026-07-23): now
+      authored** as `tj/vkd/internal-passport-application@1.0.0` — see the
+      Executive Summary and National ID & Civic Documents vertical updates
+      above and the document's own VERIFICATION.md for the full scope
+      record, including 9 disclosed findings. **This closes the entire
+      GOV-4424/GOV-4488 disclosed Tajikistan backlog: Taxes, Business
+      Formation, and National ID are all authored (3 of 6).**
     - **DMV, Visa, foreign Passport**: confirmed dead-end/weak in entry 0i's
       original scouting pass (no GAI/traffic-police static form; evisa.tj/
       visa.gov.tj are pure SPAs; foreign passport application is described
