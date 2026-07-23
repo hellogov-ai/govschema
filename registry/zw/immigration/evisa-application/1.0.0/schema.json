@@ -1,0 +1,694 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "zw/immigration/evisa-application",
+  "version": "1.0.0",
+  "title": "Zimbabwe e-Visa Application (Ordinary Single-Entry)",
+  "description": "The Department of Immigration Zimbabwe's online e-visa application, operated at evisa.gov.zw (linked from the Department's own zimimmigration.gov.zw), covering the ordinary single-entry visa product (`zwevisa`). Opens Zimbabwe's Visa vertical (3 of 6), following the registry's prior zw/zimra Taxes and Business Formation schemas. The live portal is an Angular single-page application whose entire compiled client (including every applicant-facing field name, validator, and conditional-visibility rule) ships on a plain unauthenticated GET before any login; this schema was authored by statically re-extracting that compiled bundle's own field-configuration object rather than by rendering pages, since the portal requires an account (email-verified sign-up) to reach the wizard interactively and a prior live-render attempt crashed on an unrelated MRZ/passport-scanner WASM asset. This schema models the ordinary e-visa's own four form sections (Personal Details, Emergency Contact, Travel Information, Supporting Documents) plus the two lead screens that precede them (Planned Entry / Document Type & Nationality). It excludes: the portal's other eight product types (`zwevisa_double`, `zwevisa_multiple`, `zwevisa_kaza`, `zwevisaarr`, `zweentry`, `zweexit`, `zweprovrespermit`, `zwevisaextc`/`zwevisaextab`), each a materially different field configuration in the same bundle and out of scope per this cycle's own narrow-scoping instruction; the system-generated \"Application reference\" (`BatchId`/`travelName`), which the client auto-fills and immediately disables rather than collecting from the applicant; five generic, unlabelled \"Extra document\" upload slots and one `hidden:true` legacy document field, neither carrying independent semantic meaning; and the `Dependants`/`SpouseDetails` (as distinct steps)/`ContactDetails`/`MiscellaneousDetails`/`VisitorDetails`/`Requirements` sections, which the extracted bundle's own shared section-name enum defines but which do not appear in this product's own field-configuration object (they belong to other, more complex products such as the KAZA UniVisa). This schema does not file the application itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Zimbabwe or the Department of Immigration.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ZW",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of Immigration",
+    "abbreviation": "DOI",
+    "url": "https://www.zimimmigration.gov.zw"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.evisa.gov.zw/app/index.html#/start",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "e-Visa portal (evisa.gov.zw), Angular SPA compiled client `app/main.baa2096ea7e0d09e.js` (7,376,521 bytes), ordinary single-entry visa product `zwevisa`."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "GOV-4481 (child of GOV-4476, \"GovSchema Standard Research\"). Opens Zimbabwe's Visa vertical (3 of 6), following the zw/zimra Taxes (GOV-4470) and Business Formation (GOV-4478) schemas.\n\n## Reaching the live source\n\nThe issue delegating this work disclosed that `evisa.gov.zw`'s field schema is not behind login: the entire compiled Angular client ships on a plain unauthenticated GET before any auth. Independently re-fetched fresh rather than trusting the delegating issue's own disclosed hash: `https://www.evisa.gov.zw/app/main.baa2096ea7e0d09e.js`, HTTP 200, `Content-Type` JavaScript, 7,376,521 bytes — byte-for-byte matching the delegating issue's own disclosed size, confirming the specimen is unchanged. `https://www.evisa.gov.zw/app/index.html#/start` returns HTTP 200, 50,568 bytes, and redirects an unauthenticated visitor to `#/sign-in` (confirmed via a real Playwright/Chromium session, realistic desktop UA, `LD_LIBRARY_PATH`/`FONTCONFIG_FILE` sandboxed-launch fix applied per this registry's own established recipe). The sign-in screen's own \"No account yet?\" link reaches a sign-up form requiring e-mail verification to proceed — not completable without a real inbox, and not attempted, since GovSchema does not create accounts on government portals it documents. This confirms, first-hand, the delegating issue's own caution that live-browser rendering of the actual multi-step wizard is not the reliable path for this specimen (the issue additionally reported a prior SIGABRT crash on an unrelated MRZ/passport-scanner WASM asset); all field-level modelling below is instead drawn from static re-extraction of the compiled bundle's own source code, which is authoritative for what the client actually submits regardless of account access.\n\n## Extraction method\n\nThe bundle is minified but not obfuscated: every Angular reactive-form field configuration survives as a literal JavaScript object (e.g. `{name:e.Wd.PURPOSE_OF_VISIT,type:\"select\",validators:[n.kI.required],...}`), and the field-name enum (`Wd`) and section-name enum (`mP`) both survive as literal `U.SOME_KEY=\"someValue\"` assignment chains. Located and bracket-matched (respecting string/escape state) four distinct product field-configuration objects, each keyed by section name (`[e.mP.PERSONAL_DETAILS]`, etc.); the one beginning with `PERSONAL_DETAILS`+`EMERGENCY_CONTACT`+`TRAVEL_INFORMATION`+`DOCUMENT` sections and containing passport issue/expiry dates, arrival/departure dates, and funds-available fields is the one modelled here as the ordinary `zwevisa` product — distinguished from a second, adjacent configuration (personal details + travel information with vehicle/mode-of-travel numbers, an existing-entry-reference field, and a residence-permit-number field, but no advance passport-issue/expiry or arrival/departure dates) that is far more plausibly the physical border-crossing `zweentry` form, and from a third (attestant/extension-reason fields) that is plainly one of the `zwevisaextc`/`zwevisaextab` extension forms. Cross-referenced every field's translation key (`form.*`, 241 keys confirmed, matching the delegating issue's own disclosed count) against the bundle's own embedded, per-language translation object literals (no separate `assets/i18n/*.json` file exists; translations are inlined directly in `main.js`) to recover human-readable labels, taking the first English-language occurrence per key after confirming several samples resolved to genuine English text rather than a stray cross-reference.\n\nThe applicant's document-type (`passportType`) and nationality are set on a separate, shared \"passport-type\" screen (component class confirmed by name) reused across every product, not part of the four-section field-configuration object; its selectable document types are a subset of a shared `PassportType` enum (`ordinary`, `diplomatic`, `marine`, `service`, `laissez-passer`, `identity-card`, `resident-permit`, `refugee`, `permanent-resident-permit`) which are exposed to the applicant, only 5 of which (`ordinary`, `diplomatic`, `service`, `refugee`, `marine`) carry a confirmed English translation anywhere in the bundle — the remaining 4 (`identity-card`, `resident-permit`, `permanent-resident-permit`, `laissez-passer`) have no translation and no other reference in the bundle, and are excluded here as unconfirmed for this product rather than fabricated. Similarly, the applicant's planned port of entry (`plannedEntry`) is set on a dedicated \"travel-name\" screen whose own component code fetches its selectable options at runtime from a separate live API call (`this.api.schema(\"zweentry\")`, reading `properties.ProvisionnalEntryPort.enum`) rather than embedding them statically in this bundle; that live endpoint was not called (it plausibly requires the same account session as the wizard itself, and calling an unfamiliar authenticated-looking endpoint speculatively was judged out of scope for a static bundle re-extraction), so `plannedEntry` is modelled as an open string rather than a fabricated closed enum.\n\n## Disclosed findings\n\n1. **The \"Application reference\" field (`BatchId`/`travelName`, called out in the delegating issue's own field list) is excluded from `fields[]` entirely.** Its own component code (found and read in full) shows it is not applicant-supplied: `this.form.controls.travelName.patchValue(this.cart.currentApplication.travelName||this.cart.getUniqueReference(this.existingTravelNames))` immediately followed by `this.form.controls.travelName.disable()` — the client itself generates a unique reference and disables the control before the applicant ever sees it. It carries a `Validators.required` only because the system always supplies a value, not because a human must type one; modelled here the same way this registry excludes other system/office-assigned identifiers (e.g. ZIMRA's own pre-issuance office box).\n2. **`lastName`, `firstName`, and `otherName` are modelled `required: false`, matching the source's own configuration exactly, despite this being surprising for a visa applicant's own name.** The extracted field objects for these three carry only a name-shape `pattern` validator (`^[A-Za-z\\s\\-]+$`) and no `Validators.required` — confirmed by direct, repeated reading of the raw configuration text, not a parsing artifact. The most plausible explanation (not itself confirmed, disclosed as inference only) is that these fields are ordinarily auto-populated from the passport-scan upload's OCR/MRZ pipeline earlier in the same product family, making a client-side required check redundant in the reference implementation; this schema models the confirmed validator set as-is rather than adding a required flag the source does not carry.\n3. **No field in the Supporting Documents section carries a `Validators.required` (or any `validators` array at all) in the extracted configuration**, unlike every other section, where required fields are explicit. All 14 modelled `documents[]` entries are therefore `required: false`, disclosing this as a genuine, confirmed absence rather than an assumption; the government's own officer-review workflow (found separately in the same bundle) manually inspects and can reject an application short on supporting evidence, rather than the client blocking submission.\n4. **Five generic \"Extra document\" upload slots (`ExtraDocument1`–`ExtraDocument5`) and one further upload field explicitly marked `hidden: true` in its own source configuration (`PreviousVisa`) are excluded from `documents[]`.** The five extra slots carry no semantic label distinguishing one from another (each only progressively reveals the next via `ifFormControlHasValue` chaining) and the sixth is explicitly hidden from the applicant by the source's own flag; none represents a distinct, nameable document requirement.\n5. **`gender`, `maritalStatus`, `fundsAvailableCurrency`, `passportType`, and `modeOfTravel` enum values are modelled using the exact lower-case (and, for `passportType`, hyphenated) string literals the compiled client itself submits** (e.g. `\"male\"`, `\"married\"`, `\"USD\"`, `\"ordinary\"`, `\"flight\"`), rather than this registry's more common upper-cased convention for enums inferred from a printed paper form — because these values were read directly from the live client's own JavaScript enum definitions, not inferred from rendered text, source fidelity is best served by preserving the exact wire values.\n6. **`purposeOfVisit`'s 9-value enum (`business_visa`, `holiday_visa`, `conferencing_visa`, `transit_visa`, `student_visa`, `sports_visa`, `arts_visa`, `live_here`, `other_visa`) includes `live_here` (\"Long-term Resident\"), an option that reads oddly for an advance single-entry tourist/business e-visa product.** Modelled as-is because it is the confirmed, complete set of values referenced by this exact product's own field-configuration object (`durationOfStayDays`'s own `requiredWhen` explicitly exempts this value), not a value borrowed from a different product.\n7. **`durationOfStayDays` is `requiredWhen` the applicant's purpose is anything other than `live_here`** (`{\"not\":{\"field\":\"purposeOfVisit\",\"equals\":\"live_here\"}}`), matching the source's own `ifFormControlHasNotValue` condition exactly.\n8. **The source's own relative-date rules that require date arithmetic beyond simple field-to-field comparison (e.g. a passport must remain valid at least 6 months beyond the arrival date; the applicant must be at least old enough that their passport's issue date follows their birth date) are disclosed in the relevant fields' own `description`, not encoded as `crossFieldValidation`,** since GSP-0013's `fieldCompare` grammar supports only direct value comparison between two fields, not comparison against another field plus a duration offset. The two relationships that do map cleanly to direct comparison (`dateOfIssue` on/after `dateOfBirth`; `departureDate` on/after `arrivalDate`) are modelled as `crossFieldValidation` rules.\n\n## Conformance\n\n3 valid mock scenarios — `valid-holiday-single-applicant` (an unmarried holiday visitor travelling by air, no spouse/companions/prior convictions); `valid-business-visa-with-spouse-and-convictions-disclosed` (a married business applicant travelling with their spouse, declaring a disclosed prior conviction in Zimbabwe, funds in EUR); and `valid-long-term-resident-by-road` (a `live_here` applicant entering by car, exercising `carNumber` and the `durationOfStayDays` exemption) — plus mutation-control fixtures (one missing-required-field fixture for each statically required field, an invalid-enum fixture, and an unknown-field-rejected fixture), committed under `conformance/zw/immigration/evisa-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all fixtures: all 3 valid scenarios at 0 errors, all mutation controls each raising exactly 1 error, and the unknown-field fixture correctly rejected. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "trip_setup",
+      "title": "Planned Entry, Document Type & Nationality",
+      "fields": ["plannedEntry", "passportType", "nationality"],
+      "next": "personal_details"
+    },
+    {
+      "id": "personal_details",
+      "title": "Personal Details",
+      "fields": [
+        "purposeOfVisit", "invitingCompanyName", "otherPurpose", "durationOfStayDays",
+        "lastName", "firstName", "otherName", "dateOfBirth", "placeOfBirthCountry", "placeOfBirthCity",
+        "gender", "maritalStatus", "email", "phone", "occupation", "homeAddress", "hostName", "addressInZimbabwe",
+        "hasSpouse", "spouseFullName", "spousePassportNumber", "spouseDateOfBirth", "spousePlaceOfBirth",
+        "fundsAvailable", "fundsAvailableCurrency"
+      ],
+      "next": "emergency_contact"
+    },
+    {
+      "id": "emergency_contact",
+      "title": "Emergency Contact",
+      "fields": ["emergencyContactLastName", "emergencyContactFirstName", "emergencyContactEmail", "emergencyContactPhone"],
+      "next": "travel_information"
+    },
+    {
+      "id": "travel_information",
+      "title": "Travel Information",
+      "fields": [
+        "modeOfTravel", "flightNumber", "shipNumber", "carNumber", "busNumber", "trainNumber",
+        "passportCountry", "passportNumber", "dateOfIssue", "dateOfExpiry", "placeOfIssue",
+        "arrivalDate", "numberOfCompanions", "departureDate",
+        "hasPreviousConvictionsZimbabwe", "previousConvictionsZimbabweDetails",
+        "hasPreviousConvictionsHomeCountry", "previousConvictionsHomeCountryDetails"
+      ],
+      "next": "document"
+    },
+    {
+      "id": "document",
+      "title": "Supporting Documents"
+    }
+  ],
+  "fields": [
+    {
+      "name": "plannedEntry",
+      "label": "Planned port of entry into Zimbabwe",
+      "type": "string",
+      "required": true,
+      "description": "The source's own \"travel-name\" screen fetches this field's selectable options at runtime from a separate live API call, not embedded statically in the compiled client; modelled as an open string rather than a fabricated closed enum. See this schema's own verification.notes.",
+      "sourceRef": "travel-name screen — form control `plannedEntry` (Wd.PROVISIONAL_ENTRY_PORT)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "passportType",
+      "label": "Document type",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "The 5 values confirmed with an English translation in the bundle, out of a shared 9-value PassportType enum. See this schema's own verification.notes for the 4 excluded, unconfirmed values.",
+      "sourceRef": "passport-type screen — form control `passportType` (metadata.PassportType)",
+      "validation": {
+        "enum": ["ordinary", "diplomatic", "service", "refugee", "marine"]
+      }
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "passport-type screen — form control `nationality` (metadata.Nationality)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "purposeOfVisit",
+      "label": "Purpose of visit",
+      "type": "enum",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 6 for the disclosed inclusion of live_here (\"Long-term Resident\").",
+      "sourceRef": "Personal Details — form control `purposeOfVisit` (Wd.PURPOSE_OF_VISIT / metadata.PurposeOfVisit)",
+      "validation": {
+        "enum": ["holiday_visa", "business_visa", "conferencing_visa", "transit_visa", "student_visa", "sports_visa", "arts_visa", "live_here", "other_visa"]
+      }
+    },
+    {
+      "name": "invitingCompanyName",
+      "label": "Inviting company name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Personal Details — form control `invitingCompanyName` (Wd.INVITING_COMPANY_NAME), shown when purposeOfVisit is business_visa",
+      "validation": { "maxLength": 50 },
+      "requiredWhen": { "field": "purposeOfVisit", "equals": "business_visa" }
+    },
+    {
+      "name": "otherPurpose",
+      "label": "Other purpose (please specify)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Personal Details — form control `otherPurpose` (Wd.OTHER_PURPOSE), shown when purposeOfVisit is other_visa",
+      "validation": { "maxLength": 50 },
+      "requiredWhen": { "field": "purposeOfVisit", "equals": "other_visa" }
+    },
+    {
+      "name": "durationOfStayDays",
+      "label": "Duration of stay (days)",
+      "type": "integer",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 7. Required unless purposeOfVisit is live_here.",
+      "sourceRef": "Personal Details — form control `durationOfStay` (Wd.DURATION_OF_STAY)",
+      "validation": { "minimum": 1, "maximum": 90 },
+      "requiredWhen": { "not": { "field": "purposeOfVisit", "equals": "live_here" } }
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 2 for the disclosed absence of a required validator on this field in the source.",
+      "sourceRef": "Personal Details — form control `lastName` (Wd.LAST_NAME)",
+      "validation": { "pattern": "^[A-Za-z\\s\\-]+$" }
+    },
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 2 for the disclosed absence of a required validator on this field in the source.",
+      "sourceRef": "Personal Details — form control `firstName` (Wd.FIRST_NAME)",
+      "validation": { "pattern": "^[A-Za-z\\s\\-]+$" }
+    },
+    {
+      "name": "otherName",
+      "label": "Other name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Personal Details — form control `otherName` (Wd.OTHER_NAME)",
+      "validation": { "pattern": "^[A-Za-z\\s\\-]+$" }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "The source's own client-side rule also requires this date to be no more than 125 years in the past and on or before dateOfIssue — the latter is modelled as a crossFieldValidation rule; the 125-year bound is a plausibility ceiling rather than a value comparison and is not separately encoded.",
+      "sourceRef": "Personal Details — form control `dateOfBirth` (Wd.BIRTH_DAY)"
+    },
+    {
+      "name": "placeOfBirthCountry",
+      "label": "Country of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal Details — form control `placeOfBirthCountry` (Wd.PLACE_OF_BIRTH_COUNTRY)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "placeOfBirthCity",
+      "label": "City of birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal Details — form control `placeOfBirthCity` (Wd.PLACE_OF_BIRTH_CITY)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "gender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "See this schema's own verification.notes Finding 5 for the source's exact lower-case wire values.",
+      "sourceRef": "Personal Details — form control `gender` (Wd.GENDER)",
+      "validation": {
+        "enum": ["male", "female"]
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital status",
+      "type": "enum",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 5 for the source's exact lower-case wire values.",
+      "sourceRef": "Personal Details — form control `maritalStatus` (Wd.MARITAL_STATUS)",
+      "validation": {
+        "enum": ["single", "married", "separated", "divorced", "widowed"]
+      }
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal Details — form control `email` (Wd.EMAIL)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "phone",
+      "label": "Phone number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Personal Details — form control `phone` (Wd.PHONE)",
+      "validation": { "pattern": "^(?:\\+[1-9]\\d{6,14}|0\\d{6,14})$" }
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Personal Details — form control `occupation` (Wd.OCCUPATION)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "homeAddress",
+      "label": "Home address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Personal Details — form control `homeAddress` (Wd.HOME_ADDRESS)",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "hostName",
+      "label": "Host name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Personal Details — form control `hostName` (Wd.HOST_NAME)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "addressInZimbabwe",
+      "label": "Address in Zimbabwe",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Personal Details — form control `addressZimbabwe` (Wd.ADDRESS_ZIMBABWE)",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "hasSpouse",
+      "label": "Travelling with spouse",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Personal Details — checkbox `spouse` (Wd.SPOUSE)"
+    },
+    {
+      "name": "spouseFullName",
+      "label": "Spouse's full name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Personal Details — form control `spouseName` (Wd.SPOUSE_NAME), shown when hasSpouse is true",
+      "validation": { "pattern": "^[A-Za-z\\s\\-]+$" },
+      "requiredWhen": { "field": "hasSpouse", "equals": true }
+    },
+    {
+      "name": "spousePassportNumber",
+      "label": "Spouse's passport number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "Visible only when hasSpouse is true, but the source's own configuration carries no required validator even then — modelled as unconditionally optional per the confirmed source, not requiredWhen-gated.",
+      "sourceRef": "Personal Details — form control `spousePassportNumber` (Wd.SPOUSE_PASSPORT_NUMBER), shown when hasSpouse is true",
+      "validation": { "maxLength": 50 },
+      "visibleWhen": { "field": "hasSpouse", "equals": true }
+    },
+    {
+      "name": "spouseDateOfBirth",
+      "label": "Spouse's date of birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Personal Details — form control `spouseDateOfBirth` (Wd.SPOUSE_DATE_OF_BIRTH), shown when hasSpouse is true",
+      "requiredWhen": { "field": "hasSpouse", "equals": true }
+    },
+    {
+      "name": "spousePlaceOfBirth",
+      "label": "Spouse's place of birth",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Personal Details — form control `spousePlaceOfBirth` (Wd.SPOUSE_PLACE_OF_BIRTH), shown when hasSpouse is true",
+      "validation": { "maxLength": 150 },
+      "requiredWhen": { "field": "hasSpouse", "equals": true }
+    },
+    {
+      "name": "fundsAvailable",
+      "label": "Funds available at time of entry",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Personal Details — form control `fundsAvailable` (Wd.FUNDS_AVAILABLE)",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "fundsAvailableCurrency",
+      "label": "Currency of funds available",
+      "type": "enum",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 5 for the source's exact wire values.",
+      "sourceRef": "Personal Details — form control `fundsAvailableCurrency` (Wd.FUNDS_AVAILABLE_CURRENCY)",
+      "validation": {
+        "enum": ["USD", "EUR", "GBP"]
+      }
+    },
+    {
+      "name": "emergencyContactLastName",
+      "label": "Emergency contact — last name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Emergency Contact — form control `emergencyLastName` (Wd.EMERGENCY_LAST_NAME)",
+      "validation": { "maxLength": 50, "pattern": "^[A-Za-z\\s\\-]+$" }
+    },
+    {
+      "name": "emergencyContactFirstName",
+      "label": "Emergency contact — first name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Emergency Contact — form control `emergencyFirstName` (Wd.EMERGENCY_FIRST_NAME)",
+      "validation": { "maxLength": 50, "pattern": "^[A-Za-z\\s\\-]+$" }
+    },
+    {
+      "name": "emergencyContactEmail",
+      "label": "Emergency contact — email",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Emergency Contact — form control `emergencyEmail` (Wd.EMERGENCY_EMAIL)",
+      "validation": { "maxLength": 100, "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" }
+    },
+    {
+      "name": "emergencyContactPhone",
+      "label": "Emergency contact — phone",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Emergency Contact — form control `emergencyPhone` (Wd.EMERGENCY_PHONE)",
+      "validation": { "maxLength": 20, "pattern": "^(?:\\+[1-9]\\d{6,14}|0\\d{6,14})$" }
+    },
+    {
+      "name": "modeOfTravel",
+      "label": "Mode of travel",
+      "type": "enum",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 5 for the source's exact lower-case wire values.",
+      "sourceRef": "Travel Information — form control `modeOfTravel` (Wd.MODE_OF_TRAVEL)",
+      "validation": {
+        "enum": ["flight", "ship", "car", "bus", "train"]
+      }
+    },
+    {
+      "name": "flightNumber",
+      "label": "Flight number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Travel Information — form control `flightNumber` (Wd.FLIGHT_NUMBER), shown when modeOfTravel is flight",
+      "validation": { "pattern": "^[A-Za-z0-9\\s\\-]+$" },
+      "requiredWhen": { "field": "modeOfTravel", "equals": "flight" }
+    },
+    {
+      "name": "shipNumber",
+      "label": "Ship number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Travel Information — form control `shipNumber` (Wd.SHIP_NUMBER), shown when modeOfTravel is ship",
+      "validation": { "pattern": "^[A-Za-z0-9\\s\\-]+$" },
+      "requiredWhen": { "field": "modeOfTravel", "equals": "ship" }
+    },
+    {
+      "name": "carNumber",
+      "label": "Car registration number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Travel Information — form control `carNumber` (Wd.CAR_NUMBER), shown when modeOfTravel is car",
+      "validation": { "pattern": "^[A-Za-z0-9\\s\\-]+$" },
+      "requiredWhen": { "field": "modeOfTravel", "equals": "car" }
+    },
+    {
+      "name": "busNumber",
+      "label": "Bus number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Travel Information — form control `busNumber` (Wd.BUS_NUMBER), shown when modeOfTravel is bus",
+      "validation": { "pattern": "^[A-Za-z0-9\\s\\-]+$" },
+      "requiredWhen": { "field": "modeOfTravel", "equals": "bus" }
+    },
+    {
+      "name": "trainNumber",
+      "label": "Train number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Travel Information — form control `trainNumber` (Wd.TRAIN_NUMBER), shown when modeOfTravel is train",
+      "validation": { "pattern": "^[A-Za-z0-9\\s\\-]+$" },
+      "requiredWhen": { "field": "modeOfTravel", "equals": "train" }
+    },
+    {
+      "name": "passportCountry",
+      "label": "Country issuing passport",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Travel Information — form control `passportCountry` (Wd.PASSPORT_COUNTRY)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Travel Information — form control `passportNumber` (Wd.PASSPORT_NUMBER)",
+      "validation": { "pattern": "^[A-Z0-9]+$" }
+    },
+    {
+      "name": "dateOfIssue",
+      "label": "Passport date of issue",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Travel Information — form control `dateOfIssue` (Wd.DATE_OF_ISSUE)"
+    },
+    {
+      "name": "dateOfExpiry",
+      "label": "Passport date of expiry",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "See this schema's own verification.notes Finding 8: the source's own client also requires this date to remain valid at least 6 months beyond arrivalDate, a duration-offset rule not expressible via this spec's direct field-to-field crossFieldValidation comparison.",
+      "sourceRef": "Travel Information — form control `dateOfExpiry` (Wd.DATE_OF_EXPIRY)"
+    },
+    {
+      "name": "placeOfIssue",
+      "label": "Place of issue",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Travel Information — form control `placeOfIssue` (Wd.PLACE_OF_ISSUE)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "arrivalDate",
+      "label": "Arrival date",
+      "type": "date",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 8 for the source's own additional duration-offset rule relative to dateOfExpiry, not separately encoded.",
+      "sourceRef": "Travel Information — form control `arrivalDate` (Wd.ARRIVAL_DATE)"
+    },
+    {
+      "name": "numberOfCompanions",
+      "label": "Number of travel companions",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Travel Information — form control `companionsSize` (Wd.COMPANIONS_SIZE)",
+      "validation": { "minimum": 0, "maximum": 100 }
+    },
+    {
+      "name": "departureDate",
+      "label": "Departure date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Travel Information — form control `departureDate` (Wd.DEPARTURE_DATE)"
+    },
+    {
+      "name": "hasPreviousConvictionsZimbabwe",
+      "label": "Previous conviction(s) in Zimbabwe",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Travel Information — form control `previousConvictionsZimAsk` (Wd.PREVIOUS_CONVICTIONS_ZIM_ASK)"
+    },
+    {
+      "name": "previousConvictionsZimbabweDetails",
+      "label": "Details of previous conviction(s) in Zimbabwe",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Travel Information — form control `previousConvictionsZim` (Wd.PREVIOUS_CONVICTIONS_ZIM), shown when hasPreviousConvictionsZimbabwe is true",
+      "requiredWhen": { "field": "hasPreviousConvictionsZimbabwe", "equals": true }
+    },
+    {
+      "name": "hasPreviousConvictionsHomeCountry",
+      "label": "Previous conviction(s) in home country",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Travel Information — form control `previousConvictionsHomeAsk` (Wd.PREVIOUS_CONVICTIONS_HOME_ASK)"
+    },
+    {
+      "name": "previousConvictionsHomeCountryDetails",
+      "label": "Details of previous conviction(s) in home country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Travel Information — form control `previousConvictionsHome` (Wd.PREVIOUS_CONVICTIONS_HOME), shown when hasPreviousConvictionsHomeCountry is true",
+      "requiredWhen": { "field": "hasPreviousConvictionsHomeCountry", "equals": true }
+    }
+  ],
+  "crossFieldValidation": [
+    {
+      "id": "passportIssuedAfterBirth",
+      "compare": { "field": "dateOfIssue", "operator": "greaterThanOrEqual", "compareTo": "dateOfBirth" }
+    },
+    {
+      "id": "departureNotBeforeArrival",
+      "compare": { "field": "departureDate", "operator": "greaterThanOrEqual", "compareTo": "arrivalDate" }
+    }
+  ],
+  "documents": [
+    {
+      "id": "passportPhoto",
+      "label": "Recent face photo",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Supporting Documents — upload `passportPhoto` (Wd.PASSPORT_PHOTO). See this schema's own verification.notes Finding 3 for the disclosed absence of a required validator on any document in this section.",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    },
+    {
+      "id": "passportBioDataScan",
+      "label": "Passport bio data page",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Supporting Documents — upload `passportScan` (Wd.PASSPORT_SCAN)",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    },
+    {
+      "id": "hostResidenceBooking",
+      "label": "Host's residence/booking (signed)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Supporting Documents — upload `proofOfResidenceHost` (Wd.PROOF_OF_RESIDENCE_HOST)",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    },
+    {
+      "id": "addressAtDestination",
+      "label": "Address at destination",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Supporting Documents — upload `addressAtDestination` (Wd.ADDRESS_AT_DESTINATION)",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    },
+    {
+      "id": "previousZimbabweanVisa",
+      "label": "Previous Zimbabwean visa",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Supporting Documents — upload `previousZimbabweanVisa` (Wd.PREVIOUS_ZIMBABWEAN_VISA)",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    },
+    {
+      "id": "hostInvitationLetter",
+      "label": "Host invitation letter",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Supporting Documents — upload `hostInvitationLetter` (Wd.HOST_INVITATION_LETTER)",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    },
+    {
+      "id": "proofOfResidence",
+      "label": "Proof of residence",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Supporting Documents — upload `proofOfResidence` (Wd.PROOF_OF_RESIDENCE)",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    },
+    {
+      "id": "applicationLetter",
+      "label": "Application letter",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Supporting Documents — upload `applicationLetter` (Wd.APPLICATION_LETTER)",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    },
+    {
+      "id": "residentialStatusOfHost",
+      "label": "Residential status of host",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "other",
+      "sourceRef": "Supporting Documents — upload `residentialStatusOfHost` (Wd.RESIDENTIAL_STATUS_OF_HOST)",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    },
+    {
+      "id": "reasonOfVisitProof",
+      "label": "Reason of visit proof",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Supporting Documents — upload `reasonOfVisitProof` (Wd.REASON_OF_VISIT_PROOF)",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    },
+    {
+      "id": "businessLetter",
+      "label": "Business letter/Individual letter",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Supporting Documents — upload `businessLetter` (Wd.BUSINESS_LETTER)",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    },
+    {
+      "id": "businessProfile",
+      "label": "Business profile",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Supporting Documents — upload `businessProfile` (Wd.BUSINESS_PROFILE)",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    },
+    {
+      "id": "invitationLetterAndHostDocuments",
+      "label": "Invitation letter and host company documents (signed)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Supporting Documents — upload `invitationLetterAndBusinessProfile` (Wd.INVITATION_LETTER_AND_BUSINESS_PROFILE)",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    },
+    {
+      "id": "schoolAcceptanceLetter",
+      "label": "Confirmation letter (letter of acceptance from school)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Supporting Documents — upload `letterOfAcceptanceFromSchool` (Wd.LETTER_OF_ACCEPTANCE_FROM_SCHOOL)",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    },
+    {
+      "id": "invitationLetter",
+      "label": "Invitation letter",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Supporting Documents — upload `invitationLetter` (Wd.INVITATION_LETTER)",
+      "constraints": { "maxBytes": 1000000, "mediaTypes": ["image/png", "image/jpeg", "application/pdf"] }
+    }
+  ]
+}

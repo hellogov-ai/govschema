@@ -4,7 +4,33 @@
 
 ## Executive Summary
 
-**87 jurisdictions** | **618 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**87 jurisdictions** | **619 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4481, "GovSchema Standard Research"): Zimbabwe's
+> Visa vertical opens (4 of 6)**, via
+> `zw/immigration/evisa-application@1.0.0` — the Department of Immigration's
+> online e-visa portal (evisa.gov.zw), ordinary single-entry product
+> (`zwevisa`). The portal is an Angular SPA whose entire compiled client
+> ships unauthenticated; this schema was authored by statically
+> re-extracting the compiled bundle's own field-configuration object
+> (fields, validators, and conditional-visibility rules all survive as
+> literal JavaScript in the minified-but-not-obfuscated `main.js`) after
+> confirming interactively that the wizard itself requires an
+> email-verified account to reach. Models the ordinary e-visa's four form
+> sections (Personal Details, Emergency Contact, Travel Information,
+> Supporting Documents) plus its two lead screens (Planned Entry, Document
+> Type & Nationality); excludes the portal's other eight product types
+> (double/multiple/KAZA/arrival/entry/exit/provisional-residence-permit/
+> extension visas), a system-generated application-reference field the
+> client auto-fills and disables before the applicant ever sees it, and
+> several generic/hidden upload slots — see the schema's own
+> `verification.notes` for 8 disclosed findings. This also corrects the
+> Visa vertical's own denominator, stale since Bolivia (GOV-4460, 86th
+> jurisdiction) and Zimbabwe (GOV-4470, 87th jurisdiction) each opened via
+> Taxes without this section's own denominator being bumped at the time;
+> numerator moves from 68/85 to 69/87. Zimbabwe's remaining two verticals
+> (DMV, National ID) are unscouted by this cycle and remain open backlog
+> for a future cycle.
 
 > **Update (2026-07-23, GOV-4480, "GovSchema Standard Research"): Zimbabwe
 > advances to Passport (3 of 6)**, via `zw/rg/passport-application@1.0.0` —
@@ -18982,7 +19008,15 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (68/85 jurisdictions — 80%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (69/87 jurisdictions — 79%)
+
+> **Update (2026-07-23, GOV-4481, "GovSchema Standard Research"): Zimbabwe's
+> Visa vertical opens**, via `zw/immigration/evisa-application` — see the
+> Executive Summary update above for the full sourcing record. This also
+> corrects the denominator: Bolivia (GOV-4460, 86th jurisdiction) and
+> Zimbabwe (GOV-4470, 87th jurisdiction) each opened via a non-Visa vertical
+> without this section's own denominator being bumped at the time;
+> numerator moves from 68/85 to 69/87.
 
 > **Update (2026-07-23, GOV-4451, "GovSchema Standard Research"): Paraguay's
 > Visa vertical opens**, via `py/mre/visa-application` — see the Executive
@@ -20576,7 +20610,7 @@ now closed.
 | **VN** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZM** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
-| **ZW** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **ZW** | 4 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
 
 "Schemas (top-level dirs)" counts distinct `<agency>/<process-name>` entries
 under `registry/<jurisdiction>/`, not every version/edition. US is
