@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**86 jurisdictions** | **615 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**87 jurisdictions** | **616 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4470, "GovSchema Standard Research"): Zimbabwe
+> opens as the registry's 87th jurisdiction, via Taxes (1 of 6)**, via
+> `zw/zimra/itf1-employment-income-return@1.0.0` — the Zimbabwe Revenue
+> Authority's (ZIMRA) Form ITF 1, "Return of employment income by an
+> individual for the year ended 31st December". Banked as a pre-scouted
+> STRONG backup candidate during the prior GOV-4458 cycle (which instead
+> authored Bolivia's Formulario 200 IVA); this cycle independently
+> re-fetched and re-hashed the PDF directly from `zimra.co.zw` (no
+> login/CAPTCHA/WAF gate, byte-for-byte matching the banked size) rather
+> than trusting the delegating issue's own paraphrase at face value — the
+> issue's own field list omitted two genuine sections (the form's
+> "Spouse's address"/"Name and address of spouse's employer" fields, and
+> its "C. Blind person's credit" subsection), both caught by this cycle's
+> own independent re-extraction and disclosed as findings rather than
+> silently reconciled. Table row/column structure (Employment history,
+> P.A.Y.E.-deducted, Disabled Person's Credit, Bank Accounts, Rent Paid)
+> was confirmed by rendering each page to an image via `pdfjs-dist` +
+> `node-canvas` and counting printed gridlines, since this PDF's embedded
+> font subsets did not render body-text glyphs through the canvas backend
+> (the text layer itself extracted cleanly regardless). See the Taxes
+> vertical update below and the document's own VERIFICATION.md for the
+> full scope record, including 8 disclosed findings. Zimbabwe's other five
+> verticals (DMV, Business Formation, Visa, Passport, National ID) are
+> unscouted and remain open backlog for a future cycle.
 
 > **Update (2026-07-23, GOV-4460, "GovSchema Standard Research"): Bolivia
 > opens as the registry's 86th jurisdiction, via Taxes (1 of 6)**, via
@@ -16950,7 +16975,14 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (72/86 jurisdictions — 84%)
+### Taxes — Income Tax Return, Tax Filing (73/87 jurisdictions — 84%)
+
+> **Update (2026-07-23, GOV-4470, "GovSchema Standard Research"): Zimbabwe
+> opens as the registry's 87th jurisdiction via this vertical (1/6)**, via
+> `zw/zimra/itf1-employment-income-return@1.0.0` — ZIMRA's Form ITF 1,
+> "Return of employment income by an individual for the year ended 31st
+> December" — see the Executive Summary update above for the full sourcing
+> record and the document's own VERIFICATION.md.
 
 > **Update (2026-07-23, GOV-4460, "GovSchema Standard Research"): Bolivia
 > opens as the registry's 86th jurisdiction via this vertical (1/6)**, via
@@ -20459,6 +20491,7 @@ now closed.
 | **VN** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZM** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **ZW** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 
 "Schemas (top-level dirs)" counts distinct `<agency>/<process-name>` entries
 under `registry/<jurisdiction>/`, not every version/edition. US is
