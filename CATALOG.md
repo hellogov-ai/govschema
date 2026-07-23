@@ -4,7 +4,29 @@
 
 ## Executive Summary
 
-**92 jurisdictions** | **637 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**92 jurisdictions** | **638 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4617, "GovSchema Standard Research"): Mauritius's
+> Visa vertical opens (3 of 6 for the jurisdiction)**, via
+> `mu/pio/visa-application@1.0.0` — the Passport and Immigration Office's
+> bilingual "Application for a Visa for Mauritius / Demande de Visa pour
+> Maurice", fetched directly and unauthenticated from `passport.govmu.org`
+> (296,537 bytes, sha256
+> `44510201619e427ee1a20237fca13486fa8de1b8c73180e46eb303a54144d7de` — an
+> exact byte-for-byte match to the figure GOV-4603 banked for this
+> candidate). Picked up from GOV-4603's/GOV-4610's own banked Known Gaps
+> entry 0n. A flat, image-only single-page scan (no text layer, no AcroForm
+> annotations) rendered to PNG at both 2.5x and 4x/6x-scale crops and read
+> visually. Models 30 `fields[]` across 5 steps, plus 1 `documents[]` entry
+> (two photographs, per the form's own top-right corner instruction). The
+> source carries no asterisk/mandatory-marking convention, so requiredness
+> was assigned by engineering judgment — see the document's own
+> VERIFICATION.md for every disclosed scoping/judgment call (an ungated
+> Residence Permit section and `maidenName`, a free-text `travelDocumentType`
+> and `financialMeansCurrency`, an optional `flightNumber`). Business
+> Formation remains Mauritius's only open, STRONG banked backlog item (see
+> the Known Gaps update below). See the Visa vertical update below and the
+> document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-23, GOV-4610, "GovSchema Standard Research"): Mauritius's
 > DMV vertical opens (2 of 6 for the jurisdiction)**, via
@@ -19702,7 +19724,28 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (72/91 jurisdictions — 79%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (73/92 jurisdictions — 79%)
+
+> **Update (2026-07-23, GOV-4617, "GovSchema Standard Research"): Mauritius's
+> Visa vertical opens (3 of 6 for the jurisdiction)**, via
+> `mu/pio/visa-application@1.0.0` — the Passport and Immigration Office's
+> bilingual "Application for a Visa for Mauritius / Demande de Visa pour
+> Maurice", fetched directly and unauthenticated from `passport.govmu.org`
+> (296,537 bytes, sha256
+> `44510201619e427ee1a20237fca13486fa8de1b8c73180e46eb303a54144d7de`), a
+> flat image-only single-page scan rendered to PNG and read visually since
+> it carries neither a text layer nor AcroForm annotations. Models 30
+> `fields[]` across 5 steps, plus 1 `documents[]` entry (two photographs).
+> The source has no asterisk/mandatory-marking convention, so requiredness
+> was assigned by engineering judgment: an ungated Residence Permit section
+> and `maidenName` (each explicitly conditional in its own printed heading
+> but with no discriminator field to gate on), a free-text
+> `travelDocumentType` and `financialMeansCurrency` (the form prints no
+> enumerated options for either), and an optional `flightNumber` (not
+> always known before a flight is booked). See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed scoping
+> call. Business Formation remains Mauritius's only open, STRONG banked
+> backlog item.
 
 > **Update (2026-07-23, GOV-4596, "GovSchema Standard Research"): Trinidad
 > and Tobago's Visa vertical opens (5 of 6)**, via `tt/imd/visa-application@1.0.0`
@@ -22420,7 +22463,8 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 0n. **Mauritius opened as a new jurisdiction (GOV-4603, 2026-07-23), with
     three further verticals banked as open, STRONG backlog; Guatemala
     re-scouted and found weak. Update (GOV-4610, 2026-07-23): DMV now
-    authored, Business Formation and Visa remain banked:**
+    authored. Update (GOV-4617, 2026-07-23): Visa now authored, Business
+    Formation remains banked:**
     - **Mauritius** — re-scouted this cycle as one of two runner-up
       new-jurisdiction candidates from Trinidad and Tobago's own GOV-4568
       scouting pass (the other being Guatemala, below), not previously
@@ -22463,13 +22507,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       `passport.govmu.org/passport/?mdocs-file=712` (296,537 bytes) —
       note a sibling link on the same site (`?mdocs-file=887`) is a red
       herring, a 36-page Occupation/Residence Permit guideline rather than
-      a form. Taxes (MRA's individual-return filing is mandatory via a
+      a form. **Update (GOV-4617, 2026-07-23): now authored** as
+      `mu/pio/visa-application@1.0.0` — see the Executive Summary and Visa
+      vertical updates above. **Opens Mauritius's Visa vertical (3/6).** A
+      re-fetch this cycle returned the same 296,537 bytes (sha256
+      `44510201619e427ee1a20237fca13486fa8de1b8c73180e46eb303a54144d7de`),
+      an exact match to the figure banked above. Taxes (MRA's
+      individual-return filing is mandatory via a
       login-gated e-filing portal, with only a "how to fill in your
       return" notes PDF surviving unauthenticated) and National ID (the
       National Identity Card Unit's own site has no standard first-issue
       NIC application form, only a narrow home-visit-registration form for
-      bedridden citizens) are confirmed dead ends. Business Formation and
-      Visa remain open, STRONG banked backlog for future cycles.
+      bedridden citizens) are confirmed dead ends. Business Formation
+      remains open, STRONG banked backlog for a future cycle.
     - **Guatemala** — re-scouted in the same cycle, found weak: **Business
       Formation** is STRONG (the Registro Mercantil's own live,
       unauthenticated multi-section web form at

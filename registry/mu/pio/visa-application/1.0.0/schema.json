@@ -1,0 +1,120 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "mu/pio/visa-application",
+  "version": "1.0.0",
+  "title": "Mauritius Application for a Visa for Mauritius / Demande de Visa pour Maurice",
+  "description": "The Passport and Immigration Office's bilingual (English/French) \"Application for a Visa for Mauritius / Demande de Visa pour Maurice\", distributed directly and unauthenticated from the Office's own domain as a single-page image-only PDF. Picked up from GOV-4603's/GOV-4610's own banked Known Gaps candidate (GOV-4617, \"GovSchema Standard Research\"): Mauritius was opened as the registry's 92nd jurisdiction via Passport (GOV-4603), with Business Formation and Visa banked as further STRONG open backlog; this schema authors Visa. Opens Mauritius's Visa vertical (3/6) — Business Formation remains open, STRONG banked backlog. This schema does not submit the application itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Mauritius or its Passport and Immigration Office.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MU",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Passport and Immigration Office",
+    "abbreviation": "PIO",
+    "url": "https://passport.govmu.org/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://passport.govmu.org/passport/?mdocs-file=712",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "APPLICATION FOR A VISA FOR MAURITIUS / DEMANDE DE VISA POUR MAURICE"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "See VERIFICATION.md for the full write-up: source fetch/hash, extraction method, document structure, and scoping judgment calls (unmarked required/optional convention, ungated conditional sections)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "personal_particulars",
+      "title": "Personal Particulars",
+      "fields": ["title", "surname", "firstNames", "maidenName", "dateOfBirth", "profession", "countryOfBirth", "nationality", "permanentAddress", "permanentTelephoneNumber", "faxNumber", "emailAddress"],
+      "next": "residence_permit"
+    },
+    {
+      "id": "residence_permit",
+      "title": "Particulars of Residence Permit",
+      "fields": ["residencePermitDateOfIssue", "residencePermitDateOfExpiry"],
+      "next": "travel_document"
+    },
+    {
+      "id": "travel_document",
+      "title": "Particulars of Passport or Other Travel Document",
+      "fields": ["travelDocumentType", "travelDocumentNumber", "travelDocumentCountryOfIssue", "travelDocumentDateOfIssue", "travelDocumentDateOfExpiry"],
+      "next": "particulars_of_visit"
+    },
+    {
+      "id": "particulars_of_visit",
+      "title": "Particulars of Visit",
+      "fields": ["purposeOfVisit", "durationOfStay", "hasTransitEntryPermit", "expectedDateOfTravel", "flightNumber", "addressInMauritius", "mauritiusTelephoneNumber", "financialMeansAmount", "financialMeansCurrency"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": ["declarationDate", "declarationSignature"]
+    }
+  ],
+  "fields": [
+    { "name": "title", "label": "Title", "type": "enum", "required": true, "sourceRef": "Personal Particulars — \"Title (Mr. Mrs. Miss) / Titre (M. Mme Mlle)\"", "validation": { "enum": ["MR", "MRS", "MISS"] } },
+    { "name": "surname", "label": "Surname", "type": "string", "required": true, "classification": "pii", "sourceRef": "Personal Particulars — \"Surname / Nom de Famille\"" },
+    { "name": "firstNames", "label": "First Name(s)", "type": "string", "required": true, "classification": "pii", "sourceRef": "Personal Particulars — \"First Name (s) / Prénom (s)\"" },
+    { "name": "maidenName", "label": "Maiden Name", "type": "string", "required": false, "classification": "pii", "description": "Applicable to married women, per the form's own printed label. This form carries no marital-status or sex field to gate this on (unlike mu/pio/passport-application's own maritalStatus field), so it is left unconditioned to match the source's own layout.", "sourceRef": "Personal Particulars — \"Maiden Name / Nom de Jeune Fille\"" },
+    { "name": "dateOfBirth", "label": "Date of Birth", "type": "date", "required": true, "classification": "sensitive-pii", "sourceRef": "Personal Particulars — \"Date of Birth / Date de Naissance\" (segmented D J M M Y A box grid)" },
+    { "name": "profession", "label": "Profession", "type": "string", "required": true, "sourceRef": "Personal Particulars — \"Profession\" (same row as Date of Birth)" },
+    { "name": "countryOfBirth", "label": "Country of Birth", "type": "string", "required": true, "sourceRef": "Personal Particulars — \"Country of Birth / Pays de Naissance\"" },
+    { "name": "nationality", "label": "Nationality", "type": "string", "required": true, "classification": "sensitive-pii", "sourceRef": "Personal Particulars — \"Nationality / Nationalité\" (same row as Country of Birth)" },
+    { "name": "permanentAddress", "label": "Permanent Address", "type": "string", "required": true, "classification": "pii", "description": "The source prints this as a two-row box grid (a continuation line beneath the labelled row); modelled here as one field matching the address's own single logical value.", "sourceRef": "Personal Particulars — \"Permanent Address / Adresse Permanente\"" },
+    { "name": "permanentTelephoneNumber", "label": "Telephone Number (Permanent Address)", "type": "string", "required": false, "classification": "pii", "description": "Distinct from the second telephone-number field collected later under Particulars of Visit for the Mauritius address.", "sourceRef": "Personal Particulars — \"☎ Tel.\" (row beneath Permanent Address)" },
+    { "name": "faxNumber", "label": "Fax Number", "type": "string", "required": false, "sourceRef": "Personal Particulars — \"Fax Number / Numéro de Fax\"" },
+    { "name": "emailAddress", "label": "E-mail", "type": "string", "required": false, "classification": "pii", "sourceRef": "Personal Particulars — \"E-mail\" (same row as Fax Number)" },
+    { "name": "residencePermitDateOfIssue", "label": "Residence Permit: Date of Issue", "type": "date", "required": false, "description": "Applicable only for a person not residing in his/her country of origin, per this section's own printed heading; the form provides no separate yes/no discriminator field to gate on, so this section is left unconditioned to match the source's own layout.", "sourceRef": "Particulars of Residence Permit (For person not residing in his/her country of origin) — \"Date of Issue / Date de Délivrance\" (segmented D J M M Y A box grid)" },
+    { "name": "residencePermitDateOfExpiry", "label": "Residence Permit: Date of Expiry", "type": "date", "required": false, "description": "Same conditional applicability as residencePermitDateOfIssue.", "sourceRef": "Particulars of Residence Permit — \"Date of Expiry / Date d'Expiration\" (segmented D J M M Y A box grid)" },
+    { "name": "travelDocumentType", "label": "Type of Document", "type": "string", "required": true, "description": "Free-text box grid with no printed options (e.g. \"Passport\"), unlike an enumerated checkbox list.", "sourceRef": "Particulars of Passport or Other Travel Document / Details du Passeport ou Autre Document de Voyage — \"Type of Document / Type de Document\"" },
+    { "name": "travelDocumentNumber", "label": "Document Number", "type": "string", "required": true, "classification": "sensitive-pii", "sourceRef": "Particulars of Passport or Other Travel Document — \"Number / Numéro\"" },
+    { "name": "travelDocumentCountryOfIssue", "label": "Country of Issue", "type": "string", "required": true, "sourceRef": "Particulars of Passport or Other Travel Document — \"Country of Issue / Pays de Délivrance\"" },
+    { "name": "travelDocumentDateOfIssue", "label": "Document: Date of Issue", "type": "date", "required": true, "sourceRef": "Particulars of Passport or Other Travel Document — \"Date of Issue / Date de Délivrance\" (segmented D J M M Y A box grid)" },
+    { "name": "travelDocumentDateOfExpiry", "label": "Document: Date of Expiry", "type": "date", "required": true, "sourceRef": "Particulars of Passport or Other Travel Document — \"Date of Expiry / Date d'Expiration\" (segmented D J M M Y A box grid)" },
+    { "name": "purposeOfVisit", "label": "Purpose of Visit", "type": "string", "required": true, "description": "Free-text box grid with no printed options.", "sourceRef": "Particulars of Visit / Details Concernant la Visite — \"Purpose of Visit / Motif de la Visite\"" },
+    { "name": "durationOfStay", "label": "Duration of Stay", "type": "string", "required": true, "description": "The source provides a short box grid with no printed unit (e.g. days vs. months); modelled as free text rather than asserting a unit the form does not itself state.", "sourceRef": "Particulars of Visit — \"Duration of Stay / Durée du Séjour\"" },
+    { "name": "hasTransitEntryPermit", "label": "In the Case of Transit, Do You Have a Permit to Enter the Country of Your Final Destination?", "type": "boolean", "required": false, "description": "Applicable only where the purpose of visit is transit; the form's purposeOfVisit field is free text rather than an enumerated/checkbox field, so there is no structured value to gate this on, and it is left unconditioned to match the source's own layout.", "sourceRef": "Particulars of Visit — \"In the case of transit, do you have a permit to enter the country of your final destination? Yes [ ] No [ ]\"" },
+    { "name": "expectedDateOfTravel", "label": "Expected Date of Travel", "type": "date", "required": true, "description": "This box grid carries visual day/month/year grouping dividers but, unlike the form's other date fields, no printed D/J/M/M/Y/A letter labels.", "sourceRef": "Particulars of Visit — \"Expected Date of Travel\"" },
+    { "name": "flightNumber", "label": "Flight Number", "type": "string", "required": false, "description": "Not always known at the time of application (e.g. before a flight is booked); the form does not mark this conditional, but it is modelled as optional given its dependence on a booking that may postdate the application.", "sourceRef": "Particulars of Visit — \"Flight No. / No. de Vol\" (same row as Expected Date of Travel)" },
+    { "name": "addressInMauritius", "label": "Address in Mauritius", "type": "string", "required": true, "classification": "pii", "description": "The source prints this as a two-row box grid (a continuation line beneath the labelled row); modelled here as one field matching the address's own single logical value.", "sourceRef": "Particulars of Visit — \"Address in Mauritius / Adresse à Maurice\"" },
+    { "name": "mauritiusTelephoneNumber", "label": "Telephone Number (Address in Mauritius)", "type": "string", "required": false, "classification": "pii", "description": "Distinct from the earlier permanentTelephoneNumber field collected under Personal Particulars.", "sourceRef": "Particulars of Visit — \"☎ Tel.\" (row beneath Address in Mauritius)" },
+    { "name": "financialMeansAmount", "label": "Financial Means for Your Upkeep During Your Stay", "type": "number", "required": true, "sourceRef": "Particulars of Visit — \"Financial Means for your Upkeep during your Stay / Moyens Financiers couvrant votre Dépenses durant votre Séjour\"", "validation": { "minimum": 0 } },
+    { "name": "financialMeansCurrency", "label": "Indicate Currency", "type": "string", "required": true, "description": "Free-text box grid with no printed currency options (unlike some other registry forms' fixed-currency checkbox lists).", "sourceRef": "Particulars of Visit — \"Indicate Currency / Indiquez la Devise\" (same row as Financial Means)" },
+    { "name": "declarationDate", "label": "Date", "type": "date", "required": true, "sourceRef": "Declaration — \"Date\" (segmented D J M M Y A box grid)" },
+    { "name": "declarationSignature", "label": "Signature", "type": "string", "required": true, "classification": "pii", "sourceRef": "Declaration — \"Signature\"" }
+  ],
+  "documents": [
+    {
+      "id": "passportPhotographs",
+      "label": "Two Recent Photographs",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Top-right corner box — \"TO SUBMIT TWO PHOTOS. / A SOUMETTRE DEUX PHOTOS.\""
+    }
+  ]
+}
