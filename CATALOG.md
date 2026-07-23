@@ -4,7 +4,25 @@
 
 ## Executive Summary
 
-**90 jurisdictions** | **627 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**90 jurisdictions** | **628 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4547, "GovSchema Standard Research"): Côte
+> d'Ivoire's Taxes vertical opens (2 of 6)**, via
+> `ci/dgi/microenterprise-tax-declaration@1.0.0` — the Direction Générale des
+> Impôts' (DGI) "Déclaration d'impôt des microentreprises" (Articles 71 bis
+> et suivants du Code Général des Impôts), for taxpayers whose annual
+> turnover falls between 50,000,001 and 200,000,000 CFA francs. Picked up
+> from Known Gaps entry 0l's own banked candidate left open by the GOV-4539
+> cycle below. Models 60 `fields[]` across 6 steps, including a
+> `paymentMethod` (bank cheque/postal cheque/cash) discriminator gating four
+> further payment-detail fields via GSP-0013's `in` operator, a bounded
+> 4-slot supplier-purchases table, and a taxpayer account number (N° C/C)
+> pattern independently corroborated against Côte d'Ivoire's own published
+> NCC format (7 digits plus a letter). Business Formation and Passport
+> remain open, STRONG banked backlog for a future cycle (see Known Gaps
+> entry 0l); DMV and National ID & Civic Documents remain confirmed
+> dead-end/weak. See the Taxes vertical update below and the document's own
+> VERIFICATION.md for the full scope record and 10 disclosed findings.
 
 > **Update (2026-07-23, GOV-4539, "GovSchema Standard Research"): Côte
 > d'Ivoire opens as the registry's 90th jurisdiction**, via
@@ -17375,7 +17393,17 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (75/89 jurisdictions — 84%)
+### Taxes — Income Tax Return, Tax Filing (76/90 jurisdictions — 84%)
+
+> **Update (2026-07-23, GOV-4547, "GovSchema Standard Research"): Côte
+> d'Ivoire's Taxes vertical opens (2 of 6 for the jurisdiction)**, via
+> `ci/dgi/microenterprise-tax-declaration@1.0.0` — the Direction Générale des
+> Impôts' (DGI) "Déclaration d'impôt des microentreprises" — see the
+> Executive Summary update above for the full sourcing record and the
+> document's own VERIFICATION.md. This vertical's own denominator moves from
+> 89 to 90 (Côte d'Ivoire had not yet been reached for Taxes specifically —
+> it was scouted across all 6 verticals during the GOV-4539 cycle but only
+> Visa was authored then).
 
 > **Update (2026-07-23, GOV-4490, "GovSchema Standard Research"): Tajikistan
 > opens as the registry's 88th jurisdiction via this vertical (1/6)**, via
@@ -20887,7 +20915,7 @@ now closed.
 | **BW** | 4 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 14 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **CI** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
+| **CI** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CY** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
@@ -21803,8 +21831,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       only informationally with no attached form) — not re-checked this
       cycle.
 0l. **Côte d'Ivoire scouted fresh as a brand-new jurisdiction (GOV-4539,
-    2026-07-23), opened via Visa; Business Formation, Taxes, and Passport
-    left as STRONG open backlog:**
+    2026-07-23), opened via Visa; Taxes now also authored (GOV-4547,
+    2026-07-23); Business Formation and Passport remain STRONG open
+    backlog:**
     - **Visa**: the Ministère de l'Intérieur/Direction de la Surveillance du
       Territoire's (DST) bilingual "Formulaire de demande de
       Visa/Application for Visa", mirrored unauthenticated by the Abidjan
@@ -21829,7 +21858,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     - **Taxes**: DGI's micro-enterprise income-tax declaration
       (`11_DECLARATION_DE_LIMPOT_DES_MICROENTREPRISES.pdf`, HTTP 200,
       245,929 bytes, unauthenticated) is a real, ready-to-author candidate.
-      Left as open backlog since Visa was chosen for this cycle.
+      Left as open backlog since Visa was chosen for this cycle. **Update
+      (GOV-4547, 2026-07-23): now authored** as
+      `ci/dgi/microenterprise-tax-declaration@1.0.0` — see the Executive
+      Summary and Taxes vertical updates above. Opens Côte d'Ivoire's Taxes
+      vertical (2/6); Business Formation and Passport remain open, STRONG
+      banked backlog for a future cycle (unchanged from this item's own
+      GOV-4539 findings below).
     - **Passport**: the same `snedai.com` mirror also carries
       `formulaire_passeport.pdf` (HTTP 200, 69,840 bytes, unauthenticated),
       independently re-verified this cycle. Left as open backlog since
