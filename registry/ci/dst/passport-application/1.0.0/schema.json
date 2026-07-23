@@ -1,0 +1,538 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ci/dst/passport-application",
+  "version": "1.0.0",
+  "title": "Côte d'Ivoire Ordinary Passport Application (Filed Abroad)",
+  "description": "The Ministry of Security's (Ministère de la Sécurité) \"Formulaire de demande de passeport ordinaire à l'étranger\" (Application for an ordinary passport, filed abroad), processed by the Direction de la Surveillance du Territoire's (DST) Sous-Direction de la Police de l'Air et des Frontières (border police), used by an Ivorian national residing abroad to apply for a first-time or replacement ordinary passport. Opens Côte d'Ivoire's Passport vertical (3 of 6 verticals). This schema models the applicant's own biographic particulars (name, date/place/country of birth, sex, marital status, height, occupation, distinguishing marks, prior passport and national-identity-document numbers), the applicant's geographic address and phone contact, the applicant's parents' particulars, the applicant's spouse's particulars and marriage date/place (when married), a contact person residing in Côte d'Ivoire, and the applicant's own signature. It also models the form's own 14-item \"Documents joints\" (attached documents) checklist as `documents[]` entries. It excludes the form's own \"Signature du représentant de l'autorité\" (authority representative's signature) box, which is not applicant-supplied. Filing this application is an applicant's own action performed with the Direction de la Surveillance du Territoire; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Côte d'Ivoire or the Ministère de la Sécurité.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CI",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Direction de la Surveillance du Territoire",
+    "abbreviation": "DST",
+    "url": "https://www.interieur.gouv.ci"
+  },
+  "process": {
+    "type": "application",
+    "language": "fr"
+  },
+  "source": {
+    "url": "https://snedai.com/docs/formulaire_passeport.pdf",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "\"Formulaire de demande de passeport ordinaire à l'étranger\", Ministère de la Sécurité / Direction de la Surveillance du Territoire / Sous-Direction de la Police de l'Air et des Frontières, French-language native (searchable-text) PDF, 1 page."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "GOV-4554 (\"GovSchema Standard Research\"). This candidate was originally scouted and banked during the GOV-4539 cycle (2026-07-23), which authored Côte d'Ivoire's Visa vertical (`ci/dst/visa-application`) and independently re-verified this Passport specimen as STRONG but left it as open backlog since Visa's own specimen was chosen for that cycle. This cycle re-fetched and authored it directly.\n\nIndependently re-fetched and re-hashed rather than trusted from the prior cycle's own banked note alone: `https://snedai.com/docs/formulaire_passeport.pdf`, HTTP 200 (via `curl` with a realistic desktop User-Agent; Cloudflare-fronted but not gated — no login wall, CAPTCHA, or paywall), `Content-Type: application/pdf`, `Content-Length: 69840` (byte-for-byte match with the GOV-4539 cycle's own reported size), `Last-Modified: Mon, 19 Feb 2024 15:10:05 GMT`, sha256 `25d308ad6af317c5e5c5c215cca95de36f62f9c3e3d81f3d2ecb13f6f8fdc67b`. `snedai.com` (Société Nouvelle d'Exploitation du Domaine Aéroportuaire d'Abidjan — the Abidjan airport operator) mirrors this Ministry of Security form for arriving/departing travellers, the same third-party-but-official-content mirror already accepted for this jurisdiction's Visa schema.\n\nExtraction method: text extracted via `pdfjs-dist`'s `getTextContent()` API (vendored at `/tmp/node_modules/pdfjs-dist`), grouped by y-coordinate row (±3pt tolerance) and sorted by x-coordinate to reconstruct reading order. The single page was additionally rendered to PNG via `pdfjs-dist` + `node-canvas` (also vendored at `/tmp/node_modules/canvas`) at 2.5x scale and visually reviewed to confirm box counts, column grouping, and which boxes are applicant-facing versus office-only — the raw text layer alone cannot distinguish these.\n\nModels 28 `fields[]` across 6 steps plus 15 `documents[]` entries (14 checklist items plus the form's own \"Photo\" placeholder box).\n\n## Disclosed source-fidelity findings\n\n1. **\"Signature du représentant de l'autorité\" (the second of the form's two bottom signature boxes) is excluded as office-only.** The rendered page confirms this is a distinct, equally-sized box beside \"Signature du requérant\" (the applicant's own signature, modelled as `applicantSignature`), with no printed indication the applicant supplies it.\n2. **`maritalStatus` modelled as a literal `C`/`M`/`D`/`V` enum, matching this jurisdiction's own `ci/dst/visa-application` precedent (GOV-4539).** The source prints only the four single letters (\"Situation matrimoniale\" followed by boxed \"C M D V\") with no expansion anywhere on the page; modelled as-is (matching the standard French administrative ordering Célibataire/Marié(e)/Divorcé(e)/Veuf(ve) — Single/Married/Divorced/Widowed — this registry's own inference, not printed on the source).\n3. **`sex` modelled as a literal `M`/`F` enum**, matching this jurisdiction's own Visa schema precedent — the source's \"Sexe: M ▢ F ▢\" never spells out either value.\n4. **The spouse/marriage cluster (`spouseSurname`, `spouseGivenNames`, `spouseDateOfBirth`, `marriageDate`, `marriagePlace`) is gated `visibleWhen`/`requiredWhen` on `maritalStatus` equalling `M` (Marié(e)).** Unlike the sibling Visa schema (which models a single, ungated, optional `spouseName` field since that form prints no marital-status field to gate on), this Passport form provides its own explicit `maritalStatus` field, making a precise conditional gate possible and preferred over a blanket-optional judgment call.\n5. **`height` modelled as an `integer` (centimetres), not a free-text string.** The source prints \"Taille:\" followed by a 3-digit box row immediately followed by a printed \"cm\" unit label outside the boxes — unlike this registry's `ng/nis/application-for-visa-entry-permit` precedent (a `string` height field, sourced from a form with no printed unit and mixed-format expectation), this form's explicit unit and fixed 3-digit box width support a numeric model. Bounded `50`-`250` as a physiologically sane range; the source prints no explicit min/max.\n6. **`previousPassportNumber` modelled as optional (`required: false`) despite no printed optionality marker**, since a first-time applicant (this form serves both first-time and replacement applicants, per its own generic title) would have no prior passport to cite. No field on the form distinguishes first-time from replacement applicants, so no `requiredWhen` gate could be constructed; this is a disclosed judgment call, not a printed instruction.\n7. **`distinguishingMarks` (\"Signes particuliers\") modelled as optional**, matching this registry's common practice for equivalent fields on other passport/visa/ID forms (e.g. many applicants have none), despite no printed optionality marker on this specimen.\n8. **The 14-item \"Documents joints\" (attached documents) checklist is modelled entirely as `documents[]` entries with `required: false`, including universally-expected items such as the birth-certificate extract and CNI/AI.** The rendered page confirms every one of the 14 checkbox items (birth-certificate extract; CNI/AI; a parent's CNI/AI photocopy; nationality certificate; bank receipt; marriage-certificate extract; legalized parental authorization; naturalization decree; reintegration decree; spouse's nationality certificate; a previous-passport copy; adoption decision; adoptant's nationality certificate; hearing-minutes record) is printed in identical font weight with no asterisk, bold, or other distinguishing mark separating mandatory-for-everyone items from circumstance-specific ones (e.g. adoption- or naturalization-only documents) — the specimen provides no separate instructions annex clarifying which apply universally. Modelling any subset as statically required, or constructing a `requiredWhen` gate, would fabricate a distinction the source does not print; each item's applicability is left to the filer's own circumstances, consistent with this registry's practice of not inferring unprinted requiredness (e.g. Visa schema Finding 2).\n9. **Parents' and the Côte d'Ivoire contact person's fields (`fatherSurname`/`fatherGivenNames`/`fatherDateOfBirth`, `motherSurname`/`motherGivenNames`/`motherDateOfBirth`, `contactSurname`/`contactGivenNames`/`contactDateOfBirth`/`contactPhoneNumber`) are modelled as required.** Each is a clearly bounded, singly-labelled box with no optionality marker, consistent with this jurisdiction's own Visa schema Finding 10 precedent for equivalently unambiguous single-purpose fields.\n\n## Conformance\n\n3 valid mock scenarios (a single, first-time applicant with no previous passport or spouse section; a married applicant exercising the full spouse/marriage cluster; a widowed applicant citing a previous passport number) plus 18 mutation-control fixtures (a missing statically-required field for each of `surname`, `givenNames`, `dateOfBirth`, `sex`, `maritalStatus`, `height`, `placeOfBirthLocality`, `countryOfBirth`, `occupation`, `nationalIdNumber`, `addressRegion`, `addressCity`, `phoneNumber`, `fatherSurname`, `contactSurname`, and `applicantSignature` — 16 fixtures; an invalid `maritalStatus` enum value; and an unknown top-level field) are committed under `conformance/ci/dst/passport-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/enum rules directly from this schema's own `fields[]`, including its `visibleWhen`/`requiredWhen` gates, discarded after use, not committed) ran all fixtures: all 3 valid scenarios at 0 errors, all mutation controls each raising exactly 1 error of the expected kind.\n\nValidated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "applicant_identity",
+      "title": "Applicant Identity",
+      "fields": ["surname", "givenNames", "dateOfBirth", "sex", "maritalStatus", "height", "placeOfBirthLocality", "countryOfBirth", "occupation", "distinguishingMarks", "previousPassportNumber", "nationalIdNumber"],
+      "next": "address_and_contact"
+    },
+    {
+      "id": "address_and_contact",
+      "title": "Geographic Address and Phone",
+      "fields": ["addressRegion", "addressDepartment", "addressCity", "addressCommune", "addressStreet", "addressPoBox", "phoneNumber"],
+      "next": "parents"
+    },
+    {
+      "id": "parents",
+      "title": "Parents' Particulars",
+      "fields": ["fatherSurname", "fatherGivenNames", "fatherDateOfBirth", "motherSurname", "motherGivenNames", "motherDateOfBirth"],
+      "next": "spouse"
+    },
+    {
+      "id": "spouse",
+      "title": "Spouse's Particulars (Married Applicants Only)",
+      "fields": ["spouseSurname", "spouseGivenNames", "spouseDateOfBirth", "marriageDate", "marriagePlace"],
+      "next": "contact_in_cote_divoire"
+    },
+    {
+      "id": "contact_in_cote_divoire",
+      "title": "Contact Person in Côte d'Ivoire",
+      "fields": ["contactSurname", "contactGivenNames", "contactDateOfBirth", "contactPhoneNumber"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration and Signature",
+      "fields": ["applicantSignature"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Nom:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "givenNames",
+      "label": "Given Name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Prénom(s):\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "\"Date de naissance: J M A\""
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "See this schema's own verification.notes Finding 3 for why this is modelled as a literal M/F enum rather than spelled-out values.",
+      "sourceRef": "\"Sexe: M F\"",
+      "validation": {
+        "enum": ["M", "F"]
+      }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital Status",
+      "type": "enum",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 2 for the disclosed C/M/D/V letter-only source printing and this registry's own inferred expansion (Célibataire/Marié(e)/Divorcé(e)/Veuf(ve) — Single/Married/Divorced/Widowed).",
+      "sourceRef": "\"Situation matrimoniale — C M D V\"",
+      "validation": {
+        "enum": ["C", "M", "D", "V"]
+      }
+    },
+    {
+      "name": "height",
+      "label": "Height (cm)",
+      "type": "integer",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 5 for why this is modelled as an integer in centimetres.",
+      "sourceRef": "\"Taille: __ cm\"",
+      "validation": { "minimum": 50, "maximum": 250 }
+    },
+    {
+      "name": "placeOfBirthLocality",
+      "label": "Place of Birth (Locality)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Lieu de naissance: (Localité)\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Pays de naissance:\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "\"Profession:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "distinguishingMarks",
+      "label": "Distinguishing Marks",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "See this schema's own verification.notes Finding 7.",
+      "sourceRef": "\"Signes particuliers:\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "previousPassportNumber",
+      "label": "Previous Passport Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "See this schema's own verification.notes Finding 6.",
+      "sourceRef": "\"N° du passeport précédent:\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "nationalIdNumber",
+      "label": "National ID (CNI) or Attestation (AI) Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "\"N° CNI ou AI :\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "addressRegion",
+      "label": "Region",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Adresse Géographique — Région\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "addressDepartment",
+      "label": "Department",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Adresse Géographique — Département\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "addressCity",
+      "label": "City",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Adresse Géographique — Ville\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "addressCommune",
+      "label": "Commune",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Adresse Géographique — Commune\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "addressStreet",
+      "label": "Street",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Adresse Géographique — Rue\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "addressPoBox",
+      "label": "PO Box",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "\"Adresse Géographique — Boite postale\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "phoneNumber",
+      "label": "Telephone Number (Landline or Mobile)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Tél: fixe ou portable:\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "fatherSurname",
+      "label": "Father's Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Père (nom)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "fatherGivenNames",
+      "label": "Father's Given Name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Père (prénom(s))\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "fatherDateOfBirth",
+      "label": "Father's Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "See this schema's own verification.notes Finding 9.",
+      "sourceRef": "\"Date de naissance: J M A\" (father's block)"
+    },
+    {
+      "name": "motherSurname",
+      "label": "Mother's Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Mère (nom)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "motherGivenNames",
+      "label": "Mother's Given Name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Mère (prénom(s))\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "motherDateOfBirth",
+      "label": "Mother's Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "See this schema's own verification.notes Finding 9.",
+      "sourceRef": "\"Date de naissance: J M A\" (mother's block)"
+    },
+    {
+      "name": "spouseSurname",
+      "label": "Spouse's Surname",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "visibleWhen": { "field": "maritalStatus", "equals": "M" },
+      "requiredWhen": { "field": "maritalStatus", "equals": "M" },
+      "description": "See this schema's own verification.notes Finding 4.",
+      "sourceRef": "\"Conjoint(e) (nom)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "spouseGivenNames",
+      "label": "Spouse's Given Name(s)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "visibleWhen": { "field": "maritalStatus", "equals": "M" },
+      "requiredWhen": { "field": "maritalStatus", "equals": "M" },
+      "description": "See this schema's own verification.notes Finding 4.",
+      "sourceRef": "\"Conjoint(e) (prénom(s))\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "spouseDateOfBirth",
+      "label": "Spouse's Date of Birth",
+      "type": "date",
+      "required": false,
+      "classification": "sensitive-pii",
+      "visibleWhen": { "field": "maritalStatus", "equals": "M" },
+      "requiredWhen": { "field": "maritalStatus", "equals": "M" },
+      "description": "See this schema's own verification.notes Finding 4.",
+      "sourceRef": "\"Date de naissance: J M A\" (spouse's block)"
+    },
+    {
+      "name": "marriageDate",
+      "label": "Date of Marriage",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "maritalStatus", "equals": "M" },
+      "requiredWhen": { "field": "maritalStatus", "equals": "M" },
+      "description": "See this schema's own verification.notes Finding 4.",
+      "sourceRef": "\"Date de mariage: J M A\""
+    },
+    {
+      "name": "marriagePlace",
+      "label": "Place of Marriage",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "visibleWhen": { "field": "maritalStatus", "equals": "M" },
+      "requiredWhen": { "field": "maritalStatus", "equals": "M" },
+      "description": "See this schema's own verification.notes Finding 4.",
+      "sourceRef": "\"Lieu de mariage:\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "contactSurname",
+      "label": "Contact Person in Côte d'Ivoire — Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Personne à contacter en Côte d'Ivoire (Nom)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "contactGivenNames",
+      "label": "Contact Person in Côte d'Ivoire — Given Name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Personne à contacter en Côte d'Ivoire (Prénom)\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "contactDateOfBirth",
+      "label": "Contact Person in Côte d'Ivoire — Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "\"Date de Naissance: J M A\" (contact person's block)"
+    },
+    {
+      "name": "contactPhoneNumber",
+      "label": "Contact Person in Côte d'Ivoire — Telephone Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Contact téléphonique:\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "applicantSignature",
+      "label": "Signature of Applicant",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "\"Signature du requérant\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "photo",
+      "label": "Photo",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "\"Photo\" placeholder box"
+    },
+    {
+      "id": "birthCertificateExtract",
+      "label": "Birth Certificate Extract",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "\"Documents joints — Extrait acte de naissance\" (see this schema's own verification.notes Finding 8 for why this and every other Documents joints checklist item is modelled as not statically required)"
+    },
+    {
+      "id": "nationalIdCardOrAttestation",
+      "label": "National ID Card (CNI) or ID Attestation (AI)",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "\"Documents joints — CNI/AI (Carte Nationale d'Identité / Attestation d'Identité)\""
+    },
+    {
+      "id": "parentNationalIdPhotocopy",
+      "label": "Photocopy of a Parent's National ID (CNI/AI)",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "responsible-party",
+      "sourceRef": "\"Documents joints — Photocopie CNI/AI d'un parent\""
+    },
+    {
+      "id": "nationalityCertificate",
+      "label": "Certificate of Nationality",
+      "category": "attestation",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "\"Documents joints — Certificat de nationalité\""
+    },
+    {
+      "id": "bankReceipt",
+      "label": "Bank Receipt (Fee Payment)",
+      "category": "payment",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "\"Documents joints — Reçu bancaire\""
+    },
+    {
+      "id": "marriageCertificateExtract",
+      "label": "Marriage Certificate Extract",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "\"Documents joints — Extrait acte de Mariage\""
+    },
+    {
+      "id": "legalizedParentalAuthorization",
+      "label": "Legalized Parental Authorization",
+      "category": "attestation",
+      "required": false,
+      "belongsTo": "responsible-party",
+      "sourceRef": "\"Documents joints — Autorisation Parentale Legalisée\""
+    },
+    {
+      "id": "naturalizationDecree",
+      "label": "Naturalization Decree",
+      "category": "attestation",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "\"Documents joints — Décret de naturalisation\""
+    },
+    {
+      "id": "reintegrationDecree",
+      "label": "Reintegration Decree",
+      "category": "attestation",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "\"Documents joints — Décret de réintégration\""
+    },
+    {
+      "id": "spouseNationalityCertificate",
+      "label": "Spouse's Certificate of Nationality",
+      "category": "attestation",
+      "required": false,
+      "belongsTo": "other",
+      "sourceRef": "\"Documents joints — Certificat de nationalité époux\""
+    },
+    {
+      "id": "previousPassportCopy",
+      "label": "Copy of Previous Passport",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "\"Documents joints — Passeport\""
+    },
+    {
+      "id": "adoptionDecision",
+      "label": "Adoption Decision",
+      "category": "attestation",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "\"Documents joints — Décision d'adoption\""
+    },
+    {
+      "id": "adoptantNationalityCertificate",
+      "label": "Adoptant's Certificate of Nationality",
+      "category": "attestation",
+      "required": false,
+      "belongsTo": "responsible-party",
+      "sourceRef": "\"Documents joints — Certificat de nationalité adoptant\""
+    },
+    {
+      "id": "hearingMinutesRecord",
+      "label": "Hearing Minutes Record (PV d'audition)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "\"Documents joints — PV d'audition\""
+    }
+  ]
+}
