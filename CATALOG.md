@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**88 jurisdictions** | **620 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**89 jurisdictions** | **621 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-23, GOV-4490, "GovSchema Standard Research"): Tajikistan
 > opens as the registry's 88th jurisdiction, via Taxes (1 of 6)**, via
@@ -28,6 +28,32 @@
 > National ID via the internal-passport "Shakli 1" docx) remain open
 > backlog, banked in Known Gaps below; DMV, Visa, and foreign Passport were
 > confirmed dead-end/weak in the GOV-4424 scouting pass.
+
+> **Update (2026-07-23, GOV-4491, "GovSchema Standard Research"): Namibia
+> opens as the registry's 89th jurisdiction (Taxes, 1 of 6)**, via
+> `na/namra/return-of-income-individuals@1.0.0` — the Namibia Revenue
+> Agency's (NamRA) "Return of Income: Individual" (Form 6-0/0014C/1),
+> fetched from the ITAS e-filing subdomain (`itas.namra.org.na`). Delegated
+> alongside a sibling issue (GOV-4490, Tajikistan above) from the GOV-4488
+> re-scan below; the live source had grown from 1,097,728 to 2,124,999
+> bytes since the original GOV-4424 banking (2026-07-22), so this cycle
+> independently re-fetched and re-derived the full field structure from
+> scratch rather than trusting either prior number — the re-fetched byte
+> count matched the delegating issue's own re-verified figure exactly (a
+> fresh but *stable* specimen, not further changed mid-cycle). A
+> shared-checkout concurrency race with the sibling Tajikistan cycle
+> briefly deleted this schema's own `schema.json` mid-authoring (recovered
+> by re-writing it from the same source material; `VERIFICATION.md` and
+> the conformance fixtures were unaffected). This is the simplified,
+> single-employer/full-year edition of Namibia's individual return (per
+> the form's own printed Note 6); Namibia's other two banked candidates —
+> Business Formation (BIPA's CC1 Founding Statement, whose banked download
+> URL 404'd this cycle and needs re-discovery from `bipa.na`'s own
+> document library) and Visa (MHAISS's "Visas Application.pdf", never
+> URL-banked) — remain open backlog for a follow-on cycle; Passport,
+> National ID, and DMV were already confirmed dead-end (in-person/
+> login-gated only) by GOV-4424. See the "Genuinely open candidates" and
+> "Confirmed dead ends" sections below for the full disclosed detail.
 
 > **Update (2026-07-23, GOV-4488, "GovSchema Standard Research"): re-scanned
 > the two freshest jurisdictions and confirmed both have exhausted their
@@ -17139,7 +17165,7 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (74/88 jurisdictions — 84%)
+### Taxes — Income Tax Return, Tax Filing (75/89 jurisdictions — 84%)
 
 > **Update (2026-07-23, GOV-4490, "GovSchema Standard Research"): Tajikistan
 > opens as the registry's 88th jurisdiction via this vertical (1/6)**, via
@@ -17147,6 +17173,14 @@ v1.0.0.
 > single-page simplified-tax-regime declaration — see the Executive Summary
 > update above for the full sourcing record and the document's own
 > VERIFICATION.md.
+
+> **Update (2026-07-23, GOV-4491, "GovSchema Standard Research"): Namibia
+> opens as the registry's 89th jurisdiction via this vertical (1/6)**, via
+> `na/namra/return-of-income-individuals@1.0.0` — NamRA's "Return of
+> Income: Individual" (Form 6-0/0014C/1), the simplified single-employer/
+> full-year edition — see the Executive Summary update above for the full
+> sourcing record and the document's own VERIFICATION.md. This vertical's
+> own denominator moves from 88 to 89.
 
 > **Update (2026-07-23, GOV-4470, "GovSchema Standard Research"): Zimbabwe
 > opens as the registry's 87th jurisdiction via this vertical (1/6)**, via
@@ -20640,6 +20674,7 @@ now closed.
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **NA** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NL** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NO** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -21362,7 +21397,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       follow-up fetch of the bare `bipa.na` domain also failed to connect
       — flagged as needing re-discovery via the site's own navigation, not
       yet confirmed dead (inconclusive network signal, not a confirmed
-      site change).
+      site change). **Update (GOV-4491, 2026-07-23): Taxes now authored**
+      as `na/namra/return-of-income-individuals@1.0.0` (the re-derived
+      field structure matched the re-verified 2,124,999-byte specimen, not
+      the original banked estimate) — **opens Namibia as a new
+      jurisdiction (1 of 6)**; see the Executive Summary and Taxes vertical
+      updates above and the document's own VERIFICATION.md for the full
+      scope record. Business Formation (BIPA CC1, needs URL re-discovery)
+      and Visa (MHAISS) remain open backlog; Passport, National ID, and
+      DMV stay confirmed dead ends.
     - **Tajikistan** — **Taxes**: the Tax Committee's (`andoz.tj`)
       simplified-tax-system declaration ("Эъломияи андози низоми
       содакардашуда"), a flat single-page form with numbered fields
