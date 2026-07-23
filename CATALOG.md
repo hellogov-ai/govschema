@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**85 jurisdictions** | **610 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**85 jurisdictions** | **611 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4435, "GovSchema Standard Research"): Paraguay's
+> Business Formation vertical opens (2 of 6)**, via
+> `py/suace/business-formalization-individual@1.0.0` — the Sistema
+> Unificado de Apertura y Cierre de Empresas's (SUACE) Formulario N.1,
+> "Apertura y/o Formalización de Empresa Unipersonal y Empresa Individual
+> de Responsabilidad Limitada (EIRL)", the one-stop-shop intake form an
+> individual or EIRL owner files to open or formalize a business.
+> Independently re-fetched and re-hashed rather than trusting the GOV-4424
+> scouting cycle's byte count alone:
+> `suace.gov.py/wp-content/uploads/2020/02/FORMULARIO-FISICA-03.02.2020.pdf`,
+> HTTP 200, `application/pdf`, 4,295,121 bytes (byte-for-byte matching the
+> banked figure), sha256 `6f7871d3...`. A 2-page, 126-widget AcroForm
+> specimen whose field names are meaningless (form-tool auto-generated,
+> e.g. `Texto1`, `Casilla de verificación1_12_12`) — every widget was
+> geometrically correlated to its printed label via x/y text-position
+> joins, with both pages rendered to images to resolve genuinely ambiguous
+> groupings (a 9-value combined \"Tipo de Dirección\" enum split across two
+> visual rows; two secondary-economic-activity slots; a disclosed gap
+> where the Gestor Autorizado section prints a number box only for Carnet
+> de Migración, not Cédula de Identidad or Pasaporte) — see the document's
+> own VERIFICATION.md for the full scope record. Paraguay's DMV and Visa
+> verticals remain open, STRONG, ready-to-author backlog from the same
+> GOV-4424 scouting cycle; Passport and National ID (cédula) are confirmed
+> dead ends.
 
 > **Update (2026-07-22, GOV-4427, "GovSchema Standard Research"): Paraguay
 > opens as the registry's 85th jurisdiction, via Taxes (1 of 6)**, via
@@ -15666,6 +15691,12 @@ within an already-covered vertical:
 
 ### Business Formation — Incorporation, LLC, Company Registration (73/79 jurisdictions — 92%)
 
+> **Update (2026-07-23, GOV-4435, "GovSchema Standard Research"): Paraguay
+> gains its Business Formation schema (2/6 for the jurisdiction)**, via
+> `py/suace/business-formalization-individual@1.0.0` — see the Executive
+> Summary update above for the full sourcing record and the document's
+> own VERIFICATION.md.
+
 > **Update (2026-07-22, GOV-4360, "GovSchema Standard Research"): Jamaica
 > opens its first Business Formation schema, opening Jamaica as the
 > registry's 82nd jurisdiction**, via
@@ -20931,8 +20962,12 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Summary and Taxes vertical updates above and the document's own
       VERIFICATION.md for the full scope record (RUBRO 3 and the Anexo's
       two appendix tables excluded as system-computed/appendix detail).
-      Business Formation, DMV, and Visa remain open, STRONG,
-      ready-to-author backlog for future cycles.
+      **Update (GOV-4435, 2026-07-23): Business Formation now authored**
+      as `py/suace/business-formalization-individual@1.0.0` — see the
+      Executive Summary and Business Formation vertical updates above and
+      the document's own VERIFICATION.md for the full scope record. DMV
+      and Visa remain open, STRONG, ready-to-author backlog for future
+      cycles.
     - **Namibia** — **Taxes**: NamRA's "Return of Income for Individuals"
       (Form 6-0/0014C/1), served from the ITAS e-filing subdomain rather
       than NamRA's own site,

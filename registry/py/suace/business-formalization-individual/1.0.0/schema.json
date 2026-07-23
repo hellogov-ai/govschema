@@ -1,0 +1,1181 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "py/suace/business-formalization-individual",
+  "version": "1.0.0",
+  "title": "Paraguay SUACE Formulario N°1 — Apertura y/o Formalización de Empresa Unipersonal y EIRL (Business Formalization, Individual/EIRL)",
+  "description": "Sistema Unificado de Apertura y Cierre de Empresas's (SUACE) Formulario N.1, \"Apertura y/o Formalización de Empresa Unipersonal y Empresa Individual de Responsabilidad Limitada (EIRL)\" — the single intake form an individual (persona física) or EIRL owner files to open or formalize a business through Paraguay's one-stop shop, operated by the Ministerio de Industria y Comercio. Opens Paraguay's Business Formation vertical (2 of 6; GOV-4424/GOV-4435, \"GovSchema Standard Research\", CATALOG.md Known Gaps entry 0i). This schema models the entirety of the form's own fillable fields across Sections 1-11 plus the final \"Solicitante por la Empresa\" signer block; Section 12 (\"Observaciones\") is a printed jurat/legal notice with no fillable fields, the \"Firma\" line is a physical signature with no corresponding AcroForm field, and the \"PARA USO EXCLUSIVO DEL SUACE\" office-use block (mesa de entrada, reception staff name/signature) is excluded as internal government tracking data, not applicant-supplied input. This schema does not file the application itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Paraguay, the Ministerio de Industria y Comercio, or SUACE.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PY",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Sistema Unificado de Apertura y Cierre de Empresas",
+    "abbreviation": "SUACE",
+    "url": "https://suace.gov.py",
+    "operatedBy": {
+      "name": "Ministerio de Industria y Comercio",
+      "abbreviation": "MIC",
+      "url": "https://www.mic.gov.py",
+      "basis": "SUACE is Paraguay's one-stop shop for business opening/closing, operated within the Ministerio de Industria y Comercio per the form's own header branding."
+    }
+  },
+  "process": {
+    "type": "registration",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://suace.gov.py/wp-content/uploads/2020/02/FORMULARIO-FISICA-03.02.2020.pdf",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "Formulario N.1, \"Apertura y/o Formalización de Empresa Unipersonal y Empresa Individual de Responsabilidad Limitada (EIRL)\""
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "GOV-4435 (\"GovSchema Standard Research\", child of GOV-4433), authored per the GOV-4424 cycle's own scouting record (CATALOG.md Known Gaps entry 0i), which found Paraguay's Business Formation vertical STRONG alongside Taxes (already authored as py/dnit/individual-income-tax-return), DMV, and Visa.\n\nIndependently re-fetched and re-hashed rather than trusting the scouting report's byte count alone: `https://suace.gov.py/wp-content/uploads/2020/02/FORMULARIO-FISICA-03.02.2020.pdf`, HTTP 200, `Content-Type: application/pdf`, 4,295,121 bytes — matching the banked cycle's own figure exactly. sha256 of the retrieved bytes: `6f7871d378138220cec3f66856a42180ce53b999036c00f6cf70099844bac02c`. No login/CAPTCHA/WAF gate; a plain unauthenticated `curl` with no session/cookie state reached it cleanly.\n\nExtraction method: `pdfjs-dist` (vendored at `/tmp/node_modules/pdfjs-dist`) `getAnnotations()` found 80 `/Widget` annotations on page 1 and 46 on page 2 (126 total) — an AcroForm specimen, but one built by a form tool (likely LibreOffice) that assigns meaningless auto-generated field names (`Texto1`, `Casilla de verificación1_12_12`, etc. — no field name carries any semantic relationship to what it captures). Correlating each widget to its meaning therefore required a geometric join: `getTextContent()` read every text item's raw string and its `transform` x/y position, and a purpose-built correlation script paired each widget's rect midpoint against the nearest same-row and above-row text items. Because several groupings were genuinely ambiguous from x/y position alone (the two-row \"Tipo de Dirección\" checkbox block; the two-row \"ACTIVIDAD ECONÓMICA SECUNDARIA\" Código/Descripción pair; whether \"Cédula de Identidad\"/\"Pasaporte\" carry their own number boxes in Section 10), both pages were additionally rendered to 2.5x-scale PNGs via `pdfjs-dist` + `node-canvas` and visually inspected (with a further zoomed crop of the Section 10 Tipo de Documento row) to confirm the resulting field boundaries.\n\n## Document structure\n\nPage 1: Section 1 (Tipo de Trámite: Apertura/Formalización), Section 2 (Tipo de Empresa: Persona Física/EIRL, plus RUC N°), Section 3 (Datos Personales — name, birth date, nationality, one of three ID-document types, primary email, Razón Social/Nombre Fantasía), Section 4 (Domicilio Fiscal — administrative address fields plus a combined 9-value Tipo de Dirección), Section 5 (Datos de Constitución EIRL, printed \"Completar solo en caso de EIRL\", plus an unmarked-required Datos del Escribano sub-block), Section 6 (Actividad Económica Principal — required — and Actividad Económica Secundaria — two optional Código/Descripción slots), Section 7 (Operaciones — Importador/Exportador checkboxes), and Section 8 (Obligaciones Tributarias, printed \"Completar solo en caso de Apertura de la Sociedad\" — a start date, a closing-month choice, and an 11-row tax-regime checkbox grid each with its own \"Fecha desde\" date). Page 2: Section 9 (Datos del Representante Legal — a full identity/contact/backing-document block, structurally a near-duplicate of Section 3's ID-document pattern but with its own three number boxes), Section 10 (Gestor Autorizado o Persona a Notificar — see Finding 4 below for its incomplete ID-number boxes), Section 11 (Información Patrimonial de la Empresa/MIPYMES — Total Activo/Pasivo Patrimonial, expressed in guaraníes), Section 12 (Observaciones — a printed Ley 132/98 copyright-declaration jurat and a Código Penal Paraguayo Art. 243 false-declaration jurat, no fillable fields), an unnumbered \"Solicitante por la Empresa\" signer block (name, ID type/number, role, and a physical \"Firma\" line with no AcroForm field behind it), and a \"PARA USO EXCLUSIVO DEL SUACE\" office-use block (mesa de entrada number, reception date/time, approval date, reception staff name/signature) excluded in its entirety as internal government tracking data.\n\n## Disclosed findings and interpretation choices\n\n1. **Three separate applicant/representante-level ID-document number boxes are collapsed into one `documentNumber`/`representanteDocumentNumber` field each**, rather than modelled as three parallel visibleWhen-gated fields. The source prints an independent number box directly after each of C.I. N°, Pasaporte N°, and Carnet de Migración N° in both Section 3 and Section 9, but exactly one is ever filled in per submission (whichever `documentType`/`representanteDocumentType` is checked) — the same collapsing this registry's `at/bmeia/schengen-visa-application` already applies to its own `travelDocumentType`/`travelDocumentNumber` pair for an analogous single-choice-of-N-document-types row.\n2. **`tipoDireccion` is modelled as a single 9-value enum, not two separate fields**, even though the source prints its nine options (Avenida/Calle/Autopista/Carretera/Callejón, then Interior/Departamento/Casa/Oficina) across two visual rows. Rendering the page to an image confirmed there is no independent header, asterisk, or field label introducing the second row as anything other than a continuation of the same \"*Tipo de Dirección\" field above it — this registry's own \"spec precision over cleverness\" convention favors one field over a speculative two-field split the source itself does not indicate.\n3. **Actividad Económica Secundaria is modelled as two independently-named Código/Descripción slots** (`actividadSecundaria1*`/`actividadSecundaria2*`), confirmed by rendering the page to an image after the raw x/y text extraction showed two candidate row-groups only ~15pt apart under one \"ACTIVIDAD ECONÓMICA SECUNDARIA\" header — the rendered image confirmed two full-width printed boxes, not one wrapped/duplicate box. Neither slot carries a required marker (unlike Actividad Económica Principal's own required Código/Descripción, which the source marks with asterisks).\n4. **Section 10's `gestorDocumentType` has a value box only for Carnet de Migración** (`gestorCarnetMigracionNumero`, requiredWhen `carnet-migracion`) — Cédula de Identidad and Pasaporte print only a checkbox each, with no adjacent number field, confirmed both from the raw widget/text correlation (no `Tx` widget in that x-range at that y-band) and from a zoomed-in crop of the rendered page. This is a genuine gap in the source form itself (unlike Sections 3 and 9, which give all three document types their own number box) and is modelled faithfully rather than papered over with an invented field.\n5. **`fechaInicioActividadesEirl` (Section 5) and `fechaInicioActividadesApertura` (Section 8) are two distinct fields sharing the identical printed label** \"Fecha de inicio de actividades\" under two different conditional sections (\"Completar solo en caso de EIRL\" vs \"Completar solo en caso de Apertura de la Sociedad\") — kept separate rather than merged, since a Formalización-EIRL filer and an Apertura filer are answering genuinely different questions even though the printed words are identical.\n6. **Each of the 11 Section 8 tax-regime rows is modelled as an independent `boolean` plus its own `requiredWhen`-gated `FechaDesde` date**, rather than a single multi-select field, since spec v0.3's `enum` type is a flat scalar with no array/multi-value construct (the same constraint this registry's `kg/gns/unified-tax-declaration` and `py/dnit/individual-income-tax-return` already work within). No exclusivity constraint is asserted across the 11 regimes (e.g. IRE GENERAL vs IRE SIMPLE vs IRE RESIMPLE) since the source form itself prints them as independent checkboxes with no radio-button grouping or explicit mutual-exclusivity marker.\n7. **`totalActivoPatrimonial`/`totalPasivoPatrimonial` are modelled `type: integer` with `validation.minimum: 0`**, since the Paraguayan guaraní (ISO 4217 PYG) has no minor currency unit (exponent 0) — the same guaraní-amount convention this registry's `py/dnit/individual-income-tax-return` already applies, though that schema's own source additionally prints an explicit \"sin céntimos\" instruction this SUACE form does not.\n8. **Section 12 (\"Observaciones\") and the \"PARA USO EXCLUSIVO DEL SUACE\" block are excluded in their entirety.** Section 12 is a printed jurat/legal-notice block (Ley 132/98 copyright declaration, Código Penal Paraguayo Art. 243 false-declaration warning) with zero associated widgets. The SUACE office-use block (mesa de entrada number, reception date/time, approval date, reception staff name/signature) is internal government tracking data supplied by SUACE personnel after submission, not applicant input — the same class of exclusion this registry's `py/dnit/individual-income-tax-return` (Finding 5) and `jm/taj/individual-income-tax-return` (Finding 8) already draw around their own \"for official use\" blocks. The \"Firma\" line in the \"Solicitante por la Empresa\" block is similarly excluded — no AcroForm widget exists behind it, consistent with the form's own printed instruction that it \"deberá llenarse en forma electrónica, impresa y firmada por el representante legal\" (must be filled electronically, then printed and signed by hand).\n\n## Conformance\n\n3 valid mock scenarios — `valid-apertura-persona-fisica-single-regime` (an Apertura filing for a Persona Física with one Section 8 tax regime selected and no EIRL-only fields), `valid-formalizacion-eirl-full-constitucion` (a Formalización filing for an EIRL exercising every Section 5 constitution field, the Escribano sub-block, both secondary economic activities, and a Carnet de Migración gestor), and `valid-apertura-eirl-multi-regime-otros-respaldo` (an Apertura filing for an EIRL selecting three Section 8 regimes with three FechaDesde dates, and a representante `Documento de Respaldo` of `otros` exercising the conditional `Especificar` field) — plus 9 mutation-control fixtures (one missing statically-required field from each of `tramiteType`, `businessType`, `ruc`, `fullName`, `documentType`, `documentNumber`, `primaryEmail`, `actividadPrincipalCodigo`, `totalActivoPatrimonial`) and one unknown-field-rejected fixture, committed under `conformance/py/suace/business-formalization-individual/1.0.0/`.\n\nAn ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all fixtures: all 3 valid scenarios at 0 errors, all 9 mutation controls each raising exactly 1 error, and the unknown-field fixture correctly rejected. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "tramite-y-empresa",
+      "title": "Tipo de Trámite y Tipo de Empresa",
+      "fields": [
+        "tramiteType",
+        "businessType",
+        "ruc"
+      ],
+      "next": "datos-personales"
+    },
+    {
+      "id": "datos-personales",
+      "title": "Datos Personales",
+      "fields": [
+        "fullName",
+        "dateOfBirth",
+        "nationality",
+        "documentType",
+        "documentNumber",
+        "primaryEmail",
+        "razonSocial",
+        "nombreFantasia"
+      ],
+      "next": "domicilio-fiscal"
+    },
+    {
+      "id": "domicilio-fiscal",
+      "title": "Domicilio Fiscal",
+      "fields": [
+        "departamento",
+        "distritoCiudad",
+        "localidadCompania",
+        "barrio",
+        "direccion",
+        "numeroInmueble",
+        "tipoDireccion",
+        "referencia",
+        "telefonoLineaBaja",
+        "celular"
+      ],
+      "next": "datos-constitucion-eirl"
+    },
+    {
+      "id": "datos-constitucion-eirl",
+      "title": "Datos de Constitución EIRL",
+      "fields": [
+        "inscripcionRegistroPublicoNumero",
+        "inscripcionPagina",
+        "fechaInscripcionConstitucion",
+        "tipoDocumentoRespaldoEirl",
+        "fechaInicioActividadesEirl",
+        "escribanoNombreApellidos",
+        "escribanoMatricula",
+        "escribanoRuc"
+      ],
+      "next": "actividad-economica"
+    },
+    {
+      "id": "actividad-economica",
+      "title": "Actividades Económicas",
+      "fields": [
+        "actividadPrincipalCodigo",
+        "actividadPrincipalDescripcion",
+        "actividadSecundaria1Codigo",
+        "actividadSecundaria1Descripcion",
+        "actividadSecundaria2Codigo",
+        "actividadSecundaria2Descripcion"
+      ],
+      "next": "operaciones"
+    },
+    {
+      "id": "operaciones",
+      "title": "Operaciones",
+      "fields": [
+        "isImportador",
+        "isExportador"
+      ],
+      "next": "obligaciones-tributarias"
+    },
+    {
+      "id": "obligaciones-tributarias",
+      "title": "Obligaciones Tributarias",
+      "fields": [
+        "fechaInicioActividadesApertura",
+        "mesCierre",
+        "regimeIreGeneral",
+        "regimeIreGeneralFechaDesde",
+        "regimeIreSimple",
+        "regimeIreSimpleFechaDesde",
+        "regimeIreResimple",
+        "regimeIreResimpleFechaDesde",
+        "regimeTributoUnicoMaquilaMensual",
+        "regimeTributoUnicoMaquilaMensualFechaDesde",
+        "regimeIscMensual",
+        "regimeIscMensualFechaDesde",
+        "regimeAnticipoImpuestoRentaEmpresarial",
+        "regimeAnticipoImpuestoRentaEmpresarialFechaDesde",
+        "regimeIscGeneral",
+        "regimeIscGeneralFechaDesde",
+        "regimeIscCombustibles",
+        "regimeIscCombustiblesFechaDesde",
+        "regimeIvaSemestral",
+        "regimeIvaSemestralFechaDesde",
+        "regimeIvaSimplificadoAnual",
+        "regimeIvaSimplificadoAnualFechaDesde",
+        "regimeIvaGeneral",
+        "regimeIvaGeneralFechaDesde"
+      ],
+      "next": "datos-representante-legal"
+    },
+    {
+      "id": "datos-representante-legal",
+      "title": "Datos del Representante Legal",
+      "fields": [
+        "representanteTipoPersona",
+        "representanteNombreApellidos",
+        "representanteDocumentType",
+        "representanteDocumentNumber",
+        "representanteDireccion",
+        "representanteNumeroInmueble",
+        "representanteTelefonoLineaBaja",
+        "representanteCelular",
+        "representanteCorreoElectronico",
+        "representanteDocumentoRespaldo",
+        "representanteDocumentoRespaldoEspecificar",
+        "representanteDocumentoRespaldoNumero",
+        "representanteDocumentoRespaldoFecha"
+      ],
+      "next": "gestor-autorizado"
+    },
+    {
+      "id": "gestor-autorizado",
+      "title": "Gestor Autorizado o Persona a Notificar",
+      "fields": [
+        "gestorNombreApellidos",
+        "gestorDocumentType",
+        "gestorCarnetMigracionNumero",
+        "gestorDireccion",
+        "gestorNumeroInmueble",
+        "gestorTelefonoLineaBaja",
+        "gestorCelular",
+        "gestorCorreoElectronico"
+      ],
+      "next": "informacion-patrimonial"
+    },
+    {
+      "id": "informacion-patrimonial",
+      "title": "Información Patrimonial de la Empresa/MIPYMES",
+      "fields": [
+        "totalActivoPatrimonial",
+        "totalPasivoPatrimonial"
+      ],
+      "next": "solicitante-por-la-empresa"
+    },
+    {
+      "id": "solicitante-por-la-empresa",
+      "title": "Solicitante por la Empresa",
+      "fields": [
+        "solicitanteNombreApellidos",
+        "solicitanteDocumentType",
+        "solicitanteDocumentNumber",
+        "solicitanteRole"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "tramiteType",
+      "label": "Tipo de Trámite",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 1, Section 1 — \"1. TIPO DE TRAMITE\": Apertura / Formalización",
+      "validation": {
+        "enum": [
+          "apertura",
+          "formalizacion"
+        ]
+      }
+    },
+    {
+      "name": "businessType",
+      "label": "Tipo de Empresa",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 1, Section 2 — \"2. TIPO DE EMPRESA\": Persona Física / Empresa Individual de Responsabilidad Limitada (EIRL)",
+      "validation": {
+        "enum": [
+          "persona-fisica",
+          "eirl"
+        ]
+      }
+    },
+    {
+      "name": "ruc",
+      "label": "RUC N°",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section 2 — \"RUC N°\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "fullName",
+      "label": "Nombres y Apellidos",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section 3 — \"Nombres y Apellidos\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Fecha de nacimiento",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section 3 — \"Fecha de nacimiento\""
+    },
+    {
+      "name": "nationality",
+      "label": "Nacionalidad",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section 3 — \"Nacionalidad\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "documentType",
+      "label": "Tipo de Documento",
+      "type": "enum",
+      "required": true,
+      "description": "The source prints three separate document-number boxes, one directly after each of the three type checkboxes (C.I. N°, Pasaporte N°, Carnet de Migración N°). Modelled as a single documentType + documentNumber pair, the same collapsing this registry's at/bmeia/schengen-visa-application applies to its own travelDocumentType/travelDocumentNumber pair, since exactly one of the three boxes is ever filled in per submission. See this schema's own verification.notes Finding 1.",
+      "sourceRef": "Page 1, Section 3 — \"Tipo de Documento\": *C.I. N° / Pasaporte N° / *Carnet de Migración N°",
+      "validation": {
+        "enum": [
+          "cedula-identidad",
+          "pasaporte",
+          "carnet-migracion"
+        ]
+      }
+    },
+    {
+      "name": "documentNumber",
+      "label": "Número de Documento",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1, Section 3 — \"C.I. N°\" / \"Pasaporte N°\" / \"Carnet de Migración N°\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "primaryEmail",
+      "label": "Correo electrónico principal",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section 3 — \"Correo electrónico principal\"",
+      "validation": {
+        "pattern": "^[^@\\\\s]+@[^@\\\\s]+\\\\.[^@\\\\s]+$",
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "razonSocial",
+      "label": "Razón Social",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section 3 — \"Razón Social\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "nombreFantasia",
+      "label": "Nombre de Fantasía",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section 3 — \"(Nombre Fantasía/Persona física)\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "departamento",
+      "label": "Departamento",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, Section 4 — \"Departamento\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "distritoCiudad",
+      "label": "Distrito/Ciudad",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, Section 4 — \"Distrito/Ciudad\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "localidadCompania",
+      "label": "Localidad/Compañía",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, Section 4 — \"Localidad/Compañía\"",
+      "validation": {
+        "maxLength": 150
+      }
+    },
+    {
+      "name": "barrio",
+      "label": "Barrio",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section 4 — \"Barrio\"",
+      "validation": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "direccion",
+      "label": "Dirección",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section 4 — \"Dirección\"",
+      "validation": {
+        "maxLength": 250
+      }
+    },
+    {
+      "name": "numeroInmueble",
+      "label": "N° del Inmueble",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section 4 — \"N° del Inmueble\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "tipoDireccion",
+      "label": "Tipo de Dirección",
+      "type": "enum",
+      "required": true,
+      "description": "The source prints nine checkboxes under one \"*Tipo de Dirección\" label, split across two visual rows for layout only (Avenida/Calle/Autopista/Carretera/Callejón on the first row, Interior/Departamento/Casa/Oficina on the second) — no independent header or asterisk introduces the second row as a separate field. Modelled as a single 9-value enum. See this schema's own verification.notes Finding 2.",
+      "sourceRef": "Page 1, Section 4 — \"*Tipo de Dirección\": Avenida / Calle / Autopista / Carretera / Callejón / Interior / Departamento / Casa / Oficina",
+      "validation": {
+        "enum": [
+          "avenida",
+          "calle",
+          "autopista",
+          "carretera",
+          "callejon",
+          "interior",
+          "departamento",
+          "casa",
+          "oficina"
+        ]
+      }
+    },
+    {
+      "name": "referencia",
+      "label": "Referencia",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section 4 — \"Referencia\"",
+      "validation": {
+        "maxLength": 250
+      }
+    },
+    {
+      "name": "telefonoLineaBaja",
+      "label": "Teléfono de línea baja N°",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section 4 — \"Teléfono de línea baja N°\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "celular",
+      "label": "Celular N°",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Section 4 — \"*Celular N°\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "inscripcionRegistroPublicoNumero",
+      "label": "Inscripción Registro Público (EIRL) N°",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "businessType",
+        "equals": "eirl"
+      },
+      "description": "Section 5 is printed under the note \"Completar solo en caso de EIRL\" (complete only in the case of an EIRL).",
+      "sourceRef": "Page 1, Section 5 — \"*Inscripción Registro Público (EIRL) N°\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "inscripcionPagina",
+      "label": "Pagina",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "businessType",
+        "equals": "eirl"
+      },
+      "sourceRef": "Page 1, Section 5 — \"*Pagina\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "fechaInscripcionConstitucion",
+      "label": "Fecha de inscripción o Constitución",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "businessType",
+        "equals": "eirl"
+      },
+      "sourceRef": "Page 1, Section 5 — \"*Fecha de inscripción o Constitución\""
+    },
+    {
+      "name": "tipoDocumentoRespaldoEirl",
+      "label": "Tipo de Documento de respaldo (EIRL)",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "businessType",
+        "equals": "eirl"
+      },
+      "sourceRef": "Page 1, Section 5 — \"*Tipo de Documento de respaldo:\" Escritura Pública / Documento Privado / Auto interlocutorio",
+      "validation": {
+        "enum": [
+          "escritura-publica",
+          "documento-privado",
+          "auto-interlocutorio"
+        ]
+      }
+    },
+    {
+      "name": "fechaInicioActividadesEirl",
+      "label": "Fecha de inicio de actividades (EIRL)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "businessType",
+        "equals": "eirl"
+      },
+      "description": "Distinct from fechaInicioActividadesApertura (Section 8), which is the same printed label reused later in the form under a different conditional section.",
+      "sourceRef": "Page 1, Section 5 — \"*Fecha de inicio de actividades\""
+    },
+    {
+      "name": "escribanoNombreApellidos",
+      "label": "Nombres y Apellidos del Escribano",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section 5 — \"DATOS DEL ESCRIBANO\" — \"Nombres y Apellidos\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "escribanoMatricula",
+      "label": "N° Matricula del Escribano",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section 5 — \"DATOS DEL ESCRIBANO\" — \"N° Matricula\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "escribanoRuc",
+      "label": "RUC del Escribano",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section 5 — \"DATOS DEL ESCRIBANO\" — \"RUC\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "actividadPrincipalCodigo",
+      "label": "Código (Actividad Económica Principal)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, Section 6 — \"ACTIVIDAD ECONÓMICA PRINCIPAL\" — \"*Código\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "actividadPrincipalDescripcion",
+      "label": "Descripción (Actividad Económica Principal)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, Section 6 — \"ACTIVIDAD ECONÓMICA PRINCIPAL\" — \"*Descripción\"",
+      "validation": {
+        "maxLength": 250
+      }
+    },
+    {
+      "name": "actividadSecundaria1Codigo",
+      "label": "Código (Actividad Económica Secundaria 1)",
+      "type": "string",
+      "required": false,
+      "description": "The source prints two Código/Descripción rows under one \"ACTIVIDAD ECONÓMICA SECUNDARIA\" header (confirmed by rendering the page to an image, since the two rows sit only ~15pt apart in the raw text extraction) — modelled as two independently-named secondary-activity slots. See this schema's own verification.notes Finding 3.",
+      "sourceRef": "Page 1, Section 6 — \"ACTIVIDAD ECONÓMICA SECUNDARIA\", first Código row",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "actividadSecundaria1Descripcion",
+      "label": "Descripción (Actividad Económica Secundaria 1)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section 6 — \"ACTIVIDAD ECONÓMICA SECUNDARIA\", first Descripción row",
+      "validation": {
+        "maxLength": 250
+      }
+    },
+    {
+      "name": "actividadSecundaria2Codigo",
+      "label": "Código (Actividad Económica Secundaria 2)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section 6 — \"ACTIVIDAD ECONÓMICA SECUNDARIA\", second Código row",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "actividadSecundaria2Descripcion",
+      "label": "Descripción (Actividad Económica Secundaria 2)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Section 6 — \"ACTIVIDAD ECONÓMICA SECUNDARIA\", second Descripción row",
+      "validation": {
+        "maxLength": 250
+      }
+    },
+    {
+      "name": "isImportador",
+      "label": "Importador",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Section 7 — \"OPERACIONES\" — \"Importador\""
+    },
+    {
+      "name": "isExportador",
+      "label": "Exportador",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Section 7 — \"OPERACIONES\" — \"Exportador\""
+    },
+    {
+      "name": "fechaInicioActividadesApertura",
+      "label": "Fecha de inicio de actividades (Apertura)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "tramiteType",
+        "equals": "apertura"
+      },
+      "description": "Section 8 is printed under the note \"Completar solo en caso de Apertura de la Sociedad\" (complete only in the case of opening the company). Distinct from fechaInicioActividadesEirl (Section 5), the same printed label reused earlier in the form under a different conditional section.",
+      "sourceRef": "Page 1, Section 8 — \"*Fecha de inicio de actividades\""
+    },
+    {
+      "name": "mesCierre",
+      "label": "Mes de Cierre",
+      "type": "enum",
+      "required": false,
+      "requiredWhen": {
+        "field": "tramiteType",
+        "equals": "apertura"
+      },
+      "sourceRef": "Page 1, Section 8 — \"*Mes de Cierre\": Enero / Mayo / Julio / Diciembre",
+      "validation": {
+        "enum": [
+          "enero",
+          "mayo",
+          "julio",
+          "diciembre"
+        ]
+      }
+    },
+    {
+      "name": "regimeIreGeneral",
+      "label": "700 - IRE GENERAL",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Section 8 — \"*Tipo de Obligaciones\" — \"700 - IRE GENERAL\""
+    },
+    {
+      "name": "regimeIreGeneralFechaDesde",
+      "label": "Fecha desde (700 - IRE GENERAL)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "regimeIreGeneral",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Section 8 — \"Fecha desde\" column, row \"700 - IRE GENERAL\""
+    },
+    {
+      "name": "regimeIreSimple",
+      "label": "701 - IRE SIMPLE",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Section 8 — \"*Tipo de Obligaciones\" — \"701 - IRE SIMPLE\""
+    },
+    {
+      "name": "regimeIreSimpleFechaDesde",
+      "label": "Fecha desde (701 - IRE SIMPLE)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "regimeIreSimple",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Section 8 — \"Fecha desde\" column, row \"701 - IRE SIMPLE\""
+    },
+    {
+      "name": "regimeIreResimple",
+      "label": "702 - IRE RESIMPLE",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Section 8 — \"*Tipo de Obligaciones\" — \"702 - IRE RESIMPLE\""
+    },
+    {
+      "name": "regimeIreResimpleFechaDesde",
+      "label": "Fecha desde (702 - IRE RESIMPLE)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "regimeIreResimple",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Section 8 — \"Fecha desde\" column, row \"702 - IRE RESIMPLE\""
+    },
+    {
+      "name": "regimeTributoUnicoMaquilaMensual",
+      "label": "143 - TRIBUTO UNICO - MAQUILA MENSUAL",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Section 8 — \"*Tipo de Obligaciones\" — \"143 - TRIBUTO UNICO - MAQUILA MENSUAL\""
+    },
+    {
+      "name": "regimeTributoUnicoMaquilaMensualFechaDesde",
+      "label": "Fecha desde (143 - TRIBUTO UNICO - MAQUILA MENSUAL)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "regimeTributoUnicoMaquilaMensual",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Section 8 — \"Fecha desde\" column, row \"143 - TRIBUTO UNICO - MAQUILA MENSUAL\""
+    },
+    {
+      "name": "regimeIscMensual",
+      "label": "322 - ISC MENSUAL",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Section 8 — \"*Tipo de Obligaciones\" — \"322 - ISC MENSUAL\""
+    },
+    {
+      "name": "regimeIscMensualFechaDesde",
+      "label": "Fecha desde (322 - ISC MENSUAL)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "regimeIscMensual",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Section 8 — \"Fecha desde\" column, row \"322 - ISC MENSUAL\""
+    },
+    {
+      "name": "regimeAnticipoImpuestoRentaEmpresarial",
+      "label": "735 - ANTICIPO DEL IMPUESTO A LA RENTA EMPRESARIAL",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Section 8 — \"*Tipo de Obligaciones\" — \"735 - ANTICIPO DEL IMPUESTO A LA RENTA EMPRESARIAL\""
+    },
+    {
+      "name": "regimeAnticipoImpuestoRentaEmpresarialFechaDesde",
+      "label": "Fecha desde (735 - ANTICIPO DEL IMPUESTO A LA RENTA EMPRESARIAL)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "regimeAnticipoImpuestoRentaEmpresarial",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Section 8 — \"Fecha desde\" column, row \"735 - ANTICIPO DEL IMPUESTO A LA RENTA EMPRESARIAL\""
+    },
+    {
+      "name": "regimeIscGeneral",
+      "label": "311 - ISC GENERAL",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Section 8 — \"*Tipo de Obligaciones\" — \"311 - ISC GENERAL\""
+    },
+    {
+      "name": "regimeIscGeneralFechaDesde",
+      "label": "Fecha desde (311 - ISC GENERAL)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "regimeIscGeneral",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Section 8 — \"Fecha desde\" column, row \"311 - ISC GENERAL\""
+    },
+    {
+      "name": "regimeIscCombustibles",
+      "label": "321 - ISC COMBUSTIBLES",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Section 8 — \"*Tipo de Obligaciones\" — \"321 - ISC COMBUSTIBLES\""
+    },
+    {
+      "name": "regimeIscCombustiblesFechaDesde",
+      "label": "Fecha desde (321 - ISC COMBUSTIBLES)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "regimeIscCombustibles",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Section 8 — \"Fecha desde\" column, row \"321 - ISC COMBUSTIBLES\""
+    },
+    {
+      "name": "regimeIvaSemestral",
+      "label": "212 - IVA SEMESTRAL",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Section 8 — \"*Tipo de Obligaciones\" — \"212 - IVA SEMESTRAL\""
+    },
+    {
+      "name": "regimeIvaSemestralFechaDesde",
+      "label": "Fecha desde (212 - IVA SEMESTRAL)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "regimeIvaSemestral",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Section 8 — \"Fecha desde\" column, row \"212 - IVA SEMESTRAL\""
+    },
+    {
+      "name": "regimeIvaSimplificadoAnual",
+      "label": "216 - IVA SIMPLIFICADO ANUAL",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Section 8 — \"*Tipo de Obligaciones\" — \"216 - IVA SIMPLIFICADO ANUAL\""
+    },
+    {
+      "name": "regimeIvaSimplificadoAnualFechaDesde",
+      "label": "Fecha desde (216 - IVA SIMPLIFICADO ANUAL)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "regimeIvaSimplificadoAnual",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Section 8 — \"Fecha desde\" column, row \"216 - IVA SIMPLIFICADO ANUAL\""
+    },
+    {
+      "name": "regimeIvaGeneral",
+      "label": "211 - IVA GENERAL",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Section 8 — \"*Tipo de Obligaciones\" — \"211 - IVA GENERAL\""
+    },
+    {
+      "name": "regimeIvaGeneralFechaDesde",
+      "label": "Fecha desde (211 - IVA GENERAL)",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "field": "regimeIvaGeneral",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Section 8 — \"Fecha desde\" column, row \"211 - IVA GENERAL\""
+    },
+    {
+      "name": "representanteTipoPersona",
+      "label": "Tipo de Persona",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 2, Section 9 — \"*Tipo de Persona\": Representante/Firmante / Apoderado",
+      "validation": {
+        "enum": [
+          "representante-firmante",
+          "apoderado"
+        ]
+      }
+    },
+    {
+      "name": "representanteNombreApellidos",
+      "label": "Nombres y Apellidos (Representante Legal)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 9 — \"*Nombres y Apellidos\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "representanteDocumentType",
+      "label": "Tipo de Documento (Representante Legal)",
+      "type": "enum",
+      "required": true,
+      "description": "Collapses three printed number boxes (C.I. N°, Pasaporte N°, Carnet de Migración N°) into one documentNumber field, the same treatment as this schema's own applicant-level documentType/documentNumber. See this schema's own verification.notes Finding 1.",
+      "sourceRef": "Page 2, Section 9 — \"*Tipo de Documento\": *C.I. N° / Pasaporte N° / *Carnet de Migración N°",
+      "validation": {
+        "enum": [
+          "cedula-identidad",
+          "pasaporte",
+          "carnet-migracion"
+        ]
+      }
+    },
+    {
+      "name": "representanteDocumentNumber",
+      "label": "Número de Documento (Representante Legal)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, Section 9 — \"C.I. N°\" / \"Pasaporte N°\" / \"Carnet de Migración N°\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "representanteDireccion",
+      "label": "Dirección (Representante Legal)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 9 — \"*Dirección\"",
+      "validation": {
+        "maxLength": 250
+      }
+    },
+    {
+      "name": "representanteNumeroInmueble",
+      "label": "N° del Inmueble (Representante Legal)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section 9 — \"N° del Inmueble\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "representanteTelefonoLineaBaja",
+      "label": "Teléfono de línea baja (Representante Legal)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 9 — \"Teléfono de línea baja\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "representanteCelular",
+      "label": "Celular (Representante Legal)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 9 — \"*Celular\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "representanteCorreoElectronico",
+      "label": "Correo electrónico (Representante Legal)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 9 — \"*Correo electrónico\"",
+      "validation": {
+        "pattern": "^[^@\\\\s]+@[^@\\\\s]+\\\\.[^@\\\\s]+$",
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "representanteDocumentoRespaldo",
+      "label": "Documento de Respaldo (Representante Legal)",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 2, Section 9 — \"*Documento de Respaldo\": Poder / Escritura Pública / Documento Privado / Auto Interlocutorio / Otros",
+      "validation": {
+        "enum": [
+          "poder",
+          "escritura-publica",
+          "documento-privado",
+          "auto-interlocutorio",
+          "otros"
+        ]
+      }
+    },
+    {
+      "name": "representanteDocumentoRespaldoEspecificar",
+      "label": "Especificar (Documento de Respaldo)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "representanteDocumentoRespaldo",
+        "equals": "otros"
+      },
+      "sourceRef": "Page 2, Section 9 — \"Especificar\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "representanteDocumentoRespaldoNumero",
+      "label": "N° Documento (Documento de Respaldo)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 2, Section 9 — \"*N° Documento\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "representanteDocumentoRespaldoFecha",
+      "label": "Fecha (Documento de Respaldo)",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Page 2, Section 9 — \"*Fecha\""
+    },
+    {
+      "name": "gestorNombreApellidos",
+      "label": "Nombres y Apellidos (Gestor Autorizado)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 10 — \"*Nombres y Apellidos\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "gestorDocumentType",
+      "label": "Tipo de Documento (Gestor Autorizado)",
+      "type": "enum",
+      "required": true,
+      "description": "Unlike the applicant-level and representante-level Tipo de Documento rows, this row prints a number box only for Carnet de Migración — Cédula de Identidad and Pasaporte each carry only a checkbox with no adjacent number box. See this schema's own verification.notes Finding 4.",
+      "sourceRef": "Page 2, Section 10 — \"Tipo de Documento\": *Cédula de Identidad / Pasaporte / *Carnet de Migración N°",
+      "validation": {
+        "enum": [
+          "cedula-identidad",
+          "pasaporte",
+          "carnet-migracion"
+        ]
+      }
+    },
+    {
+      "name": "gestorCarnetMigracionNumero",
+      "label": "Carnet de Migración N° (Gestor Autorizado)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "gestorDocumentType",
+        "equals": "carnet-migracion"
+      },
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, Section 10 — \"*Carnet de Migración N°\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "gestorDireccion",
+      "label": "Dirección (Gestor Autorizado)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 10 — \"*Dirección\"",
+      "validation": {
+        "maxLength": 250
+      }
+    },
+    {
+      "name": "gestorNumeroInmueble",
+      "label": "N° del Inmueble (Gestor Autorizado)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2, Section 10 — \"N° del Inmueble\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "gestorTelefonoLineaBaja",
+      "label": "Teléfono de línea baja N° (Gestor Autorizado)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 10 — \"Teléfono de línea baja N°\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "gestorCelular",
+      "label": "Celular (Gestor Autorizado)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 10 — \"*Celular\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "gestorCorreoElectronico",
+      "label": "Correo electrónico (Gestor Autorizado)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, Section 10 — \"*Correo electrónico\"",
+      "validation": {
+        "pattern": "^[^@\\\\s]+@[^@\\\\s]+\\\\.[^@\\\\s]+$",
+        "maxLength": 254
+      }
+    },
+    {
+      "name": "totalActivoPatrimonial",
+      "label": "Total Activo Patrimonial",
+      "type": "integer",
+      "required": true,
+      "description": "Modelled as an integer since the Paraguayan guaraní (PYG) has no minor currency unit (ISO 4217 exponent 0), consistent with this registry's py/dnit/individual-income-tax-return treatment of guaraní amounts.",
+      "sourceRef": "Page 2, Section 11 — \"INFORMACION PATRIMONIAL DE LA EMPRESA/MIPYMES\" — \"*Total Activo Patrimonial\" (Expresado en guaraníes)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalPasivoPatrimonial",
+      "label": "Total Pasivo Patrimonial",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Page 2, Section 11 — \"*Total Pasivo Patrimonial\" (Expresado en guaraníes)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "solicitanteNombreApellidos",
+      "label": "Nombres y Apellidos (Solicitante)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2, \"SOLICITANTE POR LA EMPRESA\" — \"*Nombres y Apellidos\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "solicitanteDocumentType",
+      "label": "Tipo de Documento (Solicitante)",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 2, \"SOLICITANTE POR LA EMPRESA\" — \"*Cédula de Identidad\" / \"*Otro\"",
+      "validation": {
+        "enum": [
+          "cedula-identidad",
+          "otro"
+        ]
+      }
+    },
+    {
+      "name": "solicitanteDocumentNumber",
+      "label": "N° de documento (Solicitante)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 2, \"SOLICITANTE POR LA EMPRESA\" — \"*N° de documento\"",
+      "validation": {
+        "maxLength": 30
+      }
+    },
+    {
+      "name": "solicitanteRole",
+      "label": "En carácter de",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 2, \"SOLICITANTE POR LA EMPRESA\" — \"En carácter de\": *Interesado / *Representante legal",
+      "validation": {
+        "enum": [
+          "interesado",
+          "representante-legal"
+        ]
+      }
+    }
+  ]
+}
