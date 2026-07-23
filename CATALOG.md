@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**90 jurisdictions** | **630 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**91 jurisdictions** | **631 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4568, "GovSchema Standard Research"): Trinidad
+> and Tobago opens as the registry's 91st jurisdiction**, via
+> `tt/imd/passport-application-first-adult@1.0.0` — the Immigration
+> Division (Ministry of National Security)'s "Application Form for Trinidad
+> and Tobago Passport (Applicants 16 Years and Over)", distributed for
+> first-issue MRP applicants by the Ministry of Foreign and CARICOM Affairs
+> (MFCA) for use through Trinidad and Tobago's overseas missions, fetched
+> unauthenticated from `foreign.gov.tt` (HTTP 200, 101,355 bytes, sha256
+> `875788ce63b0124f715ebd32b31fa77f4fc54134ab058eee12f3eb84710ee0f1`).
+> Scouted this cycle after Bolivia's five remaining verticals were all
+> independently re-confirmed dead-end/weak (Fundempresa's own domain has
+> lapsed to a domain-parking page; `migracion.gob.bo` is a pure Angular SPA
+> with no static-form fallback; SEGIP's licence/cédula processes are
+> explicitly in-person/biometric-only) — see Known Gaps entry 0j for the
+> full re-check record. A parallel scout across Guatemala, Trinidad and
+> Tobago, and Mauritius found Trinidad and Tobago the strongest new-
+> jurisdiction candidate, with four independently byte-verified STRONG
+> verticals on official `.gov.tt` domains (Passport, DMV, Business
+> Formation, Taxes). Models 122 `fields[]` across 10 steps plus 4
+> `documents[]` entries, including a `citizenshipBasis` discriminator
+> (GSP-0013 `in` operator gating a shared Registration/Naturalisation
+> certificate-detail pair) and a `sex`-gated "Married Women" section.
+> DMV, Business Formation, and Taxes remain open, STRONG banked backlog for
+> future cycles (see Known Gaps entry 0m); Visa and National ID & Civic
+> Documents are unscreened. See the Passport vertical update below and the
+> document's own VERIFICATION.md for the full scope record, including a
+> disclosed `node-canvas` glyph-path rendering limitation (text-layer
+> extraction itself was clean) and 5 other disclosed findings.
 
 > **Update (2026-07-23, GOV-4561, "GovSchema Standard Research"): Côte
 > d'Ivoire's Business Formation vertical opens, closing this jurisdiction's
@@ -15031,7 +15060,16 @@
 
 ## By Vertical
 
-### Passport (58/90 jurisdictions — 64%)
+### Passport (59/91 jurisdictions — 65%)
+
+> **Update (2026-07-23, GOV-4568, "GovSchema Standard Research"): Trinidad
+> and Tobago opens this vertical, and the jurisdiction itself (1 of 6)**,
+> via `tt/imd/passport-application-first-adult@1.0.0` — the Immigration
+> Division's "Application Form for Trinidad and Tobago Passport (Applicants
+> 16 Years and Over)". See the Executive Summary update above for the full
+> sourcing record, scope decisions, and disclosed findings. This vertical's
+> own denominator is also bumped from 58/90 to 59/91 to match the
+> registry's new jurisdiction count.
 
 > **Update (2026-07-23, GOV-4554, "GovSchema Standard Research"): Côte
 > d'Ivoire's Passport vertical opens (3 of 6 for the jurisdiction)**, via
@@ -21066,6 +21104,7 @@ now closed.
 | **SN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **TT** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **UG** | 3 | ✗ | ✓ | ✓ | ✗ | ✗ | ✓ |
@@ -21989,6 +22028,63 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       (`pre-enrolement-cni.oneci.ci/formulaire`) rather than a static
       document; the only PDF found (`etapes-demande-cni.pdf`) is an
       instructions/checklist sheet, not the fillable form itself.
+0m. **Bolivia's five remaining verticals re-checked fresh and confirmed
+    exhausted (GOV-4568, 2026-07-23); Trinidad and Tobago scouted as a new
+    91st-jurisdiction candidate in the same cycle, opened via Passport, with
+    three further verticals banked as open backlog:**
+    - **Bolivia** — Business Formation: Fundempresa's own domain
+      (`fundempresa.org.bo`) has lapsed entirely to a third-party domain-
+      parking page (confirmed via a live Wayback snapshot,
+      `web.archive.org/web/20260120155643/http://www.fundempresa.org.bo/`,
+      200 OK, 5,677 bytes, "Diese Domain kaufen"); SEPREC
+      (`seprec.gob.bo`) hosts only a 1,657,560-byte narrative "Guía de
+      Trámites de Registro de Comercio" PDF, with real e-filing behind the
+      login-gated `tramites.seprec.gob.bo/#/login` Angular SPA. Visa and
+      Passport: `migracion.gob.bo` confirmed a pure Angular SPA (200 OK,
+      6,317 bytes, only JS bundle references, zero server-rendered
+      content); the Ministry of Foreign Affairs' own
+      `visas.cancilleria.gob.bo/REQUISITOS_PARA_LA_EMISION_DE_VISAS.pdf`
+      (68,797 bytes) and consulate mirror pages are prose requirements
+      lists, not fillable forms; a previously-known embassy PDF mirror for
+      passport renewal no longer resolves (redirects to the embassy
+      homepage). DMV and National ID: SEGIP's own `licencia-para-conducir/`
+      and `cedula-de-identidad/` pages (234,763 and 192,385 bytes
+      respectively) explicitly state both processes are in-person/
+      biometric-only ("Presencia física obligatoria"), with no downloadable
+      form. **Bolivia remains confirmed exhausted at 1/6** (Taxes only, per
+      GOV-4460); this closes out the re-check GOV-4488 had left open after
+      Taxes' own verdict proved incomplete on first pass.
+    - **Trinidad and Tobago** — a parallel scout across three brand-new-
+      jurisdiction candidates (Guatemala, Trinidad and Tobago, Mauritius)
+      found Trinidad and Tobago the strongest, with four independently
+      byte-verified STRONG verticals on official `.gov.tt` domains.
+      **Passport**: `foreign.gov.tt/documents/126/Document_3_-_Application_form_for_1st_issue_of_MRP_applicants_16_years_and_over.pdf`
+      (101,355 bytes). **Update (GOV-4568, 2026-07-23): now authored** as
+      `tt/imd/passport-application-first-adult@1.0.0` — see the Executive
+      Summary and Passport vertical updates above. **Opens Trinidad and
+      Tobago as the registry's 91st jurisdiction (1/6).** **DMV**: the
+      Ministry of Works and Transport's Form 4 ("Application for Driving
+      Permits Endorsement"),
+      `mowt.gov.tt/MOWT/media/General/Documents/.../Application-for-Driving-Permits-Endorsement.pdf`
+      (125,793 bytes, needs `curl -k` — `mowt.gov.tt` has a broken TLS
+      certificate chain), plus a companion Form 12 medical-certification
+      form. **Business Formation**: the Companies Registry's (Ministry of
+      the Attorney General and Legal Affairs) Form 1
+      (`legalaffairs.gov.tt/forms/newForms/Form1_P.pdf`, 376,476 bytes) and
+      Form 6 sole-proprietor/individual-firm statement
+      (`legalaffairs.gov.tt/forms/Statement%20-%20Form%206.pdf`, 39,935
+      bytes — confirmed a scanned/image-only PDF with no extractable text
+      layer on a first pass; will need an OCR or higher-fidelity rendering
+      pass to author). **Taxes**: the Inland Revenue Division's Form 400
+      ITR individual tax return
+      (`ird.gov.tt/Media/Default/IRDForms/2018/F-400ITR--2018.pdf`,
+      157,151 bytes, confirmed live via the IRD's own forms index despite
+      the 2018 filename). Visa and National ID & Civic Documents were not
+      reached this cycle (Trinidad and Tobago has no separate national ID
+      card program distinct from its passport/driver's-licence documents,
+      per the scouting pass's own preliminary read — not independently
+      confirmed). DMV, Business Formation, and Taxes remain open, STRONG
+      banked backlog for a future cycle.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
