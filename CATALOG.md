@@ -19,7 +19,7 @@
 > dead, so this candidate is scoped to vehicle registration-mark allocation
 > only — a flat, image-only single-page scan rendered to PNG and read
 > visually since it carries neither a text layer nor AcroForm annotations.
-> Models 17 `fields[]` across 4 steps, including an `applicantType`
+> Models 18 `fields[]` across 4 steps, including an `applicantType`
 > discriminator (individual vs. registered company) gating two mutually
 > exclusive particulars sections, following the same discriminator pattern
 > as `tt/rgd/partnership-beneficial-ownership-statement`'s

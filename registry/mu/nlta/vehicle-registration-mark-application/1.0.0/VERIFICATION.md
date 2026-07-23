@@ -161,7 +161,7 @@ tools/validate-ajv.mjs` (ajv 2020-12 against `spec/v0.3/govschema.schema.json`).
 `registry-index.json` regenerated via `npm run build-index` in
 `tools/govschema-client/`.
 
-Models 17 `fields[]` across 4 steps. No `documents[]` entries — this
+Models 18 `fields[]` across 4 steps. No `documents[]` entries — this
 specimen discloses no supporting-document checklist anywhere on its single
 page, unlike this registry's other Mauritius schema
 (`mu/pio/passport-application`), which does print one.
