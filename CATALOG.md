@@ -4,7 +4,30 @@
 
 ## Executive Summary
 
-**87 jurisdictions** | **619 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**88 jurisdictions** | **620 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4490, "GovSchema Standard Research"): Tajikistan
+> opens as the registry's 88th jurisdiction, via Taxes (1 of 6)**, via
+> `tj/andoz/simplified-tax-declaration@1.0.0` — the Tax Committee under the
+> Government of the Republic of Tajikistan's (andoz.tj) single-page
+> declaration for taxpayers under the simplified tax regime. Delegated as
+> GOV-4490 (child of GOV-4488) after a parallel scouting pass under GOV-4424
+> (2026-07-22) banked this candidate but never text-extracted its field
+> structure; this cycle independently re-fetched the source (byte-identical
+> to the banked record; `andoz.tj` requires `curl -k` for its self-signed
+> TLS certificate) and extracted from scratch with `pdfjs-dist`, rendering
+> the page to confirm every digit-box grid and tick-box count. Two of the
+> form's own numbered items (004, 005) are explicit same-form row sums and
+> are excluded per GSP-0013 §7, as is the tax inspector's own office-only
+> acceptance block; the 9-digit TIN pattern was independently corroborated
+> against andoz.tj's own public tax-debtor tables and a third-party
+> TIN-format reference. See the Taxes vertical update below and the
+> document's own VERIFICATION.md for the full scope record, including 8
+> disclosed findings. Tajikistan's other two pre-scouted STRONG candidates
+> (Business Formation via andoz.tj's sole-proprietor registration form;
+> National ID via the internal-passport "Shakli 1" docx) remain open
+> backlog, banked in Known Gaps below; DMV, Visa, and foreign Passport were
+> confirmed dead-end/weak in the GOV-4424 scouting pass.
 
 > **Update (2026-07-23, GOV-4488, "GovSchema Standard Research"): re-scanned
 > the two freshest jurisdictions and confirmed both have exhausted their
@@ -17116,7 +17139,14 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (73/87 jurisdictions — 84%)
+### Taxes — Income Tax Return, Tax Filing (74/88 jurisdictions — 84%)
+
+> **Update (2026-07-23, GOV-4490, "GovSchema Standard Research"): Tajikistan
+> opens as the registry's 88th jurisdiction via this vertical (1/6)**, via
+> `tj/andoz/simplified-tax-declaration@1.0.0` — the Tax Committee's
+> single-page simplified-tax-regime declaration — see the Executive Summary
+> update above for the full sourcing record and the document's own
+> VERIFICATION.md.
 
 > **Update (2026-07-23, GOV-4470, "GovSchema Standard Research"): Zimbabwe
 > opens as the registry's 87th jurisdiction via this vertical (1/6)**, via
@@ -20631,6 +20661,7 @@ now closed.
 | **SK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **SN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **TJ** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **UG** | 3 | ✗ | ✓ | ✓ | ✗ | ✗ | ✓ |
@@ -21396,6 +21427,33 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       that the Taxes verdict was incomplete — worth a fresh, independent
       re-check in a future cycle rather than treating 0e's verdict as
       final.
+0k. **Tajikistan opened as the registry's 88th jurisdiction (GOV-4490,
+    2026-07-23), delegated by GOV-4488 from Known Gaps entry 0i's own
+    GOV-4424 (2026-07-22) banked candidates:**
+    - **Taxes**: the Tax Committee's (`andoz.tj`) simplified-tax-system
+      declaration ("Эъломияи андози низоми содакардашуда"), independently
+      re-fetched byte-identical to entry 0i's banked record (`curl -k`
+      required for a self-signed TLS certificate). **Update (GOV-4490,
+      2026-07-23): now authored** as
+      `tj/andoz/simplified-tax-declaration@1.0.0` — see the Executive
+      Summary and Taxes vertical updates above and the document's own
+      VERIFICATION.md for the full scope record, including 8 disclosed
+      findings: two same-form computed row-sums (items 004, 005) excluded
+      per GSP-0013 §7; the tax inspector's own office-only acceptance block
+      excluded; and the 9-digit `tin` pattern independently corroborated
+      against andoz.tj's own public tax-debtor tables (which also show the
+      companion РЯМ/`unifiedIdentificationNumber` field left unpopulated for
+      several real taxpayers, informing its `required: false`).
+    - **Business Formation, National ID**: not re-scouted this cycle. Entry
+      0i's own prior findings (the same registrar's sole-proprietor
+      registration form `form_№2.pdf`; the internal-passport "Shakli 1"
+      docx at `passportvkd.tj`) remain the best available record — both
+      still a ready-to-author 2-of-6 backlog for a future cycle.
+    - **DMV, Visa, foreign Passport**: confirmed dead-end/weak in entry 0i's
+      original scouting pass (no GAI/traffic-police static form; evisa.tj/
+      visa.gov.tj are pure SPAs; foreign passport application is described
+      only informationally with no attached form) — not re-checked this
+      cycle.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now

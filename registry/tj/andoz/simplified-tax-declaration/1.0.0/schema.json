@@ -1,0 +1,247 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "tj/andoz/simplified-tax-declaration",
+  "version": "1.0.0",
+  "title": "Tajikistan — Эъломияи андози низоми содакардашуда (Simplified Tax Regime Declaration)",
+  "description": "The Tax Committee under the Government of the Republic of Tajikistan's (andoz.tj) declaration form for taxpayers under the simplified tax regime (\"низоми содакардашуда\") — a single flat page reporting the taxpayer's identification, declaration type, reporting period, gross/exempt income, tax due under either the cash or income-minus-expenses computation method, and opening/closing goods inventory balances. Opens Tajikistan as the registry's 88th jurisdiction (GOV-4490, child of GOV-4488 \"GovSchema Standard Research\", following the GOV-4424 scouting pass that banked this candidate on 2026-07-22 and independently re-verified byte-identical live on 2026-07-23). This schema models the form's own Sections 1-4 (taxpayer identification, declaration type/reporting period, tax computation, and the applicant's signed declaration); the two same-form computed sum rows (item 004, the sum of items 004.1+004.2; item 005, the sum of items 003+004) are excluded per this registry's standing closed decision to defer calculated/derived fields (GSP-0013 §7, founder-confirmed on GOV-302), as is the tax inspector's own office-only acceptance block (accepting inspector's name/signature, date of acceptance, tax authority code, and acceptance note) — see this document's own VERIFICATION.md for the full scope record and disclosed findings. This schema does not file the return itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of the Republic of Tajikistan or its Tax Committee.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "TJ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Tax Committee under the Government of the Republic of Tajikistan",
+    "abbreviation": "TC",
+    "url": "https://andoz.tj"
+  },
+  "process": {
+    "type": "filing",
+    "language": "tg"
+  },
+  "source": {
+    "url": "https://andoz.tj/docs/deklarasii_2022/%D0%AD%D1%8A%D0%BB%D0%BE%D0%BC%D0%B8%D1%8F.pdf",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "Эъломияи андози низоми содакардашуда (Simplified Tax Regime Declaration)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "GOV-4490 (\"GovSchema Standard Research\", child of GOV-4488). The candidate was found and hashed during the GOV-4424 scouting pass (2026-07-22) but its field structure was never text-extracted at that time; this cycle performed that extraction from scratch rather than trusting the scouting note's own description.\n\nIndependently re-fetched and re-hashed: `https://andoz.tj/docs/deklarasii_2022/Эъломия.pdf` (URL-encoded Cyrillic filename), HTTP 200, `Content-Type: application/pdf`, `Content-Length: 165,556` bytes — byte-for-byte matching the GOV-4424 banked record. sha256 `ccff9ae32e073213241da92b921bd24185ec99ac92d0cca3d95e36f41e3e6bd3`. `andoz.tj` serves an untrusted/self-signed TLS certificate — a plain `curl` fails with \"unable to get local issuer certificate\"; retrieved with `curl -k` (certificate verification skipped), a deliberate, disclosed exception to this registry's usual plain-fetch practice, not a sign of a compromised or unofficial source (the same domain andoz.tj publishes its own current tax forms directory from).\n\nExtraction method: `pdfjs-dist` (vendored at `/tmp/node_modules/pdfjs-dist`, CommonJS build at `build/pdf.js`). `getAnnotations()` confirmed zero `/Widget` annotations on the single page — a flat (non-AcroForm) specimen. `getTextContent()` read every text item's raw string and its `transform` x/y position, grouped into lines by rounded y-coordinate, to reconstruct the form's own item numbering (1-5, 001-007) and section layout. The page was also rendered to a PNG via `pdfjs-dist` + `node-canvas` at 2.5x scale (with a `DOMMatrix` polyfill from the `canvas` package, required for this pdfjs build's tiling-pattern fill path under Node) to visually confirm every checkbox/tick-box count and digit-box grid width the text layer alone cannot express (rectangles are drawn graphics, not text).\n\n## Document structure\n\nA single physical page, four numbered sections: **1. Маълумот дар бораи андозсупоранда** (Information about the taxpayer) — items 1 (РМА/TIN), 2 (РЯМ/unified identification number), 3 (taxpayer's full name); **2. Намуди эъломия ва давраи ҳисоботии андоз** (Declaration type and tax reporting period) — item 4 (a 4-way tick-box declaration-type selector) and item 5 (reporting-period date plus a separate-subdivision Ҳа/Не tick-box pair); **3. Ҳисоби андоз** (Tax calculation) — items 001-007, each a 10-digit boxed amount; **4. Тасдиқи дурустӣ ва пуррагии маълумоти дар эъломияи мазкур зикргардида** (Confirmation of the accuracy and completeness of the information stated in this declaration) — the applicant's sworn-accuracy statement, the head/director's and chief accountant's printed names and signature lines, and the submission date, followed by a dotted divider and the tax inspector's own office-only acceptance block.\n\n## Scope: computed fields excluded\n\n- **Item 004** (\"Маблағи андоз аз фарқияти даромад байни харочот, аз ҷумла (сатри 004.1+сатри 004.2)\" — tax amount from the income/expense difference, **including (row 004.1+row 004.2)**) is excluded: its own printed text states it equals the sum of items 004.1 and 004.2, both of which are independently modelled.\n- **Item 005** (\"Ҳамагӣ маблағи ҳисобшавандаи андоз (сатри 003+сатри 004)\" — total calculated tax amount **(row 003+row 004)**) is excluded on the same basis: it is explicitly the sum of items 003 and 004.\n- This mirrors this registry's standing GSP-0013 §7 exclusion test applied identically in `bo/sin/formulario-200-iva` and `zw/zimra/itf1-employment-income-return`: a form line whose own printed text names an explicit same-form row-arithmetic combination is excluded, regardless of whether the source uses \"=\", \"аз ҷумла\" (\"including\"), or an equivalent construction.\n- Items 001, 002, 003, 004.1, 004.2, 006, and 007 carry no such arithmetic reference to other same-form rows and are each included as directly-supplied figures, even though 003 and 004.1/004.2 are conceptually alternative tax-computation-method results — the form gives the taxpayer no other row from which to derive them.\n\n## Scope: office-only fields excluded\n\n- The **tax inspector's own acceptance block**, printed below a dotted divider line following the applicant's own signature section — \"Насаб ном номи падари нозири эъломияро қабулнамуда\" (surname/name/patronymic of the inspector accepting the declaration) with its own signature line, \"Санаи қабул\" (date of acceptance), \"Рамзи мақомоти андоз\" (tax authority code), and \"Қайд оид ба қабули эъломия\" (note on acceptance of the declaration) — is excluded in its entirety as tax-office-supplied data, not applicant-supplied, the same class of exclusion this registry draws around Bolivia's Sección D bank stamp (`bo/sin/formulario-200-iva`) and Zimbabwe's \"For official use only\" box (`zw/zimra/itf1-employment-income-return`).\n\n## Disclosed findings and interpretation choices\n\n1. **`declarationType` is modelled as a 4-value enum** (`initial`, `regular`, `amended`, `liquidation`), one per the form's own tick boxes: Ибтидоӣ (initial), Навбатӣ (regular/next-in-sequence periodic filing), Иловагӣ (Тасхеҳӣ) (additional/corrective — i.e. amended), and Барҳамдиҳӣ (liquidation). This mirrors this registry's Kyrgyzstan precedent (`kg/gns/unified-tax-declaration`'s `declarationType`, a 3-value primary/amended/liquidation enum) with one additional value for this form's own extra \"regular\" tick box.\n2. **`tin` (item 1, \"РМА\") is modelled with a strict 9-digit pattern**, confirmed by both the rendered page's own 9-cell digit-box grid and independent corroboration from real РМА numbers published elsewhere on andoz.tj's own site (a public list of tax debtors shows 9-digit РМА values, e.g. `010026462`) and from a third-party TIN-format reference confirming Tajikistan's TIN is a 9-digit number.\n3. **`unifiedIdentificationNumber` (item 2, \"РЯМ\") is modelled `required: false`**, distinct from the required `tin`. The same public andoz.tj debtors list that corroborates `tin`'s 9-digit format shows its own РЯМ column populated with a dash (\"-\") for multiple listed legal entities, i.e. not universally populated in practice — modelled optional on that direct evidence rather than assumed. Its own 9-cell digit-box grid, when populated, is expected to be the same 9-digit shape as `tin`.\n4. **`taxPeriod` (item 5, \"Давраи андоз\") is modelled as a single `date`**, per its own 2-2-4-digit boxed grouping (matching the DD.MM.YYYY grouping this same form's own `submissionDate` field uses), rather than as separate day/month/year fields.\n5. **`isSeparateSubdivision` (item 5, \"Воҳиди алоҳида\", a Ҳа/Не — Yes/No — tick-box pair) is modelled `type: boolean`, `required: true`**, since the form prints it as an unconditional binary question sitting on the same numbered row as the always-applicable reporting period, with no visible gating text limiting it to a subset of filers.\n6. **All Section 3 monetary items (001, 002, 003, 004.1, 004.2, 006, 007) are modelled `type: integer` with `validation.minimum: 0`.** The form gives no explicit currency-precision instruction, but every printed amount box is a plain 10-digit grid with no decimal-point cell visible in either the text layer or the rendered page image, and no item's own text admits a negative value.\n7. **No field on this form carries a visible mandatory-field asterisk or equivalent marker anywhere in the extracted text or the rendered page.** Per this registry's own precedent for un-asterisked sources (e.g. `bo/sin/formulario-200-iva`, `zw/zimra/itf1-employment-income-return`), only the header identification fields (`tin`, `taxpayerFullName`), the declaration-type/reporting-period/separate-subdivision items, the total-income figure (item 001), the head/director's own printed name, and the submission date are modelled `required: true` — a declaration cannot be meaningfully filed or processed without them. Item 002/003/004.1/004.2/006/007 are each `required: false` since they are alternative-method or trade-specific line items the form's own layout does not universally require of every filer (mirroring `bo/sin/formulario-200-iva` Finding 5's identical reasoning for its own not-every-filer-has-every-line RUBRO items), and `accountantFullName` is `required: false` since a simplified-regime taxpayer (which may be an individual entrepreneur with no accounting staff) will not always have a chief accountant to name.\n8. **The physical signature marks themselves are not separately modelled as data** — they are captured by the `declarationAttestation` document's own `required: true`, consistent with this registry's `bo/sin/formulario-200-iva` and `zw/zimra/itf1-employment-income-return` precedent for signature blocks; the accompanying printed names (`headFullName`, `accountantFullName`) and `submissionDate` are modelled as ordinary fields since they are typed/written data distinct from the signature act.\n\n## Conformance\n\n3 valid mock scenarios — `valid-initial-declaration-cash-method` (a first-time filer under the cash-method computation, with a populated goods-inventory balance); `valid-amended-declaration-income-expense-method` (a corrective/amended filing under the income-minus-expenses method, exercising both the goods-production and other-activity sub-items); and `valid-liquidation-declaration-separate-subdivision` (a liquidation filing for a separate subdivision, with no chief accountant named) — plus 6 mutation-control fixtures (one missing statically-required field from each of `tin`, `taxpayerFullName`, `declarationType`, `taxPeriod`, `totalIncomeForPeriod`, `submissionDate`) and one unknown-field-rejected fixture, committed under `conformance/tj/andoz/simplified-tax-declaration/1.0.0/`.\n\nAn ephemeral, from-scratch conformance checker (deriving required rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all fixtures: all 3 valid scenarios at 0 errors, all 6 mutation controls each raising exactly 1 error, and the unknown-field fixture correctly rejected. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "taxpayer_information",
+      "title": "Маълумот дар бораи андозсупоранда — Information about the taxpayer",
+      "fields": ["tin", "unifiedIdentificationNumber", "taxpayerFullName"],
+      "next": "declaration_type_and_period"
+    },
+    {
+      "id": "declaration_type_and_period",
+      "title": "Намуди эъломия ва давраи ҳисоботии андоз — Declaration type and tax reporting period",
+      "fields": ["declarationType", "taxPeriod", "isSeparateSubdivision"],
+      "next": "tax_calculation"
+    },
+    {
+      "id": "tax_calculation",
+      "title": "Ҳисоби андоз — Tax calculation",
+      "fields": ["totalIncomeForPeriod", "taxExemptIncome", "cashMethodTaxAmount", "incomeDifferenceTaxGoodsProduction", "incomeDifferenceTaxOtherActivity", "goodsBalanceStartOfPeriod", "goodsBalanceEndOfPeriod"],
+      "next": "declaration_confirmation"
+    },
+    {
+      "id": "declaration_confirmation",
+      "title": "Тасдиқи дурустӣ ва пуррагии маълумот — Confirmation of accuracy and completeness",
+      "fields": ["headFullName", "accountantFullName", "submissionDate"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "tin",
+      "label": "РМА",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Рақами Мушаххаси Андозсупоранда — Taxpayer Identification Number (TIN), a 9-digit number.",
+      "sourceRef": "Section 1, Item 1 — \"РМА\"",
+      "validation": {
+        "pattern": "^\\d{9}$"
+      }
+    },
+    {
+      "name": "unifiedIdentificationNumber",
+      "label": "РЯМ",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Рақами Ягонаи Мушаххас — Unified Identification Number, a 9-digit number when assigned; not every taxpayer has one populated (see this document's own VERIFICATION.md).",
+      "sourceRef": "Section 1, Item 2 — \"РЯМ\"",
+      "validation": {
+        "pattern": "^\\d{9}$"
+      }
+    },
+    {
+      "name": "taxpayerFullName",
+      "label": "Номи пурраи андозсупоранда",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Full name of the taxpayer (individual or business name).",
+      "sourceRef": "Section 1, Item 3 — \"Номи пурраи андозсупоранда\""
+    },
+    {
+      "name": "declarationType",
+      "label": "Намуди эъломия",
+      "type": "enum",
+      "required": true,
+      "description": "Which of the four declaration types this submission is: initial (Ибтидоӣ, filed for the first time for this reporting period), regular (Навбатӣ, an ordinary periodic filing), amended (Иловагӣ (Тасхеҳӣ), filed to correct a previously submitted declaration), or liquidation (Барҳамдиҳӣ, filed on account of the taxpayer's liquidation).",
+      "sourceRef": "Section 2, Item 4 — \"Ибтидоӣ / Навбатӣ / Иловагӣ (Тасхеҳӣ) / Барҳамдиҳӣ\" tick boxes",
+      "validation": {
+        "enum": ["initial", "regular", "amended", "liquidation"]
+      }
+    },
+    {
+      "name": "taxPeriod",
+      "label": "Давраи андоз",
+      "type": "date",
+      "required": true,
+      "description": "The tax reporting period this declaration covers.",
+      "sourceRef": "Section 2, Item 5 — \"Давраи андоз\""
+    },
+    {
+      "name": "isSeparateSubdivision",
+      "label": "Воҳиди алоҳида",
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the taxpayer is filing as a separate subdivision (Ҳа/Не — Yes/No).",
+      "sourceRef": "Section 2, Item 5 — \"Воҳиди алоҳида\" Ҳа/Не tick boxes"
+    },
+    {
+      "name": "totalIncomeForPeriod",
+      "label": "Даромади умумӣ дар давраи ҳисоботӣ",
+      "type": "integer",
+      "required": true,
+      "description": "Total income for the reporting period.",
+      "sourceRef": "Section 3, Item 001",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxExemptIncome",
+      "label": "Даромади аз андозбандӣ озод (имтиёзи андоз)",
+      "type": "integer",
+      "required": false,
+      "description": "Income exempt from taxation (tax privilege/exemption).",
+      "sourceRef": "Section 3, Item 002",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "cashMethodTaxAmount",
+      "label": "Маблағи андоз барои истифодабарандагони усули хазинавӣ",
+      "type": "integer",
+      "required": false,
+      "description": "Tax amount for taxpayers using the cash-method computation.",
+      "sourceRef": "Section 3, Item 003",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "incomeDifferenceTaxGoodsProduction",
+      "label": "Барои фаъолият оид ба истеҳсоли мол",
+      "type": "integer",
+      "required": false,
+      "description": "Tax on the income/expense difference, for goods-production activity, under the income-minus-expenses computation method.",
+      "sourceRef": "Section 3, Item 004.1",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "incomeDifferenceTaxOtherActivity",
+      "label": "Барои дигар намуди фаъолият (ғайриистеҳсолӣ)",
+      "type": "integer",
+      "required": false,
+      "description": "Tax on the income/expense difference, for other (non-production) activity, under the income-minus-expenses computation method.",
+      "sourceRef": "Section 3, Item 004.2",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "goodsBalanceStartOfPeriod",
+      "label": "Бақияи молу маҳсулот ба аввали давраи ҳисоботӣ",
+      "type": "integer",
+      "required": false,
+      "description": "Balance of goods/products at the start of the reporting period.",
+      "sourceRef": "Section 3, Item 006",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "goodsBalanceEndOfPeriod",
+      "label": "Бақияи молу маҳсулот ба охири давраи ҳисоботӣ",
+      "type": "integer",
+      "required": false,
+      "description": "Balance of goods/products at the end of the reporting period.",
+      "sourceRef": "Section 3, Item 007",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "headFullName",
+      "label": "Насаб ном номи падари роҳбар",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Surname, name, and patronymic of the head/director signing the declaration.",
+      "sourceRef": "Section 4 — \"Насаб ном номи падари роҳбар\""
+    },
+    {
+      "name": "accountantFullName",
+      "label": "Насаб ном номи падари сармуҳосиб",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Surname, name, and patronymic of the chief accountant signing the declaration, when the taxpayer has one.",
+      "sourceRef": "Section 4 — \"Насаб ном номи падари сармуҳосиб\""
+    },
+    {
+      "name": "submissionDate",
+      "label": "Санаи пешниҳод",
+      "type": "date",
+      "required": true,
+      "description": "Date the declaration was submitted.",
+      "sourceRef": "Section 4 — \"Санаи пешниҳод\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "declarationAttestation",
+      "label": "Sworn declaration of accuracy",
+      "category": "attestation",
+      "required": true,
+      "statement": "Мо (ман) барои пурраги ва дурустии маълумотти дар ҳамин эъломия дарҷгардида тибқи қонунгузории Ҷумҳурии Тоҷикистон ҷавобгар мебошем (ам). (\"We (I) are responsible under the legislation of the Republic of Tajikistan for the completeness and accuracy of the information entered in this declaration.\")",
+      "sourceRef": "Section 4 — declaration statement and signature lines (Имзо) for the head/director and chief accountant"
+    }
+  ]
+}
