@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**91 jurisdictions** | **633 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**91 jurisdictions** | **634 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4589, "GovSchema Standard Research"): Trinidad
+> and Tobago's Business Formation vertical opens (4 of 6)**, via
+> `tt/rgd/partnership-beneficial-ownership-statement@1.0.0` — the Office of
+> the Registrar General's Form 1, "Statement in Respect of Beneficial
+> Ownership of a Firm", prescribed under section 20C(1),(2) of the
+> Partnership Act, Chap. 81:02, fetched unauthenticated from
+> `legalaffairs.gov.tt/forms/newForms/Form1_P.pdf` (HTTP 200, 376,476
+> bytes, sha256
+> `1ee51892fce2fb54478bac65ca2e8a1ea2ca65931597ac339666320c1b801498`),
+> matching the byte count independently banked in GOV-4568. Re-examining
+> this cycle's own banked Known Gaps entry 0m found both of its prior
+> Business Formation candidates mischaracterized: the actual initial
+> sole-trader/individual business-name registration is filed exclusively
+> through `legalaffairs.gov.tt`'s login-gated CRA e-filing portal with no
+> downloadable form, and the banked "Form 6" candidate is in fact a thin,
+> 2-field Statement of Change in Particulars (a post-registration
+> amendment, not the initial registration) once its image-only page was
+> rendered and read directly. Form1_P.pdf, by contrast, is a substantive,
+> currently-in-force, legally mandatory beneficial-ownership disclosure
+> statement required of every partnership/firm business name. Models the
+> form's three mutually exclusive declarant tracks — an individual partner,
+> a corporation that is a partner (completed by its director or secretary),
+> and a non-partner individual beneficial owner — each confirmed via direct
+> visual rendering to be a single-row-per-person disclosure, not a
+> repeating group. Visa and National ID & Civic Documents remain
+> unscreened. See the Business Formation vertical update below and the
+> document's own VERIFICATION.md for the full re-scoping rationale and 9
+> disclosed findings.
 
 > **Update (2026-07-23, GOV-4582, "GovSchema Standard Research"): Trinidad
 > and Tobago's DMV vertical opens (3 of 6)**, via
@@ -16385,7 +16414,23 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (78/83 jurisdictions — 94%)
+### Business Formation — Incorporation, LLC, Company Registration (79/84 jurisdictions — 94%)
+
+> **Update (2026-07-23, GOV-4589, "GovSchema Standard Research"): Trinidad
+> and Tobago gains its first Business Formation schema (4/6 for the
+> jurisdiction)**, via
+> `tt/rgd/partnership-beneficial-ownership-statement@1.0.0` — the Office of
+> the Registrar General's Form 1, a beneficial-ownership disclosure
+> statement under the Partnership Act, Chap. 81:02, picked up after
+> re-examining and correcting the mischaracterization of both candidates
+> Known Gaps entry 0m had banked (the actual initial business-name
+> registration is CRA-portal e-filing-only; the banked "Form 6" is a thin
+> post-registration amendment form, not the registration itself). See the
+> Executive Summary update above for the full sourcing record and the
+> document's own VERIFICATION.md. Numerator updated from 78 to 79;
+> denominator updated from 83 to 84 (Trinidad and Tobago had not yet been
+> reached for Business Formation specifically — it opened via Passport
+> under GOV-4568).
 
 > **Update (2026-07-23, GOV-4561, "GovSchema Standard Research"): Côte
 > d'Ivoire gains its Business Formation schema, closing this jurisdiction's
@@ -22165,7 +22210,27 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       (`legalaffairs.gov.tt/forms/Statement%20-%20Form%206.pdf`, 39,935
       bytes — confirmed a scanned/image-only PDF with no extractable text
       layer on a first pass; will need an OCR or higher-fidelity rendering
-      pass to author). **Taxes**: the Inland Revenue Division's Form 400
+      pass to author). **Update (GOV-4589, 2026-07-23): both candidates
+      re-examined and re-scoped.** Form1_P.pdf is not a business-name/
+      company registration form at all — its own header reads "THE
+      PARTNERSHIP ACT CHAP. 81:02 — FORM 1 — STATEMENT IN RESPECT OF
+      BENEFICIAL OWNERSHIP OF A FIRM"; rendering Form 6's single image-only
+      page and reading it directly shows it is a "Statement pursuant to
+      Section 8 ... of Nature of Change in the Particulars registered by an
+      Individual and Date of Change" — a thin, 2-field post-registration
+      amendment form, not the initial registration. The actual initial
+      "Application for Registration by an Individual" is filed exclusively
+      through `legalaffairs.gov.tt`'s login-gated CRA e-filing portal, with
+      no downloadable form found. **Form1_P.pdf now authored** as
+      `tt/rgd/partnership-beneficial-ownership-statement@1.0.0` (a
+      genuine, currently-in-force, legally mandatory beneficial-ownership
+      disclosure with three mutually exclusive declarant tracks — see the
+      Executive Summary and Business Formation vertical updates above and
+      the document's own VERIFICATION.md) — **opens Trinidad and Tobago's
+      Business Formation vertical (4/6).** Form 6 remains excluded as a
+      poor candidate (thin amendment form); the core individual/sole-
+      trader registration remains a confirmed login-gated-e-filing dead
+      end. **Taxes**: the Inland Revenue Division's Form 400
       ITR individual tax return
       (`ird.gov.tt/Media/Default/IRDForms/2018/F-400ITR--2018.pdf`,
       157,151 bytes, confirmed live via the IRD's own forms index despite
@@ -22178,10 +22243,10 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       (Trinidad and Tobago has no separate national ID card program
       distinct from its passport/driver's-licence documents, per the
       scouting pass's own preliminary read — not independently confirmed).
-      Business Formation remains open, STRONG banked backlog for a future
-      cycle (Form 1 is a genuine text-layer PDF; the companion Form 6
-      sole-proprietor/individual-firm statement is confirmed scanned/
-      image-only and will need an OCR or higher-fidelity rendering pass).
+      Business Formation was re-examined and authored under GOV-4589 (see
+      above) as `tt/rgd/partnership-beneficial-ownership-statement@1.0.0`,
+      once Form 1 and Form 6 were both found mischaracterized on closer
+      reading; Visa and National ID & Civic Documents remain open backlog.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
