@@ -6,6 +6,39 @@
 
 **89 jurisdictions** | **623 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-23, GOV-4513, "GovSchema Standard Research"): re-scanned
+> Namibia's two remaining open backlog candidates and re-discovered both,
+> delegating each for authoring.** Namibia (89th jurisdiction, opened via
+> Taxes under GOV-4491) had two candidates flagged as needing re-discovery:
+> **Business Formation** — BIPA's CC1 Founding Statement close-corporation
+> form, whose banked bare-domain URL (`bipa.na/download/...`) 404'd. Fresh
+> discovery found the identical `wpdmdl=6102` package still resolves under
+> the `www.` subdomain: `https://www.bipa.na/download/cc1-founding-statement/?wpdmdl=6102`,
+> HTTP 200, unauthenticated, `application/msword` (legacy OLE2 `.doc`, not
+> `.docx`), 215,552 bytes — byte-identical to the original GOV-4424 banking,
+> confirming the file itself never changed, only the serving host. Header
+> fields (registration number, corporation name, principal business,
+> financial year end, addresses, accounting officer) plus repeated "PART C —
+> MEMBERS" blocks (name, ID/DOB, registration number, % interest,
+> contribution, addresses, signature) and witness fields. Delegated as
+> **[GOV-4515](/GOV/issues/GOV-4515)** (would open Namibia Business
+> Formation, 2 of 6). **Visa** — MHAISS's "Visas Application.pdf", never
+> URL-banked (name only). Re-discovered via the site's own
+> "Download Forms" document-library folder (the shorter
+> `.../view_file/{id}` URL form gave a false "not found" for this entry; the
+> friendly `/documents/{groupId}/{folderId}/{name}/{uuid}?download=true` URL
+> is the reliable one) at
+> `https://mha.gov.na/documents/292728/582288/Visas+Application.pdf/c6d9c9b7-49ba-b0e6-fb40-2b3213544664?t=1741771353038&download=true`,
+> HTTP 200, unauthenticated, `application/pdf`, 82,771 bytes, 2 pages — the
+> Immigration Control Act, 1993 (section 12/13, Regulation 11) general visa
+> application, with a mutually-exclusive Part A (Holiday/Business/Work/
+> Transit) / Part B (Return Visa) split on page 2. Delegated as
+> **[GOV-4516](/GOV/issues/GOV-4516)** (would open Namibia Visa, 3 of 6).
+> Both re-verifications used direct `curl` fetches (byte counts, content
+> types, and page counts independently confirmed, not taken from the prior
+> banked record) before delegating. Passport, National ID, and DMV remain
+> confirmed dead ends per GOV-4424/GOV-4488.
+
 > **Update (2026-07-23, GOV-4506, "GovSchema Standard Research"): Tajikistan
 > gains its National ID & Civic Documents schema (3 of 6 for the
 > jurisdiction)**, via `tj/vkd/internal-passport-application@1.0.0` — the
@@ -21491,7 +21524,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       updates above and the document's own VERIFICATION.md for the full
       scope record. Business Formation (BIPA CC1, needs URL re-discovery)
       and Visa (MHAISS) remain open backlog; Passport, National ID, and
-      DMV stay confirmed dead ends.
+      DMV stay confirmed dead ends. **Update (GOV-4513, 2026-07-23): both
+      remaining candidates re-discovered and delegated.** BIPA's CC1 now
+      resolves under the `www.` subdomain
+      (`https://www.bipa.na/download/cc1-founding-statement/?wpdmdl=6102`,
+      byte-identical 215,552 bytes) — delegated as
+      [GOV-4515](/GOV/issues/GOV-4515) (Business Formation, would open 2 of
+      6). MHAISS's Visas Application.pdf resolved via the site's own
+      Download Forms folder
+      (`https://mha.gov.na/documents/292728/582288/Visas+Application.pdf/c6d9c9b7-49ba-b0e6-fb40-2b3213544664?t=1741771353038&download=true`,
+      82,771 bytes, `application/pdf`, 2 pages, Part A/Part B
+      mutually-exclusive split) — delegated as
+      [GOV-4516](/GOV/issues/GOV-4516) (Visa, would open 3 of 6). See the
+      Executive Summary update above for full detail.
     - **Tajikistan** — **Taxes**: the Tax Committee's (`andoz.tj`)
       simplified-tax-system declaration ("Эъломияи андози низоми
       содакардашуда"), a flat single-page form with numbered fields
