@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**90 jurisdictions** | **629 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**90 jurisdictions** | **630 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4561, "GovSchema Standard Research"): Côte
+> d'Ivoire's Business Formation vertical opens, closing this jurisdiction's
+> entire disclosed backlog (4 of 6)**, via
+> `ci/cepici/sole-trader-registration@1.0.0` — the Centre de Promotion des
+> Investissements en Côte d'Ivoire's (CEPICI) "Formulaire Unique
+> d'Immatriculation des Entreprises (Personnes Physiques)", the single-window
+> business-registration form an individual entrepreneur (sole trader) files
+> with CEPICI's Guichet Unique des Formalités d'Entreprises. Known Gaps entry
+> 0l had left this open since the GOV-4539 cycle because CEPICI's live host
+> (`cepici.ci`/`cepici.gouv.ci`) sits behind a Sucuri Cloudproxy JS challenge
+> a plain `curl`/fetch cannot pass; this cycle used a real Chromium session
+> (Playwright, per this registry's own standing
+> `browser-playwright-sandboxed-env-setup` recipe) to pass the challenge and
+> navigate CEPICI's own site through to its document library, where the
+> linked PDF asset itself proved directly fetchable without a browser. Models
+> 71 `fields[]` across 7 steps (27 statically required, following a companion
+> CEPICI document's own explicit blanket "all information is mandatory"
+> instruction) and 11 `documents[]` entries, including a bounded 3-slot table
+> for any additional person(s) empowered to bind the business and a
+> conditionally-applicable spouse-identification cluster. Côte d'Ivoire now
+> stands at 4/6 (Visa, Taxes, Passport, Business Formation); DMV and National
+> ID & Civic Documents remain confirmed dead-end/weak (see Known Gaps entry
+> 0l). See the Business Formation vertical update below and the document's
+> own VERIFICATION.md for the full scope record and 8 disclosed findings.
 
 > **Update (2026-07-23, GOV-4554, "GovSchema Standard Research"): Côte
 > d'Ivoire's Passport vertical opens (3 of 6)**, via
@@ -16250,7 +16275,17 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (77/82 jurisdictions — 94%)
+### Business Formation — Incorporation, LLC, Company Registration (78/83 jurisdictions — 94%)
+
+> **Update (2026-07-23, GOV-4561, "GovSchema Standard Research"): Côte
+> d'Ivoire gains its Business Formation schema, closing this jurisdiction's
+> entire disclosed backlog (4/6)**, via
+> `ci/cepici/sole-trader-registration@1.0.0` — CEPICI's "Formulaire Unique
+> d'Immatriculation des Entreprises (Personnes Physiques)". See the Executive
+> Summary update above for the full sourcing record and the document's own
+> VERIFICATION.md. Numerator updated from 77 to 78; denominator updated from
+> 82 to 83 (Côte d'Ivoire had not yet been reached for Business Formation
+> specifically — it opened via Visa under GOV-4539).
 
 > **Update (2026-07-23, GOV-4532, "GovSchema Standard Research"): Ethiopia
 > gains its Business Formation schema (4/6 for the jurisdiction)**, via
@@ -20964,7 +20999,7 @@ now closed.
 | **BW** | 4 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 14 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **CI** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
+| **CI** | 4 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CY** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
@@ -21880,9 +21915,11 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       only informationally with no attached form) — not re-checked this
       cycle.
 0l. **Côte d'Ivoire scouted fresh as a brand-new jurisdiction (GOV-4539,
-    2026-07-23), opened via Visa; Taxes (GOV-4547, 2026-07-23) and Passport
-    (GOV-4554, 2026-07-23) now also authored; Business Formation remains the
-    sole STRONG open backlog item:**
+    2026-07-23), opened via Visa; Taxes (GOV-4547, 2026-07-23), Passport
+    (GOV-4554, 2026-07-23), and Business Formation (GOV-4561, 2026-07-23) now
+    also authored — this jurisdiction's entire disclosed backlog is closed
+    (4/6; DMV and National ID & Civic Documents remain confirmed
+    dead-end/weak):**
     - **Visa**: the Ministère de l'Intérieur/Direction de la Surveillance du
       Territoire's (DST) bilingual "Formulaire de demande de
       Visa/Application for Visa", mirrored unauthenticated by the Abidjan
@@ -21903,7 +21940,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       CEPICI's own live host (`cepici.ci`/`cepici.gouv.ci`) currently sits
       behind a Sucuri Cloudproxy JS challenge that 307/404s a plain fetch —
       not a login wall, but not authorable without real-browser-automation
-      access this cycle. Left as open backlog.
+      access this cycle. Left as open backlog. **Update (GOV-4561,
+      2026-07-23): now authored** as
+      `ci/cepici/sole-trader-registration@1.0.0` — a real Chromium/Playwright
+      session passed the Sucuri challenge and navigated CEPICI's own site
+      through to its document library, where the "formulaire unique" PDF
+      asset itself proved directly fetchable without a browser. See the
+      Executive Summary and Business Formation vertical updates above and
+      the document's own VERIFICATION.md for the full scope record and 8
+      disclosed findings. Closes Côte d'Ivoire's entire disclosed backlog
+      (4/6); DMV and National ID & Civic Documents remain confirmed
+      dead-end/weak, per this item's own findings below.
     - **Taxes**: DGI's micro-enterprise income-tax declaration
       (`11_DECLARATION_DE_LIMPOT_DES_MICROENTREPRISES.pdf`, HTTP 200,
       245,929 bytes, unauthenticated) is a real, ready-to-author candidate.
@@ -21913,7 +21960,7 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Summary and Taxes vertical updates above. Opens Côte d'Ivoire's Taxes
       vertical (2/6); Business Formation and Passport remained open, STRONG
       banked backlog for a future cycle (unchanged from this item's own
-      GOV-4539 findings below) — Passport is now also authored, see below.
+      GOV-4539 findings below) — both are now also authored, see below.
     - **Passport**: the same `snedai.com` mirror also carries
       `formulaire_passeport.pdf` (HTTP 200, 69,840 bytes, unauthenticated),
       independently re-verified this cycle. Left as open backlog since
@@ -21931,8 +21978,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       circumstantially-required items; and a `height` field modelled as an
       integer in centimetres per the form's own printed "cm" unit label).
       Opens Côte d'Ivoire's Passport vertical (3/6); Business Formation
-      remains the sole open, STRONG banked backlog item for a future cycle
-      (unchanged from this item's own GOV-4539 finding below).
+      remained the sole open, STRONG banked backlog item for a future cycle
+      (unchanged from this item's own GOV-4539 finding below) — now also
+      authored, see above.
     - **DMV**: confirmed dead end. DGTTC/OSER licensing and vehicle
       registration route exclusively through the login/account-gated
       `eservices.cgi.ci/avit/` portal; no downloadable form found anywhere.
