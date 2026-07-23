@@ -4,7 +4,40 @@
 
 ## Executive Summary
 
-**89 jurisdictions** | **621 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**89 jurisdictions** | **622 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4499, "GovSchema Standard Research"): Tajikistan
+> gains its Business Formation schema (2 of 6 for the jurisdiction)**, via
+> `tj/andoz/sole-proprietor-registration@1.0.0` — the Tax Committee under
+> the Government of the Republic of Tajikistan's (andoz.tj) "Shakli №02"
+> application for state registration of a natural person as an individual
+> entrepreneur, the same one-stop-shop registrar as the sibling
+> `tj/andoz/simplified-tax-declaration`. Picked up from Known Gaps entry
+> 0i/0k's own banked candidate (independently re-fetched byte-identical to
+> both prior records: 644,554 bytes; `andoz.tj` again requires `curl -k`
+> for its self-signed TLS certificate). This 6-page specimen's embedded
+> font subset renders as heavy mojibake through `pdfjs-dist`'s text-layer
+> extraction, so every field was instead confirmed by rendering each page
+> to a PNG (via `pdfjs-dist` + `node-canvas`) and reading the glyphs
+> directly off the image — the same "broken ToUnicode mapping, correct
+> glyph painting" pattern already documented elsewhere in this registry
+> (e.g. `se/polisen/medgivande-pass-nationellt-id-kort-minderarig`). Models
+> the base 4-page application (Parts I-IV: submitting applicant, individual
+> entrepreneur identity/gender/TIN/residential address, chosen activity
+> form including a conditional farm-household land-holding branch, and the
+> block for a natural person not recognised as a Tajik citizen); the two
+> standalone, separately-paginated repeatable annexes on pages 5-6
+> (additional farm-household members; additional main activity types) are
+> excluded as overflow attachments, not fixed steps of the base form — see
+> the document's own VERIFICATION.md for the full scope record and 14
+> disclosed findings. Numerator updated from 74 to 75; denominator updated
+> from 80 to 81 (Tajikistan had not yet been reached for Business
+> Formation — this vertical's own denominator only grows when a
+> jurisdiction is actually reached for that specific vertical, per this
+> registry's standing convention). Tajikistan's National ID candidate
+> (the internal-passport "Shakli 1" docx, Known Gaps entry 0i/0k) remains
+> open, STRONG, ready-to-author backlog for a future cycle; DMV, Visa, and
+> foreign Passport remain confirmed dead-end/weak.
 
 > **Update (2026-07-23, GOV-4490, "GovSchema Standard Research"): Tajikistan
 > opens as the registry's 88th jurisdiction, via Taxes (1 of 6)**, via
@@ -15998,7 +16031,15 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (74/80 jurisdictions — 93%)
+### Business Formation — Incorporation, LLC, Company Registration (75/81 jurisdictions — 93%)
+
+> **Update (2026-07-23, GOV-4499, "GovSchema Standard Research"): Tajikistan
+> gains its first Business Formation schema**, via
+> `tj/andoz/sole-proprietor-registration@1.0.0` — see the Executive
+> Summary update above for the full sourcing record and the document's own
+> VERIFICATION.md. Numerator updated from 74 to 75; denominator updated
+> from 80 to 81 (Tajikistan had not yet been reached for Business
+> Formation).
 
 > **Update (2026-07-23, GOV-4478, "GovSchema Standard Research"): Zimbabwe
 > gains its first Business Formation schema**, via
@@ -20696,7 +20737,7 @@ now closed.
 | **SK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **SN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **TJ** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **TJ** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **UG** | 3 | ✗ | ✓ | ✓ | ✗ | ✗ | ✓ |
@@ -21487,11 +21528,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       against andoz.tj's own public tax-debtor tables (which also show the
       companion РЯМ/`unifiedIdentificationNumber` field left unpopulated for
       several real taxpayers, informing its `required: false`).
-    - **Business Formation, National ID**: not re-scouted this cycle. Entry
-      0i's own prior findings (the same registrar's sole-proprietor
-      registration form `form_№2.pdf`; the internal-passport "Shakli 1"
-      docx at `passportvkd.tj`) remain the best available record — both
-      still a ready-to-author 2-of-6 backlog for a future cycle.
+    - **Business Formation**: entry 0i's own prior finding (the same
+      registrar's sole-proprietor registration form `form_№2.pdf`)
+      re-verified byte-identical again. **Update (GOV-4499, 2026-07-23):
+      now authored** as `tj/andoz/sole-proprietor-registration@1.0.0` —
+      see the Executive Summary and Business Formation vertical updates
+      above and the document's own VERIFICATION.md for the full scope
+      record, including 14 disclosed findings and the exclusion of two
+      standalone repeatable annexes (additional farm-household members;
+      additional main activity types). Tajikistan is now 2/6.
+    - **National ID**: not re-scouted this cycle. Entry 0i's own prior
+      finding (the internal-passport "Shakli 1" docx at `passportvkd.tj`)
+      remains the best available record — still a ready-to-author
+      3-of-6 backlog item for a future cycle.
     - **DMV, Visa, foreign Passport**: confirmed dead-end/weak in entry 0i's
       original scouting pass (no GAI/traffic-police static form; evisa.tj/
       visa.gov.tj are pure SPAs; foreign passport application is described
