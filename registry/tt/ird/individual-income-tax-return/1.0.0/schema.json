@@ -1,0 +1,719 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "tt/ird/individual-income-tax-return",
+  "version": "1.0.0",
+  "title": "Trinidad and Tobago Individual Income Tax Return (IRD Form 400 ITR)",
+  "description": "The Inland Revenue Division's (IRD, Ministry of Finance) \"Individual Income Tax Return\" (Form 400 ITR), used by an individual taxpayer to declare personal particulars, employment/pension income, deductions, tax credits, and prepayments, and to make the accompanying signed general declaration. Models the 2-page core return (Identification Section, Tax Computation Section, General Declaration) that every individual filer completes; the form's 20 lettered companion Schedules (A-T, covering specific income types such as alimony, tax credits, and business levy) are out of scope for v1.0.0 — see this document's own VERIFICATION.md for the full disclosed scoping rationale. Opens Trinidad and Tobago's Taxes vertical (2 of 6 — Passport already published via tt/imd/passport-application-first-adult). This schema does not file the return itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Trinidad and Tobago or the Inland Revenue Division.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "TT",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Inland Revenue Division",
+    "abbreviation": "IRD",
+    "url": "https://ird.gov.tt/"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://ird.gov.tt/Media/Default/IRDForms/2018/F-400ITR--2018.pdf",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "Form 400 ITR, \"Individual Income Tax Return\", Inland Revenue Division, Ministry of Finance, 13 pages (2-page core return plus 20 lettered companion Schedules A-T), native (searchable-text) PDF."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "## Candidate selection\n\nGOV-4575 (\"GovSchema Standard Research\"). GOV-4568 opened Trinidad and\nTobago as the registry's 91st jurisdiction via `tt/imd/passport-application-first-adult@1.0.0`\nand banked three further STRONG-candidate verticals for a future cycle in\nCATALOG.md's Known Gaps entry 0m: DMV (Ministry of Works and Transport Form\n4 + Form 12), Business Formation (Companies Registry Form 1, plus a Form 6\nsole-proprietor statement already confirmed image-only/scanned with no\nextractable text layer), and Taxes (Inland Revenue Division Form 400 ITR).\nThis cycle authors the Taxes candidate: it carries no disclosed OCR blocker\n(unlike Business Formation's Form 6) and no disclosed broken-TLS-chain\nfetch workaround (unlike DMV's `mowt.gov.tt`), making it the cleanest of\nthe three banked candidates to pick up first.\n\n## Reaching the live source\n\n`https://ird.gov.tt/Media/Default/IRDForms/2018/F-400ITR--2018.pdf`\n\n- Required `curl -k` (TLS certificate verification bypass) to reach\n  `ird.gov.tt` from this session's network egress — a plain `curl` request\n  without it fails at the TLS handshake (exit code 60); this is a\n  connectivity/certificate-chain characteristic of the host, not a\n  login/CAPTCHA/WAF content gate, and does not affect the document's own\n  authenticity once reached.\n- HTTP 200, `Content-Type: application/pdf`, **157,151 bytes** — matches\n  the byte count independently recorded when this candidate was first\n  banked in GOV-4568, confirming the source has not changed since.\n- sha256 of the retrieved bytes:\n  `5db6ccfcd095f3194de69e97b348fe787c1a4c9f08561911a94fb2811ef47a36`.\n- PDF header `%PDF-1.4` at byte 0, 13 pages, confirmed via `pdfjs-dist`'s\n  `numPages`.\n- `getAnnotations()` returned zero AcroForm fields on any of the 13 pages —\n  a flat, print-and-fill specimen, not an interactive form.\n- Despite the filename and footer barcode reading \"2018\"/\"V1-18400ITRP0x\",\n  the document is confirmed live and currently served from IRD's own\n  \"IRDForms\" media library at the exact URL banked in GOV-4568 — the\n  Inland Revenue Division's standing practice of keeping prior-year return\n  templates permanently downloadable (the filer supplies the correct\n  reporting year via the schema's own printed header, not a URL path\n  change).\n\n### Authority attribution\n\nThe document's own header prints \"GOVERNMENT OF THE REPUBLIC OF TRINIDAD\nAND TOBAGO, Ministry of Finance, Inland Revenue Division\", and is\napproved by the Board of Inland Revenue under Section 76 of the Income Tax\nAct, Chap. 75:01. This schema attributes `authority` to the Inland Revenue\nDivision (IRD, `ird.gov.tt`), the issuing and processing authority whose\nown domain hosts the form.\n\n## Extraction method\n\n`pdfjs-dist` (vendored at `/tmp/node_modules/pdfjs-dist`) `getTextContent()`\nread every text item's raw string and `transform` x/y position on all 13\npages, grouped into printed rows by rounded y-coordinate and sorted by\nx-coordinate. The document is plain English with clean, non-rasterized\nembedded fonts — the text layer extracted completely and unambiguously.\nPages 1-2 (the core return this schema models) were also rendered to PNG\nvia `node-canvas` at 2.5x scale to visually confirm the true table/checkbox\nlayout; unlike some other registry sources where embedded-font glyph\noutlines failed to rasterize in this environment, this specimen's glyphs\nrendered cleanly, visually confirming every checkbox (\"NAME CHANGE\" /\n\"ADDRESS CHANGE\"; \"Resident\" / \"Non-Resident\" / \"Male\" / \"Female\" /\n\"Self-employed\") as a plain, symmetric square glyph with no printed\nasymmetry between paired options.\n\n## Document structure\n\nThe 13-page form (each page footer-stamped with its own `V1-18400ITRPnn`\ncode) is: page 1, the Identification Section and the start of the Tax\nComputation Section (Income, Lines 1-10); page 2, Deductions (Lines\n11-33), Prepayments (Lines 34-41), and the General Declaration; pages 3-13,\ntwenty lettered companion Schedules (A through T) covering specific income\ntypes and computations referenced from the main return by page number\n(e.g. \"Page 6, Schedule E\", \"Page 3, Schedule B\", \"Page 4, Schedule C\",\n\"Page 11, Schedule R\", \"Page 13, Schedule T\").\n\n## Scope\n\nThis v1.0.0 schema models only the 2-page core return (Identification\nSection, Tax Computation Section, General Declaration) — the portion every\nindividual filer completes regardless of income type. The 20 lettered\ncompanion Schedules (A-T, pages 3-13) are excluded, following this\nregistry's standing narrow-scoping precedent for large multi-schedule tax\nreturns (e.g. Zambia's ITF 46_1 excluding its business/self-employment\ncomputation sections; Kazakhstan's Form 250.00 authored core-first with\nSchedules 250.01-06 as separate companion documents in later cycles). Each\nexcluded schedule is referenced from a specific core-return field's own\n`description` (e.g. `netIncomeFromOtherSources` cites Schedule E,\n`alimonyMaintenancePayment` cites Schedule B), so the gap is visible\nrather than silent, and left as disclosed open backlog for a future\ncompanion-schema cycle.\n\nWithin the core return, every printed formula/subtotal line — Lines 4, 6,\n10 (Income section); 14, 16, 20, 24, 25, 26, 29, 30, 32, 33 (Deductions\nsection); 39, 40, 41 (Prepayments section) — is excluded from `fields[]`,\nper this registry's standing closed decision to defer calculated/derived\nfields (GSP-0013 §7, founder-confirmed on GOV-302). Only the lines a\ntaxpayer directly supplies are modelled. The sole exception is Line 15\n(\"Deduct Personal Allowance - $72,000\"): although printed alongside\nformula lines, it is a fixed statutory constant available to every\nindividual filer rather than a value derived from other lines on this\nform, so it is modelled as a directly-supplied required field, consistent\nwith how this registry treats other schemas' own printed fixed-allowance\nconstants.\n\n## Disclosed findings and interpretation choices\n\n1. **Three independent tick-box groups share one \"Please tick the\n   appropriate box\" instruction** — Resident/Non-Resident, Male/Female,\n   and a standalone Self-employed box — confirmed via the page 1 render:\n   the first two are modelled as mutually-exclusive `enum` fields\n   (`residencyStatus`, `sex`); Self-employed is modelled as an independent\n   `isSelfEmployed` boolean, since the form prints it as a third, separate\n   checkbox rather than a third option of either enum.\n2. **`tradeName`/`typeOfBusiness`/`addressOfBusiness*` are gated\n   `requiredWhen isSelfEmployed equals true`**, per the form's own printed\n   qualifier \"(IF ANY) SELF EMPLOYED ONLY\" directly beside the Trade Name\n   box.\n3. **`personalAllowance` (Line 15) is modelled required, not excluded as a\n   computed total** — see Scope above for the distinction drawn between a\n   fixed statutory constant and a line genuinely derived by formula from\n   other lines.\n4. **`covenantedDonations` (Line 13)'s own printed 15%-of-Line-10 ceiling\n   is disclosed in its `description` but not enforced as a `validation`\n   maximum**, since Line 10 (Total Income) is itself an excluded computed\n   total this schema does not carry a value for.\n5. **`declarationDate` collapses the declaration's own printed \"day of\n   .... 2019\" blank into one ordinary `date` field** rather than splitting\n   day/month/fixed-year sub-fields or introducing a schema `edition` axis,\n   consistent with this registry's `kz/kgd/*`/`ua/dps/*` tax-return\n   precedent of modelling a filing year as an ordinary data value on a\n   single, undated generic schema rather than a new edition per tax year.\n6. **Every Income/Deductions/Prepayments line (Lines 1-3, 5, 7-9, 11-13,\n   17-19, 21-23, 27-28, 31, 34-38) is modelled `required: false`**: the\n   form's own \"To Nearest Dollar, Omit Cents/Commas\" column header carries\n   no accompanying \"enter NONE if not applicable\" instruction, but every\n   line is visibly one of many alternative income/deduction/prepayment\n   categories a given filer may simply not have — the same left-blank-if-\n   inapplicable convention this registry's `bw/burs/individual-tax-return`\n   and `zm/zra/individual-income-tax-return` precedents already apply to\n   their own analogous income-category lines.\n7. **Excluded as official-use-only fields, not applicant-supplied data:**\n   page 2's \"FOR OFFICIAL USE ONLY\" box (\"Place Date Received Stamp\n   Here\").\n\n## Conformance\n\n3 valid mock scenarios — `valid-employed-resident` (a resident PAYE\nemployee with employment income, personal allowance, and a signed\ndeclaration, no self-employment or schedule-referenced lines populated);\n`valid-self-employed-with-deductions` (a resident, self-employed filer\nexercising `isSelfEmployed`'s four `requiredWhen`-gated business fields\nplus several deduction lines); and `valid-non-resident-with-schedule-\nreferenced-income` (a non-resident filer exercising the Schedule-\nreferenced lines — `netIncomeFromOtherSources`, `alimonyMaintenancePayment`,\n`taxCredits`, `businessLevyLiability`, `totalIncomeTaxQuarterlyInstalmentsPaid`,\n`totalBusinessLevyQuarterlyInstalmentsPaid`) — plus 8 mutation-control\nfixtures (one missing statically-required field from each of `birFileNo`,\n`lastName`, `firstName`, `occupationOrProfession`, `dateOfBirth`,\n`personalAllowance`, `declarantName`, `signatureOfTaxpayerOrAuthorisedAgent`\n— 8 fixtures) and one unknown-field-rejected fixture, committed under\n`conformance/tt/ird/individual-income-tax-return/1.0.0/`.\n\nAn ephemeral, from-scratch conformance checker (deriving required/\nrequiredWhen rules directly from this schema's own `fields[]`, discarded\nafter use, not committed) ran all 12 fixtures: all 3 valid scenarios at 0\nerrors, all 8 static-required mutation controls each raising exactly 1\nerror, the unknown-field fixture correctly rejected, and confirmed every\n`requiredWhen` field reference resolves to a real field name (0 dangling\nreferences). Validated clean with `node tools/validate.mjs` and\n`node tools/validate-ajv.mjs`, individually and as part of the full\nregistry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "registration_and_identification",
+      "title": "Registration Information Change and Identification Section",
+      "fields": [
+        "registrationInformationNameChange",
+        "registrationInformationAddressChange",
+        "birFileNo",
+        "spouseBirFileNo",
+        "lastName",
+        "firstName",
+        "middleName",
+        "presentAddressStreet",
+        "presentAddressCityOrTown",
+        "presentAddressCountry",
+        "pinNo",
+        "vatRegistrationNo",
+        "mailingAddressStreet",
+        "mailingAddressCityOrTown",
+        "mailingAddressCountry",
+        "nisNo",
+        "driversPermitNo",
+        "occupationOrProfession",
+        "nationalIdentificationNo",
+        "emailAddress",
+        "dateOfBirth",
+        "telephoneContactHomeOrOffice",
+        "mobile",
+        "residencyStatus",
+        "sex",
+        "isSelfEmployed",
+        "tradeName",
+        "typeOfBusiness",
+        "addressOfBusinessStreet",
+        "addressOfBusinessCityOrTown",
+        "addressOfBusinessCountry"
+      ],
+      "next": "income"
+    },
+    {
+      "id": "income",
+      "title": "Tax Computation Section: Income (Lines 1-9)",
+      "fields": [
+        "incomeFromEmployment",
+        "retirementSeveranceBenefit",
+        "pensionsFromSources",
+        "lessTravellingExpenses",
+        "grossAmountFromCancellationOfDeferredAnnuityOrEsop",
+        "employerContributionToApprovedDeferredAnnuityTaxableBenefit",
+        "netIncomeFromOtherSources"
+      ],
+      "next": "deductions"
+    },
+    {
+      "id": "deductions",
+      "title": "Tax Computation Section: Deductions (Lines 11-31)",
+      "fields": [
+        "tertiaryEducationExpenses",
+        "firstTimeAcquisitionOfHouse",
+        "covenantedDonations",
+        "personalAllowance",
+        "approvedPensionPlanSchemeDeferredAnnuityPlan",
+        "contributionsToWidowsAndOrphansFund",
+        "nationalInsurancePayments",
+        "employerNisContributionsForDomesticWorkers",
+        "approvedCapitalExpenditureConversionToGuestHouse",
+        "alimonyMaintenancePayment",
+        "taxCredits",
+        "doubleTaxationRelief",
+        "businessLevyLiability"
+      ],
+      "next": "prepayments"
+    },
+    {
+      "id": "prepayments",
+      "title": "Tax Computation Section: Prepayments (Lines 34-38)",
+      "fields": [
+        "totalIncomeTaxQuarterlyInstalmentsPaid",
+        "totalBusinessLevyQuarterlyInstalmentsPaid",
+        "taxDeductedOnInterestDividendIncome",
+        "taxDeductedOnCancellationOfDeferredAnnuityOrEsop",
+        "incomeTaxDeductedPayePerTd4Certificates"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "General Declaration",
+      "fields": [
+        "declarantName",
+        "declarationDate",
+        "signatureOfTaxpayerOrAuthorisedAgent"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "registrationInformationNameChange",
+      "label": "Registration Information Change — Name Change",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1 — \"REGISTRATION INFORMATION CHANGE\" box, \"NAME CHANGE\" checkbox"
+    },
+    {
+      "name": "registrationInformationAddressChange",
+      "label": "Registration Information Change — Address Change",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1 — \"REGISTRATION INFORMATION CHANGE\" box, \"ADDRESS CHANGE\" checkbox"
+    },
+    {
+      "name": "birFileNo",
+      "label": "BIR File No.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"BIR File No.\""
+    },
+    {
+      "name": "spouseBirFileNo",
+      "label": "Spouse's BIR File No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"Spouse's BIR File No.\""
+    },
+    {
+      "name": "lastName",
+      "label": "Last Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"LAST NAME\""
+    },
+    {
+      "name": "firstName",
+      "label": "First Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"FIRST NAME\""
+    },
+    {
+      "name": "middleName",
+      "label": "Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Modelled optional: not every filer has a middle name, and the form provides no separate mandatory marker for this box.",
+      "sourceRef": "Page 1, Identification Section — \"MIDDLE NAME\""
+    },
+    {
+      "name": "presentAddressStreet",
+      "label": "Present Address (Street No. and Name)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"PRESENT ADDRESS (STREET NO. AND NAME)\""
+    },
+    {
+      "name": "presentAddressCityOrTown",
+      "label": "Present Address — City or Town",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"CITY OR TOWN\" (present address row)"
+    },
+    {
+      "name": "presentAddressCountry",
+      "label": "Present Address — Country",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"COUNTRY\" (present address row)"
+    },
+    {
+      "name": "pinNo",
+      "label": "PIN No. (Electronic Birth Certificate No.)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"PIN No. (Electronic Birth Certificate No.)\""
+    },
+    {
+      "name": "vatRegistrationNo",
+      "label": "VAT Registration No.",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1, Identification Section — \"VAT Registration No.\""
+    },
+    {
+      "name": "mailingAddressStreet",
+      "label": "Mailing Address If Different From Above (Street No. and Name)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Only applicable when the filer's mailing address differs from the present address entered above.",
+      "sourceRef": "Page 1, Identification Section — \"MAILING ADDRESS IF DIFFERENT FROM ABOVE (STREET NO. AND NAME)\""
+    },
+    {
+      "name": "mailingAddressCityOrTown",
+      "label": "Mailing Address — City or Town",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"CITY OR TOWN\" (mailing address row)"
+    },
+    {
+      "name": "mailingAddressCountry",
+      "label": "Mailing Address — Country",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"COUNTRY\" (mailing address row)"
+    },
+    {
+      "name": "nisNo",
+      "label": "NIS No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"NIS No.\""
+    },
+    {
+      "name": "driversPermitNo",
+      "label": "Driver's Permit No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"Driver's Permit No.\""
+    },
+    {
+      "name": "occupationOrProfession",
+      "label": "Occupation or Profession",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1, Identification Section — \"OCCUPATION OR PROFESSION\""
+    },
+    {
+      "name": "nationalIdentificationNo",
+      "label": "National Identification No.",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Modelled optional: a non-resident individual taxpayer is not necessarily issued a Trinidad and Tobago National Identification number.",
+      "sourceRef": "Page 1, Identification Section — \"National Identification No.\""
+    },
+    {
+      "name": "emailAddress",
+      "label": "Email Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"EMAIL ADDRESS\""
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"Date of Birth (DD MM YYYY)\""
+    },
+    {
+      "name": "telephoneContactHomeOrOffice",
+      "label": "Telephone Contact (Home/Office)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"TELEPHONE CONTACT (HOME/OFFICE)\""
+    },
+    {
+      "name": "mobile",
+      "label": "Mobile",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Identification Section — \"MOBILE\""
+    },
+    {
+      "name": "residencyStatus",
+      "label": "Residency Status",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "resident",
+          "non_resident"
+        ]
+      },
+      "sourceRef": "Page 1, Identification Section — \"Please tick the appropriate box\": \"Resident\" / \"Non-Resident\""
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "validation": {
+        "enum": [
+          "male",
+          "female"
+        ]
+      },
+      "sourceRef": "Page 1, Identification Section — \"Please tick the appropriate box\": \"Male\" / \"Female\""
+    },
+    {
+      "name": "isSelfEmployed",
+      "label": "Self-employed",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "Page 1, Identification Section — \"Please tick the appropriate box\": \"Self-employed\""
+    },
+    {
+      "name": "tradeName",
+      "label": "Trade Name (If Any) Self Employed Only",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "isSelfEmployed",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Identification Section — \"TRADE NAME (IF ANY) SELF EMPLOYED ONLY\""
+    },
+    {
+      "name": "typeOfBusiness",
+      "label": "Type of Business",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "isSelfEmployed",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Identification Section — \"TYPE OF BUSINESS\""
+    },
+    {
+      "name": "addressOfBusinessStreet",
+      "label": "Address of Business (Street No. and Name)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "isSelfEmployed",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Identification Section — \"ADDRESS OF BUSINESS (STREET NO. AND NAME)\""
+    },
+    {
+      "name": "addressOfBusinessCityOrTown",
+      "label": "Address of Business — City or Town",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "isSelfEmployed",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Identification Section — \"CITY OR TOWN\" (address of business row)"
+    },
+    {
+      "name": "addressOfBusinessCountry",
+      "label": "Address of Business — Country",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "isSelfEmployed",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Identification Section — \"COUNTRY\" (address of business row)"
+    },
+    {
+      "name": "incomeFromEmployment",
+      "label": "Income from Employment (Government and Non-Government)",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 1. Left blank if not applicable.",
+      "sourceRef": "Page 1, Tax Computation Section, Line 1 — \"Income from Employment (Government and Non-Government)\""
+    },
+    {
+      "name": "retirementSeveranceBenefit",
+      "label": "Retirement Severance Benefit",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 2. Left blank if not applicable.",
+      "sourceRef": "Page 1, Tax Computation Section, Line 2 — \"Retirement Severance Benefit\""
+    },
+    {
+      "name": "pensionsFromSources",
+      "label": "Pensions from sources within/outside T&T",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 3. Left blank if not applicable.",
+      "sourceRef": "Page 1, Tax Computation Section, Line 3 — \"Pensions from sources within/outside T&T\""
+    },
+    {
+      "name": "lessTravellingExpenses",
+      "label": "Less Travelling Expenses",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 5. Left blank if not applicable.",
+      "sourceRef": "Page 1, Tax Computation Section, Line 5 — \"Less Travelling Expenses\""
+    },
+    {
+      "name": "grossAmountFromCancellationOfDeferredAnnuityOrEsop",
+      "label": "Gross Amount Received on Cancellation of Approved Deferred Annuity/Pension Plan / ESOP",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 7. Left blank if not applicable.",
+      "sourceRef": "Page 1, Tax Computation Section, Line 7 — \"Gross Amount Received on Cancellation of Approved Deferred Annuity/Pension Plan / ESOP\""
+    },
+    {
+      "name": "employerContributionToApprovedDeferredAnnuityTaxableBenefit",
+      "label": "Employer's contribution to Approved Deferred Annuity/Pension Plan (Taxable Benefit)",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 8, Section 134(6) of the Income Tax Act. Left blank if not applicable.",
+      "sourceRef": "Page 1, Tax Computation Section, Line 8 — \"Employer's contribution to Approved Deferred Annuity/Pension Plan (Taxable Benefit) Section 134(6)\""
+    },
+    {
+      "name": "netIncomeFromOtherSources",
+      "label": "Net Income from Other Sources",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 9, transcribed from Schedule E (Page 6). Schedule E's own line items are out of scope for this v1.0.0 schema; see this document's own VERIFICATION.md.",
+      "sourceRef": "Page 1, Tax Computation Section, Line 9 — \"Net Income from Other Sources (Page 6, Schedule E)\""
+    },
+    {
+      "name": "tertiaryEducationExpenses",
+      "label": "Tertiary Education Expenses",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0,
+        "maximum": 60000
+      },
+      "description": "Line 11. Limited to $60,000 per household. Left blank if not applicable.",
+      "sourceRef": "Page 2, Deductions, Line 11 — \"Tertiary Education Expenses (Limited to $60,000 per household)\""
+    },
+    {
+      "name": "firstTimeAcquisitionOfHouse",
+      "label": "First-Time Acquisition of House in respect of Owner Occupied Property",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0,
+        "maximum": 25000
+      },
+      "description": "Line 12. Limited to $25,000. Left blank if not applicable.",
+      "sourceRef": "Page 2, Deductions, Line 12 — \"First-Time Acquisition of House in respect of Owner Occupied Property (Limited to $25,000)\""
+    },
+    {
+      "name": "covenantedDonations",
+      "label": "Covenanted Donations",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 13. Limited to 15% of Line 10 (Total Income), a cross-line limit this schema does not enforce as a hard validation ceiling since Line 10 is itself an excluded computed total (GSP-0013 §7). Left blank if not applicable.",
+      "sourceRef": "Page 2, Deductions, Line 13 — \"Covenanted Donations (Limited to 15% of Line 10)\""
+    },
+    {
+      "name": "personalAllowance",
+      "label": "Deduct Personal Allowance",
+      "type": "number",
+      "required": true,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 15. The form itself pre-prints the statutory amount, \"$72,000\" — a fixed allowance available to every individual filer, not a computed total, so modelled as a directly-supplied required field rather than excluded under GSP-0013 §7.",
+      "sourceRef": "Page 2, Deductions, Line 15 — \"Deduct Personal Allowance - $72,000\""
+    },
+    {
+      "name": "approvedPensionPlanSchemeDeferredAnnuityPlan",
+      "label": "Approved Pension Plan/Scheme/Deferred Annuity Plan",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 17. Left blank if not applicable.",
+      "sourceRef": "Page 2, Deductions, Line 17 — \"Approved Pension Plan/Scheme/Deferred Annuity Plan\""
+    },
+    {
+      "name": "contributionsToWidowsAndOrphansFund",
+      "label": "Contributions to Widows' and Orphans' Fund",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 18. Left blank if not applicable.",
+      "sourceRef": "Page 2, Deductions, Line 18 — \"Contributions to Widows' and Ophans' Fund\""
+    },
+    {
+      "name": "nationalInsurancePayments",
+      "label": "National Insurance Payments",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 19. Only 70% of National Insurance Payments is allowable per the form's own printed note; the filer enters the already-computed allowable amount. Left blank if not applicable.",
+      "sourceRef": "Page 2, Deductions, Line 19 — \"National Insurance Payments - 70% Allowable\""
+    },
+    {
+      "name": "employerNisContributionsForDomesticWorkers",
+      "label": "Employer's NIS Contributions paid for domestic workers",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 21. Left blank if not applicable.",
+      "sourceRef": "Page 2, Deductions, Line 21 — \"Employer's NIS Contributions paid for domestic workers\""
+    },
+    {
+      "name": "approvedCapitalExpenditureConversionToGuestHouse",
+      "label": "Approved Capital Expenditure on Conversion of House to Approved Guest House",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 22. Left blank if not applicable.",
+      "sourceRef": "Page 2, Deductions, Line 22 — \"Approved Capital Expenditure on Conversion of House to Approved Guest House\""
+    },
+    {
+      "name": "alimonyMaintenancePayment",
+      "label": "Alimony/Maintenance Payment",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 23, transcribed from Schedule B (Page 3). Schedule B's own line items are out of scope for this v1.0.0 schema; see this document's own VERIFICATION.md.",
+      "sourceRef": "Page 2, Deductions, Line 23 — \"Alimony/Maintenance Payment (Page 3, Schedule B)\""
+    },
+    {
+      "name": "taxCredits",
+      "label": "Tax Credits",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 27, transcribed from Schedule C (Page 4). Schedule C's own line items are out of scope for this v1.0.0 schema; see this document's own VERIFICATION.md.",
+      "sourceRef": "Page 2, Deductions, Line 27 — \"Tax Credits [(See Instructions 18) (Please complete Schedule C)]\""
+    },
+    {
+      "name": "doubleTaxationRelief",
+      "label": "Double Taxation Relief",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 28. Left blank if not applicable.",
+      "sourceRef": "Page 2, Deductions, Line 28 — \"Double Taxation Relief\""
+    },
+    {
+      "name": "businessLevyLiability",
+      "label": "Business Levy Liability",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 31, transcribed from Schedule T (Page 13). Schedule T's own line items are out of scope for this v1.0.0 schema; see this document's own VERIFICATION.md.",
+      "sourceRef": "Page 2, Deductions, Line 31 — \"Business Levy Liability (Page 13, Schedule T)\""
+    },
+    {
+      "name": "totalIncomeTaxQuarterlyInstalmentsPaid",
+      "label": "Total Income Tax Quarterly Instalments Paid",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 34, transcribed from Schedule R (Page 11). Schedule R's own line items are out of scope for this v1.0.0 schema; see this document's own VERIFICATION.md.",
+      "sourceRef": "Page 2, Prepayments, Line 34 — \"Total Income Tax Quarterly Installments Paid (Page 11, Schedule R)\""
+    },
+    {
+      "name": "totalBusinessLevyQuarterlyInstalmentsPaid",
+      "label": "Total Business Levy Quarterly Instalments Paid",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 35, transcribed from Schedule R (Page 11). Schedule R's own line items are out of scope for this v1.0.0 schema; see this document's own VERIFICATION.md.",
+      "sourceRef": "Page 2, Prepayments, Line 35 — \"Total Business Levy Quarterly Installments Paid (Page 11, Schedule R)\""
+    },
+    {
+      "name": "taxDeductedOnInterestDividendIncome",
+      "label": "Tax Deducted on Interest/Dividend Income Per Certificate(s)",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 36. Left blank if not applicable.",
+      "sourceRef": "Page 2, Prepayments, Line 36 — \"Tax Deducted on Interest/Dividend Income Per Certificate(s)\""
+    },
+    {
+      "name": "taxDeductedOnCancellationOfDeferredAnnuityOrEsop",
+      "label": "Tax Deducted Re: Cancellation of Approved Deferred Annuity/Pension Plan/ESOP",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 37. Left blank if not applicable.",
+      "sourceRef": "Page 2, Prepayments, Line 37 — \"Tax Deducted Re: Cancellation of Approved Deferred Annuity/Pension Plan/ESOP\""
+    },
+    {
+      "name": "incomeTaxDeductedPayePerTd4Certificates",
+      "label": "Income Tax Deducted (PAYE) Per TD4 Certificate(s) Enclosed",
+      "type": "number",
+      "required": false,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Line 38. Left blank if not applicable.",
+      "sourceRef": "Page 2, Prepayments, Line 38 — \"Income Tax Deducted (PAYE) Per TD4 Certificate(s) Enclosed\""
+    },
+    {
+      "name": "declarantName",
+      "label": "Declarant's Full Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The declaration's own printed blank line (\"I, ..............................................\") into which the taxpayer or authorised agent's full name is entered.",
+      "sourceRef": "Page 2, General Declaration — \"I, ..............................................................................declare that...\""
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "The declaration's own printed sentence reads \"Given under my hand this .... day of .... 2019\" — this specific 2018-tax-year edition of the form pre-prints the filing year as 2019, leaving only the day and month blank for the filer to complete. Modelled as a single ordinary date field per this registry's standing practice of not introducing a schema edition axis for a single filing-year form (matching kz/kgd/* and ua/dps/* precedent).",
+      "sourceRef": "Page 2, General Declaration — \"Given under my hand this .................................................... day of ........................................... 2019.\""
+    },
+    {
+      "name": "signatureOfTaxpayerOrAuthorisedAgent",
+      "label": "Signature of Taxpayer or Authorized Agent",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The form itself warns: \"Failure to sign this return would result in a delay in processing.\"",
+      "sourceRef": "Page 2, General Declaration — \"Signature of Taxpayer or Authorized Agent\""
+    }
+  ]
+}

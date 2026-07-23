@@ -4,7 +4,35 @@
 
 ## Executive Summary
 
-**91 jurisdictions** | **631 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**91 jurisdictions** | **632 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4575, "GovSchema Standard Research"): Trinidad
+> and Tobago's Taxes vertical opens (2 of 6 for the jurisdiction)**, via
+> `tt/ird/individual-income-tax-return@1.0.0` — the Inland Revenue
+> Division's "Individual Income Tax Return" (Form 400 ITR), fetched
+> unauthenticated (with a TLS certificate-verification bypass; `ird.gov.tt`
+> has a broken chain, the same class of workaround this cycle's own DMV
+> backlog candidate on `mowt.gov.tt` needs) from
+> `ird.gov.tt/Media/Default/IRDForms/2018/F-400ITR--2018.pdf` (HTTP 200,
+> 157,151 bytes, sha256
+> `5db6ccfcd095f3194de69e97b348fe787c1a4c9f08561911a94fb2811ef47a36`),
+> matching the byte count independently banked in GOV-4568. Picked as the
+> cleanest of that cycle's three banked candidates (DMV needs the same TLS
+> workaround plus a second companion form; Business Formation's Form 6 is
+> confirmed image-only with no extractable text layer). Models the 2-page
+> core return (Identification Section, Tax Computation Section, General
+> Declaration) — 59 `fields[]` across 5 steps; the form's 20 lettered
+> companion Schedules (A-T, pages 3-13) are out of scope for v1.0.0, per
+> this registry's standing narrow-scoping precedent for large multi-
+> schedule tax returns. Every printed formula/subtotal line is excluded
+> per GSP-0013 §7 (calculated/derived fields deferred), with one disclosed
+> exception: the fixed $72,000 statutory personal allowance (Line 15) is
+> modelled as a directly-supplied required field since it is a constant,
+> not a value derived from other lines. DMV and Business Formation remain
+> open, STRONG banked backlog (Known Gaps entry 0m, updated below); Visa
+> and National ID & Civic Documents remain unscreened. See the Taxes
+> vertical update below and the document's own VERIFICATION.md for the
+> full scope record and disclosed findings.
 
 > **Update (2026-07-23, GOV-4568, "GovSchema Standard Research"): Trinidad
 > and Tobago opens as the registry's 91st jurisdiction**, via
@@ -17515,7 +17543,19 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (76/90 jurisdictions — 84%)
+### Taxes — Income Tax Return, Tax Filing (77/91 jurisdictions — 85%)
+
+> **Update (2026-07-23, GOV-4575, "GovSchema Standard Research"): Trinidad
+> and Tobago's Taxes vertical opens (2 of 6 for the jurisdiction)**, via
+> `tt/ird/individual-income-tax-return@1.0.0` — the Inland Revenue
+> Division's "Individual Income Tax Return" (Form 400 ITR) — see the
+> Executive Summary update above for the full sourcing record and the
+> document's own VERIFICATION.md. This vertical's own denominator moves
+> from 90 to 91: Trinidad and Tobago's Taxes candidate was actually first
+> reached (scouted and banked) back in the GOV-4568 cycle alongside its
+> Passport, DMV, and Business Formation candidates, but that cycle's own
+> catalog update did not bump this vertical's denominator at the time —
+> corrected here now that the candidate is authored.
 
 > **Update (2026-07-23, GOV-4547, "GovSchema Standard Research"): Côte
 > d'Ivoire's Taxes vertical opens (2 of 6 for the jurisdiction)**, via
@@ -22079,12 +22119,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       ITR individual tax return
       (`ird.gov.tt/Media/Default/IRDForms/2018/F-400ITR--2018.pdf`,
       157,151 bytes, confirmed live via the IRD's own forms index despite
-      the 2018 filename). Visa and National ID & Civic Documents were not
-      reached this cycle (Trinidad and Tobago has no separate national ID
-      card program distinct from its passport/driver's-licence documents,
-      per the scouting pass's own preliminary read — not independently
-      confirmed). DMV, Business Formation, and Taxes remain open, STRONG
-      banked backlog for a future cycle.
+      the 2018 filename). **Update (GOV-4575, 2026-07-23): now authored**
+      as `tt/ird/individual-income-tax-return@1.0.0` (core 2-page return;
+      the form's 20 lettered companion Schedules A-T are out of scope for
+      v1.0.0) — see the Executive Summary and Taxes vertical updates
+      above. **Opens Trinidad and Tobago's Taxes vertical (2/6).** Visa
+      and National ID & Civic Documents were not reached this cycle
+      (Trinidad and Tobago has no separate national ID card program
+      distinct from its passport/driver's-licence documents, per the
+      scouting pass's own preliminary read — not independently confirmed).
+      DMV and Business Formation remain open, STRONG banked backlog for a
+      future cycle.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
