@@ -4,7 +4,25 @@
 
 ## Executive Summary
 
-**89 jurisdictions** | **623 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**89 jurisdictions** | **624 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4516, "GovSchema Standard Research"): Namibia's
+> Visa vertical opens (3 of 6)**, via `na/mhaiss/visa-application@1.0.0` —
+> MHAISS's general "Application for Visa" (Form 3-1/0033), the same
+> 82,771-byte specimen GOV-4513 re-discovered (see the update immediately
+> below). Page 2's own "COMPLETE ONLY PART A OR B" instruction (Part A:
+> Holiday/Business/Work/Transit; Part B: Return Visa) is modelled via a
+> required `visaCategory` discriminator enum gating every Part-specific
+> field's `visibleWhen`/`requiredWhen` (GSP-0013 §2), following this
+> registry's established discriminator-field convention rather than
+> GSP-0013's boolean-only `exclusivityGroups`. Models 90 `fields[]` across
+> 12 steps plus 5 `documents[]` entries; both Part A and Part B mock
+> scenarios resolved end-to-end with zero missing-required errors. See the
+> Visa vertical section below and the document's own VERIFICATION.md for
+> the full scope record, including the office-only "FOR OFFICIAL USE ONLY"
+> box exclusion and other disclosed judgment calls. Namibia's sibling
+> Business Formation candidate (BIPA CC1, GOV-4515) is being authored
+> concurrently in a separate cycle.
 
 > **Update (2026-07-23, GOV-4513, "GovSchema Standard Research"): re-scanned
 > Namibia's two remaining open backlog candidates and re-discovered both,
@@ -19195,7 +19213,18 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (69/87 jurisdictions — 79%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (70/89 jurisdictions — 79%)
+
+> **Update (2026-07-23, GOV-4516, "GovSchema Standard Research"): Namibia's
+> Visa vertical opens (3 of 6)**, via `na/mhaiss/visa-application` — the
+> Ministry of Home Affairs, Immigration, Safety and Security's general visa
+> application (Form 3-1/0033), modelling a mutually-exclusive Part A
+> (Holiday/Business/Work/Transit) / Part B (Return Visa) discriminated
+> choice — see the Executive Summary update above for the full sourcing
+> record. This also corrects the denominator: Tajikistan (GOV-4490, 88th
+> jurisdiction) and Namibia (GOV-4491, 89th jurisdiction) each opened via a
+> non-Visa vertical without this section's own denominator being bumped at
+> the time; numerator moves from 69/87 to 70/89.
 
 > **Update (2026-07-23, GOV-4481, "GovSchema Standard Research"): Zimbabwe's
 > Visa vertical opens**, via `zw/immigration/evisa-application` — see the
@@ -20793,7 +20822,7 @@ now closed.
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
-| **NA** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **NA** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NL** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NO** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -21536,7 +21565,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       82,771 bytes, `application/pdf`, 2 pages, Part A/Part B
       mutually-exclusive split) — delegated as
       [GOV-4516](/GOV/issues/GOV-4516) (Visa, would open 3 of 6). See the
-      Executive Summary update above for full detail.
+      Executive Summary update above for full detail. **Update (GOV-4516,
+      2026-07-23): Visa now authored** as
+      `na/mhaiss/visa-application@1.0.0` (the re-verified 82,771-byte
+      specimen's Part A/Part B mutually-exclusive split modelled via a
+      `visaCategory` discriminator field per this registry's established
+      discriminator-field convention) — **Namibia reaches 3 of 6**; see the
+      Executive Summary and Visa vertical updates above and the document's
+      own VERIFICATION.md for the full scope record. Business Formation
+      (BIPA CC1, GOV-4515) remains open, in progress in a concurrent cycle;
+      Passport, National ID, and DMV stay confirmed dead ends.
     - **Tajikistan** — **Taxes**: the Tax Committee's (`andoz.tj`)
       simplified-tax-system declaration ("Эъломияи андози низоми
       содакардашуда"), a flat single-page form with numbered fields
