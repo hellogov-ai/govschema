@@ -1,0 +1,861 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ci/cepici/sole-trader-registration",
+  "version": "1.0.0",
+  "title": "Côte d'Ivoire Sole Trader (Individual Entrepreneur) Business Registration",
+  "description": "The Centre de Promotion des Investissements en Côte d'Ivoire's (CEPICI) \"Formulaire Unique d'Immatriculation des Entreprises (Personnes Physiques)\" — the single-window business-registration form an individual entrepreneur (sole trader) files with CEPICI's Guichet Unique des Formalités d'Entreprises to obtain a Registre du Commerce et du Crédit Mobilier (RCCM) number, taxpayer account number, CNPS employer number, and (where applicable) import-export code. Closes Côte d'Ivoire's Business Formation vertical (4 of 6; Visa, Taxes, and Passport were already published) — the sole remaining item of this jurisdiction's disclosed backlog. This schema models the declarant's own identity and contact particulars, the entrepreneur's identification and marital-status particulars, a conditionally-applicable spouse-identification cluster, the business's activities and premises/localisation particulars, a bounded 3-slot table for any additional person(s) empowered to bind the business, three-year investment- and employment-projection figures, and the declaration date/place and signature. It excludes the form's own top-of-page \"CADRE RESERVE AU CEPICI\" office box (dossier number, date of receipt, and the office-assigned RCCM/taxpayer-account/CNPS/import-export numbers), none of which is applicant-supplied. Registering a business is an applicant's own action performed with CEPICI's Guichet Unique; this schema does not file the registration itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Côte d'Ivoire or CEPICI.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CI",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Centre de Promotion des Investissements en Côte d'Ivoire",
+    "abbreviation": "CEPICI",
+    "url": "https://cepici.ci"
+  },
+  "process": {
+    "type": "registration",
+    "language": "fr"
+  },
+  "source": {
+    "url": "https://cepici.ci/admin/pdf/codeinvestir/1752162607.pdf",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "\"Formulaire Unique d'Immatriculation des Entreprises (Personnes Physiques)\", CEPICI, native (searchable-text) PDF, 3 pages (form ref. \"FU/PP-1/2\"/\"FU/PP-2/2\")."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "GOV-4561 (\"GovSchema Standard Research\"). Closes Known Gaps entry 0l's own standing note that Côte d'Ivoire's Business Formation vertical was open, STRONG banked backlog since GOV-4539 (2026-07-23), blocked at the time because CEPICI's live host (`cepici.ci`/`cepici.gouv.ci`) sits behind a Sucuri Cloudproxy JS challenge that a plain `curl`/fetch cannot pass. This cycle used a real Chromium session (Playwright, realistic desktop Chrome User-Agent, per this registry's own standing `browser-playwright-sandboxed-env-setup` recipe) to pass the challenge and navigate CEPICI's own site (`https://cepici.ci` → \"Services\" → \"Création d'entreprise\" → \"SERVICE A LA CREATION D'ENTREPRISES\" → `https://cepici.ci/creation-entreprise`), which lists this exact form under its own \"PERSONNE PHYSIQUE\" heading as \"Formulaire unique\". The linked PDF asset itself (`https://cepici.ci/admin/pdf/codeinvestir/1752162607.pdf`) is NOT behind the Sucuri challenge — independently re-fetched with a plain, unauthenticated `curl` (realistic desktop User-Agent, no browser/cookies/session needed) and byte-for-byte reproduced: HTTP 200, `Content-Type: application/pdf`, 29,145 bytes, sha256 `a55c3a61d8e0b3f609085746841cdac7561df01568947825ed4a32a8593b970d`.\n\nExtraction method: text extracted via `pdfjs-dist`'s `getTextContent()` API (vendored at `/tmp/node_modules/pdfjs-dist`), reading each item's raw string and x/y transform position, grouped by y-coordinate row. `getAnnotations()` confirmed zero `/Widget` annotations across all 3 pages — a flat (non-AcroForm) specimen. All 3 pages were additionally rendered to PNG via `pdfjs-dist` + `node-canvas` (vendored at `/tmp/node_modules/canvas`) at 2.5x scale to visually confirm box/table grid structure. As with several prior specimens in this registry, this document's glyphs render as blank/invisible in the rasterized PNG despite extracting correctly through the text layer — a broken-glyph-mapping/correct-underlying-text-extraction pattern, not missing content; box and table gridlines (which are vector-drawn, not glyphs) render correctly and were used to independently corroborate column/row counts against the text layer's y-coordinate groupings.\n\nA companion CEPICI document, the \"Liste exhaustive des pièces à fournir pour l'Entreprise individuelle\" (`https://cepici.ci/admin/pdf/codeinvestir/1767862894.pdf`, independently re-fetched, HTTP 200, 300,464 bytes), was also read in full: it supplies both this schema's `documents[]` checklist and an explicit blanket instruction — \"Il est important de remplir toutes les informations contenues dans le formulaire unique ; elles sont toutes obligatoires\" (\"it is important to complete all the information in the formulaire unique; all of it is mandatory\") — used as the basis for this schema's requiredness calls, per Finding 1 below.\n\nModels 71 `fields[]` across 7 steps (27 statically required) and 11 `documents[]` entries.\n\n## Disclosed source-fidelity findings\n\n1. **The companion pièces-à-fournir document's blanket \"toutes obligatoires\" (\"all of it is mandatory\") instruction is applied to every Section I/III/IV/declarant field that is unconditionally applicable to any filer**, since this is the only document in this registry's Côte d'Ivoire family to carry such an explicit, authority-issued blanket-required instruction (the sibling `ci/dst/visa-application` and `ci/dst/passport-application` schemas rely on per-field judgment calls in the absence of any such statement). This instruction is NOT extended to the two structurally-conditional clusters modelled optional per Findings 2 and 4 below (spouse identification; additional empowered persons), since a blanket instruction to complete \"all the information\" cannot literally require information that does not exist for a given filer (e.g. an unmarried entrepreneur has no spouse to declare), nor to sub-components of a premises description that may not apply to every property type (floor number, door number, cadastral references — see Finding 3).\n2. **The \"II- IDENTIFICATION DU CONJOINT\" (spouse identification) cluster is modelled entirely optional, with no `visibleWhen`/`requiredWhen` gate to `maritalStatus`.** Unlike this registry's sibling `ci/dst/passport-application` schema (whose source form prints a literal C/M/D/V marital-status checkbox/box-grid enum this schema's own spouse cluster gates on), this form's \"Situation matrimoniale\" is a single free-text blank line with no printed options — there is no discrete, enumerable value to construct a reliable machine condition against, so `maritalStatus` is modelled as a plain `string` field and the spouse cluster is left ungated (optional throughout), rather than fabricating an enum this specimen does not print.\n3. **The premises/localisation sub-fields describing a specific building's internal layout or land-registry references (`headOfficeFloorNumber`, `headOfficeDoorNumber`, `establishmentFloorNumber`, `establishmentDoorNumber`, `lotNumber`, `ilot`, `cadastralSection`, `cadastralParcelle`, `titleFoncierNumber`) are modelled optional**, since these are conditional on the specific property (an unbuilt or non-multi-story premises may have no floor/door number; a leased office may have no land-title/cadastral references of its own) — `city`, `commune`, and `quartier` (the form's own three primary location-identification captions) are modelled required per Finding 1's blanket instruction, since every business has a city/commune/quartier regardless of building specifics.\n4. **\"V- IDENTIFICATION DES PERSONNES AYANT LE POUVOIR D'ENGAGER L'ENTREPRISE\" is modelled as a bounded 3-slot repeating group, all fields optional.** The rendered page shows a 4-column, 5-row table — one label column (\"Nom\"/\"Prénoms\"/\"Date et lieu de naissance\"/\"Nationalité\"/\"Domicile\", confirmed via the text layer's own x-coordinate grouping: all five labels share the identical x=59 left-margin position, meaning they are row labels, not column headers) plus three further data columns — matching the companion pièces-list's own \"NB : En cas de désignation d'une personne pouvant engager l'entreprise, produire...\" note, which frames this as a conditional designation, not a mandatory one. This schema's own documents checklist (Finding 6) does not separately duplicate the near-identical identity/criminal-record/residence-certificate document set the pièces-list's own \"NB\" sub-items (a/b/c) describe for such a designated person, since it is structurally identical to the entrepreneur's own already-modelled document set and this bounded table is itself optional.\n5. **`dateAndPlaceOfBirth` and its spouse/representative-table counterparts are each modelled as a single combined `string` field, not split into separate date-of-birth and place-of-birth fields.** Unlike this registry's sibling `ci/dst/passport-application` and `ci/dst/visa-application` schemas (whose source forms print separate \"J M A\" day/month/year box grids and a distinct \"Lieu de naissance\" caption), this specimen prints one shared blank line captioned \"Date et lieu de naissance\" throughout (Section I, Section II, and the Section V table) with no internal box/caption split — splitting it would fabricate a structure this specimen does not present.\n6. **The `documents[]` list is drawn from the companion pièces-à-fournir document, not from this form's own text** (this form prints no attached-documents checklist of its own, unlike the sibling passport/visa schemas' printed \"Documents joints\" sections). `identityDocumentCopy`, `birthCertificateOrFiliationDocument`, `residenceCertificate`, `leaseContractOrPropertyProof`, and `locationPlan` are modelled `required: true` (the pièces-list states production of every listed document is mandatory for the dossier to be processed, and these five apply to every individual-entrepreneur filer regardless of circumstance). `criminalRecordExtractAbidjan` and `swornDeclarationOfHonorWithCriminalRecord` are modelled `required: false` as a disclosed either/or pair (the pièces-list itself conditions which applies on whether the entrepreneur/manager was born within the Abidjan Commercial Court's own territorial jurisdiction, a condition this schema has no field to test). `emancipationAct`, `marriageCertificateOrFamilyRecordBook`, `regulatedActivityAuthorization`, and `powerOfAttorneyOrOtherDocument` are modelled `required: false`, matching the pièces-list's own \"Autres\" framing (emancipated minor / legally married / regulated activity / procuration, each conditional on the filer's own circumstances).\n7. **The three-year investment- and employment-projection figures (`investmentYearNAmount`/`employeesYearN` for N=1..3) are all modelled `required: true`**, per Finding 1's blanket-required instruction — the source prints all three years' columns identically, with no asterisk or note distinguishing any one year as optional, and the pièces-list's own worked example of a mandatory field (\"chiffre d'affaires prévisionnel\") is a structurally identical projected-figure field.\n8. **The signature is modelled as a plain `signature` string field, not a `documents[]` entry**, matching this registry's `ci/dst/visa-application` and `ci/dgi/microenterprise-tax-declaration` precedent for this jurisdiction's own signature-block convention.\n\n## Conformance\n\n3 valid mock scenarios (an unmarried sole entrepreneur with no additional empowered representative and no CNPS-registered employees; a married entrepreneur declaring a spouse under the séparation de biens regime with one additional empowered representative; a multi-establishment entrepreneur declaring two additional empowered representatives and secondary-establishment details) plus 29 mutation-control fixtures (a missing-required-field fixture for each of this schema's 27 statically-required fields — `declarantName`, `declarantCapacity`, `declarantAddress`, `declarantPhone`, `declarantMobile`, `investmentYear1Amount`, `investmentYear2Amount`, `investmentYear3Amount`, `employeesYear1`, `employeesYear2`, `employeesYear3`, `lastName`, `firstNames`, `dateAndPlaceOfBirth`, `domicile`, `nationality`, `maritalStatus`, `businessActivities`, `operatingForm`, `mainEstablishmentStartDate`, `projectedRevenue`, `businessPurpose`, `city`, `commune`, `quartier`, `declarationDate`, and `signature` — plus an invalid-type fixture (`employeesYear1` given a string rather than an integer) and an unknown-field-rejected fixture) are committed under `conformance/ci/cepici/sole-trader-registration/1.0.0/`.\n\nAn ephemeral, from-scratch conformance checker (deriving required/type rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all fixtures: all 3 valid scenarios at 0 errors, and all mutation controls each raising exactly 1 error of the expected kind. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "declarant_and_projections",
+      "title": "Declarant and Investment Projections",
+      "fields": [
+        "declarantName",
+        "declarantCapacity",
+        "declarantTaxpayerAccountNumber",
+        "declarantAddress",
+        "declarantPhone",
+        "declarantFax",
+        "declarantMobile",
+        "declarantEmail",
+        "investmentYear1Amount",
+        "investmentYear2Amount",
+        "investmentYear3Amount",
+        "employeesYear1",
+        "employeesYear2",
+        "employeesYear3"
+      ],
+      "next": "entrepreneur_identification"
+    },
+    {
+      "id": "entrepreneur_identification",
+      "title": "Entrepreneur Identification",
+      "fields": [
+        "lastName",
+        "firstNames",
+        "dateAndPlaceOfBirth",
+        "domicile",
+        "nationality",
+        "maritalStatus"
+      ],
+      "next": "spouse_identification"
+    },
+    {
+      "id": "spouse_identification",
+      "title": "Spouse Identification",
+      "fields": [
+        "spouseName",
+        "spouseFirstNames",
+        "spouseDateAndPlaceOfBirth",
+        "spouseNationality",
+        "spouseDomicile",
+        "matrimonialRegime"
+      ],
+      "next": "business_activities"
+    },
+    {
+      "id": "business_activities",
+      "title": "Business Activities",
+      "fields": [
+        "businessActivities",
+        "operatingForm",
+        "numberOfEmployees",
+        "firstEmployeeHireDate",
+        "mainEstablishmentStartDate",
+        "otherEstablishmentsStartDate",
+        "recentEstablishmentsActivityNatureAndLocation",
+        "secondaryEstablishmentsDetails",
+        "projectedRevenue",
+        "tradeName",
+        "tradeAcronym",
+        "businessPurpose"
+      ],
+      "next": "localisation"
+    },
+    {
+      "id": "localisation",
+      "title": "Localisation",
+      "fields": [
+        "headOfficeBuildingName",
+        "headOfficeFloorNumber",
+        "headOfficeDoorNumber",
+        "establishmentBuildingName",
+        "establishmentFloorNumber",
+        "establishmentDoorNumber",
+        "city",
+        "commune",
+        "quartier",
+        "lotNumber",
+        "ilot",
+        "cadastralSection",
+        "cadastralParcelle",
+        "titleFoncierNumber",
+        "postalAddress",
+        "premisesPhone"
+      ],
+      "next": "authorized_representatives"
+    },
+    {
+      "id": "authorized_representatives",
+      "title": "Persons Empowered to Bind the Business",
+      "fields": [
+        "representative1Name",
+        "representative1FirstNames",
+        "representative1DateAndPlaceOfBirth",
+        "representative1Nationality",
+        "representative1Domicile",
+        "representative2Name",
+        "representative2FirstNames",
+        "representative2DateAndPlaceOfBirth",
+        "representative2Nationality",
+        "representative2Domicile",
+        "representative3Name",
+        "representative3FirstNames",
+        "representative3DateAndPlaceOfBirth",
+        "representative3Nationality",
+        "representative3Domicile"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration",
+      "fields": [
+        "declarationDate",
+        "signature"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "declarantName",
+      "label": "Declaration Established By",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1 — \"DECLARATION ETABLIE PAR :\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "declarantCapacity",
+      "label": "Acting in the Capacity Of",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1 — \"AGISSANT EN QUALITE DE :\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "declarantTaxpayerAccountNumber",
+      "label": "Declarant's Taxpayer Account Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "The declarant's own taxpayer account number, if the declarant (who may be the entrepreneur or a mandated agent/accountant) already has one. Not required, since a first-time entrepreneur declarant would not yet hold one.",
+      "sourceRef": "Page 1 — \"NUMERO DE COMPTE CONTRIBUABLE\" (declarant block)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "declarantAddress",
+      "label": "Declarant's Personal Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"ADRESSE PERSONNELLE\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "declarantPhone",
+      "label": "Declarant's Telephone",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"TEL :\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "declarantFax",
+      "label": "Declarant's Fax",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1 — \"FAX :\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "declarantMobile",
+      "label": "Declarant's Mobile",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"MOBILE :\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "declarantEmail",
+      "label": "Declarant's Email",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"E-MAIL :\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "investmentYear1Amount",
+      "label": "Projected Investment Amount — Year 1",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Page 1 — investment/employment table, \"Montant d'Investissement (projeté)\", \"ANNEE 1\" column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "investmentYear2Amount",
+      "label": "Projected Investment Amount — Year 2",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Page 1 — investment/employment table, \"Montant d'Investissement (projeté)\", \"ANNEE 2\" column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "investmentYear3Amount",
+      "label": "Projected Investment Amount — Year 3",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Page 1 — investment/employment table, \"Montant d'Investissement (projeté)\", \"ANNEE 3\" column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "employeesYear1",
+      "label": "Projected Number of Employees — Year 1",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Page 1 — investment/employment table, \"Nombre d'Emplois (projetés)\", \"ANNEE 1\" column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "employeesYear2",
+      "label": "Projected Number of Employees — Year 2",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Page 1 — investment/employment table, \"Nombre d'Emplois (projetés)\", \"ANNEE 2\" column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "employeesYear3",
+      "label": "Projected Number of Employees — Year 3",
+      "type": "integer",
+      "required": true,
+      "sourceRef": "Page 1 — investment/employment table, \"Nombre d'Emplois (projetés)\", \"ANNEE 3\" column",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "lastName",
+      "label": "Last Name (Nom)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section I — \"Nom :\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "firstNames",
+      "label": "First Names (Prénoms)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section I — \"Prénoms :\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "dateAndPlaceOfBirth",
+      "label": "Date and Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "See this schema's own verification.notes Finding 5 for why date and place of birth are modelled as a single combined field.",
+      "sourceRef": "Section I — \"Date et lieu de naissance :\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "domicile",
+      "label": "Domicile",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section I — \"Domicile :\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section I — \"Nationalité :\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital Status (Situation Matrimoniale)",
+      "type": "string",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 2 for why this is modelled as free text rather than an enum.",
+      "sourceRef": "Section I — \"Situation matrimoniale :\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "spouseName",
+      "label": "Spouse's Last Name (Nom)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section II — \"Nom :\" (spouse block)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "spouseFirstNames",
+      "label": "Spouse's First Names (Prénoms)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section II — \"Prénoms :\" (spouse block)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "spouseDateAndPlaceOfBirth",
+      "label": "Spouse's Date and Place of Birth",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Section II — \"Date et lieu de naissance :\" (spouse block)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "spouseNationality",
+      "label": "Spouse's Nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section II — \"Nationalité :\" (spouse block)",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "spouseDomicile",
+      "label": "Spouse's Domicile",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section II — \"Domicile :\" (spouse block)",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "matrimonialRegime",
+      "label": "Matrimonial Regime (Régime Matrimonial)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section II — \"Régime matrimonial :\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "businessActivities",
+      "label": "Activities Carried Out",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section III — \"Activités exercées :\"",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "operatingForm",
+      "label": "Form of Operation (Forme d'Exploitation)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section III — \"Forme d'exploitation :\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "numberOfEmployees",
+      "label": "Number of Employees",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section III — \"Nombre d'employés :\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "firstEmployeeHireDate",
+      "label": "First Employee's Hire Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Section III — \"Date d'embauche 1er employé :\""
+    },
+    {
+      "name": "mainEstablishmentStartDate",
+      "label": "Main Establishment Start-of-Operation Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Section III — \"Date de début d'exploitation de l'établissement principal :\""
+    },
+    {
+      "name": "otherEstablishmentsStartDate",
+      "label": "Other Establishments' Start-of-Operation Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Section III — \"Date de début d'exploitation des autres établissements :\""
+    },
+    {
+      "name": "recentEstablishmentsActivityNatureAndLocation",
+      "label": "Nature and Location of Activity of Most Recent Establishments",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section III — \"Nature et lieu d'exercice de l'activité des derniers établissements exploités :\"",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "secondaryEstablishmentsDetails",
+      "label": "Secondary Establishments — RCCM Number, Trade Name and Address",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section III — \"Numéro RCCM, nom commercial et adresse des établissements secondaires :\"",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "projectedRevenue",
+      "label": "Projected Turnover (Chiffre d'Affaires Prévisionnel)",
+      "type": "number",
+      "required": true,
+      "sourceRef": "Section III — \"Chiffre d'affaires prévisionnel :\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "tradeName",
+      "label": "Trade Name (Nom Commercial)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section III — \"Nom commercial :\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "tradeAcronym",
+      "label": "Trade Acronym (Sigle Utilisé)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section III — \"Sigle utilisé :\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "businessPurpose",
+      "label": "Business Purpose (Objet de l'Entreprise)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section III — \"Objet de l'entreprise :\"",
+      "validation": { "maxLength": 500 }
+    },
+    {
+      "name": "headOfficeBuildingName",
+      "label": "Head Office — Building Name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section IV — \"Adresse du siège social : Nom immeuble\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "headOfficeFloorNumber",
+      "label": "Head Office — Floor Number",
+      "type": "string",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 3 for why this is modelled optional.",
+      "sourceRef": "Section IV — \"Adresse du siège social : Numéro étage\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "headOfficeDoorNumber",
+      "label": "Head Office — Door Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section IV — \"Adresse du siège social : Numéro porte\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "establishmentBuildingName",
+      "label": "Establishment — Building Name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section IV — \"Adresse de l'établissement : Nom immeuble\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "establishmentFloorNumber",
+      "label": "Establishment — Floor Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section IV — \"Adresse de l'établissement : Numéro étage\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "establishmentDoorNumber",
+      "label": "Establishment — Door Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section IV — \"Adresse de l'établissement : Numéro porte\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "city",
+      "label": "City (Ville)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section IV — \"Ville :\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "commune",
+      "label": "Commune",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section IV — \"Commune :\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "quartier",
+      "label": "Neighbourhood (Quartier)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section IV — \"Quartier :\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "lotNumber",
+      "label": "Lot Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section IV — \"Lot n° :\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "ilot",
+      "label": "Block (Ilot)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section IV — \"Ilot :\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "cadastralSection",
+      "label": "Cadastral Section",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section IV — \"Section :\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "cadastralParcelle",
+      "label": "Cadastral Parcel (Parcelle)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section IV — \"Parcelle :\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "titleFoncierNumber",
+      "label": "Land Title Number (TF N°)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section IV — \"TF n° :\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "postalAddress",
+      "label": "Postal Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section IV — \"Adresse Postale :\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "premisesPhone",
+      "label": "Premises Telephone",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section IV — \"Tel :\" (localisation block)",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "representative1Name",
+      "label": "Additional Representative 1 — Last Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section V table, column 1, \"Nom\" row",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "representative1FirstNames",
+      "label": "Additional Representative 1 — First Names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section V table, column 1, \"Prénoms\" row",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "representative1DateAndPlaceOfBirth",
+      "label": "Additional Representative 1 — Date and Place of Birth",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Section V table, column 1, \"Date et lieu de naissance\" row",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "representative1Nationality",
+      "label": "Additional Representative 1 — Nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section V table, column 1, \"Nationalité\" row",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "representative1Domicile",
+      "label": "Additional Representative 1 — Domicile",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section V table, column 1, \"Domicile\" row",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "representative2Name",
+      "label": "Additional Representative 2 — Last Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section V table, column 2, \"Nom\" row",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "representative2FirstNames",
+      "label": "Additional Representative 2 — First Names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section V table, column 2, \"Prénoms\" row",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "representative2DateAndPlaceOfBirth",
+      "label": "Additional Representative 2 — Date and Place of Birth",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Section V table, column 2, \"Date et lieu de naissance\" row",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "representative2Nationality",
+      "label": "Additional Representative 2 — Nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section V table, column 2, \"Nationalité\" row",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "representative2Domicile",
+      "label": "Additional Representative 2 — Domicile",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section V table, column 2, \"Domicile\" row",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "representative3Name",
+      "label": "Additional Representative 3 — Last Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section V table, column 3, \"Nom\" row",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "representative3FirstNames",
+      "label": "Additional Representative 3 — First Names",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section V table, column 3, \"Prénoms\" row",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "representative3DateAndPlaceOfBirth",
+      "label": "Additional Representative 3 — Date and Place of Birth",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Section V table, column 3, \"Date et lieu de naissance\" row",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "representative3Nationality",
+      "label": "Additional Representative 3 — Nationality",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section V table, column 3, \"Nationalité\" row",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "representative3Domicile",
+      "label": "Additional Representative 3 — Domicile",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section V table, column 3, \"Domicile\" row",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Declaration Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Page 2 — \"Fait à Abidjan, le …………….\"",
+      "validation": {}
+    },
+    {
+      "name": "signature",
+      "label": "Signature",
+      "type": "string",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 8 for why this is modelled as a plain string field rather than a documents[] entry.",
+      "sourceRef": "Page 2 — \"Signature\"",
+      "validation": { "maxLength": 100 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "identityDocumentCopy",
+      "label": "Identity Document Copy (CNI, Passport, Consular Card, Resident Card, or ID Attestation)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Pièces-list item 1 — \"Une (1) photocopie de la pièce d'identité (CNI, passeport, carte consulaire, carte de résident, attestation d'identité) du promoteur\""
+    },
+    {
+      "id": "birthCertificateOrFiliationDocument",
+      "label": "Birth Certificate Extract or Other Filiation Document",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Pièces-list item 1 — \"rajouter un extrait d'acte de naissance ou tout autre document administratif comportant la filiation\""
+    },
+    {
+      "id": "criminalRecordExtractAbidjan",
+      "label": "Criminal Record Extract (Under 3 Months, Born Within Abidjan Commercial Court Jurisdiction)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Pièces-list item 2 — \"Un (1) Casier judiciaire datant de moins de trois (03) mois du/des dirigeant(s) né(s) à Abidjan et dans des communes relevant du ressort territorial du Tribunal de Commerce d'Abidjan\" (see this schema's own verification.notes Finding 6 for why this and the following document are modelled as a disclosed either/or pair)"
+    },
+    {
+      "id": "swornDeclarationOfHonorWithCriminalRecord",
+      "label": "Sworn Declaration of Honour, Completed Within 75 Days by a Criminal Record Extract from the Place of Birth (Born Outside Abidjan Commercial Court Jurisdiction)",
+      "category": "attestation",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Pièces-list item 2 — \"Pour tout dirigeant né hors des communes relevant du ressort territorial du Tribunal de Commerce d'Abidjan, produire une (1) Déclaration sur l'Honneur ... complétée dans un délai de 75 jours ... par un (1) extrait de casier judiciaire du lieu de naissance\""
+    },
+    {
+      "id": "residenceCertificate",
+      "label": "Residence Certificate (Under 6 Months)",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Pièces-list item 3 — \"Un (1) Certificat de Résidence datant de moins de six (6) mois\""
+    },
+    {
+      "id": "leaseContractOrPropertyProof",
+      "label": "Commercial Lease Contract (2 Originals) or Property Title/Attestation/Domiciliation Contract Copy",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Pièces-list item 4 — \"Deux (2) exemplaires du contrat de bail à usage commercial ou professionnel (originaux) ; une (1) copie du titre de propriété, de l'attestation de propriété ou du contrat de domiciliation\""
+    },
+    {
+      "id": "locationPlan",
+      "label": "Location Plan of the Place of Business",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Pièces-list item 5 — \"Plan de localisation du lieu d'exercice de l'activité\""
+    },
+    {
+      "id": "emancipationAct",
+      "label": "Emancipation Act (If Emancipated Minor)",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Pièces-list item 7 — \"Un acte d'émancipation si mineur émancipé\""
+    },
+    {
+      "id": "marriageCertificateOrFamilyRecordBook",
+      "label": "Marriage Certificate Extract or Family Record Book (Spouses Page), If Legally Married",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Pièces-list item 7 — \"Un (1) extrait d'acte de mariage ou la copie du livret de famille (page relative aux conjoints) si marié légalement\""
+    },
+    {
+      "id": "regulatedActivityAuthorization",
+      "label": "Prior Authorization to Exercise a Regulated Activity",
+      "category": "attestation",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Pièces-list item 7 — \"Une (1) autorisation préalable d'exercer l'activité en cas d'activité réglementée\""
+    },
+    {
+      "id": "powerOfAttorneyOrOtherDocument",
+      "label": "Power of Attorney or Other Document Relevant to the Business-Creation Process",
+      "category": "attestation",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Pièces-list item 7 — \"une procuration ou tout autre document pouvant intervenir dans le processus de création de l'entreprise\""
+    }
+  ]
+}
