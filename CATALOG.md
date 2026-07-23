@@ -1,10 +1,35 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-22** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-23** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**85 jurisdictions** | **611 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**85 jurisdictions** | **612 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4443, "GovSchema Standard Research"): Paraguay's
+> DMV vertical opens (3 of 6)**, via `py/mda/driving-licence-declaration@1.0.0`
+> — the Municipalidad de la Ciudad de Asunción's (MDA) Dirección General de
+> Policía Municipal "Declaración Jurada, Licencia de Conducir." Paraguay
+> issues driving licences at the municipal (not national) level, so this
+> schema is scoped specifically to Asunción's own municipal form.
+> Independently re-fetched and re-hashed rather than trusting the GOV-4424
+> scouting cycle's byte count alone:
+> `asuncion.gov.py/wp-content/uploads/2019/03/DECLARACION-JURADA-Licencia-de-conducir-def.pdf`,
+> HTTP 200, `application/pdf`, 155,460 bytes (byte-for-byte matching the
+> banked figure), sha256 `edaa3d21...`. A flat, non-AcroForm 2-page
+> specimen (zero `/Widget` annotations on either page) with no asterisk or
+> other required-field marker anywhere in the source — every field was
+> identified from raw text x/y position, cross-checked against both pages
+> rendered to images to confirm checkbox counts (a 6-way "Motivo del
+> Trámite" single-select, a 10-way "Categoría de Licencia" single-select, a
+> 4-way foreigner residency-status single-select) and a 37-row page-2
+> medical/fitness-to-drive sworn-declaration table — see the document's own
+> VERIFICATION.md for the full scope record. This also corrects this
+> table's own **PY** row, which the prior GOV-4435 cycle's Business
+> Formation addition had left stale at 1 schema/Business ✗ instead of 2
+> schemas/Business ✓. Paraguay's Visa vertical remains open, STRONG,
+> ready-to-author backlog from the same GOV-4424 scouting cycle; Passport
+> and National ID (cédula) are confirmed dead ends.
 
 > **Update (2026-07-23, GOV-4435, "GovSchema Standard Research"): Paraguay's
 > Business Formation vertical opens (2 of 6)**, via
@@ -15069,7 +15094,19 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (61/82 jurisdictions — 74%)
+### DMV — Vehicle Registration, Licensing, Permits (62/85 jurisdictions — 73%)
+
+> **Update (2026-07-23, GOV-4443, "GovSchema Standard Research"): Paraguay's
+> DMV vertical opens (3 of 6 for the jurisdiction)**, via
+> `py/mda/driving-licence-declaration@1.0.0` — the Municipalidad de la
+> Ciudad de Asunción's (MDA) Dirección General de Policía Municipal
+> "Declaración Jurada, Licencia de Conducir." See the Executive Summary's
+> GOV-4443 update above and the document's own VERIFICATION.md for the
+> full sourcing record, including the 10 disclosed findings. Paraguay's
+> other open vertical (Visa) remains STRONG banked backlog. Numerator
+> updated from 61 to 62; denominator corrected from 82 to 85 to match the
+> registry's current total jurisdiction count (this section's own
+> denominator had lagged behind the last few new-jurisdiction cycles).
 
 > **Update (2026-07-22, GOV-4376, "GovSchema Standard Research"): Jamaica's
 > DMV vertical opens (3 of 6 for the jurisdiction)**, via
@@ -20316,7 +20353,7 @@ now closed.
 | **PK** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PY** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **PY** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **RO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **RS** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **RW** | 5 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
@@ -20965,9 +21002,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       **Update (GOV-4435, 2026-07-23): Business Formation now authored**
       as `py/suace/business-formalization-individual@1.0.0` — see the
       Executive Summary and Business Formation vertical updates above and
-      the document's own VERIFICATION.md for the full scope record. DMV
-      and Visa remain open, STRONG, ready-to-author backlog for future
-      cycles.
+      the document's own VERIFICATION.md for the full scope record.
+      **Update (GOV-4443, 2026-07-23): DMV now authored** as
+      `py/mda/driving-licence-declaration@1.0.0` (the Municipalidad de
+      Asunción form cited above, byte count re-verified unchanged at
+      155,460 bytes) — see the Executive Summary and DMV vertical updates
+      above and the document's own VERIFICATION.md for the full scope
+      record, including the 10 disclosed findings. Visa remains open,
+      STRONG, ready-to-author backlog for a future cycle.
     - **Namibia** — **Taxes**: NamRA's "Return of Income for Individuals"
       (Form 6-0/0014C/1), served from the ITAS e-filing subdomain rather
       than NamRA's own site,
