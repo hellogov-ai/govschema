@@ -4,7 +4,30 @@
 
 ## Executive Summary
 
-**85 jurisdictions** | **613 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**85 jurisdictions** | **614 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4451, "GovSchema Standard Research"): Paraguay's
+> Visa vertical opens (4 of 6)**, via `py/mre/visa-application@1.0.0` — the
+> Ministerio de Relaciones Exteriores's (MRE) Dirección General de Protocolo
+> "Formulario de Solicitud de Visa Diplomática – Oficial – de Cortesía"
+> (Titular), filed by an accrediting diplomatic mission or international
+> organization on behalf of a diplomat/official/courtesy-visa beneficiary.
+> Independently re-fetched rather than trusting the GOV-4424 scouting
+> cycle's byte count alone:
+> `www.mre.gov.py/wp-content/uploads/documentacion-dgp/Formulario_de_Visa_Titular_2021..docx`,
+> HTTP 200, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`,
+> 57,591 bytes (byte-for-byte matching the banked figure), sha256
+> `1a85502c...`. A native Office Open XML `.docx` (unlike this registry's
+> usual scanned/AcroForm PDF Paraguayan specimens) carrying zero content
+> controls, legacy form fields, or checkboxes of any kind — every field is a
+> plain blank table cell, extracted via Python's standard-library `zipfile`
+> + `xml.etree.ElementTree` walking `word/document.xml`'s table structure in
+> document order. This closes the entire GOV-4424 scouting cycle's disclosed
+> Paraguay backlog: Taxes, Business Formation, DMV, and now Visa are all
+> authored (4 of 6); Passport and National ID (cédula) remain confirmed dead
+> ends. See the document's own VERIFICATION.md for the full scope record,
+> including the "Dependiente" companion form left unverified/open backlog
+> and 8 disclosed findings.
 
 > **Update (2026-07-23, GOV-4446, "GovSchema Standard Research"): patch
 > `py/mda/driving-licence-declaration` to `1.0.1`** — a follow-up to
@@ -18804,7 +18827,14 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (67/84 jurisdictions — 80%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (68/85 jurisdictions — 80%)
+
+> **Update (2026-07-23, GOV-4451, "GovSchema Standard Research"): Paraguay's
+> Visa vertical opens**, via `py/mre/visa-application` — see the Executive
+> Summary update above for the full sourcing record. This also corrects the
+> denominator: Paraguay (GOV-4427, 85th jurisdiction) opened via Taxes
+> without this section's own denominator being bumped at the time; numerator
+> moves from 67/84 to 68/85.
 
 > **Update (2026-07-22, GOV-4417, "GovSchema Standard Research"): Senegal
 > opens as the registry's 84th jurisdiction, via this vertical**, via
@@ -21031,7 +21061,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       (GOV-4446, 2026-07-23): patched to `1.0.1`** to fix a misattributed
       `sexo` field citation (independently caught during post-merge
       cross-checking) — see the Executive Summary and DMV vertical updates
-      above.
+      above. **Update (GOV-4451, 2026-07-23): Visa now authored** as
+      `py/mre/visa-application@1.0.0` (the MRE Dirección General de
+      Protocolo diplomatic/official/courtesy visa Titular form cited above,
+      byte count re-verified unchanged at 57,591 bytes) — see the Executive
+      Summary and Visa vertical updates above and the document's own
+      VERIFICATION.md for the full scope record, including the sibling
+      "Dependiente" form left unverified/open backlog. **This closes the
+      entire GOV-4424 scouting cycle's disclosed Paraguay backlog: Taxes,
+      Business Formation, DMV, and Visa are all authored (4 of 6); Passport
+      and National ID (cédula) remain confirmed dead ends.**
     - **Namibia** — **Taxes**: NamRA's "Return of Income for Individuals"
       (Form 6-0/0014C/1), served from the ITAS e-filing subdomain rather
       than NamRA's own site,
