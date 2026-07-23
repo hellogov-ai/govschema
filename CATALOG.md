@@ -6,6 +6,36 @@
 
 **87 jurisdictions** | **619 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-23, GOV-4488, "GovSchema Standard Research"): re-scanned
+> the two freshest jurisdictions and confirmed both have exhausted their
+> disclosed-STRONG backlog** — Zimbabwe (GOV-4476, 87th jurisdiction) is at
+> 4/6 with DMV and National ID both confirmed dead ends; Bolivia (GOV-4460,
+> 86th jurisdiction) has its other five verticals confirmed weak/dead-end
+> per the GOV-4121 scouting record (DMV/National ID in-person-only, Business
+> Formation login-gated, Visa/Passport SPA-gated), not re-checked this cycle
+> since nothing suggested those sources had changed. Rather than force a
+> re-screen of gated sources, picked up the two ready-to-author
+> new-jurisdiction candidates banked in Known Gaps entry 0i since GOV-4424
+> (2026-07-22) but never delegated for authoring: **Tajikistan** (Taxes —
+> andoz.tj's simplified-tax-system declaration) and **Namibia** (Taxes —
+> NamRA's Return of Income for Individuals via the ITAS subdomain). Both
+> sources were independently re-fetched this cycle before delegating:
+> Tajikistan's three banked documents (Taxes, Business Formation, National
+> ID candidates) are byte-identical to the GOV-4424 record (andoz.tj
+> requires `curl -k`/cert-verification-skip, a genuine self-signed-cert
+> quirk, not a dead source); Namibia's Taxes PDF is still live but has grown
+> from 1,097,728 to 2,124,999 bytes since banking (re-verify field structure
+> from scratch, don't assume the prior byte count), and a direct re-check of
+> Namibia's banked Business Formation URL (BIPA's CC1 form) 404'd — flagged
+> as needing re-discovery rather than treated as a confirmed dead end, since
+> a follow-up direct fetch of the bare `bipa.na` domain also failed to
+> connect (inconclusive network signal, not a confirmed site change).
+> Delegated as GOV-4490 (Tajikistan Taxes, would open the registry's 88th
+> jurisdiction) and GOV-4491 (Namibia Taxes, would open the registry's 89th
+> jurisdiction) — both auto-picked-up by separate concurrent execution runs
+> within seconds of creation, the same [[gov2177-duplicate-concurrent-run-same-issue]]
+> pattern seen on every child issue this routine has created recently.
+
 > **Update (2026-07-23, GOV-4481, "GovSchema Standard Research"): Zimbabwe's
 > Visa vertical opens (4 of 6)**, via
 > `zw/immigration/evisa-application@1.0.0` — the Department of Immigration's
@@ -21291,7 +21321,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       transactions routed through the login-gated `online.ra.org.na`.
       Not authored this cycle (Paraguay's stronger 4-of-6 showing was
       prioritized); a ready-to-author 3-of-6 new-jurisdiction candidate
-      for a future cycle.
+      for a future cycle. **Update (GOV-4488, 2026-07-23): Taxes delegated
+      for authoring as GOV-4491**, which would open Namibia as a new
+      jurisdiction. This cycle's independent re-fetch found the Taxes PDF
+      still live (HTTP 200, valid PDF) but grown from 1,097,728 to
+      2,124,999 bytes since banking — re-derive field structure fresh at
+      authoring time, don't assume the prior record. The banked Business
+      Formation URL (BIPA's CC1 form) now 404s on direct re-check, and a
+      follow-up fetch of the bare `bipa.na` domain also failed to connect
+      — flagged as needing re-discovery via the site's own navigation, not
+      yet confirmed dead (inconclusive network signal, not a confirmed
+      site change).
     - **Tajikistan** — **Taxes**: the Tax Committee's (`andoz.tj`)
       simplified-tax-system declaration ("Эъломияи андози низоми
       содакардашуда"), a flat single-page form with numbered fields
@@ -21317,7 +21357,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       one embassy page's title literally promising a "PDF and MS Word"
       form but no actual attachment link. Not authored this cycle; a
       ready-to-author 3-of-6 new-jurisdiction candidate for a future
-      cycle.
+      cycle. **Update (GOV-4488, 2026-07-23): Taxes delegated for
+      authoring as GOV-4490**, which would open Tajikistan as a new
+      jurisdiction. This cycle's independent re-fetch found all three
+      documents byte-identical to the GOV-4424 record (Taxes 165,556
+      bytes; Business Formation form_№2.pdf 644,554 bytes; National ID
+      Zamimaho.docx 608,357 bytes) — `andoz.tj` requires skipping TLS
+      certificate verification (e.g. `curl -k`) due to a self-signed/
+      untrusted cert, a genuine site quirk rather than a dead source.
 0j. **Bolivia opened as the registry's 86th jurisdiction (GOV-4460,
     2026-07-23), via a parallel scouting pass under GOV-4458 run after
     Paraguay's remaining Passport/National ID verticals were confirmed
