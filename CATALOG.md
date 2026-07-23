@@ -4,7 +4,30 @@
 
 ## Executive Summary
 
-**92 jurisdictions** | **636 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**92 jurisdictions** | **637 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4610, "GovSchema Standard Research"): Mauritius's
+> DMV vertical opens (2 of 6 for the jurisdiction)**, via
+> `mu/nlta/vehicle-registration-mark-application@1.0.0` — the National Land
+> Transport Authority's "Application for Registration Mark (A - FL3000 and
+> FM1 - FM2500)", fetched directly and unauthenticated from `nlta.govmu.org`
+> (598,726 bytes, sha256
+> `dc757ea9fbb495b9a00117cb04d37a63a90729f51ed6e63bffbdea99d462df89`). Picked
+> up from GOV-4603's own banked Known Gaps entry 0n, this cycle confirmed
+> the driving-licence half of Mauritius's DMV vertical (Police Form PF31)
+> remains in-person-only and the online learner-licence channel remains
+> dead, so this candidate is scoped to vehicle registration-mark allocation
+> only — a flat, image-only single-page scan rendered to PNG and read
+> visually since it carries neither a text layer nor AcroForm annotations.
+> Models 17 `fields[]` across 4 steps, including an `applicantType`
+> discriminator (individual vs. registered company) gating two mutually
+> exclusive particulars sections, following the same discriminator pattern
+> as `tt/rgd/partnership-beneficial-ownership-statement`'s
+> `declarantCategory`. No `documents[]` — this specimen discloses no
+> supporting-document checklist. Business Formation and Visa remain open,
+> STRONG banked backlog for Mauritius (see the Known Gaps update below).
+> See the DMV vertical update below and the document's own VERIFICATION.md
+> for the full sourcing record and every disclosed scoping/judgment call.
 
 > **Update (2026-07-23, GOV-4603, "GovSchema Standard Research"): Mauritius
 > opens as the registry's 92nd jurisdiction, via Passport (1 of 6)**, via
@@ -15840,7 +15863,18 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (63/91 jurisdictions — 69%)
+### DMV — Vehicle Registration, Licensing, Permits (64/92 jurisdictions — 70%)
+
+> **Update (2026-07-23, GOV-4610, "GovSchema Standard Research"): Mauritius's
+> DMV vertical opens (2 of 6 for the jurisdiction)**, via
+> `mu/nlta/vehicle-registration-mark-application@1.0.0` — the National Land
+> Transport Authority's "Application for Registration Mark". See the
+> Executive Summary's GOV-4610 update above and the document's own
+> VERIFICATION.md for the full sourcing record, including the disclosed
+> `applicantType` discriminator (individual vs. registered company) and the
+> exclusion of the in-person-only driving-licence half of this vertical.
+> Numerator updated from 63 to 64; denominator updated from 91 to 92 to
+> match the registry's current total jurisdiction count.
 
 > **Update (2026-07-23, GOV-4582, "GovSchema Standard Research"): Trinidad
 > and Tobago's DMV vertical opens (3 of 6 for the jurisdiction)**, via
@@ -21313,7 +21347,7 @@ now closed.
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| **MU** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| **MU** | 2 | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NA** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -22385,7 +22419,8 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       registry has already documented for GR, CY, and others).
 0n. **Mauritius opened as a new jurisdiction (GOV-4603, 2026-07-23), with
     three further verticals banked as open, STRONG backlog; Guatemala
-    re-scouted and found weak:**
+    re-scouted and found weak. Update (GOV-4610, 2026-07-23): DMV now
+    authored, Business Formation and Visa remain banked:**
     - **Mauritius** — re-scouted this cycle as one of two runner-up
       new-jurisdiction candidates from Trinidad and Tobago's own GOV-4568
       scouting pass (the other being Guatemala, below), not previously
@@ -22403,7 +22438,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       link on `police.govmu.org`) and the online learner-licence channel is
       confirmed dead ("temporarily out of service due to Covid 19
       Pandemic" per `govmu.org`'s own notice) — this candidate is scoped to
-      vehicle registration only. **Business Formation**: the Corporate and
+      vehicle registration only. **Update (GOV-4610, 2026-07-23): now
+      authored** as `mu/nlta/vehicle-registration-mark-application@1.0.0`
+      — see the Executive Summary and DMV vertical updates above. **Opens
+      Mauritius's DMV vertical (2/6).** A re-fetch this cycle returned
+      598,726 bytes (sha256
+      `dc757ea9fbb495b9a00117cb04d37a63a90729f51ed6e63bffbdea99d462df89`),
+      not the 584,700 bytes banked by GOV-4603 — the earlier figure came
+      from this session's web-fetch tooling rather than a raw byte-for-byte
+      `curl`, the same "don't trust summarized fetches alone" caution this
+      registry's own `gov-source-fidelity-verification` practice already
+      documents; the document content itself (a single-page scanned
+      "APPLICATION FOR REGISTRATION MARK" specimen) is unchanged. **Business
+      Formation**: the Corporate and
       Business Registration Department's own downloadable-forms page,
       `companies.govmu.org/cbrd/downloadable-forms/`, hosts dozens of real
       unauthenticated PDFs (verified: a Limited Partnership registration
@@ -22421,8 +22468,8 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       return" notes PDF surviving unauthenticated) and National ID (the
       National Identity Card Unit's own site has no standard first-issue
       NIC application form, only a narrow home-visit-registration form for
-      bedridden citizens) are confirmed dead ends. DMV, Business Formation,
-      and Visa remain open, STRONG banked backlog for future cycles.
+      bedridden citizens) are confirmed dead ends. Business Formation and
+      Visa remain open, STRONG banked backlog for future cycles.
     - **Guatemala** — re-scouted in the same cycle, found weak: **Business
       Formation** is STRONG (the Registro Mercantil's own live,
       unauthenticated multi-section web form at
