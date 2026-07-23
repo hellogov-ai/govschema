@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**89 jurisdictions** | **626 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**90 jurisdictions** | **627 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4539, "GovSchema Standard Research"): Côte
+> d'Ivoire opens as the registry's 90th jurisdiction**, via
+> `ci/dst/visa-application@1.0.0` — the Ministère de l'Intérieur/Direction de
+> la Surveillance du Territoire's (DST) bilingual (French/English)
+> "Formulaire de demande de Visa/Application for Visa," fetched unauthenticated
+> from `snedai.com` (the Abidjan airport operator's own mirror of this
+> Ministry form, HTTP 200, 128,087 bytes, sha256
+> `80384ff148e9a323df4109388ac5f9de93e70ff750301a4488e13957596265d2`).
+> Scouted fresh across all 6 verticals: DMV (DGTTC/OSER) is a confirmed dead
+> end, fully login-gated via `eservices.cgi.ci`; National ID (ONECI) is weak,
+> a session-based HTML pre-enrollment form rather than a static document;
+> Business Formation (CEPICI's "formulaire unique") and Taxes (DGI's
+> micro-enterprise income-tax declaration) are both real, unauthenticated
+> STRONG candidates left as open backlog, the former pending a
+> real-browser-capable pass around CEPICI's own Sucuri bot-detection
+> challenge; Passport (`snedai.com/docs/formulaire_passeport.pdf`) is also
+> STRONG and independently re-verified but not authored this cycle. Models 32
+> `fields[]` across 6 steps plus 1 `documents[]` entry (the form's own
+> "Photo" placeholder box), including a 3-slot business-contacts block gated
+> on the printed "if it's a business trip" instruction (GSP-0013
+> `visibleWhen`/`requiredWhen`) and a disclosed C/M/D/V letter-only marital-
+> status enum. Excludes the form's own "RESERVE A L'ADMINISTRATION"
+> office-only box and the authority's own signature block — see the
+> document's own VERIFICATION.md for the full extraction record and every
+> disclosed scope decision. Côte d'Ivoire now stands at 1/6 (Visa); Business
+> Formation, Taxes, and Passport remain open, STRONG-but-unauthored backlog;
+> DMV is a confirmed dead end and National ID is weak. Numerator/denominator
+> updates for the Visa vertical below.
 
 > **Update (2026-07-23, GOV-4532, "GovSchema Standard Research"): Ethiopia's
 > Business Formation vertical opens (4 of 6)**, via
@@ -19283,7 +19312,15 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (70/89 jurisdictions — 79%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (71/90 jurisdictions — 79%)
+
+> **Update (2026-07-23, GOV-4539, "GovSchema Standard Research"): Côte
+> d'Ivoire opens as the registry's 90th jurisdiction, via this vertical**,
+> via `ci/dst/visa-application` — the Ministère de l'Intérieur/Direction de
+> la Surveillance du Territoire's bilingual general visa application form —
+> see the Executive Summary update above for the full sourcing record and
+> disclosed findings. Numerator and denominator both move together since
+> Côte d'Ivoire opened via this vertical: 70/89 to 71/90.
 
 > **Update (2026-07-23, GOV-4516, "GovSchema Standard Research"): Namibia's
 > Visa vertical opens (3 of 6)**, via `na/mhaiss/visa-application` — the
@@ -20850,6 +20887,7 @@ now closed.
 | **BW** | 4 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 14 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **CI** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CY** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
@@ -21764,6 +21802,46 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       visa.gov.tj are pure SPAs; foreign passport application is described
       only informationally with no attached form) — not re-checked this
       cycle.
+0l. **Côte d'Ivoire scouted fresh as a brand-new jurisdiction (GOV-4539,
+    2026-07-23), opened via Visa; Business Formation, Taxes, and Passport
+    left as STRONG open backlog:**
+    - **Visa**: the Ministère de l'Intérieur/Direction de la Surveillance du
+      Territoire's (DST) bilingual "Formulaire de demande de
+      Visa/Application for Visa", mirrored unauthenticated by the Abidjan
+      airport operator at `snedai.com/docs/Formulaire_visa.pdf` (HTTP 200,
+      128,087 bytes). **Update (GOV-4539, 2026-07-23): now authored** as
+      `ci/dst/visa-application@1.0.0` — see the Executive Summary and Visa
+      vertical updates above and the document's own VERIFICATION.md for the
+      full scope record, including 10 disclosed findings (a literal C/M/D/V
+      marital-status enum with no printed expansion; a literal M/F sex
+      enum; a French/English spouse-name caption asymmetry; and a 3-slot
+      business-contacts block gated on the printed "if it's a business
+      trip" instruction). Opens Côte d'Ivoire as the registry's 90th
+      jurisdiction (1/6).
+    - **Business Formation**: CEPICI's "formulaire unique" sole-trader form
+      (confirmed via a Nov 2025 Wayback snapshot) and DGI's
+      `Formulaire_Enregistrement_des_Entreprises_FNE.doc` (confirmed live,
+      unauthenticated, 81,920 bytes) are both real candidates, but
+      CEPICI's own live host (`cepici.ci`/`cepici.gouv.ci`) currently sits
+      behind a Sucuri Cloudproxy JS challenge that 307/404s a plain fetch —
+      not a login wall, but not authorable without real-browser-automation
+      access this cycle. Left as open backlog.
+    - **Taxes**: DGI's micro-enterprise income-tax declaration
+      (`11_DECLARATION_DE_LIMPOT_DES_MICROENTREPRISES.pdf`, HTTP 200,
+      245,929 bytes, unauthenticated) is a real, ready-to-author candidate.
+      Left as open backlog since Visa was chosen for this cycle.
+    - **Passport**: the same `snedai.com` mirror also carries
+      `formulaire_passeport.pdf` (HTTP 200, 69,840 bytes, unauthenticated),
+      independently re-verified this cycle. Left as open backlog since
+      Visa's specimen was the more completely legible of the two.
+    - **DMV**: confirmed dead end. DGTTC/OSER licensing and vehicle
+      registration route exclusively through the login/account-gated
+      `eservices.cgi.ci/avit/` portal; no downloadable form found anywhere.
+    - **National ID & Civic Documents**: weak. ONECI's CNI application is a
+      live, unauthenticated HTML pre-enrollment form
+      (`pre-enrolement-cni.oneci.ci/formulaire`) rather than a static
+      document; the only PDF found (`etapes-demande-cni.pdf`) is an
+      instructions/checklist sheet, not the fillable form itself.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now

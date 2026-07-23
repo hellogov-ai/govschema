@@ -1,0 +1,397 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ci/dst/visa-application",
+  "version": "1.0.0",
+  "title": "Côte d'Ivoire Visa Application",
+  "description": "The Ministry of the Interior's (Ministère de l'Intérieur) \"Formulaire de demande de Visa / Application for Visa\", processed by the Direction de la Surveillance du Territoire (DST), used by a foreign national requiring a visa to enter the Republic of Côte d'Ivoire under the general visa regime. Opens Côte d'Ivoire as a new jurisdiction in this registry (1 of 6 verticals). This schema models the applicant's own identity and biographic particulars, passport particulars, the type and requested duration of the visa, the reason for travel, the applicant's address in Côte d'Ivoire, the applicant's host/relative in Côte d'Ivoire, and (when the trip is for business) up to three merchants/industrialists the applicant intends to meet. It excludes the form's own \"RESERVE A L'ADMINISTRATION\" (office-only) box — the office's own determination of the granted length of stay, which service/embassy establishes the visa, the filing date, the handling officer, and the office's own attached-documents checklist — and the \"Authority's signature\" box, none of which is applicant-supplied. Filing this application is an applicant's own action performed with the Direction de la Surveillance du Territoire; this schema does not file the application itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Côte d'Ivoire or the Ministère de l'Intérieur.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CI",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Direction de la Surveillance du Territoire",
+    "abbreviation": "DST",
+    "url": "https://www.interieur.gouv.ci"
+  },
+  "process": {
+    "type": "application",
+    "language": "fr"
+  },
+  "source": {
+    "url": "https://snedai.com/docs/Formulaire_visa.pdf",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "\"Formulaire de demande de Visa / Application for Visa\", Ministère de l'Intérieur / Direction de la Surveillance du Territoire, bilingual (French/English) native (searchable-text) PDF, 2 pages."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "GOV-4539 (\"GovSchema Standard Research\"). Côte d'Ivoire was not previously in this registry (89 jurisdictions before this cycle). Scouted fresh across all 6 verticals via an independent research agent, then independently re-verified before authoring: DMV (DGTTC/OSER) is a confirmed dead end, delivered exclusively through the login/account-gated `eservices.cgi.ci` portal, with no downloadable licence/registration form found. National ID (ONECI) is weak — the CNI application is a live, unauthenticated HTML pre-enrollment form rather than a static document, and the only PDF found is an instructions/checklist sheet, not the fillable form itself. Business Formation is a real candidate (CEPICI's \"formulaire unique\" sole-trader form, and DGI's `Formulaire_Enregistrement_des_Entreprises_FNE.doc`) but CEPICI's own live host currently sits behind a Sucuri bot-detection JS challenge that 307/404s a plain fetch, so it was left as open backlog rather than authored this cycle pending a real-browser-capable pass. Taxes (DGI's micro-enterprise income-tax declaration) is also a real, unauthenticated, live candidate, left as open backlog for a future cycle. Visa (this schema) and Passport (`snedai.com/docs/formulaire_passeport.pdf`, HTTP 200, 69,840 bytes, independently re-verified this cycle) were both confirmed STRONG and unauthenticated; Visa was chosen for this cycle's authoring since it is one of GovSchema's six core verticals and this specimen's bilingual layout was the more completely legible of the two on independent review.\n\nIndependently re-fetched and re-hashed rather than trusted from the scouting agent's own report alone: `https://snedai.com/docs/Formulaire_visa.pdf`, HTTP 200 (via `curl` with a realistic desktop User-Agent; Cloudflare-fronted but not gated), `Content-Type: application/pdf`, `Content-Length: 128087` (byte-for-byte match with the scouting report), sha256 `80384ff148e9a323df4109388ac5f9de93e70ff750301a4488e13957596265d2`. This document's own footer/header carry no revision date; `snedai.com` (Société Nouvelle d'Exploitation du Domaine Aéroportuaire d'Abidjan — the Abidjan airport operator) mirrors this Ministry of the Interior form for arriving/departing travellers, a third-party-but-official-content mirror of the same genre this registry has accepted before (e.g. Ireland's `dlrceb.ie`-mirrored RBN1, GOV-4178).\n\nExtraction method: text extracted via `pdfjs-dist`'s `getTextContent()` API (vendored at `/tmp/node_modules/pdfjs-dist` from prior cycles), grouped by y-coordinate row and sorted by x-coordinate to reconstruct reading order. Both pages additionally rendered to PNG via `pdfjs-dist` + `node-canvas` (also vendored at `/tmp/node_modules/canvas`) and used to visually confirm every checkbox grid, box boundary, and section grouping described in the findings below, since the raw text layer alone cannot distinguish an office-only box from an applicant-facing one.\n\nModels 32 `fields[]` across 6 steps plus 1 `documents[]` entry (the form's own \"Photo\" placeholder box).\n\n## Disclosed source-fidelity findings\n\n1. **The entire top box (from the page's own top rule down to just above \"Nom (en majuscule)\") is excluded as office-only.** The rendered page confirms this box is divided into three columns — \"Durée du séjour\" (the office's own granted-length-of-stay determination: Transit/Court séjour/Long séjour), \"Service qui établit le Visa\" (Ambassade or DST (Côte d'Ivoire), a fixed two-option office routing choice), and \"RESERVE A L'ADMINISTRATION\" itself (Date du dépôt de la demande, Dossier traité par, and a numbered 1-7 Pièces jointes checklist) — none of it printed as applicant input. This is a distinct decision from the form's applicant-facing \"Durée du visa sollicité\" (requested visa duration) lower on the same page, which carries an almost-identical Transit/Court séjour wording but is modelled as `requestedVisaDuration` (Finding 4 below) since it is the applicant's own request, not the office's grant.\n2. **The unlabelled row of boxes directly beneath \"Résidence actuelle\" (Present residence) and above \"Profession\" is excluded.** The rendered page confirms a full-width row of entry boxes with no adjacent label in either French or English anywhere on the page — no derivable meaning, so no field is fabricated for it.\n3. **`maritalStatus` modelled as a literal `C`/`M`/`D`/`V` enum, not spelled-out status names.** The source prints only the four single letters (\"Situation matrimoniale (Marital's Status) C M D V\") with no expansion anywhere on either page — unlike this registry's other marital-status fields (e.g. `bw/dic/visa-application`'s `maritalStatus`), which are sourced from forms that spell every option out in full. The C/M/D/V initials are modelled as-is (matching the standard French administrative ordering Célibataire/Marié(e)/Divorcé(e)/Veuf(ve) — Single/Married/Divorced/Widowed — but that expansion is this registry's own inference, not printed on the source, and is disclosed rather than substituted as the enum's actual values).\n4. **`sex` modelled as a literal `M`/`F` enum, not spelled-out `MALE`/`FEMALE`.** Unlike `bw/dic/visa-application`'s `sex` field (sourced from a form that prints \"Male\"/\"Female\" in full), this source's \"Sexe : (Gender) M ▢ F ▢\" never spells out either value anywhere on either page — modelled literally per the source's own printed letters.\n5. **`spouseName` sourced from a field whose French and English captions disagree on gender-neutrality.** The French caption reads \"Nom du conjoint\" (spouse's name, gender-neutral), but the form's own English translation reads \"(Husband name)\" — narrower than the French. Modelled as gender-neutral `spouseName` per the French (the form's primary-language caption), with the English asymmetry disclosed here rather than silently resolved.\n6. **`requestedVisaDuration` (\"Durée du visa sollicité\"/\"Validity period of visa\") is a separate, applicant-facing field from the office-only top-box duration discussed in Finding 1**, despite both printing a near-identical Transit/Court séjour wording. This field's own third option reads \"Sortie-retour (un an)\"/\"(In an out : 1 year)\" — distinct from the office box's own third option, \"Long séjour (1 à 2 ans)\"/\"Long stay (from 1 to 2 years)\" — confirming these are two structurally different fields on the same page, not one field duplicated by extraction.\n7. **The 3-slot business-contacts block (`businessContact1Name`/`Address` through `businessContact3Name`/`Address`) is gated `visibleWhen`/`requiredWhen` on `travelReason` equalling `BUSINESS`, per the section's own printed instruction** (\"Indiquez avec précision les noms et adresses ... s'il s'agit d'un voyage d'affaires\" — \"Indicate precisely names and addresses ... if it's a business trip\"), a genuine printed conditional this registry's GSP-0013 grammar is built to express. Only the first slot (`businessContact1Name`/`businessContact1Address`) is `requiredWhen` gated; the second and third slots remain optional even when visible, since the source gives no indication that meeting more than one contact is expected of every business traveller.\n8. **The page-2 declaration paragraph (\"Vous engagez-vous à n'accepter aucun emploi rémunéré ...\") is excluded — it is pure declaratory prose printed immediately above the signature block, with no discrete checkbox, Oui/Non pair, or blank answer line printed anywhere near it**, unlike a genuine yes/no question. The applicant's agreement is captured by the act of signing, already modelled via `applicantSignature`.\n9. **`photo` modelled as a required `documents[]` entry, matching this registry's `bw/dic/visa-application` precedent for a placeholder photo box.** The rendered page confirms the box is drawn within the visual area beside the RESERVE-A-L'ADMINISTRATION column, but it is genuinely the applicant's own photo affixed to the application, not an office-completed field.\n10. **`addressInCotedIvoire` and the three `Répondant en Côte d'Ivoire` (Relative in Côte d'Ivoire) fields (`relativeName`, `relativeAddress`, `relativePhone`) are modelled as required.** Neither section prints an optionality marker; unlike `bw/dic/visa-application`'s own references section (Finding 4 there, excluded from required status due to a genuinely unlabelled shared box), this form dedicates one clearly bounded, singly-labelled field to each, with no ambiguity about what is being asked.\n\n## Conformance\n\n3 valid mock scenarios (a single-entry tourist applicant on a short-stay ordinary visa; a business applicant declaring one merchant contact; a transit applicant with no relative section left blank) plus 15 mutation-control fixtures (a missing statically-required field for each of `surname`, `givenNames`, `dateOfBirth`, `sex`, `placeOfBirth`, `maritalStatus`, `originNationality`, `presentNationality`, `presentResidence`, `passportNumber`, `passportType`, `visaType`, `requestedVisaDuration`, `travelReason`, and `applicantSignature`; an invalid `maritalStatus` enum value; and an unknown top-level field) are committed under `conformance/ci/dst/visa-application/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all fixtures: all 3 valid scenarios at 0 errors, all mutation controls each raising exactly 1 error. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "applicant_identity",
+      "title": "Applicant Identity",
+      "fields": ["surname", "maidenName", "givenNames", "spouseName", "dateOfBirth", "sex", "placeOfBirth", "maritalStatus", "originNationality", "presentNationality", "presentResidence"],
+      "next": "passport_details"
+    },
+    {
+      "id": "passport_details",
+      "title": "Occupation and Passport Particulars",
+      "fields": ["occupation", "passportNumber", "passportIssueDate", "passportIssuedBy", "passportValidUntil", "passportType"],
+      "next": "visa_details"
+    },
+    {
+      "id": "visa_details",
+      "title": "Visa Sought and Reason for Travel",
+      "fields": ["visaType", "requestedVisaDuration", "travelReason", "departureDate"],
+      "next": "business_contacts"
+    },
+    {
+      "id": "business_contacts",
+      "title": "Merchants/Industrialists to Meet (Business Trips Only)",
+      "fields": ["businessContact1Name", "businessContact1Address", "businessContact2Name", "businessContact2Address", "businessContact3Name", "businessContact3Address"],
+      "next": "address_and_host"
+    },
+    {
+      "id": "address_and_host",
+      "title": "Address in Côte d'Ivoire and Host/Relative",
+      "fields": ["addressInCotedIvoire", "relativeName", "relativeAddress", "relativePhone"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Declaration and Signature",
+      "fields": ["applicantSignature"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "surname",
+      "label": "Surname (in capital letters)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"Nom (en majuscule) (Surname(Capital letter))\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "maidenName",
+      "label": "Maiden Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"Nom de jeune fille (Maiden name)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "givenNames",
+      "label": "Given Name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"Prénom(s): (Given name)\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "spouseName",
+      "label": "Spouse's Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 5 for the disclosed French/English caption asymmetry (the printed English translation reads \"Husband name\").",
+      "sourceRef": "Page 1 — \"Nom du conjoint : (Husband name)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1 — \"Date de naissance : (Date of birth) J M A\""
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "See this schema's own verification.notes Finding 4 for why this is modelled as a literal M/F enum rather than spelled-out MALE/FEMALE values.",
+      "sourceRef": "Page 1 — \"Sexe : (Gender) M F\"",
+      "validation": {
+        "enum": ["M", "F"]
+      }
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"Lieu de naissance : (Place of birth)\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital Status",
+      "type": "enum",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 3 for the disclosed C/M/D/V letter-only source printing and this registry's own inferred expansion (Célibataire/Marié(e)/Divorcé(e)/Veuf(ve) — Single/Married/Divorced/Widowed).",
+      "sourceRef": "Page 1 — \"Situation matrimoniale (Marital's Status) C M D V\"",
+      "validation": {
+        "enum": ["C", "M", "D", "V"]
+      }
+    },
+    {
+      "name": "originNationality",
+      "label": "Nationality of Origin",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"Nationalité d'Origine (Origin Nationality)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "presentNationality",
+      "label": "Present Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"Nationalité Actuelle : (Present Nationality)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "presentResidence",
+      "label": "Present Residence",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"Résidence actuelle : (Present residence)\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "occupation",
+      "label": "Occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1 — \"Profession (Occupation) :\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "passportNumber",
+      "label": "Passport Number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1 — \"Passeport N° (Passport N°) :\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "passportIssueDate",
+      "label": "Passport Issue Date",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1 — \"Délivré le (issued on) : J M A\""
+    },
+    {
+      "name": "passportIssuedBy",
+      "label": "Passport Issued By",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"Par : (by)\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "passportValidUntil",
+      "label": "Passport Valid Until",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Page 1 — \"Valable jusqu'au (valid until) : J M A\""
+    },
+    {
+      "name": "passportType",
+      "label": "Type of Passport",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 1 — \"Type de passeport (Passport type) : Passeport ordinaire (Ordinary passport) / Passeport diplomatique (Diplomatic passport) / Passeport de service (Passport of Service) / Tout autre document de voyage (Other travelling documents)\"",
+      "validation": {
+        "enum": ["ORDINARY", "DIPLOMATIC", "SERVICE", "OTHER_TRAVEL_DOCUMENT"]
+      }
+    },
+    {
+      "name": "visaType",
+      "label": "Type of Visa Applied For",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 1 — \"Nature du visa sollicité (Type of visa applied for) : Visa Ordinaire (Ordinary visa) / Visa de courtoisie (Courtesy visa) / Visa diplomatique (Diplomatic visa)\"",
+      "validation": {
+        "enum": ["ORDINARY", "COURTESY", "DIPLOMATIC"]
+      }
+    },
+    {
+      "name": "requestedVisaDuration",
+      "label": "Validity Period of Visa Requested",
+      "type": "enum",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 6 — distinct from the form's own office-only granted-length-of-stay box.",
+      "sourceRef": "Page 1 — \"Durée du visa sollicité (Validity period of visa) : Transit (de 1 à 3 jours) / Court séjour (de 1 jours à trois mois) / Sortie-retour (un an) (In an out : 1 year)\"",
+      "validation": {
+        "enum": ["TRANSIT", "SHORT_STAY", "ROUND_TRIP_ONE_YEAR"]
+      }
+    },
+    {
+      "name": "travelReason",
+      "label": "Reason for Travel",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Page 1 — \"Motifs du voyage : (Reasons of travelling) Affaires (Business) / Mission (Mission) / Vacances-Loisirs (Holidays-Leisure) / Etudes/Recherches (Study/Research) / Santé (Health)\"",
+      "validation": {
+        "enum": ["BUSINESS", "MISSION", "HOLIDAYS_LEISURE", "STUDY_RESEARCH", "HEALTH"]
+      }
+    },
+    {
+      "name": "departureDate",
+      "label": "Departure Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Page 1 — \"Date de départ (Departure date) : J M A\""
+    },
+    {
+      "name": "businessContact1Name",
+      "label": "Business Contact 1 — Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "visibleWhen": { "field": "travelReason", "equals": "BUSINESS" },
+      "requiredWhen": { "field": "travelReason", "equals": "BUSINESS" },
+      "description": "See this schema's own verification.notes Finding 7.",
+      "sourceRef": "Page 2 — \"Indiquez avec précision les noms et adresses ... s'il s'agit d'un voyage d'affaires : Nom (Name)\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "businessContact1Address",
+      "label": "Business Contact 1 — Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "visibleWhen": { "field": "travelReason", "equals": "BUSINESS" },
+      "requiredWhen": { "field": "travelReason", "equals": "BUSINESS" },
+      "sourceRef": "Page 2 — \"Adresse (Address)\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "businessContact2Name",
+      "label": "Business Contact 2 — Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "visibleWhen": { "field": "travelReason", "equals": "BUSINESS" },
+      "sourceRef": "Page 2 — \"Nom (Name)\" (2nd repeated block)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "businessContact2Address",
+      "label": "Business Contact 2 — Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "visibleWhen": { "field": "travelReason", "equals": "BUSINESS" },
+      "sourceRef": "Page 2 — \"Adresse (Address)\" (2nd repeated block)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "businessContact3Name",
+      "label": "Business Contact 3 — Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "visibleWhen": { "field": "travelReason", "equals": "BUSINESS" },
+      "sourceRef": "Page 2 — \"Nom (Name)\" (3rd repeated block)",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "businessContact3Address",
+      "label": "Business Contact 3 — Address",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "visibleWhen": { "field": "travelReason", "equals": "BUSINESS" },
+      "sourceRef": "Page 2 — \"Adresse (Address)\" (3rd repeated block)",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "addressInCotedIvoire",
+      "label": "Address in Côte d'Ivoire",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"Adresse en Côte d'Ivoire (Address in Côte d'Ivoire)\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "relativeName",
+      "label": "Relative in Côte d'Ivoire — Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"Repondant en Côte d'Ivoire (Relative in Côte d'Ivoire) — Nom (Name)\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "relativeAddress",
+      "label": "Relative in Côte d'Ivoire — Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"Repondant en Côte d'Ivoire (Relative in Côte d'Ivoire) — Adresse (Address)\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "relativePhone",
+      "label": "Relative in Côte d'Ivoire — Telephone Number",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1 — \"Repondant en Côte d'Ivoire (Relative in Côte d'Ivoire) — Téléphone (Phone number)\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "applicantSignature",
+      "label": "Signature of Applicant",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2 — \"Signature du requérant(Applicant's signature)\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "photo",
+      "label": "Photo",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 1 — \"Photo\" placeholder box"
+    }
+  ]
+}
