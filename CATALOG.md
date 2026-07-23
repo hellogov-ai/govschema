@@ -4,7 +4,39 @@
 
 ## Executive Summary
 
-**87 jurisdictions** | **616 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**87 jurisdictions** | **617 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4480, "GovSchema Standard Research"): Zimbabwe
+> advances to Passport (2 of 6)**, via `zw/rg/passport-application@1.0.0` —
+> the Department of the Registrar-General's (RG) "APPLICATION FOR A ZIMBABWE
+> PASSPORT" (Form EP1), a single unified form covering first-time issuance,
+> renewal, and lost/stolen replacement. The live `rg.gov.zw` origin has
+> returned HTTP 404 on every path for a genuine, ongoing outage (first
+> observed ~2026-02-07, still down at authoring time); this schema is
+> instead sourced from a Wayback Machine capture taken while the live
+> site's own download endpoint was still serving the PDF directly and
+> unauthenticated, following this registry's established
+> `mt/transport-malta` Wayback-workaround precedent (GOV-4237). The
+> retrieved PDF is a scanned specimen with a third-party AcroForm layer
+> retrofitted on top; its own internal field names are generic Adobe
+> form-builder placeholders, several written in Hebrew script (an artifact
+> of the conversion tool, unrelated to the form's own English-language
+> content) — every field was mapped to a semantic name by rendering each
+> page to an image and overlaying each widget's own rect back onto it to
+> positively confirm its printed label, since the PDF's text layer itself
+> is entirely empty. Models 46 `fields[]` across 7 steps (Personal Details;
+> Married Woman, Divorced or Widowed — gated on a compound `sex`+
+> `maritalStatus` condition; Next of Kin; Declaration by Applicant; Guardian
+> Consent, gated on an unprinted `applicantIsMinor` boolean; and Particulars
+> of Lost/Stolen Passport, gated on the applicant's own prior-passport
+> answer rather than a second invented boolean) plus 9 `documents[]`
+> entries. See the Passport vertical update below and the document's own
+> VERIFICATION.md for the full scope record, including several genuinely
+> printed boxes (a "Relationship to child" field, both Signature boxes, and
+> two free-text sections) that carry no corresponding AcroForm widget in
+> this retrofit and are disclosed as excluded rather than invented.
+> Zimbabwe's remaining four verticals (DMV, Business Formation, Visa,
+> National ID) are unscouted and remain open backlog for a future cycle.
 
 > **Update (2026-07-23, GOV-4470, "GovSchema Standard Research"): Zimbabwe
 > opens as the registry's 87th jurisdiction, via Taxes (1 of 6)**, via
@@ -14612,7 +14644,18 @@
 
 ## By Vertical
 
-### Passport (56/82 jurisdictions — 68%)
+### Passport (57/83 jurisdictions — 69%)
+
+> **Update (2026-07-23, GOV-4480, "GovSchema Standard Research"): Zimbabwe
+> opens this vertical (2/6 for the jurisdiction)**, via
+> `zw/rg/passport-application@1.0.0` — the Department of the
+> Registrar-General's (RG) "APPLICATION FOR A ZIMBABWE PASSPORT" (Form
+> EP1). This vertical's own denominator is also corrected here from 82 to
+> 83 — Zimbabwe (GOV-4470) had opened via a non-Passport vertical (Taxes)
+> without this section's own denominator being bumped, the same
+> stale-denominator class of fix prior cycles have already applied here.
+> See the Executive Summary's GOV-4480 update above for the full sourcing
+> record and disclosed findings.
 
 > **Update (2026-07-22, GOV-4367, "GovSchema Standard Research"): Jamaica
 > opens this vertical (2/6 for the jurisdiction)**, via
@@ -20491,7 +20534,7 @@ now closed.
 | **VN** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZM** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
-| **ZW** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **ZW** | 2 | ✓ | ✗ | ✗ | ✓ | ✗ | ✗ |
 
 "Schemas (top-level dirs)" counts distinct `<agency>/<process-name>` entries
 under `registry/<jurisdiction>/`, not every version/edition. US is

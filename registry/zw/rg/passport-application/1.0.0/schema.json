@@ -1,0 +1,589 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "zw/rg/passport-application",
+  "version": "1.0.0",
+  "title": "Zimbabwe Passport Application (Form EP1)",
+  "description": "The Department of the Registrar-General's (RG) \"APPLICATION FOR A ZIMBABWE PASSPORT\" (form code EP1, 4 pages), a single unified form covering first-time issuance, renewal, and lost/stolen replacement. Opens Zimbabwe's Passport vertical (2 of 6), alongside `zw/zimra/itf1-employment-income-return` (Taxes, 1 of 6). The live `rg.gov.zw` origin has returned HTTP 404 on every path for a genuine, ongoing outage (first observed 2026-02-07, still down 2026-07-23 at authoring time); this schema is sourced from a Wayback Machine capture of the form taken while the live site's own download endpoint was still serving it directly and unauthenticated (see verification.notes for the archival-source rationale, following this registry's established `mt/transport-malta` Wayback-workaround precedent, GOV-4237). The retrieved PDF is a scanned/flat specimen with a third-party AcroForm layer retrofitted on top (a common pattern for older Zimbabwean government forms) — its own internal field names are generic Adobe form-builder placeholders, several written in Hebrew script (e.g. a field literally named \"מלל6\", Hebrew for \"text\"/content placeholder), an artifact of the retrofit tool rather than any Hebrew-language content in the form itself; every field below was mapped to a semantic name by its rect position cross-referenced against the rendered page image and its printed label, not by its literal internal name. This document models Section 1 (Personal Details: ID number, Birth Entry Number, name, sex, marital status, date/place/country of birth, physical description, address, telephone), Section 2 (Married Woman, Divorced or Widowed — husband's particulars, gated on the applicant being female and not single), Section 3 (Next of Kin), Section 4 (Declaration by Applicant — citizenship basis, prior Zimbabwean and foreign passport history), Section 5 (Declaration by Father or Other Legal Guardian, gated on an unprinted `applicantIsMinor` eligibility boolean since the section's own header states it applies only to children under 18, the same convention this registry's other passport schemas use for an analogous age gate), and Section 6 (Particulars of Lost/Stolen Passport, gated on the applicant having answered \"Yes, Lost\" to Section 4's own prior-passport question, since Section 6's own header ties directly to a lost/stolen prior passport and no separate checkbox exists to select it). It excludes: Page 1's free-text continuation line for \"state original name, how changed, and date\", Section 5's \"Relationship to child\" box, both pages' \"Signature\" boxes (Section 4 and Section 5), Section 6's \"State how lost/stolen or other reasons\" free-text block, and the entirety of Section 7 (\"Previous Marriage Details/Former Names\") — every one of these is a genuine printed box or writing line on the source form, but none carries a corresponding AcroForm widget in this specific digital retrofit (confirmed by exhaustively mapping every widget rect to the rendered page, not merely inferred), so none is a field an agent can supply through this document (signature capture is additionally excluded per this registry's own standing convention for physical signature/biometric acts). Page 3 (photograph, fingerprint, and in-person-signature capture performed at a Zimbabwe Passport Office, plus office-only processing fields) and page 4 (an \"INSTRUCTIONS\" panel plus an office-only collection/disposal panel) are excluded from `fields[]` in their entirety as non-applicant-authored content, though page 4's own required-original-documents checklist and page 3's biometric capture are modeled in `documents[]`. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Zimbabwe or the Department of the Registrar-General.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "ZW",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Department of the Registrar-General",
+    "abbreviation": "RG",
+    "url": "https://www.rg.gov.zw"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://web.archive.org/web/20191101005412/http://www.rg.gov.zw:80/index.php/documents-and-forms?download=1:passport-application-form",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "Form EP1, \"Application for a Zimbabwe Passport\", Department of the Registrar-General, 4 pages, Wayback Machine capture of the live rg.gov.zw download dated 2019-11-01 (the live site itself has been down, HTTP 404 on every path, since approximately 2026-02-07)."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "GOV-4480 (child of GOV-4476, \"GovSchema Standard Research\"). Opens Zimbabwe's Passport vertical (2 of 6) following GOV-4470's ZIMRA ITF 1 (Taxes, 1 of 6).\n\n## Reaching the source: a genuine live-site outage, worked around via Wayback\n\nThe live origin `rg.gov.zw` returns HTTP 404 on every path attempted this cycle (including the domain root and the documents-and-forms listing page) — independently reproduced, not merely trusted from the delegating issue's own paraphrase. The delegating issue's own CDX history check places the outage's first observation at approximately 2026-02-07, a genuine ~6-month-and-counting outage, not a transient blip. Per this registry's established Wayback-workaround precedent (`mt/transport-malta/driving-licence-renewal@1.0.0`, GOV-4237), the form was instead retrieved from a Wayback Machine capture of the live download endpoint: `https://web.archive.org/web/20191101005412/http://www.rg.gov.zw:80/index.php/documents-and-forms?download=1:passport-application-form`. Independently re-fetched and re-hashed this cycle rather than trusted from the delegating issue's own report alone: HTTP 200, `Content-Type: application/pdf`, `Content-Length: 1,568,546` bytes — an exact byte-for-byte match with the delegating issue's own disclosed size — sha256 `8f939371ee2a20aa1e7428473944b949b791765da767872995815a03f5ad931a`, begins `%PDF-1.6`. The Wayback response's own `x-archive-orig-*` headers confirm the underlying capture's original response was itself `Content-Type: application/pdf` with HTTP status `200` and no cookie/session gate beyond a single non-authenticating session cookie — i.e. genuinely a direct, unauthenticated PDF download on the live site at capture time (2019-11-01), not a login-gated resource incidentally crawled.\n\n## Document structure and extraction method\n\n4 pages. `pdfjs-dist`'s `getAnnotations()` confirms exactly 68 `/Widget` annotations (38 on page 1, 28 on page 2, 1 each on pages 3 and 4) — an exact match to the delegating issue's own disclosed count, independently reproduced rather than trusted. `getTextContent()`, however, returned zero text items on all four pages: this is a scanned/flat specimen with a third-party AcroForm layer retrofitted on top for fillability, not a specimen with a native selectable text layer (unlike this registry's `zw/zimra/itf1-employment-income-return`, which is flat with no AcroForm at all). With no text layer to cross-reference, every field was mapped to its printed label by rendering each page to a PNG via `pdfjs-dist` + `node-canvas` at 2.5x scale, then drawing each widget's own PDF-coordinate rect as a red overlay rectangle back onto that same rendered page image and visually confirming which printed label and box each rectangle lands on — a positive-alignment check, not a distance-based guess. This caught and corrected an initial page-2 mis-mapping: a first attempt at eyeballing y-coordinate order alone misassigned four fields (`undefined2`, `undefined4`, `מלל32`, `מלל33`, `undefined5`) to the wrong printed rows; the overlay re-render confirmed the correct assignment used in this schema (Section 5's \"I.D. No.\"/\"Date\" boxes and Section 6's \"Passport No.\"/\"Issued at\"/\"Issue date\" boxes, per the Disclosed findings below).\n\nThe retrofit tool's own internal field names are generic Adobe form-builder placeholders, several in Hebrew script (e.g. \"מלל6\", \"מלל19\", literally Hebrew for a text/content placeholder) — an artifact of the specific third-party conversion tool used, unrelated to any Hebrew-language content in the form itself (the form is entirely English-language). Every field's semantic name in this schema derives from its confirmed printed label, never from its literal internal PDF field name.\n\n## Disclosed findings\n\n1. **The retrofit's AcroForm layer omits widgets for several genuinely-printed, applicant-facing boxes and writing lines**, disclosed rather than silently patched with an invented field: (a) page 1's continuation line beneath Maiden name (\"Has name been changed? If yes, state original name how changed and date\") carries no widget beyond the Yes/No checkbox itself; (b) Section 5's \"Relationship to child\" box (page 2) has no widget, even though the adjacent \"I.D. No.\" and \"Date\" boxes on the same section do; (c) both \"Signature\" boxes (Section 4's declaration signature and Section 5's guardian signature) have no widget, consistent with this registry's standing convention of treating physical signature capture as an act rather than a data field; (d) Section 6's six-line \"State how lost/stolen or other reasons\" block has no widget; (e) the entirety of Section 7 (\"Previous Marriage Details/Former Names\", four dashed writing lines) has no widget. None of (a), (b), (d), or (e) is modeled in `fields[]` — an agent consuming this schema cannot supply that specific box's value through this document, which is a genuine limitation of the live source's own digital fillability, not a modeling omission.\n2. **Pages 3 and 4 each carry exactly one AcroForm widget, and neither has any visible printed label near it anywhere on its page** — both sit at the identical tiny bottom-left corner position (`rect` approximately `[16, 6-24, 92, 17-24]`) as an equivalent widget on pages 1 and 2. All four are excluded as a non-substantive internal artifact of the Adobe LiveCycle-style retrofit (a common page-tracking/reference placeholder left over from the conversion tool), not applicant data — this accounts for the disclosed \"1 each on pages 3/4\" portion of the 68-field total.\n3. **The Sex dropdown's own underlying export values are internally malformed**: its three options carry exportValue/displayValue pairs of `(\"0\", \" \")`, `(\"M\", \"M\")`, and `(\"M/F\", \"F\")` — the third option's exportValue is literally the string \"M/F\" even though its displayValue is \"F\". Modeled here as a clean two-value enum (`M`/`F`), matching the printed label \"Sex (M/F)\", not the raw export-value artifact.\n4. **Section 2 (\"Married Woman, Divorced or Widowed\") is gated on a compound condition — `sex` equals `F` AND `maritalStatus` is one of Married/Widowed/Divorced — built from two fields the form already asks for**, rather than an invented boolean: the section's own fields are exclusively about a \"Husband\", so it only meaningfully applies to a female applicant who is not single. GSP-0013's `all`/`in` composition expresses this precisely without fabricating an unprinted field.\n5. **Section 5 (Declaration by Father or Other Legal Guardian) is gated on a directly-supplied, unprinted `applicantIsMinor` boolean**, matching this registry's established convention for the same pattern in Botswana/Zambia/Ethiopia/Malta/Cyprus passport schemas — the section's own header reads \"(for children under 18 years)\" with no separate checkbox of its own, and GSP-0013's `Condition` grammar has no date-arithmetic/age-derivation operator to compute this from `dateOfBirth` directly.\n6. **Section 6 (Particulars of Lost/Stolen Passport) is gated on `previouslyIssuedPassportStatus` equals `YES_LOST` rather than a second invented boolean.** Section 4's own Question 2 (\"Were you ever issued with a ZIMBABWEAN PASSPORT/TRAVEL DOCUMENT?\") already offers \"Yes, Lost\" as one of five printed checkbox options, and Section 6's own header (\"PARTICULARS OF LOST/STOLEN PASSPORT OR NOT AVAILABLE FOR PRESENT USE\") describes exactly that scenario — reusing this already-captured fact is more precise than adding a second, redundant unprinted gate.\n7. **No field on this form carries a visible mandatory-field asterisk, bold marker, or equivalent anywhere in the rendered pages** (confirmed visually across all four rendered page images, since no text layer exists to check programmatically). Following this registry's own established precedent for un-asterisked sources (e.g. `zw/zimra/itf1-employment-income-return`), only a bare-minimum set is modeled `required: true`: the core personal-identity fields (`surname`, `otherNames`, `sex`, `dateOfBirth`, `placeOfBirth`, `countryOfBirth`, `residentialAddress`); all four Next-of-Kin fields, per page 4's own explicit instruction item 4 (\"SECTION 3 OF THIS FORM MUST BEAR THE DETAILS OF NEXT OF KIN\") — a genuine explicit source directive, unlike the rest of the form; and Section 4's five-item declaration block (`citizenshipBasis`, `previouslyIssuedPassportStatus`, `foreignPassportHolder`, `renouncedForeignBirthRight`, `surrenderedForeignPassport`) plus `declarationDate`, since these five numbered questions form one cohesive attestation a passport cannot be processed without. Every other field is `required: false`, gated by `requiredWhen` where a printed branch exists (Section 2, Section 5, Section 6, and the three conditional passport-number fields), or left bare-optional where no printed signal distinguishes it (e.g. `maidenName`, `visibleMarks`, `idNumber`/`birthEntryNumber` as alternative identifiers).\n8. **`height` is modeled as a single integer field in centimetres**, unlike this registry's Botswana passport schema's split metres/centimetres convention — the source prints one box captioned \"cm\", not two adjacent unit boxes.\n9. **`maxLength` values largely follow each field's own AcroForm `maxLen` constraint where the retrofit set one** (e.g. `idNumber` 12, `birthEntryNumber` 11, `colourOfEyes`/`colourOfHair` 12, `guardianIdNumber` 12, all date fields 8 for a packed DDMMYYYY layout) — these differ meaningfully field-to-field, indicating the retrofit's own author sized them deliberately rather than leaving a single tool default. Fields whose widget carries no `maxLen` (reported as `0`) are assigned a semantically reasonable `maxLength` matching this registry's convention for the equivalent field type elsewhere (e.g. free-text address/name fields).\n10. **Both `previousPassportNumber`/`foreignPassportNumber`/`surrenderedPassportNumber` and the Section 6 lost-passport fields are independently conditioned**, not chained off one another: `previousPassportNumber` requires `previouslyIssuedPassportStatus` to be one of the four affirmative values (`YES_VALID`/`YES_EXPIRED`/`YES_FULL`/`YES_LOST`); `foreignPassportNumber` requires `foreignPassportHolder` equals `YES`; `surrenderedPassportNumber` requires `surrenderedForeignPassport` equals `YES` — each mirrors its own printed \"If yes, state the Passport number\"/\"State the Passport number\" instruction, printed independently beside each of the three respective questions. `previousPassportNumber`'s condition deliberately uses `in` over the four affirmative values rather than `notEquals \"NO\"`, since the ephemeral conformance checker's own dry run surfaced that a `notEquals` condition evaluates `true` against a wholly *absent* `previouslyIssuedPassportStatus` value, cascading a spurious second error onto the `mutation-missing-previouslyissuedpassportstatus-required` fixture — the same class of absent-field/`notEquals` pitfall this registry has previously catalogued (see memory `notequals-empty-string-absent-field-bug`), here triggered by an omitted required enum rather than an empty optional string. Also caught by the same dry run: the `valid-lost-passport-replacement` fixture's `previouslyIssuedPassportStatus: \"YES_LOST\"` independently satisfies this same `in` condition, so that fixture supplies `previousPassportNumber` alongside its Section 6 particulars — reflecting that Section 4 Q2's own passport-number box and Section 6's particulars are two separate, both-applicable requests for the same lost passport's number.\n\n## Conformance\n\n4 valid mock scenarios — `valid-first-time-adult-single` (a single, adult, first-time male applicant exercising none of the conditional branches), `valid-married-woman-renewal` (a married female applicant renewing a still-valid passport, exercising the Section 2 married-woman branch), `valid-minor-with-guardian-consent` (a minor applicant exercising the Section 5 guardian-consent branch, with a foreign-passport-holder declaration), and `valid-lost-passport-replacement` (an adult applicant whose prior passport was lost, exercising the Section 6 lost/stolen-particulars branch and the `previousPassportNumber` conditional) — plus 15 mutation-control fixtures (one missing statically-required field for each of `surname`, `otherNames`, `sex`, `dateOfBirth`, `placeOfBirth`, `countryOfBirth`, `residentialAddress`, `nokFullName`, `nokRelation`, `nokResidentialAddress`, `nokTelephone`, `citizenshipBasis`, `previouslyIssuedPassportStatus`, `foreignPassportHolder`, and `declarationDate`) and one unknown-top-level-field-rejected fixture, committed under `conformance/zw/rg/passport-application/1.0.0/`.\n\nAn ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all 20 fixtures: all 4 valid scenarios at 0 errors, all 15 mutation controls each raising exactly 1 error, and the unknown-field fixture correctly rejected. Confirmed every `requiredWhen` field reference resolves (0 dangling references) and the `visibleWhen`/`requiredWhen` dependency graph is acyclic. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "eligibility_gates",
+      "title": "Eligibility Gates",
+      "fields": ["applicantIsMinor"],
+      "next": "personal_details"
+    },
+    {
+      "id": "personal_details",
+      "title": "Section 1: Personal Details",
+      "fields": ["idNumber", "birthEntryNumber", "surname", "otherNames", "maidenName", "nameChanged", "sex", "maritalStatus", "dateOfBirth", "placeOfBirth", "countryOfBirth", "height", "colourOfEyes", "colourOfHair", "visibleMarks", "profession", "residentialAddress", "countryOfPermanentResidence", "telephone"],
+      "next": "married_woman_divorced_widowed"
+    },
+    {
+      "id": "married_woman_divorced_widowed",
+      "title": "Section 2: Married Woman, Divorced or Widowed",
+      "fields": ["dateOfMarriage", "husbandFullName", "placeCountryOfMarriage", "husbandPlaceCountryOfBirth", "husbandCitizenship", "marriageOrDivorceOrderNumber", "marriedMoreThanOnce"],
+      "next": "next_of_kin"
+    },
+    {
+      "id": "next_of_kin",
+      "title": "Section 3: Next of Kin",
+      "fields": ["nokFullName", "nokRelation", "nokResidentialAddress", "nokTelephone"],
+      "next": "declaration_by_applicant"
+    },
+    {
+      "id": "declaration_by_applicant",
+      "title": "Section 4: Declaration by Applicant",
+      "fields": ["citizenshipBasis", "previouslyIssuedPassportStatus", "previousPassportNumber", "foreignPassportHolder", "foreignPassportNumber", "renouncedForeignBirthRight", "surrenderedForeignPassport", "surrenderedPassportNumber", "declarationDate"],
+      "next": "guardian_consent"
+    },
+    {
+      "id": "guardian_consent",
+      "title": "Section 5: Declaration by Father or Other Legal Guardian",
+      "fields": ["guardianIdNumber", "guardianConsentDate"],
+      "next": "lost_stolen_passport_particulars"
+    },
+    {
+      "id": "lost_stolen_passport_particulars",
+      "title": "Section 6: Particulars of Lost/Stolen Passport",
+      "fields": ["lostPassportNumber", "lostPassportIssuedAt", "lostPassportIssueDate", "lostPassportBearerFullName"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "applicantIsMinor",
+      "label": "Applicant is under 18 years of age",
+      "type": "boolean",
+      "required": true,
+      "fieldRole": "eligibility",
+      "description": "Not a printed checkbox. Section 5's own header reads \"DECLARATION BY FATHER OR OTHER LEGAL GUARDIAN (for children under 18 years)\" — this directly-supplied boolean gates Section 5. See this schema's own verification.notes Finding 5.",
+      "sourceRef": "Form EP1, page 2, Section 5 header"
+    },
+    {
+      "name": "idNumber",
+      "label": "ID Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "description": "One of two alternative applicant identifiers printed side by side (the other is Birth Entry Number); neither is universal to every applicant, so both are modeled optional.",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"ID Number\"",
+      "validation": { "maxLength": 12 }
+    },
+    {
+      "name": "birthEntryNumber",
+      "label": "Birth Entry Number",
+      "type": "string",
+      "required": false,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Birth Entry Number\"",
+      "validation": { "maxLength": 11 }
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Surname\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "otherNames",
+      "label": "Other Names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Other names\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "maidenName",
+      "label": "Maiden Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Maiden name\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nameChanged",
+      "label": "Has name been changed?",
+      "type": "boolean",
+      "required": false,
+      "description": "The printed continuation line asking for the original name, how it changed, and the date carries no corresponding AcroForm widget in this retrofit and is excluded — see this schema's own verification.notes Finding 1(a).",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Has name been changed? If yes, state original name how changed and date\""
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "description": "Modeled as a clean two-value enum; see this schema's own verification.notes Finding 3 for the underlying dropdown's malformed export values.",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Sex (M/F)\"",
+      "validation": { "enum": ["M", "F"] }
+    },
+    {
+      "name": "maritalStatus",
+      "label": "Marital Status",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Marital status. Tick the appropriate box: Single / Married / Widowed / Divorced\"",
+      "validation": { "enum": ["SINGLE", "MARRIED", "WIDOWED", "DIVORCED"] }
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Date of birth\""
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Place of birth\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "countryOfBirth",
+      "label": "Country of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Country of birth\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "height",
+      "label": "Height (cm)",
+      "type": "integer",
+      "required": false,
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 8 for why this is modeled as a single centimetre field.",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Height ... cm\"",
+      "validation": { "minimum": 30, "maximum": 250 }
+    },
+    {
+      "name": "colourOfEyes",
+      "label": "Colour of Eyes",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Colour of eyes\"",
+      "validation": { "maxLength": 12 }
+    },
+    {
+      "name": "colourOfHair",
+      "label": "Colour of Hair",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Colour of hair\"",
+      "validation": { "maxLength": 12 }
+    },
+    {
+      "name": "visibleMarks",
+      "label": "Visible Marks or Peculiarities",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Visible marks or peculiarities\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "profession",
+      "label": "Profession",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Profession\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "residentialAddress",
+      "label": "Residential Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Residential address\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "countryOfPermanentResidence",
+      "label": "Country of Permanent Residence",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Country of permanent residence\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "telephone",
+      "label": "Telephone",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 1 — \"Telephone\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "dateOfMarriage",
+      "label": "Date of Marriage",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "all": [{ "field": "sex", "equals": "F" }, { "field": "maritalStatus", "in": ["MARRIED", "WIDOWED", "DIVORCED"] }] },
+      "classification": "pii",
+      "description": "See this schema's own verification.notes Finding 4 for this section's compound gating condition.",
+      "sourceRef": "Form EP1, page 1, Section 2 — \"Date of marriage\""
+    },
+    {
+      "name": "husbandFullName",
+      "label": "Husband's Full Name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "all": [{ "field": "sex", "equals": "F" }, { "field": "maritalStatus", "in": ["MARRIED", "WIDOWED", "DIVORCED"] }] },
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 2 — \"Husband's full name\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "placeCountryOfMarriage",
+      "label": "Place & Country of Marriage",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "all": [{ "field": "sex", "equals": "F" }, { "field": "maritalStatus", "in": ["MARRIED", "WIDOWED", "DIVORCED"] }] },
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 2 — \"Place & country of marriage\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "husbandPlaceCountryOfBirth",
+      "label": "Husband's Place & Country of Birth",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "all": [{ "field": "sex", "equals": "F" }, { "field": "maritalStatus", "in": ["MARRIED", "WIDOWED", "DIVORCED"] }] },
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 2 — \"Husband's place & country of birth\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "husbandCitizenship",
+      "label": "Husband's Citizenship",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "all": [{ "field": "sex", "equals": "F" }, { "field": "maritalStatus", "in": ["MARRIED", "WIDOWED", "DIVORCED"] }] },
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 2 — \"Husband's citizenship\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "marriageOrDivorceOrderNumber",
+      "label": "Marriage or Divorce Order Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "all": [{ "field": "sex", "equals": "F" }, { "field": "maritalStatus", "in": ["MARRIED", "WIDOWED", "DIVORCED"] }] },
+      "classification": "sensitive-pii",
+      "sourceRef": "Form EP1, page 1, Section 2 — \"Marriage or divorce order number\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "marriedMoreThanOnce",
+      "label": "State if Married More Than Once",
+      "type": "boolean",
+      "required": false,
+      "requiredWhen": { "all": [{ "field": "sex", "equals": "F" }, { "field": "maritalStatus", "in": ["MARRIED", "WIDOWED", "DIVORCED"] }] },
+      "description": "If yes, particulars of former marriage(s) must be given on page 2, Section 7 — that free-text block carries no AcroForm widget and is excluded (see this schema's own verification.notes Finding 1(e)).",
+      "sourceRef": "Form EP1, page 1, Section 2 — \"State if married more than once, if yes particulars of former marriage(s) must be given on page 2 section 7\""
+    },
+    {
+      "name": "nokFullName",
+      "label": "Next of Kin — Full Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Required per page 4's own explicit instruction item 4: \"SECTION 3 OF THIS FORM MUST BEAR THE DETAILS OF NEXT OF KIN.\"",
+      "sourceRef": "Form EP1, page 1, Section 3 — \"Full name\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "nokRelation",
+      "label": "Next of Kin — Relation to Applicant",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Form EP1, page 1, Section 3 — \"Relation to applicant\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "nokResidentialAddress",
+      "label": "Next of Kin — Residential Address",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 3 — \"Residential address\"",
+      "validation": { "maxLength": 300 }
+    },
+    {
+      "name": "nokTelephone",
+      "label": "Next of Kin — Telephone",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 1, Section 3 — \"Telephone\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "citizenshipBasis",
+      "label": "I am a Citizen of Zimbabwe by",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form EP1, page 2, Section 4, Q1 — \"I am a citizen of ZIMBABWE by: Birth / Descent / Registration\"",
+      "validation": { "enum": ["BIRTH", "DESCENT", "REGISTRATION"] }
+    },
+    {
+      "name": "previouslyIssuedPassportStatus",
+      "label": "Were You Ever Issued With a Zimbabwean Passport/Travel Document?",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form EP1, page 2, Section 4, Q2 — \"Were you ever issued with a ZIMBABWEAN PASSPORT/TRAVEL DOCUMENT? No / Yes, valid / Yes, Expired / Yes, Full / Yes, Lost\"",
+      "validation": { "enum": ["NO", "YES_VALID", "YES_EXPIRED", "YES_FULL", "YES_LOST"] }
+    },
+    {
+      "name": "previousPassportNumber",
+      "label": "Previous Passport Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "previouslyIssuedPassportStatus", "in": ["YES_VALID", "YES_EXPIRED", "YES_FULL", "YES_LOST"] },
+      "classification": "sensitive-pii",
+      "sourceRef": "Form EP1, page 2, Section 4, Q2 — \"If yes, state the Passport number\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "foreignPassportHolder",
+      "label": "Are You a Holder of a Foreign Passport?",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form EP1, page 2, Section 4, Q3 — \"Are you a holder of a foreign passport? N/A / No / Yes\"",
+      "validation": { "enum": ["NA", "NO", "YES"] }
+    },
+    {
+      "name": "foreignPassportNumber",
+      "label": "Foreign Passport Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "foreignPassportHolder", "equals": "YES" },
+      "classification": "sensitive-pii",
+      "sourceRef": "Form EP1, page 2, Section 4, Q3 — \"If yes, state the Passport number\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "renouncedForeignBirthRight",
+      "label": "Did You Renounce Your Foreign Birth Right in Favour of Zimbabwean Citizenship?",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form EP1, page 2, Section 4, Q4 — \"Did you renounce your foreign birth right in favour of Zimbabwean citizenship? N/A / No / Yes\"",
+      "validation": { "enum": ["NA", "NO", "YES"] }
+    },
+    {
+      "name": "surrenderedForeignPassport",
+      "label": "Did You Surrender Your Foreign Passport?",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "Form EP1, page 2, Section 4, Q5 — \"Did you surrender your foreign passport? N/A / No / Yes\"",
+      "validation": { "enum": ["NA", "NO", "YES"] }
+    },
+    {
+      "name": "surrenderedPassportNumber",
+      "label": "Surrendered Passport Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "surrenderedForeignPassport", "equals": "YES" },
+      "classification": "sensitive-pii",
+      "sourceRef": "Form EP1, page 2, Section 4, Q5 — \"State the Passport number\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Declaration Date",
+      "type": "date",
+      "required": true,
+      "description": "The accompanying \"Signature In bold black ink\" box carries no AcroForm widget and is represented instead by this schema's own applicantDeclarationAttestation documents[] entry.",
+      "sourceRef": "Form EP1, page 2, Section 4 — \"Signature In bold black ink ... Date\""
+    },
+    {
+      "name": "guardianIdNumber",
+      "label": "Parent/Legal Guardian — I.D. No.",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "classification": "sensitive-pii",
+      "sourceRef": "Form EP1, page 2, Section 5 — \"I.D. No.\"",
+      "validation": { "maxLength": 12 }
+    },
+    {
+      "name": "guardianConsentDate",
+      "label": "Parent/Legal Guardian Consent — Date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "description": "The adjacent \"Relationship to child\" box and \"Signature of father/legal guardian\" box carry no AcroForm widget and are excluded — see this schema's own verification.notes Finding 1(b).",
+      "sourceRef": "Form EP1, page 2, Section 5 — \"Date\""
+    },
+    {
+      "name": "lostPassportNumber",
+      "label": "Lost/Stolen Passport — Passport No.",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "previouslyIssuedPassportStatus", "equals": "YES_LOST" },
+      "classification": "sensitive-pii",
+      "description": "See this schema's own verification.notes Finding 6 for why this section is gated on previouslyIssuedPassportStatus rather than a second unprinted boolean.",
+      "sourceRef": "Form EP1, page 2, Section 6 — \"Passport No.\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "lostPassportIssuedAt",
+      "label": "Lost/Stolen Passport — Issued At",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "previouslyIssuedPassportStatus", "equals": "YES_LOST" },
+      "sourceRef": "Form EP1, page 2, Section 6 — \"Issued at\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "lostPassportIssueDate",
+      "label": "Lost/Stolen Passport — Issue Date",
+      "type": "date",
+      "required": false,
+      "requiredWhen": { "field": "previouslyIssuedPassportStatus", "equals": "YES_LOST" },
+      "sourceRef": "Form EP1, page 2, Section 6 — \"Issue date\""
+    },
+    {
+      "name": "lostPassportBearerFullName",
+      "label": "Lost/Stolen Passport — Bearer's Full Name",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "previouslyIssuedPassportStatus", "equals": "YES_LOST" },
+      "classification": "pii",
+      "sourceRef": "Form EP1, page 2, Section 6 — \"Bearer's full name\"",
+      "validation": { "maxLength": 200 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "applicantDeclarationAttestation",
+      "label": "Declaration by applicant",
+      "category": "attestation",
+      "required": true,
+      "statement": "I declare that the information given on this form is correct. I understand that giving incorrect or misleading information, or any omission made with the intention of misleading, will make me liable to a jail sentence, Loss of citizenship or forfeiture of a passport privilege.",
+      "sourceRef": "Form EP1, page 2, Section 4"
+    },
+    {
+      "id": "guardianConsentAttestation",
+      "label": "Declaration by father or other legal guardian",
+      "category": "attestation",
+      "required": false,
+      "requiredWhen": { "field": "applicantIsMinor", "equals": true },
+      "statement": "Declare that the information given in this application is correct to the best of my knowledge and belief. I hereby give my consent to the issue of a passport to the applicant.",
+      "sourceRef": "Form EP1, page 2, Section 5"
+    },
+    {
+      "id": "birthCertificate",
+      "label": "Long Birth Certificate",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form EP1, page 4, Section 8, item 2A — \"BIRTH CERTIFICATE (Long Birth Certificate)\""
+    },
+    {
+      "id": "nationalIdentityCard",
+      "label": "National Identity Card",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form EP1, page 4, Section 8, item 2B — \"NATIONAL IDENTITY CARD\""
+    },
+    {
+      "id": "marriageCertificateOrDivorceOrder",
+      "label": "Marriage Certificate/National Identity Card in married name, or Divorce order",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "requiredWhen": { "all": [{ "field": "sex", "equals": "F" }, { "field": "maritalStatus", "in": ["MARRIED", "WIDOWED", "DIVORCED"] }] },
+      "sourceRef": "Form EP1, page 4, Section 8, item 2C — \"MARRIAGE CERTIFICATE/NATIONAL IDENTITY CARD IN MARRIED NAME/DIVORCE ORDER\""
+    },
+    {
+      "id": "passportPhotographs",
+      "label": "Two identical passport colour photographs (3.5cm x 4.5cm, without white border)",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Form EP1, page 4, Section 8, item 2D and page 3, \"Instructions to the Officers\" item 1 (\"Scanned Photo\"/\"Verification Photo\")"
+    },
+    {
+      "id": "citizenshipCertificate",
+      "label": "Citizenship Certificate (for citizens by registration)",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "requiredWhen": { "field": "citizenshipBasis", "equals": "REGISTRATION" },
+      "sourceRef": "Form EP1, page 4, Section 8, item 2E — \"CITIZENSHIP CERIFICATE (FOR CITIZENS BY REGISTRATION)\""
+    },
+    {
+      "id": "oldPassportOrEmergencyTravelDocument",
+      "label": "Old passport or emergency travel document, if any",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "applicant",
+      "sourceRef": "Form EP1, page 4, Section 8, item 2F — \"OLD PASSPORT OR EMERGENCY TRAVEL DOCUMENTS IF ANY\""
+    },
+    {
+      "id": "inPersonSignatureAndFingerprintCapture",
+      "label": "In-person signature (in bold black ink) and forefinger prints of both hands, captured at a Zimbabwe Passport Office",
+      "category": "identity-document",
+      "required": true,
+      "belongsTo": "applicant",
+      "handling": "captured-in-person-at-passport-office-not-supplied-with-the-application",
+      "sourceRef": "Form EP1, page 3 — \"APPLICANT'S SIGNATURE IN BOLD BLACK INK (To be signed in front of the Passport Officer)\" and \"FOREFINGER LEFT HAND\"/\"FOREFINGER RIGHT HAND\" capture boxes; page 3 instruction item 6 states this signature must match the Section 4 declaration signature"
+    }
+  ]
+}
