@@ -4,7 +4,39 @@
 
 ## Executive Summary
 
-**91 jurisdictions** | **635 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**92 jurisdictions** | **636 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4603, "GovSchema Standard Research"): Mauritius
+> opens as the registry's 92nd jurisdiction, via Passport (1 of 6)**, via
+> `mu/pio/passport-application@1.0.0` — the Passport and Immigration
+> Office's "Application for a Mauritius Passport" (P.F.136), fetched
+> directly and unauthenticated from `passport.govmu.org` (321,178 bytes,
+> sha256 `c3f793505b02e69c0c8a5fc182c3f019c0d4eb7cdc69d6e33aca06eb76ab7bca`).
+> This cycle re-checked Trinidad and Tobago's own final gap first: the
+> Elections and Boundaries Commission's own "Apply for a new ID" page
+> states plainly "NO application form is required" for a National
+> Identification Card, closing Trinidad and Tobago's backlog at 5 of 6
+> verticals with National ID a confirmed dead end (see the Known Gaps
+> update below). With Trinidad and Tobago's own cycle fully closed, this
+> cycle re-scouted Guatemala and Mauritius — the two runner-up
+> new-jurisdiction candidates from Trinidad and Tobago's own GOV-4568
+> scouting pass, which had not been scored in depth once Trinidad and
+> Tobago came back strongest. Guatemala came back weak (1 of 6 STRONG,
+> Business Formation; 1 of 6 WEAK, Visa, Cloudflare-blocked; 4 of 6
+> dead-end). Mauritius came back strong: 4 of 6 STRONG verticals
+> independently byte-verified on official `.govmu.org` domains (Passport,
+> DMV vehicle registration, Business Formation, Visa), with Taxes and
+> National ID confirmed dead-end (MRA's individual-return filing is
+> mandatory via a login-gated e-filing portal; the National Identity Card
+> Unit's own site has no standard first-issue application form). This
+> schema authors the first of Mauritius's four STRONG verticals — DMV,
+> Business Formation, and Visa remain open, STRONG banked backlog (see the
+> Known Gaps update below). See the Passport vertical update below and the
+> document's own VERIFICATION.md for the full sourcing record and every
+> disclosed scoping/judgment call, including the exclusion of two
+> Police-Officer-only in-person certification sections (distinct from an
+> applicant-arranged recommender/referee section, which this registry does
+> model).
 
 > **Update (2026-07-23, GOV-4596, "GovSchema Standard Research"): Trinidad
 > and Tobago's Visa vertical opens (5 of 6)**, via
@@ -15183,7 +15215,16 @@
 
 ## By Vertical
 
-### Passport (59/91 jurisdictions — 65%)
+### Passport (60/92 jurisdictions — 65%)
+
+> **Update (2026-07-23, GOV-4603, "GovSchema Standard Research"): Mauritius
+> opens this vertical, and the jurisdiction itself (1 of 6)**, via
+> `mu/pio/passport-application@1.0.0` — the Passport and Immigration
+> Office's "Application for a Mauritius Passport" (P.F.136). See the
+> Executive Summary update above for the full sourcing record, scope
+> decisions, and disclosed findings. This vertical's own denominator is
+> also bumped from 59/91 to 60/92 to match the registry's new jurisdiction
+> count.
 
 > **Update (2026-07-23, GOV-4568, "GovSchema Standard Research"): Trinidad
 > and Tobago opens this vertical, and the jurisdiction itself (1 of 6)**,
@@ -21272,6 +21313,7 @@ now closed.
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
+| **MU** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NA** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -22326,7 +22368,80 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       downloadable application form found on `ebctt.com` this cycle
       (not exhaustively confirmed dead-end; a closer look at `ebctt.com`'s
       full site is the natural next step). National ID & Civic Documents
-      remains Trinidad and Tobago's sole open backlog item.
+      remains Trinidad and Tobago's sole open backlog item. **Update
+      (GOV-4603, 2026-07-23): National ID & Civic Documents confirmed dead
+      end.** `ebctt.com`'s own "Apply for a new ID" page states plainly
+      that "NO application form is required" for first issue and that, as
+      of 2023-06-01, no appointment is needed either — the entire process
+      is in-person at a Registration Area Office on supporting documents
+      alone (birth certificate, proof of address per the 2025-01-20
+      notice, etc.), with no downloadable form or online portal anywhere
+      on the site (the "online portal" language on some subpages refers to
+      appointment/status lookup, not application submission). See the
+      "Confirmed dead ends" section below. **Trinidad and Tobago's backlog
+      is now fully closed: 5 of 6 verticals authored, National ID & Civic
+      Documents a confirmed dead end** (Trinidad and Tobago has no
+      separate national-ID-card *form* to model, matching the pattern this
+      registry has already documented for GR, CY, and others).
+0n. **Mauritius opened as a new jurisdiction (GOV-4603, 2026-07-23), with
+    three further verticals banked as open, STRONG backlog; Guatemala
+    re-scouted and found weak:**
+    - **Mauritius** — re-scouted this cycle as one of two runner-up
+      new-jurisdiction candidates from Trinidad and Tobago's own GOV-4568
+      scouting pass (the other being Guatemala, below), not previously
+      scored in depth. **Passport**: the Passport and Immigration Office's
+      own "Application for a Mauritius Passport" (P.F.136),
+      `passport.govmu.org/passport/?mdocs-file=718` (321,178 bytes).
+      **Update (GOV-4603, 2026-07-23): now authored** as
+      `mu/pio/passport-application@1.0.0` — see the Executive Summary and
+      Passport vertical updates above. **Opens Mauritius as the registry's
+      92nd jurisdiction (1/6).** **DMV**: the National Land Transport
+      Authority's "Application for Registration Mark" (vehicle
+      registration), `nlta.govmu.org/Documents/Downloads/Procedures%20Forms/Application%20Form%20Reg%20Mark.pdf`
+      (584,700 bytes, rendered and confirmed field-labeled); the driving-
+      licence half (Police Form PF31) is confirmed in-person-only (no PDF
+      link on `police.govmu.org`) and the online learner-licence channel is
+      confirmed dead ("temporarily out of service due to Covid 19
+      Pandemic" per `govmu.org`'s own notice) — this candidate is scoped to
+      vehicle registration only. **Business Formation**: the Corporate and
+      Business Registration Department's own downloadable-forms page,
+      `companies.govmu.org/cbrd/downloadable-forms/`, hosts dozens of real
+      unauthenticated PDFs (verified: a Limited Partnership registration
+      form, ~60,000 bytes); full company incorporation itself routes
+      through the login-gated CBRIS portal, so this candidate is scoped to
+      the directly-downloadable forms (Limited Partnership, LLP,
+      Foundation, etc.), not company incorporation. **Visa**: the Passport
+      and Immigration Office's own bilingual "Application for a Visa for
+      Mauritius / Demande de Visa pour Maurice",
+      `passport.govmu.org/passport/?mdocs-file=712` (296,537 bytes) —
+      note a sibling link on the same site (`?mdocs-file=887`) is a red
+      herring, a 36-page Occupation/Residence Permit guideline rather than
+      a form. Taxes (MRA's individual-return filing is mandatory via a
+      login-gated e-filing portal, with only a "how to fill in your
+      return" notes PDF surviving unauthenticated) and National ID (the
+      National Identity Card Unit's own site has no standard first-issue
+      NIC application form, only a narrow home-visit-registration form for
+      bedridden citizens) are confirmed dead ends. DMV, Business Formation,
+      and Visa remain open, STRONG banked backlog for future cycles.
+    - **Guatemala** — re-scouted in the same cycle, found weak: **Business
+      Formation** is STRONG (the Registro Mercantil's own live,
+      unauthenticated multi-section web form at
+      `servicios.registromercantil.gob.gt/formatoSolicitudes/Solicitudes/satrm_02`,
+      plus a companion static PDF), banked as open backlog. **Visa** is
+      WEAK — real forms exist on `minex.gob.gt`/`igm.gob.gt` per an archived
+      snapshot, but both live hosting domains now sit fully behind a
+      Cloudflare Managed Challenge that stalled indefinitely even under a
+      real Playwright/Chromium session; not confirmed downloadable this
+      cycle. **DMV** (vehicle registration and driver's licensing both
+      route through SAT's login-gated Declaraguate e-filing system or are
+      in-person-only), **Passport** (issuance is booking-only via a
+      Cloudflare-blocked portal, no static form), **Taxes** (every ISR form
+      is generated only inside the login-gated Declaraguate portal), and
+      **National ID** (RENAP's DPI is in-person-only for first issue, with
+      only a login-gated portal for replacement/certifications) are all
+      confirmed dead ends. Guatemala was not opened as a jurisdiction this
+      cycle; its sole STRONG candidate (Business Formation) is banked
+      should a future cycle find a second STRONG vertical to pair with it.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
@@ -24182,6 +24297,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 
 ### Confirmed dead ends (do not re-attempt without new information)
 
+- **TT National ID & Civic Documents (ebctt.com)** — GOV-4603, 2026-07-23.
+  The Elections and Boundaries Commission's own "Apply for a new ID" page
+  states explicitly "NO application form is required" for a first-issue
+  National Identification Card, and that no appointment has been required
+  since 2023-06-01 — the entire transaction is conducted in person at a
+  Registration Area Office against supporting documents alone (birth
+  certificate, and, per a 2025-01-20 notice, proof of address), with no
+  downloadable form or fillable online application anywhere on the site.
+  This closes Trinidad and Tobago's backlog: 5 of 6 verticals authored
+  (Passport, DMV, Business Formation, Taxes, Visa — see item 0m above),
+  National ID a confirmed dead end.
 - **CY Business Formation, DMV, Taxes, National ID; CY Visa (confirmed
   duplicate)** — GOV-4121, 2026-07-21. Business Formation's HE1
   incorporation form (Companies Section, `companies.gov.cy`) is a sworn
