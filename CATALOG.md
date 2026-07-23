@@ -4,7 +4,35 @@
 
 ## Executive Summary
 
-**85 jurisdictions** | **614 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**86 jurisdictions** | **615 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4460, "GovSchema Standard Research"): Bolivia
+> opens as the registry's 86th jurisdiction, via Taxes (1 of 6)**, via
+> `bo/sin/formulario-200-iva@1.0.0` — the Servicio de Impuestos Nacionales'
+> (SIN) Formulario 200 V.5 Resumido, the monthly sworn declaration of
+> Impuesto al Valor Agregado (IVA). Found via a parallel scouting pass
+> under GOV-4458 after Paraguay's remaining Passport and National ID
+> verticals were confirmed dead ends. Independently re-fetched and
+> re-hashed the PDF directly from `impuestos.gob.bo` (no login/CAPTCHA/WAF
+> gate) rather than trusting the delegating issue's own field-count
+> estimate: the live source turned out to be the abbreviated "Resumido"
+> edition (30 filas across 4 rubros), materially fewer casillas than the
+> issue's own pre-authoring estimate of ~52 casillas across 8 rubros
+> (including a SIGMA-payment section) — disclosed as a finding in the
+> document's own VERIFICATION.md rather than silently reconciled, since a
+> fuller "extendido" edition may exist behind SIN's authenticated Oficina
+> Virtual portal. This also corrects a stale prior finding (Known Gaps
+> entry 0e) that had found Bolivia's only viable Taxes candidate to be a
+> JPG-scanned Form 110 V3 — Formulario 200 is a different, genuinely
+> text-layer PDF form the earlier scouting pass did not surface. See the
+> Taxes vertical update below and the document's own VERIFICATION.md for
+> the full scope record, including 7 disclosed findings. Bolivia's other
+> five verticals (Passport, DMV, Business Formation, Visa, National ID)
+> remain open backlog, per Known Gaps entry 0e's prior findings (Business
+> Formation login-gated, DMV/National ID in-person-only, Visa/Passport
+> routed through a JS-rendered SPA) — worth a fresh look in a future cycle
+> given this cycle's own surprise that the earlier Taxes verdict was
+> incomplete.
 
 > **Update (2026-07-23, GOV-4451, "GovSchema Standard Research"): Paraguay's
 > Visa vertical opens (4 of 6)**, via `py/mre/visa-application@1.0.0` — the
@@ -16922,7 +16950,17 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (70/84 jurisdictions — 83%)
+### Taxes — Income Tax Return, Tax Filing (72/86 jurisdictions — 84%)
+
+> **Update (2026-07-23, GOV-4460, "GovSchema Standard Research"): Bolivia
+> opens as the registry's 86th jurisdiction via this vertical (1/6)**, via
+> `bo/sin/formulario-200-iva@1.0.0` — SIN's Formulario 200 V.5 Resumido,
+> the monthly IVA sworn declaration — see the Executive Summary update
+> above for the full sourcing record and the document's own
+> VERIFICATION.md. This vertical's own denominator is also corrected here
+> from 84 to 86, and its numerator from 70 to 72 (Paraguay's own GOV-4427
+> opening, below, plus this update, neither had bumped this header) — the
+> same stale-header class of fix prior cycles have already applied here.
 
 > **Update (2026-07-22, GOV-4427, "GovSchema Standard Research"): Paraguay
 > opens as the registry's 85th jurisdiction via this vertical (1/6)**, via
@@ -20344,6 +20382,7 @@ now closed.
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **BO** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **BR** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **BW** | 4 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -20857,7 +20896,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Visa and Passport both route through `migracion.gob.bo`, a fully
       JS-rendered Angular SPA with no static fallback content. Not a
       priority new-jurisdiction candidate without a materially different
-      source or OCR tooling.
+      source or OCR tooling. **Update (GOV-4460, 2026-07-23): this Taxes
+      verdict is corrected** — a different SIN form, Formulario 200 V.5
+      (monthly IVA declaration), is a genuine text-layer PDF (not a JPG
+      scan like Form 110 V3, RC-IVA, this bullet's own finding), found via
+      a later scouting pass and now authored, opening Bolivia as the
+      registry's 86th jurisdiction. See the Executive Summary and Taxes
+      vertical updates above and Known Gaps entry 0j below. This bullet's
+      findings on Bolivia's other five verticals (DMV/National ID
+      in-person-only, Business Formation login-gated, Visa/Passport
+      SPA-gated) were not re-checked this cycle and remain the best
+      available record for them.
 0f. **Jamaica scouted as a brand-new jurisdiction (GOV-4360, 2026-07-22) —
     opened via Business Formation, four verticals banked STRONG backlog,
     National ID confirmed dead end. Update (GOV-4390, 2026-07-22): all
@@ -21117,6 +21166,37 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       form but no actual attachment link. Not authored this cycle; a
       ready-to-author 3-of-6 new-jurisdiction candidate for a future
       cycle.
+0j. **Bolivia opened as the registry's 86th jurisdiction (GOV-4460,
+    2026-07-23), via a parallel scouting pass under GOV-4458 run after
+    Paraguay's remaining Passport/National ID verticals were confirmed
+    dead ends:**
+    - **Taxes**: SIN's Formulario 200 V.5 Resumido, the monthly IVA sworn
+      declaration, `impuestos.gob.bo/wp-content/uploads/2025/10/200v5.pdf`,
+      HTTP 200, `application/pdf`, 609,640 bytes, no login/CAPTCHA/WAF
+      gate. **Update (GOV-4460, 2026-07-23): now authored** as
+      `bo/sin/formulario-200-iva@1.0.0` — see the Executive Summary and
+      Taxes vertical updates above and the document's own VERIFICATION.md
+      for the full scope record, including 7 disclosed findings and a
+      material discrepancy: the live PDF is the abbreviated "Resumido"
+      edition (30 filas across 4 rubros), not the ~52-casilla/8-rubro
+      "extendido" edition a web search found third-party references to —
+      the fuller edition may exist only behind SIN's authenticated Oficina
+      Virtual e-filing portal, and remains open backlog if it can ever be
+      found at an unauthenticated URL. This also corrects Known Gaps entry
+      0e's own prior Bolivia-Taxes finding (a JPG-scanned Form 110 V3,
+      RC-IVA quarterly declaration) — Formulario 200 is a different,
+      genuinely text-layer form the earlier scouting pass did not surface.
+    - **Passport, DMV, Business Formation, Visa, National ID**: not
+      re-scouted this cycle. Known Gaps entry 0e's own prior findings
+      (Business Formation login-gated at Fundempresa/SEPREC with only
+      third-party-aggregator copies of the real form; DMV and National ID
+      SEGIP in-person-only info pages with no attached form; Visa and
+      Passport both routed through `migracion.gob.bo`, a fully JS-rendered
+      Angular SPA with no static fallback) remain the best available
+      record, but are now a cycle stale given this cycle's own surprise
+      that the Taxes verdict was incomplete — worth a fresh, independent
+      re-check in a future cycle rather than treating 0e's verdict as
+      final.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now

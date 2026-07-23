@@ -1,0 +1,298 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "bo/sin/formulario-200-iva",
+  "version": "1.0.0",
+  "title": "Bolivia Formulario 200 V.5 Resumido — Declaración Jurada del Impuesto al Valor Agregado (IVA)",
+  "description": "The Servicio de Impuestos Nacionales' (SIN) Formulario 200 V.5 Resumido, the monthly sworn declaration (\"Declaración Jurada mensual\") of Impuesto al Valor Agregado (Value Added Tax) every VAT-registered taxpayer in Bolivia must file, per Ley N.843 and its own printed citation of Artículo N.22 and Artículo N.78 Parágrafo I of Ley N.2492 (Código Tributario Boliviano). Opens Bolivia as the registry's 86th jurisdiction (GOV-4460, child of GOV-4458 \"GovSchema Standard Research\", following GOV-4424's parallel scouting of Paraguay/Namibia/Tajikistan and a further scouting pass that found Bolivia's monthly IVA declaration a strong Taxes-vertical candidate). This schema models the taxpayer-supplied header/identification block (Sección A), the directly-supplied casillas of RUBRO 1 (Determinación del Débito Fiscal y Crédito Fiscal) and RUBRO 2 (Determinación del Saldo Definitivo a Favor del Fisco o del Contribuyente), the entirety of RUBRO 3 (Determinación de la Deuda Tributaria, populated only on a late filing) that is not itself same-form-computed, one directly-supplied casilla of RUBRO 4 (Saldo Definitivo e Importe de Pago), and Sección C's signatory identification fields plus its sworn-declaration attestation. Every printed casilla elsewhere computed purely by adding/subtracting other same-form casillas, applying a published tax rate to another casilla, or carrying forward another same-form casilla's own value unchanged is excluded from `fields[]`, per this registry's standing closed decision to defer calculated/derived fields (GSP-0013 §7, founder-confirmed on GOV-302) — see this document's own VERIFICATION.md for the full list of excluded casillas and disclosed findings, including a material discrepancy between this cycle's own field-count estimate and the live source's actual content. This schema does not file the return itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Estado Plurinacional de Bolivia or the Servicio de Impuestos Nacionales.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "BO",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Servicio de Impuestos Nacionales",
+    "abbreviation": "SIN",
+    "url": "https://www.impuestos.gob.bo"
+  },
+  "process": {
+    "type": "filing",
+    "language": "es"
+  },
+  "source": {
+    "url": "https://www.impuestos.gob.bo/wp-content/uploads/2025/10/200v5.pdf",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "Formulario 200 V.5 Resumido, \"Impuesto al Valor Agregado\" (IVA200)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "GOV-4460 (\"GovSchema Standard Research\", child of GOV-4458), authored per a scouting pass that found Bolivia's monthly IVA declaration (SIN Formulario 200 v.5) a genuinely downloadable, unauthenticated PDF with a page-by-page instructivo covering every casilla.\n\nIndependently re-fetched and re-hashed rather than trusting the scouting note's own description: `https://www.impuestos.gob.bo/wp-content/uploads/2025/10/200v5.pdf`, HTTP 200, `Content-Type: application/pdf`, `Last-Modified: Thu, 16 Oct 2025`, 609,640 bytes. sha256 of the retrieved bytes: `1f1e2f4d08cef95cb93fffe953875788c6a90299d8bb9fa0121d0940494eb5a2`. No login/CAPTCHA/WAF gate; a plain unauthenticated `curl` with no session/cookie state reached it cleanly.\n\n**Material discrepancy from this cycle's own scouting estimate, disclosed up front:** the issue that delegated this authoring cycle described \"~52 numbered casillas across 8 rubros... plus datos informativos, datos pago SIGMA\". The actual live PDF at the given URL is titled, in its own header, \"Formulario 200 V.5 **Resumido**\" (abbreviated/summary edition) and contains only 30 numbered filas across 4 rubros, with no SIGMA-payment or separate \"datos informativos\" section anywhere in its text layer (confirmed by an exhaustive grep of the full extracted text for \"RECTIF\", \"SIGMA\", and \"informativ\" — zero hits). A web search independently found third-party commentary (boliviaimpuestos.com) referencing a longer \"extendido\" edition of this same form with ~52 casillas including SIGMA-related casilla 8883, suggesting the fuller edition may exist as a separate document (e.g. inside SIN's authenticated Oficina Virtual e-filing portal) distinct from this specific publicly-downloadable PDF. Per this registry's source-of-truth-fidelity principle, this schema is authored strictly against the actual bytes at the cited URL — the Resumido edition — not the pre-authoring estimate. This is disclosed here rather than silently reconciled, since a future cycle revisiting Bolivia's Taxes vertical should know the fuller \"extendido\" edition remains unauthored backlog if it can be found at an unauthenticated URL.\n\nExtraction method: `pdfjs-dist` (vendored at `/tmp/node_modules/pdfjs-dist`, CommonJS build at `build/pdf.js`) `getAnnotations()` confirmed zero `/Widget` annotations across all 5 pages — a flat (non-AcroForm) specimen. `getTextContent()` then read every text item's raw string and its `transform` x/y position across all 5 pages, grouped into lines by rounded y-coordinate, to reconstruct the form's own fila numbering, casilla (Cód.) numbers, and header column layout.\n\n## Document structure\n\nThe 5-page PDF is three physical copies of the same 1-page form (page 1 \"ORIGINAL SIN\", page 3 \"COPIA CONTRIBUYENTE\", page 5 \"TALÓN ENTIDAD FINANCIERA\" — a carbonless multi-part declaration, common practice for SIN paper/bank-window filing) interleaved with two copies of the same 2-page instructivo (pages 2 and 4, identical content, doubled to sit behind each of the first two form copies for print purposes). Each form copy carries: an unlabelled header block (\"DATOS DE CABECERA\" per the instructivo's own heading) with NIT, taxpayer name/razón social, período mes/año, the \"DD.JJ. ORIGINAL\" (Cód. 534) indicator, a system/office-assigned NÚMERO DE ORDEN, and a FOLIO box explicitly reserved for the receiving Entidad Financiera or Colecturía; Sección B, RUBRO 1: Determinación del Débito Fiscal y Crédito Fiscal (filas 1-5); RUBRO 2: Determinación del Saldo Definitivo a Favor del Fisco o del Contribuyente (filas 6-19); RUBRO 3: Determinación de la Deuda Tributaria, printed \"(En caso de presentación fuera de plazo)\" — only completed on a late filing (filas 20-24); RUBRO 4: Saldo Definitivo e Importe de Pago (filas 25-30); and Sección C, Datos del Sujeto Pasivo o Tercero Responsable (a sworn-accuracy declaration citing Artículo N.22 and Artículo N.78 Parágrafo I of Ley N.2492, with a printed name line, signature line, and C.I. line), followed by Sección D, a bank-only \"Sello y Refrendo Entidad Financiera\" stamp box.\n\n## Scope: fields excluded as purely computed from other same-form casillas\n\nUnlike this registry's precedent for e-filing systems that explicitly write \"El Sistema calculará/trasladará automáticamente\" (e.g. Paraguay's IRP, Zambia's ITR), every one of this form's own instructivo lines uses the imperative \"Consignar el resultado de la siguiente operación...\" (\"record the result of the following operation\") for filas that are nonetheless 100% arithmetically determined by other same-form casillas, with zero independent taxpayer judgment — this schema treats determinism, not automation wording, as the GSP-0013 §7 exclusion test, consistent with how this registry already excludes system-automated fields elsewhere. Excluded on this basis: fila 2 (Cód. 1002, C13×13%), fila 4 (Cód. 1004, C26×13%), fila 5 (Cód. 909, C1002−C1004), fila 6 (Cód. 693, C1004−C1002), fila 9 (Cód. 1001, C909−C635−C648), fila 11 (Cód. 629, a same-form C1001/C621 comparison), fila 14 (Cód. 643, C622+C640−C629), fila 15 (Cód. 468, C629−C622−C640), fila 18 (Cód. 467, C465+C466−C468), fila 19 (Cód. 996, C468−C465−C466), fila 24 (Cód. 955, sum of filas 20-23), fila 25 (Cód. 592, C693+C635+C648−C909), fila 27 (Cód. 747, C643−C955), fila 28 (Cód. 646, a same-form C996/(C955−C643) choice), and fila 30 (Cód. 576, C646−C678).\n\nAlso excluded on the narrower sub-case of a same-form casilla carried forward verbatim under a new number with no arithmetic at all: fila 20 (Cód. 924, \"Consignar el importe de la Casilla C996\", a pure same-form copy of fila 19) and fila 26 (Cód. 469, \"Consignar el resultado de la siguiente operación (C467) Si es mayor a cero\", a pure same-form copy of fila 18's threshold-gated value).\n\n## Scope: fields included despite referencing another casilla, because the reference is not a same-form computation\n\n- Fila 7 (Cód. 635) and fila 13 (Cód. 640) are each explicitly sourced from the **prior period's own filed return** (\"C592 del Formulario del período anterior\"; \"C747 del Formulario del período anterior\") — a different document's own value, not a same-form computation — so both are included as directly-supplied, mirroring this registry's own precedent in `py/dnit/individual-income-tax-return` (Finding 3) for prior-year/prior-period carryforward amounts.\n- Fila 17 (Cód. 466) is likewise sourced from the prior period's own casilla C469, included on the same basis.\n- Fila 8 (Cód. 648) and fila 21 (Cód. 925) both require the taxpayer to independently calculate a UFV (Unidad de Fomento de Vivienda) value-adjustment factor using an external index the instructivo does not itself tabulate (\"en función a la variación de la Unidad de Fomento de Vivienda (UFV)... utilice la Calculadora Tributaria en el sitio web\") — genuinely external data, not a same-form arithmetic combination, so both are included.\n- Fila 22 (Cód. 938) requires an interest-rate calculation per Artículo 47 of Ley N.2492 over an elapsed-day count between the statutory due date and the actual payment date — external legal/temporal facts this form does not itself capture — so it is included, not excluded as computed.\n- Fila 23 (Cód. 954) is a late-filing administrative penalty (\"Multa por Incumplimiento al Deber Formal\") assessed per the sanctions regime in force, an external fact (how late the filing is) this form does not itself capture, so it is included, mirroring this registry's own precedent for late-filing penalties in `py/dnit/individual-income-tax-return` (Finding 4) and `jm/taj/individual-income-tax-return`.\n- Fila 29 (Cód. 678) is a taxpayer-elected amount of an existing FAP (Facilidad de Ago Parcial / accumulated favorable balance) credit the taxpayer chooses to apply, \"sujeto a verificación y confirmación por el SIN\" — an election, not a same-form arithmetic result — so it is included.\n\n## Scope: header/office-only fields excluded\n\n- **NÚMERO DE ORDEN** is excluded as a system/office-assigned tracking number generated on submission, not applicant-supplied data — the same class of exclusion this registry's `py/dnit/individual-income-tax-return` (Finding 5) draws around its own \"Número de Orden\".\n- **FOLIO** is excluded per the instructivo's own explicit text: \"Casilla de uso exclusivo para la Entidad Financiera o Colecturía\" (\"box for the exclusive use of the Financial Entity or Collection Office\") — not applicant-supplied.\n- **Sección D, Sello y Refrendo Entidad Financiera** (the receiving bank/office's own stamp and endorsement) is excluded in its entirety as third-party-supplied, not applicant data.\n\n## Disclosed findings and interpretation choices\n\n1. **\"DD.JJ. ORIGINAL\" (Cód. 534) is excluded, not modelled as an `isOriginalDeclaration` boolean.** The instructivo's own text reads: \"Se consigna por defecto una 'X' cuando la DD.JJ. es original (primera DD.JJ. presentada por el período fiscal)\" — \"an X is entered **by default** when the DD.JJ. is original.\" This describes a value the e-filing/printing system itself pre-populates based on the taxpayer's own filing history for the period, not a box the taxpayer actively marks on this form — the same class of exclusion this registry's own GSP-0013 §7 precedent draws around system-auto-populated indicators. This Resumido specimen also prints no adjacent \"Rectificativa\" alternative box, so there is no visible taxpayer-facing choice here to model.\n2. **The header's \"1234567890\" numeral (printed near the NÚMERO DE ORDEN label) is a generic illustrative placeholder, not a labelled field of its own** — it carries no adjacent caption distinguishing it from decorative example content, and NÚMERO DE ORDEN is itself already excluded as office-assigned.\n3. **`taxpayerName` is modelled as a single free-text field**, matching the source's own single combined label \"NOMBRE (S) Y APELLIDO (S) O RAZÓN SOCIAL DEL CONTRIBUYENTE\" (\"Taxpayer's Name(s) and Surname(s) or Business Name\") printed as one blank line with no internal subdivision.\n4. **`periodMonth` is modelled `type: string` with a 2-digit pattern, not `type: integer`**, per the instructivo's own explicit formatting instruction: \"el formato de llenado deberá ser de dos dígitos (mm), Ej.: 03 para marzo\" — a printed format constraint this schema encodes literally rather than reinterpreting as a numeric range.\n5. **All RUBRO 1/2/3/4 monetary fields are modelled `required: false`**, since the source's own header instruction (\"EN BOLIVIANOS SIN CENTAVOS\") confirms every casilla is a plain whole-currency amount, but the instructivo gives no explicit zero/blank convention distinguishing a genuinely-zero casilla from an inapplicable one, and RUBRO 3 in particular is printed as applying \"sólo si la presentación y pago son realizados después del vencimiento\" (only on a late filing) — the same not-every-filer-has-every-line convention this registry's `py/dnit/individual-income-tax-return` (Finding 10) and `zm/zra/individual-income-tax-return` already apply to their own income/expense/penalty lines.\n6. **Every monetary field is modelled `type: integer` with `validation.minimum: 0`**, per the form's own printed column header \"(EN BOLIVIANOS SIN CENTAVOS)\" (\"in Bolivianos without cents\"), confirming whole-Boliviano amounts, and no fila's own text describes a possible negative value.\n7. **Sección C's sworn-declaration text (\"JURO LA EXACTITUD DE LA PRESENTE DECLARACIÓN\", citing Artículo N.22 and Artículo N.78 Parágrafo I of Ley N.2492) is modelled as a `documents[]` attestation entry**, not a `fields[]` boolean, consistent with this registry's own precedent for sworn-declaration/signature blocks (e.g. `ae/fta/vat-registration`'s \"Declaration attestation\", `bw/burs/individual-tax-return`'s Section G declaration). The physical signature mark itself is not separately modelled as data (it is captured by the attestation's own `required: true`); the printed name (\"Aclaración de Firma\") and national ID number (\"C.I.\") that accompany the signature per the instructivo's own explicit list (\"firma, aclaración de firma, número de documento de identidad\") are modelled as ordinary required `fields[]` entries, since they are typed/written data distinct from the signature act itself.\n\n## Conformance\n\n3 valid mock scenarios — `valid-original-return-domestic-sales` (a straightforward on-time original monthly filing with domestic sales/purchases and a prior-period tax-credit carryforward, no RUBRO 3 late-filing casillas populated); `valid-return-with-siete-rg-advance-payments` (a filing exercising the SIETE-RG 5%-advance-payment casillas and their own prior-period carryforward); and `valid-late-filed-return-with-penalty` (a late filing exercising all three RUBRO 3 casillas — value adjustment, interest, and penalty — plus a FAP credit-balance payment) — plus 4 mutation-control fixtures (one missing statically-required field from each of `nit`, `taxpayerName`, `periodMonth`, `periodYear`) and one unknown-field-rejected fixture, committed under `conformance/bo/sin/formulario-200-iva/1.0.0/`.\n\nAn ephemeral, from-scratch conformance checker (deriving required rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all fixtures: all 3 valid scenarios at 0 errors, all 4 mutation controls each raising exactly 1 error, and the unknown-field fixture correctly rejected. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "datos_cabecera",
+      "title": "Datos de Cabecera",
+      "fields": ["nit", "taxpayerName", "periodMonth", "periodYear"],
+      "next": "rubro1_debito_credito_fiscal"
+    },
+    {
+      "id": "rubro1_debito_credito_fiscal",
+      "title": "RUBRO 1: Determinación del Débito Fiscal y Crédito Fiscal",
+      "fields": ["domesticSalesExceptZeroRate", "purchasesDirectlyLinkedToTaxedActivities"],
+      "next": "rubro2_saldo_definitivo"
+    },
+    {
+      "id": "rubro2_saldo_definitivo",
+      "title": "RUBRO 2: Determinación del Saldo Definitivo a Favor del Fisco o del Contribuyente",
+      "fields": ["priorPeriodTaxCreditBalance", "valueAdjustmentOnPriorPeriodTaxCreditBalance", "employerContributionAdvancePayment50Pct", "advancePaymentsMadeInPeriod", "priorPeriodAdvancePaymentBalance", "sieteRgAdvancePayment5Pct", "priorPeriodSieteRgAdvancePaymentBalance"],
+      "next": "rubro3_deuda_tributaria"
+    },
+    {
+      "id": "rubro3_deuda_tributaria",
+      "title": "RUBRO 3: Determinación de la Deuda Tributaria (En caso de presentación fuera de plazo)",
+      "fields": ["valueAdjustmentOnOmittedTax", "interestOnUpdatedOmittedTax", "lateFilingPenalty"],
+      "next": "rubro4_saldo_definitivo_importe_pago"
+    },
+    {
+      "id": "rubro4_saldo_definitivo_importe_pago",
+      "title": "RUBRO 4: Saldo Definitivo e Importe de Pago",
+      "fields": ["paymentWithFapCreditBalance"],
+      "next": "datos_sujeto_pasivo"
+    },
+    {
+      "id": "datos_sujeto_pasivo",
+      "title": "Datos del Sujeto Pasivo o Tercero Responsable",
+      "fields": ["signatoryPrintedName", "signatoryIdNumber"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "nit",
+      "label": "NIT",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Número de Identificación Tributaria (taxpayer identification number).",
+      "sourceRef": "Header — \"NIT\""
+    },
+    {
+      "name": "taxpayerName",
+      "label": "Nombre (s) y Apellido (s) o Razón Social del Contribuyente",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Taxpayer's name(s)/surname(s), for a natural person, or business name (razón social), for a legal entity.",
+      "sourceRef": "Header — \"NOMBRE (S) Y APELLIDO (S) O RAZÓN SOCIAL DEL CONTRIBUYENTE\""
+    },
+    {
+      "name": "periodMonth",
+      "label": "Período — Mes",
+      "type": "string",
+      "required": true,
+      "description": "Two-digit fiscal month being declared (e.g. \"03\" for March), per the instructivo's own explicit formatting instruction.",
+      "sourceRef": "Header — \"PERÍODO MES\"",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])$"
+      }
+    },
+    {
+      "name": "periodYear",
+      "label": "Período — Año",
+      "type": "integer",
+      "required": true,
+      "description": "Four-digit fiscal year being declared.",
+      "sourceRef": "Header — \"PERÍODO AÑO\"",
+      "validation": {
+        "minimum": 1000,
+        "maximum": 9999
+      }
+    },
+    {
+      "name": "domesticSalesExceptZeroRate",
+      "label": "Fila 1 (Cód. 13) — Ventas de bienes y/o servicios Facturados en el mercado interno, excepto ventas gravadas con Tasa Cero",
+      "type": "integer",
+      "required": false,
+      "description": "Total invoiced domestic sales of goods/services, excluding sales taxed at the Zero Rate.",
+      "sourceRef": "RUBRO 1, Fila 1, Casilla 13",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "purchasesDirectlyLinkedToTaxedActivities",
+      "label": "Fila 3 (Cód. 26) — Compras directamente vinculadas a actividades gravadas",
+      "type": "integer",
+      "required": false,
+      "description": "Total purchases, contracts, and definitive imports directly linked to VAT-taxed operations.",
+      "sourceRef": "RUBRO 1, Fila 3, Casilla 26",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "priorPeriodTaxCreditBalance",
+      "label": "Fila 7 (Cód. 635) — Saldo de Crédito Fiscal del período anterior a compensar",
+      "type": "integer",
+      "required": false,
+      "description": "Tax-credit balance carried forward from Casilla 592 of the prior period's own Formulario 200.",
+      "sourceRef": "RUBRO 2, Fila 7, Casilla 635",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "valueAdjustmentOnPriorPeriodTaxCreditBalance",
+      "label": "Fila 8 (Cód. 648) — Actualización de Valor sobre el Saldo de Crédito Fiscal del período anterior",
+      "type": "integer",
+      "required": false,
+      "description": "Value-maintenance adjustment on Casilla 635, calculated per the UFV (Unidad de Fomento de Vivienda) variation between the prior and current period's last business day.",
+      "sourceRef": "RUBRO 2, Fila 8, Casilla 648",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "employerContributionAdvancePayment50Pct",
+      "label": "Fila 10 (Cód. 621) — Pago a cuenta del 50% de contribuciones patronales pagadas del periodo",
+      "type": "integer",
+      "required": false,
+      "description": "Advance payment of 50% of employer social-security contributions paid in the period, per D.S. 4298, subject to SIN verification.",
+      "sourceRef": "RUBRO 2, Fila 10, Casilla 621",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "advancePaymentsMadeInPeriod",
+      "label": "Fila 12 (Cód. 622) — Pagos a Cuenta realizados en DD.JJ. y/o Boletas de Pago correspondientes al período que se declara",
+      "type": "integer",
+      "required": false,
+      "description": "Advance payments made via prior sworn declarations and/or payment slips corresponding to the declared period.",
+      "sourceRef": "RUBRO 2, Fila 12, Casilla 622",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "priorPeriodAdvancePaymentBalance",
+      "label": "Fila 13 (Cód. 640) — Saldo de Pagos a Cuenta del período anterior a compensar",
+      "type": "integer",
+      "required": false,
+      "description": "Advance-payment balance carried forward from Casilla 747 of the prior period's own Formulario 200.",
+      "sourceRef": "RUBRO 2, Fila 13, Casilla 640",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "sieteRgAdvancePayment5Pct",
+      "label": "Fila 16 (Cód. 465) — Pago a cuenta del 5% por compras a contribuyentes del SIETE-RG",
+      "type": "integer",
+      "required": false,
+      "description": "Advance payment of 5% for purchases from SIETE-RG (Sistema Integrado de Etiquetado Tributario, Régimen General) taxpayers, per D.S. 4298.",
+      "sourceRef": "RUBRO 2, Fila 16, Casilla 465",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "priorPeriodSieteRgAdvancePaymentBalance",
+      "label": "Fila 17 (Cód. 466) — Saldo de Pagos a cuenta 5% por compras a contribuyentes del SIETE-RG",
+      "type": "integer",
+      "required": false,
+      "description": "SIETE-RG 5% advance-payment balance carried forward from Casilla 469 of the prior period's own Formulario 200.",
+      "sourceRef": "RUBRO 2, Fila 17, Casilla 466",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "valueAdjustmentOnOmittedTax",
+      "label": "Fila 21 (Cód. 925) — Actualización de valor sobre Tributo Omitido",
+      "type": "integer",
+      "required": false,
+      "description": "Value-maintenance adjustment on the omitted tax (Casilla 924), calculated per the UFV variation between the tax's due date and the actual payment date. Populated only on a late filing.",
+      "sourceRef": "RUBRO 3, Fila 21, Casilla 925",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "interestOnUpdatedOmittedTax",
+      "label": "Fila 22 (Cód. 938) — Intereses sobre Tributo Omitido Actualizado",
+      "type": "integer",
+      "required": false,
+      "description": "Interest on the updated omitted tax, calculated per Artículo 47 of Ley N.2492, applying the interest rate in force over the days elapsed between the due date and the payment date. Populated only on a late filing.",
+      "sourceRef": "RUBRO 3, Fila 22, Casilla 938",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "lateFilingPenalty",
+      "label": "Fila 23 (Cód. 954) — Multa por Incumplimiento al Deber Formal (IDF) por presentación fuera de plazo",
+      "type": "integer",
+      "required": false,
+      "description": "Penalty for breach of formal duty (IDF) due to late filing, per the sanctions regime in force. Populated only on a late filing.",
+      "sourceRef": "RUBRO 3, Fila 23, Casilla 954",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "paymentWithFapCreditBalance",
+      "label": "Fila 29 (Cód. 678) — Pago con Saldo a Favor FAP",
+      "type": "integer",
+      "required": false,
+      "description": "Amount of an existing favorable FAP (Facilidad de Apoyo al Pago) credit balance the taxpayer elects to apply toward this period's payment, subject to verification and confirmation by SIN.",
+      "sourceRef": "RUBRO 4, Fila 29, Casilla 678",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "signatoryPrintedName",
+      "label": "Aclaración de Firma",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Printed/clarified name of the sujeto pasivo (taxpayer) or tercero responsable (responsible third party) signing the declaration.",
+      "sourceRef": "Sección C — \"Aclaración de Firma\""
+    },
+    {
+      "name": "signatoryIdNumber",
+      "label": "C.I.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Cédula de Identidad (national identity document number) of the signatory.",
+      "sourceRef": "Sección C — \"C.I.\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "swornDeclarationAttestation",
+      "label": "Sworn declaration of accuracy",
+      "category": "attestation",
+      "required": true,
+      "statement": "JURO LA EXACTITUD DE LA PRESENTE DECLARACIÓN (\"I swear to the accuracy of the present declaration\"), per Artículo N.22 y Artículo N.78 Parágrafo I de la Ley N.2492 Código Tributario Boliviano.",
+      "sourceRef": "Sección C — signature block"
+    }
+  ]
+}
