@@ -4,7 +4,34 @@
 
 ## Executive Summary
 
-**87 jurisdictions** | **616 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**87 jurisdictions** | **617 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4478, "GovSchema Standard Research"): Zimbabwe
+> advances to Business Formation (2 of 6)**, via
+> `zw/zimra/rev1-application-for-new-registration@1.0.0` — the Zimbabwe
+> Revenue Authority's (ZIMRA) Form REV 1, "Application for New Registration
+> Form", used to register an individual, organisation, or group with ZIMRA
+> and obtain a Business Partner (BP) number. Independently re-fetched and
+> re-hashed the PDF directly from `zimra.co.zw` (HTTP 200, no
+> login/CAPTCHA/WAF gate, byte-for-byte matching the delegating issue's own
+> disclosed 479,772-byte size). A flat (non-AcroForm) 18-page specimen,
+> same extraction pattern as `zw/zimra/itf1-employment-income-return`;
+> pages 1-7 carry the applicant-facing form (Parts I-XII), while the
+> closing portion of page 7 and all of pages 8-18 are a purely
+> informational ISIC-derived Industry Classification Table, excluded from
+> `fields[]` as a reference lookup rather than applicant data. The Part
+> III "Revenue Heads" tick grid — read cleanly off a `node-canvas`
+> rendering of page 2 after the interleaved four-column text layer proved
+> too garbled to trust directly — is modelled as 38 independent boolean
+> fields (plus 10 further booleans for Part III.B's "Special Income Tax
+> Categories"), since a business may register for more than one tax head
+> at once. See the Business Formation vertical update below and the
+> document's own VERIFICATION.md for the full scope record, including why
+> the VAT/PAYE-registration sections (Parts IX-X) were deliberately left
+> ungated rather than conditionally required on their corresponding
+> revenue-head booleans. Zimbabwe's remaining four verticals (DMV, Visa,
+> Passport, National ID) are unscouted and remain open backlog for a
+> future cycle.
 
 > **Update (2026-07-23, GOV-4470, "GovSchema Standard Research"): Zimbabwe
 > opens as the registry's 87th jurisdiction, via Taxes (1 of 6)**, via
@@ -15820,7 +15847,19 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (73/79 jurisdictions — 92%)
+### Business Formation — Incorporation, LLC, Company Registration (74/80 jurisdictions — 93%)
+
+> **Update (2026-07-23, GOV-4478, "GovSchema Standard Research"): Zimbabwe
+> gains its first Business Formation schema**, via
+> `zw/zimra/rev1-application-for-new-registration@1.0.0` — see the
+> Executive Summary update above for the full sourcing record and the
+> document's own VERIFICATION.md. Numerator updated from 73 to 74;
+> denominator updated from 79 to 80 (Zimbabwe had not yet been reached for
+> Business Formation — this vertical's own denominator was unaffected when
+> `zw/zimra/itf1-employment-income-return` opened Zimbabwe as the
+> registry's 87th jurisdiction under Taxes, per this registry's convention
+> that a vertical's denominator only grows when a jurisdiction is actually
+> reached for that specific vertical).
 
 > **Update (2026-07-23, GOV-4435, "GovSchema Standard Research"): Paraguay
 > gains its Business Formation schema (2/6 for the jurisdiction)**, via
@@ -20491,7 +20530,7 @@ now closed.
 | **VN** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZA** | 11 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **ZM** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
-| **ZW** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **ZW** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 
 "Schemas (top-level dirs)" counts distinct `<agency>/<process-name>` entries
 under `registry/<jurisdiction>/`, not every version/edition. US is
