@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**89 jurisdictions** | **623 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**89 jurisdictions** | **624 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4515, "GovSchema Standard Research"): Namibia
+> gains its Business Formation schema (2 of 6 for the jurisdiction)**, via
+> `na/bipa/close-corporation-founding-statement@1.0.0` — the Business and
+> Intellectual Property Authority's (BIPA) Form CC 1, "Founding Statement"
+> (Close Corporations Act, 1988), re-discovered by GOV-4513 immediately
+> before this authoring cycle after the previously-banked bare-domain URL
+> 404'd. The source is a legacy OLE2/Compound File Binary Word 97-2003
+> `.doc` (215,552 bytes, sha256 `f0565d795524968b34a4ded0e98b4cc812c7c4eec
+> 7a77e716056abc950d2be02`), extracted with the vendored `word-extractor`
+> (pure-JS OLE2-aware `.doc` parser under `/tmp/node_modules`) rather than
+> the `.docx`-zip approach this registry usually uses. Models the
+> corporation's identity/accounting-officer particulars, a 10-slot bounded
+> member table (matching the Close Corporations Act's own 10-member
+> statutory maximum and the source's own five repeated two-member pages),
+> a 5-slot bounded witness table (one per member-pair page), and a 6-slot
+> Financial Intelligence Act contact-details table — 181 fields total. The
+> Registrar-completed "Certificate of Incorporation" pages are excluded as
+> office-only content, not applicant data. See the document's own
+> VERIFICATION.md for the full extraction record and 12 disclosed scoping
+> decisions, including the `isBodyCorporate` discriminator pattern reused
+> from `zm/pacra/company-incorporation` for the member-identity/juristic-
+> person branch. Numerator/denominator updates for the Business Formation
+> vertical below. Namibia's Visa candidate (GOV-4516, also re-discovered
+> by GOV-4513) remains open backlog.
 
 > **Update (2026-07-23, GOV-4513, "GovSchema Standard Research"): re-scanned
 > Namibia's two remaining open backlog candidates and re-discovered both,
@@ -16083,7 +16108,15 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (75/81 jurisdictions — 93%)
+### Business Formation — Incorporation, LLC, Company Registration (76/82 jurisdictions — 93%)
+
+> **Update (2026-07-23, GOV-4515, "GovSchema Standard Research"): Namibia
+> gains its Business Formation schema (2/6 for the jurisdiction)**, via
+> `na/bipa/close-corporation-founding-statement@1.0.0` — see the Executive
+> Summary update above for the full sourcing record and the document's own
+> VERIFICATION.md. Numerator updated from 75 to 76; denominator updated
+> from 81 to 82 (Namibia had not yet been reached for Business Formation —
+> it opened via Taxes under GOV-4491).
 
 > **Update (2026-07-23, GOV-4499, "GovSchema Standard Research"): Tajikistan
 > gains its first Business Formation schema**, via
@@ -20793,7 +20826,7 @@ now closed.
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
-| **NA** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **NA** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **NG** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NL** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **NO** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -21536,7 +21569,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       82,771 bytes, `application/pdf`, 2 pages, Part A/Part B
       mutually-exclusive split) — delegated as
       [GOV-4516](/GOV/issues/GOV-4516) (Visa, would open 3 of 6). See the
-      Executive Summary update above for full detail.
+      Executive Summary update above for full detail. **Update (GOV-4515,
+      2026-07-23): Business Formation now authored** as
+      `na/bipa/close-corporation-founding-statement@1.0.0` (the re-verified
+      215,552-byte OLE2 `.doc` specimen, extracted via the vendored
+      `word-extractor` package) — **opens Namibia's second vertical (2 of
+      6)**; see the Executive Summary and Business Formation vertical
+      updates above and the document's own VERIFICATION.md for the full
+      scope record, including the 10-slot bounded member table, 5-slot
+      bounded witness table, and 6-slot FIA contact-details table. Visa
+      (MHAISS, GOV-4516) remains open backlog; Passport, National ID, and
+      DMV stay confirmed dead ends.
     - **Tajikistan** — **Taxes**: the Tax Committee's (`andoz.tj`)
       simplified-tax-system declaration ("Эъломияи андози низоми
       содакардашуда"), a flat single-page form with numbered fields
