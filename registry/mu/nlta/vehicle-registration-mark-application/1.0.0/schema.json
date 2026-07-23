@@ -1,0 +1,255 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "mu/nlta/vehicle-registration-mark-application",
+  "version": "1.0.0",
+  "title": "Mauritius Application for Registration Mark (National Land Transport Authority)",
+  "description": "The National Land Transport Authority's \"Application for Registration Mark (A - FL3000 and FM1 - FM2500)\", fetched directly and unauthenticated from the Authority's own domain. Advances Mauritius's DMV vertical, previously banked as open, STRONG backlog by GOV-4603 (\"GovSchema Standard Research\") alongside Business Formation and Visa, once Mauritius opened as the registry's 92nd jurisdiction via Passport. This candidate is scoped to vehicle registration-mark allocation only: the driving-licence half of Mauritius's DMV vertical (Police Form PF31) is in-person-only with no downloadable form, and the online learner-licence channel is confirmed dead (a standing govmu.org notice states it remains \"temporarily out of service due to Covid 19 Pandemic\"), per the GOV-4603 scouting record. Models the form's two mutually exclusive applicant tracks — an individual applicant (Section 1) and a registered company or other corporate applicant (Section 2) — plus the common dealer/registering-party and declaration sections. This schema does not submit the application itself; the live source and the National Land Transport Authority's own current requirements are always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Mauritius or its National Land Transport Authority.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "MU",
+    "level": "national"
+  },
+  "authority": {
+    "name": "National Land Transport Authority",
+    "abbreviation": "NLTA",
+    "url": "https://nlta.govmu.org/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://nlta.govmu.org/Documents/Downloads/Procedures%20Forms/Application%20Form%20Reg%20Mark.pdf",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "APPLICATION FOR REGISTRATION MARK (A - FL3000 and FM1 - FM2500), National Land Transport Authority, 1 page, flat (non-AcroForm), image-only scanned PDF."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "See VERIFICATION.md for the full write-up: source fetch/hash, extraction method (canvas render, no text layer), the two mutually-exclusive applicant-track discriminator (not itself a printed field), and disclosed judgment calls on requiredness."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "applicant_type_and_individual",
+      "title": "Item 1 — Full Name and Address of Applicant (Individual Applicants)",
+      "fields": [
+        "applicantType",
+        "individualTitle",
+        "individualSurname",
+        "individualOtherNames",
+        "individualPermanentAddress",
+        "individualNationalIdentityCardNumber"
+      ],
+      "next": "applicant_company"
+    },
+    {
+      "id": "applicant_company",
+      "title": "Item 2 — Full Name and Address of Applicant (Registered Companies, etc.)",
+      "fields": [
+        "companyName",
+        "companyAddress",
+        "companyRegisteredCorporateNumber"
+      ],
+      "next": "dealer_and_registering_party"
+    },
+    {
+      "id": "dealer_and_registering_party",
+      "title": "Items 3-4 — Dealer and Registering Party",
+      "fields": [
+        "dealerName",
+        "registeringParty",
+        "registeringPartyOtherSpecify"
+      ],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Item 5 — Declaration",
+      "fields": [
+        "registrationMarkApplied",
+        "undertakingType",
+        "declarantFullName",
+        "signatureOfApplicant",
+        "signatoryStatus",
+        "declarationDate"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "applicantType",
+      "label": "Applicant type",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["individual", "company"]
+      },
+      "description": "Not itself a printed field: the form provides two mutually exclusive sections — Item 1, \"Applicable for individual applicants\", and Item 2, \"Applicable for registered companies, etc.\". Modelled as an explicit discriminator selecting which of the two sections below applies to this filing, the same pattern this registry uses for other forms whose applicable section is implied by context rather than printed as its own selectable field (e.g. tt/rgd/partnership-beneficial-ownership-statement's declarantCategory).",
+      "sourceRef": "Item 1 heading — \"Full name and address of applicant (Applicable for individual applicants)\"; Item 2 heading — \"Full name and address of applicant (Applicable for registered companies, etc.)\""
+    },
+    {
+      "name": "individualTitle",
+      "label": "Title",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantType", "equals": "individual" },
+      "description": "Printed as a run of unlabelled letter boxes with no enumerated options (e.g. Mr/Mrs/Miss) shown on the form itself, unlike this registry's mu/pio/passport-application, so modelled as free text rather than an enum.",
+      "sourceRef": "Item 1(a) — \"Title\""
+    },
+    {
+      "name": "individualSurname",
+      "label": "Surname (Block Letters)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantType", "equals": "individual" },
+      "classification": "pii",
+      "sourceRef": "Item 1(b) — \"Surname (Block letters)\""
+    },
+    {
+      "name": "individualOtherNames",
+      "label": "Other Names (Block Letters)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantType", "equals": "individual" },
+      "classification": "pii",
+      "sourceRef": "Item 1(c) — \"Other names (Block letters)\""
+    },
+    {
+      "name": "individualPermanentAddress",
+      "label": "Permanent Address (Block Letters)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantType", "equals": "individual" },
+      "classification": "pii",
+      "description": "Printed as three ruled lines of letter boxes with no distinct line captions (e.g. street/town/district); modelled here as a single free-text field matching this specimen's own undifferentiated layout.",
+      "sourceRef": "Item 1(d) — \"Permanent address (Block letters)\""
+    },
+    {
+      "name": "individualNationalIdentityCardNumber",
+      "label": "National Identity Card Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantType", "equals": "individual" },
+      "classification": "sensitive-pii",
+      "sourceRef": "Item 1(e) — \"National Identity Card Number\""
+    },
+    {
+      "name": "companyName",
+      "label": "Name (Block Letters)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantType", "equals": "company" },
+      "sourceRef": "Item 2(a) — \"Name (Block letters)\""
+    },
+    {
+      "name": "companyAddress",
+      "label": "Address (Block Letters)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantType", "equals": "company" },
+      "description": "Printed as three ruled lines of letter boxes with no distinct line captions, the same undifferentiated layout as Item 1(d).",
+      "sourceRef": "Item 2(b) — \"Address (Block letters)\""
+    },
+    {
+      "name": "companyRegisteredCorporateNumber",
+      "label": "Registered Corporate Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantType", "equals": "company" },
+      "sourceRef": "Item 2(c) — \"Registered Corporate Number\""
+    },
+    {
+      "name": "dealerName",
+      "label": "Name of Dealer from Which the Vehicle Is to Be Purchased",
+      "type": "string",
+      "required": false,
+      "description": "Modelled optional: the form's own Item 4 offers \"Purchaser\" and \"Other\" as alternatives to \"Dealer\" for who effects the registration, implying a dealer is not always party to the transaction (e.g. a private sale or personal import), and the form does not gate Item 3 on Item 4's own answer.",
+      "sourceRef": "Item 3 — \"Name of dealer from which the vehicle is to be purchased (Block letters)\""
+    },
+    {
+      "name": "registeringParty",
+      "label": "Who Will Be Effecting the Registration of the Vehicle?",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["dealer", "purchaser", "other"]
+      },
+      "sourceRef": "Item 4 — \"Who will be effecting the registration of the vehicle? (Please tick as appropriate)\" — \"Dealer\"/\"Purchaser\"/\"Other\""
+    },
+    {
+      "name": "registeringPartyOtherSpecify",
+      "label": "Other (Please Specify)",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "registeringParty", "equals": "other" },
+      "sourceRef": "Item 4 — \"Other _____ (Please specify)\""
+    },
+    {
+      "name": "registrationMarkApplied",
+      "label": "Registration Mark Applied For",
+      "type": "string",
+      "required": true,
+      "description": "The specific registration mark the applicant is requesting, within the A-FL3000 or FM1-FM2500 ranges named in the form's own title, subject to the Authority's approval per the form's own \"NOTE TO APPLICANTS\".",
+      "sourceRef": "Item 5 — \"I apply for registration mark ______\""
+    },
+    {
+      "name": "undertakingType",
+      "label": "Undertaking to Purchase or Reserve the Registration Mark",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["purchase", "reserve"]
+      },
+      "sourceRef": "Item 5 — \"I undertake to purchase / reserve * the registration mark upon approval of the request. (* Delete as appropriate)\""
+    },
+    {
+      "name": "declarantFullName",
+      "label": "Declarant's Full Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The name inserted into the form's own printed declaration sentence, distinct from the applicant particulars already captured in Items 1/2 (e.g. a company officer signing and declaring on the company's behalf).",
+      "sourceRef": "Item 5 — \"I, ......................................, declare that, to the best of my knowledge and belief, the particulars given above are true and correct.\""
+    },
+    {
+      "name": "signatureOfApplicant",
+      "label": "Signature of Applicant",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Item 5 — \"Signature of applicant: ..........\""
+    },
+    {
+      "name": "signatoryStatus",
+      "label": "Status",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "applicantType", "equals": "company" },
+      "description": "The capacity in which the signatory signs on the company's behalf (e.g. director, secretary), per the form's own printed qualifier.",
+      "sourceRef": "Item 5 — \"Status: .......... (Applicable for registered companies only)\""
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Item 5 — \"Date: [Date] [Month] [Year]\""
+    }
+  ]
+}
