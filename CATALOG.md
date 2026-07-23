@@ -4,7 +4,35 @@
 
 ## Executive Summary
 
-**89 jurisdictions** | **625 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**89 jurisdictions** | **626 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4532, "GovSchema Standard Research"): Ethiopia's
+> Business Formation vertical opens (4 of 6)**, via
+> `et/eic/investment-permit-application@1.0.0` — the Ethiopian Investment
+> Commission's (EIC) "Application Form for New Investment Permit," a legacy
+> OLE2/Compound File Binary Word 97-2003 `.doc` (88,576 bytes, sha256
+> `ebc7a1a680c137e07e5fa7fbd45a6df41c22a75b38f31f86e9a24a0977de2ec9`),
+> extracted with the same vendored `word-extractor` pure-JS OLE2-aware
+> parser this cycle's sibling `na/bipa/close-corporation-founding-statement`
+> schema used. Consumed the Ethiopia Business Formation candidate
+> CATALOG.md's own Known Gaps §0c had left banked since GOV-4246. Models
+> 102 `fields[]` across 8 steps plus 1 `documents[]` entry, including two
+> bounded 3-row partner tables (Ethiopian partners from abroad; partners of
+> Ethiopian origin), a two-currency (US$/Birr) investment-cost breakdown, a
+> fixed 10-row project-implementation-plan activity checklist, and a
+> `branchParentCompanyAddress` field gated on the printed "Branch" ownership
+> option. Two open-ended supplementary tables (an annual production/
+> marketing-plan table and a raw-material-sourcing table, both with no
+> derivable bounded row count from this document's linear text-run
+> extraction) and the form's own "FOR OFFICE USE ONLY" reviewing/approving
+> section are excluded — see the document's own VERIFICATION.md for the
+> full extraction record and every disclosed scope decision, including why
+> no foreign/domestic or currency split is asserted for the "Source of
+> Finance" table despite this being flagged as a possibility going into
+> this cycle. Ethiopia now stands at 4/6 (Visa, Taxes, Passport, and
+> Business Formation); National ID and DMV remain confirmed dead ends per
+> the GOV-4246 cycle. Numerator/denominator updates for the Business
+> Formation vertical below.
 
 > **Update (2026-07-23, GOV-4516, "GovSchema Standard Research"): Namibia's
 > Visa vertical opens (3 of 6)**, via `na/mhaiss/visa-application@1.0.0` —
@@ -16126,7 +16154,16 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (76/82 jurisdictions — 93%)
+### Business Formation — Incorporation, LLC, Company Registration (77/82 jurisdictions — 94%)
+
+> **Update (2026-07-23, GOV-4532, "GovSchema Standard Research"): Ethiopia
+> gains its Business Formation schema (4/6 for the jurisdiction)**, via
+> `et/eic/investment-permit-application@1.0.0` — the Ethiopian Investment
+> Commission's "Application Form for New Investment Permit". See the
+> Executive Summary update above for the full sourcing record and the
+> document's own VERIFICATION.md. Numerator updated from 76 to 77;
+> denominator unchanged at 82 (Ethiopia was already counted as a
+> jurisdiction via `et/ics/e-visa-application`).
 
 > **Update (2026-07-23, GOV-4515, "GovSchema Standard Research"): Namibia
 > gains its Business Formation schema (2/6 for the jurisdiction)**, via
@@ -20824,7 +20861,7 @@ now closed.
 | **EE** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **EG** | 2 | ✗ | ✗ | ✗ | ✓ | ✗ | ✓ |
 | **ES** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **ET** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
+| **ET** | 4 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **FI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **FR** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GB** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -21121,10 +21158,10 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       and this document are now this registry's two examples of the
       individual-owner-scoped business-name-registration pattern.
 0c. **Pre-scouted candidates banked this cycle (GOV-4246, 2026-07-21) —
-    Ethiopia Taxes, (GOV-4255, 2026-07-22) Georgia Business Formation, and
-    (GOV-4264, 2026-07-22) Ethiopia Passport now authored, Ethiopia
-    Business Formation remains open backlog, Uzbekistan confirmed a full
-    dead end:**
+    Ethiopia Taxes, (GOV-4255, 2026-07-22) Georgia Business Formation,
+    (GOV-4264, 2026-07-22) Ethiopia Passport, and (GOV-4532, 2026-07-23)
+    Ethiopia Business Formation now all authored, Uzbekistan confirmed a
+    full dead end:**
     - **Ethiopia Taxes** — Ministry of Revenue "Individual Taxpayers
       Registration Application" (TIN registration), `mor.gov.et/api/forms`
       form id 8 — served unauthenticated, no login/CAPTCHA/WAF gate.
@@ -21137,7 +21174,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Permit" (`.doc`, `investethiopia.gov.et/wp-content/uploads/2022/11/InvestmentPermitApplicationForm.doc`),
       unauthenticated, ~60-80 fields across investor/company particulars,
       addresses, legal form, project profile, cost breakdown, financing,
-      and employment estimates. Not authored this cycle; open backlog.
+      and employment estimates. **Update (GOV-4532, 2026-07-23): now
+      authored** as `et/eic/investment-permit-application` — see the
+      Executive Summary and Business Formation vertical updates above.
+      Opens Ethiopia's Business Formation vertical (4/6). Models 102
+      `fields[]` across 8 steps; two open-ended supplementary tables
+      (annual production/marketing plan; raw-material sourcing) and the
+      form's own "FOR OFFICE USE ONLY" section are excluded — see the
+      document's own VERIFICATION.md for the full scope record.
     - **Ethiopia Passport** — the standard Ministry of Immigration &
       Nationality Affairs application form, mirrored unauthenticated on
       multiple Ethiopian embassy sites (e.g.
