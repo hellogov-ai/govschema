@@ -1,0 +1,580 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "ci/dgi/microenterprise-tax-declaration",
+  "version": "1.0.0",
+  "title": "Côte d'Ivoire Micro-Enterprise Tax Declaration",
+  "description": "The Direction Générale des Impôts' (DGI) \"Déclaration d'impôt des microentreprises\" (Articles 71 bis et suivants du Code Général des Impôts), used by a taxpayer whose annual turnover (all taxes included) falls between 50,000,001 and 200,000,000 CFA francs to declare and pay the micro-enterprise tax. Opens Côte d'Ivoire's Taxes vertical (2 of 6; Visa, `ci/dst/visa-application`, was already published). This schema models the taxpayer's own identification and address particulars, CGA (Centre de Gestion Agréé) and accounting-firm affiliation, the applicable turnover/tax-rate computation, a supplementary schedule of known taxation elements (revenue, payroll, rent, stock, other charges, staff and vehicle counts), a bounded 4-slot supplier-purchases table, the accompanying payment particulars, and the taxpayer's declaration date and signature. It excludes the form's own top-of-page office box (the office-assigned declaration number, \"CACHET DU SERVICE\" stamp, and \"DATE DE RECEPTION\") and the \"RESERVE A L'ADMINISTRATION\" box, neither of which is applicant-supplied. Filing this declaration is a taxpayer's own action performed with the Direction Générale des Impôts; this schema does not file the declaration itself, and the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Republic of Côte d'Ivoire or the Direction Générale des Impôts.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "CI",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Direction Générale des Impôts",
+    "abbreviation": "DGI",
+    "url": "https://www.dgi.gouv.ci"
+  },
+  "process": {
+    "type": "filing",
+    "language": "fr"
+  },
+  "source": {
+    "url": "https://www.dgi.gouv.ci/assets/documents/imprimes/11_DECLARATION_DE_LIMPOT_DES_MICROENTREPRISES.pdf",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "\"Déclaration d'impôt des microentreprises\" (Articles 71 bis et suivants du CGI), Direction Générale des Impôts, native (searchable-text) PDF, 2 pages."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "GOV-4547 (\"GovSchema Standard Research\"). Picked up from Known Gaps entry 0l's own banked candidate (GOV-4539, 2026-07-23), which found this document live and unauthenticated but left it as open backlog while Visa was authored instead. Independently re-fetched rather than trusted from the prior cycle's own byte count alone: `https://www.dgi.gouv.ci/assets/documents/imprimes/11_DECLARATION_DE_LIMPOT_DES_MICROENTREPRISES.pdf`, HTTP 200 (via `curl` with a realistic desktop User-Agent), `Content-Type: application/pdf`, `Content-Length: 245929` — byte-for-byte match with the GOV-4539 banked record. sha256 `3f6bdde34a1bc239c0f8caa4d36e5b73b4a5d004876a5cca9a4ccd2697796c22`.\n\nExtraction method: text extracted via `pdfjs-dist`'s `getTextContent()` API (vendored at `/tmp/node_modules/pdfjs-dist` from prior cycles), reading each item's raw string and x/y transform position, grouped by y-coordinate row and sorted by x-coordinate to reconstruct reading order. `getAnnotations()` confirmed zero `/Widget` annotations on both pages — a flat (non-AcroForm) specimen. Both pages were additionally rendered to PNG via `pdfjs-dist` + `node-canvas` (also vendored at `/tmp/node_modules/canvas`) at 2.5x scale to visually confirm every box grid, checkbox, and table row the text layer alone cannot fully disambiguate. As with several prior specimens in this registry, this document's bolded section headers (\"01\", \"02\", \"03\", \"04\") and one row label (\"Espèces\", see Finding 6) render as solid black boxes or blank space in the rasterized PNG despite extracting correctly through the text layer — a broken-glyph-mapping/correct-underlying-text-extraction pattern, not missing content.\n\nModels 60 `fields[]` across 6 steps.\n\n## Disclosed source-fidelity findings\n\n1. **The entire top-of-page box (from the page's own top rule down to just above \"DECLARATION D'IMPOT DES MICROENTREPRISES\") is excluded as office-only.** The rendered page confirms two boxed columns flanking the ministry letterhead — the left box is unlabelled in the extracted text (structurally mirroring the right box) and the right box reads \"DECLARATION N°…./.\" directly beside \"CACHET DU SERVICE\" (office stamp) and \"DATE DE RECEPTION\" (date of receipt) labels printed immediately above it on the same rule line — none of it printed as applicant input.\n2. **`taxAssessmentServiceOffice` (\"SERVICE D'ASSIETTE DES IMPOTS DE ……\") is modelled as an applicant-facing field, distinct from the excluded top box.** It sits on its own dotted line beside the filing-period box grid, not inside the ruled office box discussed in Finding 1, and identifies which local DGI tax-assessment service the taxpayer's business is attached to — information the taxpayer, not the receiving office, would supply when completing the form in advance of submission.\n3. **The \"PERIODE D'IMPOSITION\" box grid (2 boxes captioned \"Mois\", 2 boxes captioned \"Trim.\", 4 boxes captioned \"Année\") is modelled as three separate optional numeric fields (`reportingMonth`, `reportingQuarter`, `reportingYear`) rather than one field**, since the source prints three visually distinct, separately-captioned box groups with no instruction stating they are mutually exclusive or must all be completed together. `reportingYear` is the only one of the three modelled `required: true`: this document's own footnote (3) states the underlying tax is an annual liability (\"le montant de l'impôt annuel exigible\") paid via monthly instalments, making the fiscal year the one universally-applicable value of the three; `reportingMonth`/`reportingQuarter` are modelled optional to accommodate whichever instalment cadence (monthly or quarterly) a given filer uses, per the same footnote.\n4. **`taxpayerAccountNumber` (\"N° C/C\") is modelled with a 7-digit-plus-letter pattern**, matching the rendered page's own box grid (7 contiguous digit boxes, then a visually separated 8th box) and independently corroborated by a third-party reference describing Côte d'Ivoire's own NCC (Numéro de Compte Contribuable) format as 7 digits followed by a single letter (e.g. \"9500015F\").\n5. **Section 02's \"TAUX\" (rate) column is excluded as a fixed printed value, not applicant input** — the rendered page shows \"4 %\" and \"6 %\" printed directly in that column for the form's own two rows, not left blank for the filer to complete. The corresponding \"CHIFFRE D'AFFAIRES TAXABLE TTC\" (taxable turnover) and \"MONTANT\" (tax amount) cells for each of the two rows are modelled as four separate optional fields (`taxableRevenueAt4Percent`/`taxAmountAt4Percent`, `taxableRevenueAt6Percent`/`taxAmountAt6Percent`), all optional, since footnote (2) confirms only one row applies to a given filer (the 4% rate applies to CGA members or taxpayers under an accounting-firm convention with the DGI; the 6% rate applies otherwise) and the form gives the filer no instruction to complete both. `MONTANT` is modelled as its own field rather than excluded as calculated, since — unlike this registry's closed GSP-0013 §7 precedent for excluding same-form arithmetic (e.g. `tj/andoz/simplified-tax-declaration` items 004/005) — this form prints no explicit textual formula tying MONTANT to the other two columns; the \"(1) (2) (3)\" column numbering implies a positional relationship but does not state one in words, so the field is included rather than assumed derivable.\n6. **The payment-mode section (\"Mode de paiement\") is modelled as a `paymentMethod` enum (`BANK_CHEQUE`/`POSTAL_CHEQUE`/`CASH`) gating four further fields.** The rendered page shows two filled table rows, each with its own checkbox, dotted `Numéro`/`Date`/`Banque ou établissement`/`Montant` cells, captioned \"Chèque … Bancaire\" and \"… Postal\" respectively (both under a shared \"Chèque (Cocher)\" heading), while the text layer additionally places a third label, \"Espèces\" (cash), directly beneath at the same left-margin x-position — a row that renders entirely blank in the rasterized PNG (no checkbox or dotted cells visible in any column), the same broken-glyph pattern noted above. `checkNumber`, `checkDate`, `bankOrInstitution`, and `paymentAmount` are modelled `visibleWhen`/`requiredWhen` gated on `paymentMethod` being `BANK_CHEQUE` or `POSTAL_CHEQUE` via GSP-0013's `in` operator (mirroring `ug/mowt/driving-licence-application`'s established cross-tab convention), since only the two cheque rows print these cells; no equivalent dotted cell is printed anywhere near the `CASH` row for any of the four, so no field is fabricated for a cash amount.\n7. **Section 03's eight numbered line items (\"ELEMENTS D'IMPOSITION CONNUS AU : ……\") are modelled `required: false`.** The form gives an explicit \"known as of\" date field (`elementsKnownAsOfDate`, modelled `required: true` since the section's own header dedicates a printed date blank to it) but no asterisk or other marking on any of the eight line items themselves, and several (e.g. `annualPremisesRent`, `numberOfProfessionalVehicles`) are not applicable to every micro-enterprise (e.g. a business with no rented premises or no vehicles) — mirroring this registry's standing precedent for un-asterisked, not-every-filer-has-every-line schedule items (e.g. `tj/andoz/simplified-tax-declaration` Finding 7).\n8. **The \"ETAT DES FOURNISSEURS\" (statement of suppliers) table is modelled as a bounded 4-slot repeating group** (`supplier1Identity` through `supplier4Amount`), matching the rendered page's own four numbered rows (1-4); all slots are optional, since a micro-enterprise is not guaranteed to have exactly four (or any) suppliers to disclose.\n9. **`companyName`, `taxpayerAccountNumber`, `businessActivity`, and `addressCommune` are modelled as the only required Section 01 identification fields**, alongside the required `elementsKnownAsOfDate` (Finding 7) and the required filing-period/tax-office fields (Findings 2-3). No asterisk or other required-field marking appears anywhere on this form; these four were selected as the minimum information the DGI could not process a declaration without (the filer's legal name, its unique taxpayer account number, what the business does, and which commune it operates in), while every other Section 01 detail (trade name/sigle, address components beyond commune, cadastral references, CGA/accounting-firm affiliation) is modelled optional since a given filer may not have all of them (e.g. a filer with no CGA affiliation, no cadastral parcel reference, or no separately-named trade sigle).\n10. **The signature is modelled as a plain `signature` string field, not a `documents[]` entry**, matching this registry's `ci/dst/visa-application` precedent (`applicantSignature`) for this jurisdiction's own signature-block convention, rather than the `documents[]`-entry convention used elsewhere for a physically attached signature/attestation page.\n\n## Conformance\n\n3 valid mock scenarios (a 6%-rate cash-paying annual filer declaring no CGA affiliation; a 4%-rate CGA-affiliated bank-cheque-paying filer with two suppliers declared; a postal-cheque-paying quarterly filer with an accounting-firm convention reference) plus 12 mutation-control fixtures (a missing-required-field fixture for each of this schema's 10 statically-required fields — `reportingYear`, `taxAssessmentServiceOffice`, `companyName`, `taxpayerAccountNumber`, `businessActivity`, `addressCommune`, `elementsKnownAsOfDate`, `paymentMethod`, `declarationDate`, and `signature`; an invalid `paymentMethod` enum value; and an unknown-field-rejected fixture) are committed under `conformance/ci/dgi/microenterprise-tax-declaration/1.0.0/`.\n\nAn ephemeral, from-scratch conformance checker (deriving required/enum rules directly from this schema's own `fields[]`, including its `visibleWhen`/`requiredWhen` gates, discarded after use, not committed) ran all fixtures: all 3 valid scenarios at 0 errors, and all 12 mutation controls each raising exactly 1 error of the expected kind. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. `registry-index.json` regenerated via `npm run build-index` in `tools/govschema-client/`."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "filing_period_and_office",
+      "title": "Filing Period and Tax Assessment Office",
+      "fields": ["reportingMonth", "reportingQuarter", "reportingYear", "taxAssessmentServiceOffice"],
+      "next": "taxpayer_identification"
+    },
+    {
+      "id": "taxpayer_identification",
+      "title": "Taxpayer Identification",
+      "fields": ["companyName", "tradeName", "taxpayerAccountNumber", "businessActivity", "addressCommune", "addressPOBox", "addressPhone", "addressQuartier", "addressStreet", "addressLotNumber", "addressIlot", "cadastralSection", "cadastralParcelle", "cgaAffiliation", "cgaMembershipDate", "cgaMembershipNumber", "accountingFirmName", "accountingFirmMembershipNumber", "dgiConventionReference"],
+      "next": "tax_determination"
+    },
+    {
+      "id": "tax_determination",
+      "title": "Tax Determination",
+      "fields": ["taxableRevenueAt4Percent", "taxAmountAt4Percent", "taxableRevenueAt6Percent", "taxAmountAt6Percent"],
+      "next": "known_taxation_elements"
+    },
+    {
+      "id": "known_taxation_elements",
+      "title": "Known Elements of Taxation",
+      "fields": ["elementsKnownAsOfDate", "priorYearPurchasesResold", "salesOrServicesRevenue", "annualSalariesPaid", "annualPremisesRent", "goodsStockValue", "otherOperatingCharges", "numberOfEmployees", "numberOfProfessionalVehicles"],
+      "next": "suppliers_statement"
+    },
+    {
+      "id": "suppliers_statement",
+      "title": "Statement of Suppliers",
+      "fields": ["supplier1Identity", "supplier1NCC", "supplier1NatureOfPurchases", "supplier1Amount", "supplier2Identity", "supplier2NCC", "supplier2NatureOfPurchases", "supplier2Amount", "supplier3Identity", "supplier3NCC", "supplier3NatureOfPurchases", "supplier3Amount", "supplier4Identity", "supplier4NCC", "supplier4NatureOfPurchases", "supplier4Amount"],
+      "next": "payment_and_declaration"
+    },
+    {
+      "id": "payment_and_declaration",
+      "title": "Payment and Declaration",
+      "fields": ["paymentMethod", "checkNumber", "checkDate", "bankOrInstitution", "paymentAmount", "declarationPlace", "declarationDate", "signature"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "reportingMonth",
+      "label": "Reporting Month",
+      "type": "string",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 3 for why this and the two following period fields are modelled as three separate optional fields.",
+      "sourceRef": "Page 1 — \"PERIODE D'IMPOSITION\" box grid, \"Mois\" caption",
+      "validation": { "pattern": "^\\d{2}$" }
+    },
+    {
+      "name": "reportingQuarter",
+      "label": "Reporting Quarter",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 1 — \"PERIODE D'IMPOSITION\" box grid, \"Trim.\" caption",
+      "validation": { "pattern": "^\\d{1,2}$" }
+    },
+    {
+      "name": "reportingYear",
+      "label": "Reporting Year",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Page 1 — \"PERIODE D'IMPOSITION\" box grid, \"Année\" caption",
+      "validation": { "pattern": "^\\d{4}$" }
+    },
+    {
+      "name": "taxAssessmentServiceOffice",
+      "label": "Tax Assessment Service Office",
+      "type": "string",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 2 for why this is modelled as applicant-facing rather than office-only.",
+      "sourceRef": "Page 1 — \"SERVICE D'ASSIETTE DES IMPOTS DE ……\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "companyName",
+      "label": "Company Name (Raison Sociale)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 01 — \"Raison sociale :\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "tradeName",
+      "label": "Trade Name (Sigle)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 01 — \"Sigle :\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "taxpayerAccountNumber",
+      "label": "Taxpayer Account Number (N° C/C)",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "description": "See this schema's own verification.notes Finding 4 for the 7-digit-plus-letter NCC format corroboration.",
+      "sourceRef": "Section 01 — \"N° C/C\" box grid",
+      "validation": { "pattern": "^\\d{7}[A-Z]$" }
+    },
+    {
+      "name": "businessActivity",
+      "label": "Business Purpose or Activity (Objet ou activité)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 01 — \"Objet ou activité :\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "addressCommune",
+      "label": "Commune",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 01 — \"Adresse : Commune :\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "addressPOBox",
+      "label": "P.O. Box (BP)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 01 — \"BP :\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "addressPhone",
+      "label": "Telephone (Tél)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 01 — \"Tél :\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "addressQuartier",
+      "label": "Quartier",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 01 — \"Quartier :\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "addressStreet",
+      "label": "Street (Rue)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 01 — \"Rue\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "addressLotNumber",
+      "label": "Lot Number (N° du lot)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 01 — \"N° du lot\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "addressIlot",
+      "label": "Block (Ilot)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 01 — \"Ilot :\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "cadastralSection",
+      "label": "Cadastral Section",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 01 — \"Références cadastrales : Section :\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "cadastralParcelle",
+      "label": "Cadastral Parcel (Parcelle)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 01 — \"Parcelle :\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "cgaAffiliation",
+      "label": "Affiliated CGA (Centre de Gestion Agréé)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 01 — \"CGA de rattachement\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "cgaMembershipDate",
+      "label": "CGA Membership Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Section 01 — \"Date d'adhésion au CGA\""
+    },
+    {
+      "name": "cgaMembershipNumber",
+      "label": "CGA Membership Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 01 — \"N° d'adhéshion\" (CGA)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "accountingFirmName",
+      "label": "Accounting Firm Name (Cabinet d'Expert-Comptable)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 01 — \"Raison sociale du cabinet d'expert-comptable\"",
+      "validation": { "maxLength": 200 }
+    },
+    {
+      "name": "accountingFirmMembershipNumber",
+      "label": "Accounting Firm Membership Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 01 — \"N° d'adhéshion\" (accounting firm)",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "dgiConventionReference",
+      "label": "DGI Convention Reference",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 01 — \"Référence de la convention avec la DGI\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "taxableRevenueAt4Percent",
+      "label": "Taxable Turnover at 4% Rate",
+      "type": "integer",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 5. Applicable to CGA members or taxpayers filing under an accounting-firm convention with the DGI.",
+      "sourceRef": "Section 02 — \"CHIFFRE D'AFFAIRES TAXABLE TTC\" row printed \"4 %\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "taxAmountAt4Percent",
+      "label": "Tax Amount at 4% Rate",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section 02 — \"MONTANT\" row printed \"4 %\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "taxableRevenueAt6Percent",
+      "label": "Taxable Turnover at 6% Rate",
+      "type": "integer",
+      "required": false,
+      "description": "See this schema's own verification.notes Finding 5. The standard rate, applicable when the 4% rate's conditions are not met.",
+      "sourceRef": "Section 02 — \"CHIFFRE D'AFFAIRES TAXABLE TTC\" row printed \"6 %\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "taxAmountAt6Percent",
+      "label": "Tax Amount at 6% Rate",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section 02 — \"MONTANT\" row printed \"6 %\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "elementsKnownAsOfDate",
+      "label": "Elements of Taxation Known As Of",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Section 03 — \"ELEMENTS D'IMPOSITION CONNUS AU :\""
+    },
+    {
+      "name": "priorYearPurchasesResold",
+      "label": "Amount of Purchases Resold (Prior Year)",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section 03, Item 1 — \"Montant des achats revendus (N-1)\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "salesOrServicesRevenue",
+      "label": "Amount of Sales or Services Rendered",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section 03, Item 2 — \"Montant des ventes ou prestations de services\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "annualSalariesPaid",
+      "label": "Annual Salaries Paid",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section 03, Item 3 — \"Montant des salaires annuels versés\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "annualPremisesRent",
+      "label": "Annual Rent of Business Premises",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section 03, Item 4 — \"Montant annuel des loyers des locaux professionnels\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "goodsStockValue",
+      "label": "Stock of Goods",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section 03, Item 5 — \"Montant du stock de marchandises\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "otherOperatingCharges",
+      "label": "Other Charges Related to the Activity",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section 03, Item 6 — \"Montant des autres charges liées à l'activité\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "numberOfEmployees",
+      "label": "Number of Employees",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section 03, Item 7 — \"Nombre d'employés\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "numberOfProfessionalVehicles",
+      "label": "Number of Professional Vehicles",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section 03, Item 8 — \"Nombre de véhicules professionnels\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "supplier1Identity",
+      "label": "Supplier 1 — Identity",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 04, Row 1 — \"Identité\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "supplier1NCC",
+      "label": "Supplier 1 — Taxpayer Account Number (NCC)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 04, Row 1 — \"NCC\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "supplier1NatureOfPurchases",
+      "label": "Supplier 1 — Nature of Purchases",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 04, Row 1 — \"Nature des achats\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "supplier1Amount",
+      "label": "Supplier 1 — Amount",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section 04, Row 1 — \"Montant\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "supplier2Identity",
+      "label": "Supplier 2 — Identity",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 04, Row 2 — \"Identité\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "supplier2NCC",
+      "label": "Supplier 2 — Taxpayer Account Number (NCC)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 04, Row 2 — \"NCC\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "supplier2NatureOfPurchases",
+      "label": "Supplier 2 — Nature of Purchases",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 04, Row 2 — \"Nature des achats\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "supplier2Amount",
+      "label": "Supplier 2 — Amount",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section 04, Row 2 — \"Montant\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "supplier3Identity",
+      "label": "Supplier 3 — Identity",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 04, Row 3 — \"Identité\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "supplier3NCC",
+      "label": "Supplier 3 — Taxpayer Account Number (NCC)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 04, Row 3 — \"NCC\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "supplier3NatureOfPurchases",
+      "label": "Supplier 3 — Nature of Purchases",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 04, Row 3 — \"Nature des achats\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "supplier3Amount",
+      "label": "Supplier 3 — Amount",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section 04, Row 3 — \"Montant\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "supplier4Identity",
+      "label": "Supplier 4 — Identity",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 04, Row 4 — \"Identité\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "supplier4NCC",
+      "label": "Supplier 4 — Taxpayer Account Number (NCC)",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 04, Row 4 — \"NCC\"",
+      "validation": { "maxLength": 20 }
+    },
+    {
+      "name": "supplier4NatureOfPurchases",
+      "label": "Supplier 4 — Nature of Purchases",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 04, Row 4 — \"Nature des achats\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "supplier4Amount",
+      "label": "Supplier 4 — Amount",
+      "type": "integer",
+      "required": false,
+      "sourceRef": "Section 04, Row 4 — \"Montant\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "paymentMethod",
+      "label": "Payment Method",
+      "type": "enum",
+      "required": true,
+      "description": "See this schema's own verification.notes Finding 6.",
+      "sourceRef": "Page 2 — \"Mode de paiement\" — \"Chèque … Bancaire\" / \"… Postal\" / \"Espèces\"",
+      "validation": {
+        "enum": ["BANK_CHEQUE", "POSTAL_CHEQUE", "CASH"]
+      }
+    },
+    {
+      "name": "checkNumber",
+      "label": "Cheque Number",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "paymentMethod", "in": ["BANK_CHEQUE", "POSTAL_CHEQUE"] },
+      "requiredWhen": { "field": "paymentMethod", "in": ["BANK_CHEQUE", "POSTAL_CHEQUE"] },
+      "sourceRef": "Page 2 — \"Numéro\"",
+      "validation": { "maxLength": 50 }
+    },
+    {
+      "name": "checkDate",
+      "label": "Cheque Date",
+      "type": "date",
+      "required": false,
+      "visibleWhen": { "field": "paymentMethod", "in": ["BANK_CHEQUE", "POSTAL_CHEQUE"] },
+      "requiredWhen": { "field": "paymentMethod", "in": ["BANK_CHEQUE", "POSTAL_CHEQUE"] },
+      "sourceRef": "Page 2 — \"Date\""
+    },
+    {
+      "name": "bankOrInstitution",
+      "label": "Bank or Institution",
+      "type": "string",
+      "required": false,
+      "visibleWhen": { "field": "paymentMethod", "in": ["BANK_CHEQUE", "POSTAL_CHEQUE"] },
+      "requiredWhen": { "field": "paymentMethod", "in": ["BANK_CHEQUE", "POSTAL_CHEQUE"] },
+      "sourceRef": "Page 2 — \"Banque ou établissement\"",
+      "validation": { "maxLength": 150 }
+    },
+    {
+      "name": "paymentAmount",
+      "label": "Payment Amount",
+      "type": "integer",
+      "required": false,
+      "visibleWhen": { "field": "paymentMethod", "in": ["BANK_CHEQUE", "POSTAL_CHEQUE"] },
+      "requiredWhen": { "field": "paymentMethod", "in": ["BANK_CHEQUE", "POSTAL_CHEQUE"] },
+      "sourceRef": "Page 2 — \"Montant\"",
+      "validation": { "minimum": 0 }
+    },
+    {
+      "name": "declarationPlace",
+      "label": "Place of Declaration",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Page 2 — \"A………...………………., le\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date of Declaration",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Page 2 — \"le………../……..…/20…………\""
+    },
+    {
+      "name": "signature",
+      "label": "Signature",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 2 — \"Signature\""
+    }
+  ]
+}
