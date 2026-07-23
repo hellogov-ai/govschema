@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-**87 jurisdictions** | **619 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**87 jurisdictions** | **618 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
 > **Update (2026-07-23, GOV-4480, "GovSchema Standard Research"): Zimbabwe
 > advances to Passport (3 of 6)**, via `zw/rg/passport-application@1.0.0` —
