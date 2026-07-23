@@ -4,7 +4,31 @@
 
 ## Executive Summary
 
-**90 jurisdictions** | **628 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**90 jurisdictions** | **629 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4554, "GovSchema Standard Research"): Côte
+> d'Ivoire's Passport vertical opens (3 of 6)**, via
+> `ci/dst/passport-application@1.0.0` — the Ministère de la Sécurité's
+> Direction de la Surveillance du Territoire (DST) / Sous-Direction de la
+> Police de l'Air et des Frontières "Formulaire de demande de passeport
+> ordinaire à l'étranger", used by an Ivorian national residing abroad to
+> apply for a first-time or replacement ordinary passport. Picked up from
+> Known Gaps entry 0l's own banked candidate, independently re-verified
+> STRONG during the GOV-4539 cycle (same `snedai.com` mirror, byte-for-byte
+> re-confirmed at 69,840 bytes) and left open pending this cycle. Models 28
+> `fields[]` across 6 steps, including a spouse/marriage field cluster
+> gated `visibleWhen`/`requiredWhen` on the form's own `maritalStatus`
+> field equalling `M` (a precise conditional gate this jurisdiction's
+> sibling Visa schema could not construct, since that form has no
+> `maritalStatus` field to key on), plus 15 `documents[]` entries modelling
+> the form's own 14-item "Documents joints" attached-documents checklist
+> (all `required: false`, since the specimen prints no distinction between
+> universally- and circumstantially-required items) and its "Photo"
+> placeholder box. Business Formation remains open, STRONG banked backlog
+> for a future cycle (see Known Gaps entry 0l); DMV and National ID &
+> Civic Documents remain confirmed dead-end/weak. See the Passport
+> vertical update below and the document's own VERIFICATION.md for the
+> full scope record and 9 disclosed findings.
 
 > **Update (2026-07-23, GOV-4547, "GovSchema Standard Research"): Côte
 > d'Ivoire's Taxes vertical opens (2 of 6)**, via
@@ -14982,7 +15006,32 @@
 
 ## By Vertical
 
-### Passport (57/83 jurisdictions — 69%)
+### Passport (58/90 jurisdictions — 64%)
+
+> **Update (2026-07-23, GOV-4554, "GovSchema Standard Research"): Côte
+> d'Ivoire's Passport vertical opens (3 of 6 for the jurisdiction)**, via
+> `ci/dst/passport-application@1.0.0` — the Ministère de la Sécurité's
+> Direction de la Surveillance du Territoire (DST) / Sous-Direction de la
+> Police de l'Air et des Frontières "Formulaire de demande de passeport
+> ordinaire à l'étranger", for an Ivorian national residing abroad applying
+> for a first-time or replacement ordinary passport. Picked up from Known
+> Gaps entry 0l's own banked candidate, independently re-verified STRONG
+> during the GOV-4539 cycle and left open pending this cycle. Models 28
+> `fields[]` across 6 steps plus 15 `documents[]` entries (a 14-item
+> "Documents joints" attached-documents checklist, all modelled `required:
+> false` since the specimen prints no distinction between universally- and
+> circumstantially-required items, plus the form's own "Photo" placeholder
+> box), including a spouse/marriage field cluster gated `visibleWhen`/
+> `requiredWhen` on the form's own `maritalStatus` field equalling `M`.
+> Business Formation remains open, STRONG banked backlog for a future
+> cycle (see Known Gaps entry 0l); DMV and National ID & Civic Documents
+> remain confirmed dead-end/weak. This section's own denominator is also
+> corrected here from 83 to 90 to match the registry's current total
+> jurisdiction count — several new jurisdictions had opened since this
+> denominator was last bumped without this section being updated in step,
+> the same stale-denominator class of fix prior cycles have already
+> applied here. See the Executive Summary update above and the document's
+> own VERIFICATION.md for the full scope record and 9 disclosed findings.
 
 > **Update (2026-07-23, GOV-4480, "GovSchema Standard Research"): Zimbabwe
 > opens this vertical (3/6 for the jurisdiction)**, via
@@ -20915,7 +20964,7 @@ now closed.
 | **BW** | 4 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CH** | 14 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **CI** | 2 | ✗ | ✗ | ✗ | ✓ | ✓ | ✗ |
+| **CI** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CY** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
@@ -21831,9 +21880,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       only informationally with no attached form) — not re-checked this
       cycle.
 0l. **Côte d'Ivoire scouted fresh as a brand-new jurisdiction (GOV-4539,
-    2026-07-23), opened via Visa; Taxes now also authored (GOV-4547,
-    2026-07-23); Business Formation and Passport remain STRONG open
-    backlog:**
+    2026-07-23), opened via Visa; Taxes (GOV-4547, 2026-07-23) and Passport
+    (GOV-4554, 2026-07-23) now also authored; Business Formation remains the
+    sole STRONG open backlog item:**
     - **Visa**: the Ministère de l'Intérieur/Direction de la Surveillance du
       Territoire's (DST) bilingual "Formulaire de demande de
       Visa/Application for Visa", mirrored unauthenticated by the Abidjan
@@ -21862,13 +21911,28 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       (GOV-4547, 2026-07-23): now authored** as
       `ci/dgi/microenterprise-tax-declaration@1.0.0` — see the Executive
       Summary and Taxes vertical updates above. Opens Côte d'Ivoire's Taxes
-      vertical (2/6); Business Formation and Passport remain open, STRONG
+      vertical (2/6); Business Formation and Passport remained open, STRONG
       banked backlog for a future cycle (unchanged from this item's own
-      GOV-4539 findings below).
+      GOV-4539 findings below) — Passport is now also authored, see below.
     - **Passport**: the same `snedai.com` mirror also carries
       `formulaire_passeport.pdf` (HTTP 200, 69,840 bytes, unauthenticated),
       independently re-verified this cycle. Left as open backlog since
-      Visa's specimen was the more completely legible of the two.
+      Visa's specimen was the more completely legible of the two. **Update
+      (GOV-4554, 2026-07-23): now authored** as
+      `ci/dst/passport-application@1.0.0` — see the Executive Summary and
+      Passport vertical updates above and the document's own
+      VERIFICATION.md for the full scope record, including 9 disclosed
+      findings (the same literal C/M/D/V marital-status enum and M/F sex
+      enum precedent as the sibling Visa schema; a spouse/marriage field
+      cluster gated `visibleWhen`/`requiredWhen` on this form's own
+      `maritalStatus` field equalling `M`; a 14-item "Documents joints"
+      checklist modelled entirely as non-required `documents[]` entries
+      since the specimen prints no distinction between universally- and
+      circumstantially-required items; and a `height` field modelled as an
+      integer in centimetres per the form's own printed "cm" unit label).
+      Opens Côte d'Ivoire's Passport vertical (3/6); Business Formation
+      remains the sole open, STRONG banked backlog item for a future cycle
+      (unchanged from this item's own GOV-4539 finding below).
     - **DMV**: confirmed dead end. DGTTC/OSER licensing and vehicle
       registration route exclusively through the login/account-gated
       `eservices.cgi.ci/avit/` portal; no downloadable form found anywhere.
