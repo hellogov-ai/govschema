@@ -1,0 +1,455 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "tt/mowt/driving-permit-application",
+  "version": "1.0.0",
+  "title": "Trinidad and Tobago Application for Driving Permit(s)/Endorsement(s) (MOWT Form 4)",
+  "description": "The Ministry of Works and Transport's (MOWT) Form 4, \"Application for Driving Permit(s)/Endorsement(s)\", prescribed under Regulation 18 of the Motor Vehicles and Road Traffic Act, Chap. 48:50, and used for a First Issue, Renewal, Duplicate, Provisional, or Endorsement application/transaction against a Trinidad and Tobago driving permit. Opens Trinidad and Tobago's DMV vertical (3 of 6 — Passport and Taxes already published via tt/imd/passport-application-first-adult and tt/ird/individual-income-tax-return). Picked up from CATALOG.md's own Known Gaps entry 0m, a STRONG candidate banked since the GOV-4568 cycle. Models the universal core application (Questions 1-14, completed regardless of transaction type); the form's own Question 15 (a notarized statutory declaration required only of \"Duplicate\" transaction applicants, sworn before a Commissioner of Affidavits) and the companion Form 12 (\"Form of Medical Certificate for an Applicant for a Permit to Drive Motor Vehicles\", completed entirely by a Registered Medical Practitioner based on a clinical examination) are both out of scope for v1.0.0 — see this document's own VERIFICATION.md for the full disclosed scoping rationale. This schema does not submit the application itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of the Republic of Trinidad and Tobago or its Ministry of Works and Transport.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "TT",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministry of Works and Transport",
+    "abbreviation": "MOWT",
+    "url": "https://mowt.gov.tt/"
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.mowt.gov.tt/MOWT/media/General/Documents/New%20Transport%20Division%20Forms%20-%20September%2016th%202020/Application-for-Driving-Permits-Endorsement.pdf",
+    "retrievedAt": "2026-07-23",
+    "documentRef": "Form 4, \"Application for Driving Permit(s)/Endorsement(s)\", Ministry of Works and Transport, Transport Division, 2 pages, native (AcroForm) PDF."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-23",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-23",
+    "notes": "See VERIFICATION.md for the full write-up: source fetch/hash (including the `mowt.gov.tt` broken-TLS-chain workaround), extraction method, document structure, the currentlyHoldsTtPermit/previouslyHeldTtPermit OR-gated disclosure block, and the disclosed decision to exclude Question 15 (the notarized duplicate-permit declaration) and the companion Form 12 (medical certificate)."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-23"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "permit_type",
+      "title": "Question 1 — Type of Permit(s)/Endorsement(s) Applied For",
+      "fields": ["transactionType", "vehicleClassification", "useType"],
+      "next": "applicant_particulars"
+    },
+    {
+      "id": "applicant_particulars",
+      "title": "Questions 2-6 — Applicant Particulars",
+      "fields": ["surname", "firstName", "middleName", "maidenName", "sex", "placeOfBirth", "dateOfBirth", "nationality"],
+      "next": "contact_information"
+    },
+    {
+      "id": "contact_information",
+      "title": "Questions 7-8 — Contact Information",
+      "fields": [
+        "residentialAddressStreet",
+        "residentialAddressCity",
+        "residentialEmail",
+        "residentialPhoneAreaCode",
+        "residentialPhoneExchange",
+        "residentialPhoneNumber",
+        "postalAddressStreet",
+        "postalAddressCity",
+        "postalEmail",
+        "postalPhoneAreaCode",
+        "postalPhoneExchange",
+        "postalPhoneNumber"
+      ],
+      "next": "driving_history"
+    },
+    {
+      "id": "driving_history",
+      "title": "Questions 9-10 — Driving Permit History",
+      "fields": [
+        "currentlyHoldsTtPermit",
+        "previouslyHeldTtPermit",
+        "ttPermitNumber",
+        "ttPermitIssueDate",
+        "authorisedVehicleClass",
+        "holdsPermitElsewhere"
+      ],
+      "next": "endorsements_and_declaration"
+    },
+    {
+      "id": "endorsements_and_declaration",
+      "title": "Questions 11-14 — Endorsements, Disqualification, Fitness, and Declaration",
+      "fields": [
+        "endorsementParticulars",
+        "previouslyDisqualified",
+        "disqualificationParticulars",
+        "physicallyMentallyFit",
+        "declarantName",
+        "applicationDate",
+        "signatureOfApplicant"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "transactionType",
+      "label": "Transaction",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["first_issue", "renewal", "duplicate", "provisional", "endorsement"]
+      },
+      "description": "\"First Issue\": application for the first time for a permit for a particular class of vehicle. \"Provisional\": application for a permit to learn to drive a vehicle of a particular class, valid for one year only, per the form's own Instructions to Applicants.",
+      "sourceRef": "Page 1, Question 1(i) — \"Type of permit(s)/endorsement(s) applied for — Transaction\": First Issue / Renewal / Duplicate / Provisional / Endorsement"
+    },
+    {
+      "name": "vehicleClassification",
+      "label": "Classification",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["motorcycle", "light_motor_vehicle", "heavy_motor_vehicle", "extra_heavy_motor_vehicle", "omnibus", "tractor_wheel_truck", "other"]
+      },
+      "description": "\"Motor Vehicle/Light\" includes any motor vehicle whose tare weight does not exceed 2,270 kilogrammes or whose m.g.w. does not exceed 2,950 kilogrammes; \"Motor Vehicle/Heavy\" exceeds 2,950 kilogrammes m.g.w. but not 15,240 kilogrammes; \"Motor Vehicle/Extra Heavy\" exceeds 15,240 kilogrammes m.g.w.; \"Other\" covers a vehicle not otherwise listed (e.g. road roller, crane), per the form's own Instructions to Applicants.",
+      "sourceRef": "Page 1, Question 1(ii) — \"Classification\": Motorcycle / Light Motor Vehicle / Heavy Motor Vehicle / Extra Heavy Motor Vehicle / Omnibus / Tractor Wheel/Truck / Other"
+    },
+    {
+      "name": "useType",
+      "label": "Use",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["hiring_car_taxi", "commercial", "private"]
+      },
+      "description": "\"Private use\" includes use of a rented vehicle or use of any other vehicle for non-commercial purposes; \"Commercial use\" means use of a vehicle primarily for industrial or trade purposes, per the form's own Instructions to Applicants.",
+      "sourceRef": "Page 1, Question 1(iii) — \"Use\": Hiring Car/Taxi / Commercial / Private"
+    },
+    {
+      "name": "surname",
+      "label": "Surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 2 — \"Full name of applicant\", \"Surname\""
+    },
+    {
+      "name": "firstName",
+      "label": "First Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 2 — \"First Name\""
+    },
+    {
+      "name": "middleName",
+      "label": "Middle Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 2 — \"Middle Name\""
+    },
+    {
+      "name": "maidenName",
+      "label": "Maiden Name (if any)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 2 — \"Maiden Name (if any)\""
+    },
+    {
+      "name": "sex",
+      "label": "Sex",
+      "type": "enum",
+      "required": true,
+      "classification": "pii",
+      "validation": {
+        "enum": ["male", "female"]
+      },
+      "sourceRef": "Page 1, Question 3 — \"Sex\": Male / Female"
+    },
+    {
+      "name": "placeOfBirth",
+      "label": "Place of Birth",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 4 — \"Place of Birth\""
+    },
+    {
+      "name": "dateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 5 — \"Date of Birth (DD/MM/YYYY)\""
+    },
+    {
+      "name": "nationality",
+      "label": "Nationality",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 6 — \"Nationality\""
+    },
+    {
+      "name": "residentialAddressStreet",
+      "label": "Residential Address in Trinidad and Tobago — Street",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 7 — \"Contact Information\", \"Residential Address in Trinidad and Tobago\", \"Street\""
+    },
+    {
+      "name": "residentialAddressCity",
+      "label": "Residential Address in Trinidad and Tobago — City",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 7 — \"City\""
+    },
+    {
+      "name": "residentialEmail",
+      "label": "E-mail",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 7 — \"E-mail\""
+    },
+    {
+      "name": "residentialPhoneAreaCode",
+      "label": "Phone — Area Code",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The 3-digit area code portion of \"Phone (   )    -    \".",
+      "sourceRef": "Page 1, Question 7 — \"Phone ( ) -\""
+    },
+    {
+      "name": "residentialPhoneExchange",
+      "label": "Phone — Exchange",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The 3-digit exchange portion of \"Phone (   )    -    \", before the hyphen.",
+      "sourceRef": "Page 1, Question 7 — \"Phone ( ) -\""
+    },
+    {
+      "name": "residentialPhoneNumber",
+      "label": "Phone — Number",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "The 4-digit line-number portion of \"Phone (   )    -    \", after the hyphen.",
+      "sourceRef": "Page 1, Question 7 — \"Phone ( ) -\""
+    },
+    {
+      "name": "postalAddressStreet",
+      "label": "Residential Address — Street (if different from Question 7)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "description": "Only applicable when the applicant's mailing/contact address differs from the Question 7 residential address.",
+      "sourceRef": "Page 1, Question 8 — \"Contact Information if different from (7)\", \"Residential Address\", \"Street\""
+    },
+    {
+      "name": "postalAddressCity",
+      "label": "Residential Address — City (if different from Question 7)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 8 — \"City\""
+    },
+    {
+      "name": "postalEmail",
+      "label": "E-mail (if different from Question 7)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 8 — \"E-mail\""
+    },
+    {
+      "name": "postalPhoneAreaCode",
+      "label": "Phone — Area Code (if different from Question 7)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 8 — \"Phone ( ) -\""
+    },
+    {
+      "name": "postalPhoneExchange",
+      "label": "Phone — Exchange (if different from Question 7)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 8 — \"Phone ( ) -\""
+    },
+    {
+      "name": "postalPhoneNumber",
+      "label": "Phone — Number (if different from Question 7)",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 8 — \"Phone ( ) -\""
+    },
+    {
+      "name": "currentlyHoldsTtPermit",
+      "label": "Are you the holder of a driving permit issued in Trinidad and Tobago?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Page 1, Question 9(i) — \"Are you the holder of a driving permit issued in Trinidad and Tobago? Yes No\""
+    },
+    {
+      "name": "previouslyHeldTtPermit",
+      "label": "Have you previously been the holder of a Driving Permit issued in Trinidad and Tobago?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Page 1, Question 9(ii) — \"Have you previously been the holder of a Driving Permit issued in Trinidad and Tobago? Yes No\""
+    },
+    {
+      "name": "ttPermitNumber",
+      "label": "Permit Number",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "currentlyHoldsTtPermit", "equals": true },
+          { "field": "previouslyHeldTtPermit", "equals": true }
+        ]
+      },
+      "classification": "pii",
+      "sourceRef": "Page 1, Question 9(iii) — \"If 'yes' to (i) or (ii) state number and date of Issue below\", \"Number\""
+    },
+    {
+      "name": "ttPermitIssueDate",
+      "label": "Date of Issue",
+      "type": "date",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "currentlyHoldsTtPermit", "equals": true },
+          { "field": "previouslyHeldTtPermit", "equals": true }
+        ]
+      },
+      "sourceRef": "Page 1, Question 9(iii) — \"Date (DD/MM/YYYY)\""
+    },
+    {
+      "name": "authorisedVehicleClass",
+      "label": "Class of vehicle authorised to drive",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "any": [
+          { "field": "currentlyHoldsTtPermit", "equals": true },
+          { "field": "previouslyHeldTtPermit", "equals": true }
+        ]
+      },
+      "description": "Modelled as a directly-supplied string rather than reusing the vehicleClassification enum: the printed instructions only define the enum's own 7 categories for a NEW application, while an existing permit's authorised class may be printed using different historical class codes.",
+      "sourceRef": "Page 1, Question 9(iv) — \"Class of vehicle authorised to drive\""
+    },
+    {
+      "name": "holdsPermitElsewhere",
+      "label": "Are you the holder of a driving permit/licences held elsewhere than in Trinidad and Tobago?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Page 1, Question 10 — \"Are you the holder of a driving permit/licences held elsewhere than in Trinidad and Tobago? Yes No\""
+    },
+    {
+      "name": "endorsementParticulars",
+      "label": "Particulars of endorsement(s)",
+      "type": "string",
+      "required": false,
+      "description": "Left blank if the applicant has no endorsement(s) to disclose.",
+      "sourceRef": "Page 1, Question 11 — \"Give particulars of any endorsement(s) on any driving permit/licence which you held or now hold.\""
+    },
+    {
+      "name": "previouslyDisqualified",
+      "label": "Have you at any time been disqualified from obtaining a driving permit?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Page 1, Question 12 — \"Have you at any time been disqualified from obtaining a driving permit? Yes No\""
+    },
+    {
+      "name": "disqualificationParticulars",
+      "label": "Particulars of disqualification",
+      "type": "string",
+      "required": false,
+      "requiredWhen": {
+        "field": "previouslyDisqualified",
+        "equals": true
+      },
+      "sourceRef": "Page 1, Question 12 — \"If 'yes' give particulars\""
+    },
+    {
+      "name": "physicallyMentallyFit",
+      "label": "Are your physique, hearing and bodily and mental fitness such as to qualify you for the issue of a driving permit?",
+      "type": "boolean",
+      "required": true,
+      "sourceRef": "Page 1, Question 13 — \"Are your physique, hearing and bodily and mental fitness such as to qualify you for the issue of a driving permit? Yes No\""
+    },
+    {
+      "name": "declarantName",
+      "label": "Declarant's Full Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The declaration's own printed blank line (\"I, ..............., declare that...\") into which the applicant's full name is entered.",
+      "sourceRef": "Page 1, Question 14 — \"I, ..................., declare that the information provided above is true and correct.\""
+    },
+    {
+      "name": "applicationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "Printed as a plain \"Date:\" blank beside the signature line, with no corresponding interactive AcroForm field on the source specimen (unlike every other Question 1-14 field, which is a genuine fillable form field) — modelled directly since every application is dated when signed.",
+      "sourceRef": "Page 1, below Question 14 — \"Date:\""
+    },
+    {
+      "name": "signatureOfApplicant",
+      "label": "Signature of Applicant",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "Printed as a plain signature line, with no corresponding interactive AcroForm field on the source specimen (same disclosed gap as applicationDate).",
+      "sourceRef": "Page 1, below Question 14 — \"Signature of Applicant (DD/MM/YYYY)\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "proofOfAddress",
+      "label": "Proof of Address (Utility Bill or Lease/Rental Agreement)",
+      "category": "supporting-evidence",
+      "required": true,
+      "belongsTo": "applicant",
+      "sourceRef": "Page 2, Instructions to Applicants, item 6 — \"Application must be supported by documents as proof of address such as a recent Utility Bill or in the case of a rental, a copy of the Lease/Rental Agreement for the rental premises identified and bearing the name of the Applicant.\""
+    },
+    {
+      "id": "ownerConfirmationLetter",
+      "label": "Letter from Owner Confirming Applicant's Residence",
+      "category": "supporting-evidence",
+      "required": false,
+      "belongsTo": "other",
+      "sourceRef": "Page 2, Instructions to Applicants, item 6 — required only if the utility bill/Lease Rental Agreement submitted as proofOfAddress is not in the Applicant's name: \"...a letter from the owner confirming the Applicant's residence and copy of the owner's national identification (ID) MUST be submitted.\" Not statically required here since this condition is not universal to every applicant."
+    },
+    {
+      "id": "ownerNationalId",
+      "label": "Copy of Owner's National Identification (ID)",
+      "category": "identity-document",
+      "required": false,
+      "belongsTo": "other",
+      "sourceRef": "Page 2, Instructions to Applicants, item 6 — required only in the same circumstance as ownerConfirmationLetter above (proof of address not in the Applicant's name): \"...and copy of the owner's national identification (ID) MUST be submitted.\""
+    }
+  ]
+}

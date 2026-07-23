@@ -4,7 +4,37 @@
 
 ## Executive Summary
 
-**91 jurisdictions** | **632 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**91 jurisdictions** | **633 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4582, "GovSchema Standard Research"): Trinidad
+> and Tobago's DMV vertical opens (3 of 6)**, via
+> `tt/mowt/driving-permit-application@1.0.0` — the Ministry of Works and
+> Transport's (MOWT) Form 4, "Application for Driving Permit(s)/
+> Endorsement(s)", prescribed under Regulation 18 of the Motor Vehicles and
+> Road Traffic Act, Chap. 48:50, fetched with a TLS certificate-verification
+> bypass (`curl -k`; `mowt.gov.tt` has a broken certificate chain, the same
+> workaround this schema's own sibling Taxes schema needed for `ird.gov.tt`)
+> from `mowt.gov.tt/MOWT/media/General/Documents/New Transport Division
+> Forms - September 16th 2020/Application-for-Driving-Permits-
+> Endorsement.pdf` (HTTP 200, 125,793 bytes, sha256
+> `528de723f2b6cec474ffa9c26936f12cd270a7bc5a7650b8b7bdaf333f0dd5a2`),
+> matching the byte count independently banked in GOV-4568. The full live
+> path was recovered via a web search after `mowt.gov.tt`'s own Kentico-CMS
+> HTML pages (Services/Divisions listings) each 404'd to a direct fetch,
+> while the static document-library path itself remained unmitigated.
+> Models the universal core application (Questions 1-14, 36 `fields[]`
+> across 5 steps, plus a 3-entry `documents[]` proof-of-address cluster)
+> that every transaction type (First Issue, Renewal, Duplicate, Provisional,
+> Endorsement) completes; excludes, with disclosed rationale, Question 15
+> (a notarized statutory declaration required only of "Duplicate"
+> applicants, sworn before a Commissioner of Affidavits) and the companion
+> Form 12 (a medical certificate completed entirely by a Registered Medical
+> Practitioner, not the applicant — the same class of doctor-only content
+> already excluded from the Uganda driving-licence schema, GOV-4335).
+> Business Formation remains open, STRONG banked backlog (Known Gaps entry
+> 0m, updated below); Visa and National ID & Civic Documents remain
+> unscreened. See the DMV vertical update below and the document's own
+> VERIFICATION.md for the full scope record and 8 disclosed findings.
 
 > **Update (2026-07-23, GOV-4575, "GovSchema Standard Research"): Trinidad
 > and Tobago's Taxes vertical opens (2 of 6 for the jurisdiction)**, via
@@ -15704,7 +15734,21 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (62/85 jurisdictions — 73%)
+### DMV — Vehicle Registration, Licensing, Permits (63/91 jurisdictions — 69%)
+
+> **Update (2026-07-23, GOV-4582, "GovSchema Standard Research"): Trinidad
+> and Tobago's DMV vertical opens (3 of 6 for the jurisdiction)**, via
+> `tt/mowt/driving-permit-application@1.0.0` — the Ministry of Works and
+> Transport's (MOWT) Form 4, "Application for Driving Permit(s)/
+> Endorsement(s)." See the Executive Summary's GOV-4582 update above and
+> the document's own VERIFICATION.md for the full sourcing record,
+> including the disclosed exclusion of Question 15 (the notarized
+> duplicate-permit declaration) and the companion Form 12 (medical
+> certificate). Trinidad and Tobago's remaining open vertical (Business
+> Formation) remains STRONG banked backlog (see Known Gaps entry 0m).
+> Numerator updated from 62 to 63; denominator corrected from 85 to 91 to
+> match the registry's current total jurisdiction count (this section's own
+> denominator had lagged behind the last few new-jurisdiction cycles).
 
 > **Update (2026-07-23, GOV-4446, "GovSchema Standard Research"): patch
 > `py/mda/driving-licence-declaration` to `1.0.1`** — fixes a misattributed
@@ -22108,7 +22152,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       `mowt.gov.tt/MOWT/media/General/Documents/.../Application-for-Driving-Permits-Endorsement.pdf`
       (125,793 bytes, needs `curl -k` — `mowt.gov.tt` has a broken TLS
       certificate chain), plus a companion Form 12 medical-certification
-      form. **Business Formation**: the Companies Registry's (Ministry of
+      form. **Update (GOV-4582, 2026-07-23): Form 4 now authored** as
+      `tt/mowt/driving-permit-application@1.0.0` (Questions 1-14, the
+      universal core application; Question 15's notarized duplicate-permit
+      declaration and the companion Form 12 medical certificate are both
+      out of scope for v1.0.0 — see the document's own VERIFICATION.md) —
+      see the Executive Summary and DMV vertical updates above. **Opens
+      Trinidad and Tobago's DMV vertical (3/6).** **Business Formation**: the Companies Registry's (Ministry of
       the Attorney General and Legal Affairs) Form 1
       (`legalaffairs.gov.tt/forms/newForms/Form1_P.pdf`, 376,476 bytes) and
       Form 6 sole-proprietor/individual-firm statement
@@ -22128,8 +22178,10 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       (Trinidad and Tobago has no separate national ID card program
       distinct from its passport/driver's-licence documents, per the
       scouting pass's own preliminary read — not independently confirmed).
-      DMV and Business Formation remain open, STRONG banked backlog for a
-      future cycle.
+      Business Formation remains open, STRONG banked backlog for a future
+      cycle (Form 1 is a genuine text-layer PDF; the companion Form 6
+      sole-proprietor/individual-firm statement is confirmed scanned/
+      image-only and will need an OCR or higher-fidelity rendering pass).
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
