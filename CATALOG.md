@@ -4,7 +4,43 @@
 
 ## Executive Summary
 
-**91 jurisdictions** | **634 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**91 jurisdictions** | **635 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-23, GOV-4596, "GovSchema Standard Research"): Trinidad
+> and Tobago's Visa vertical opens (5 of 6)**, via
+> `tt/imd/visa-application@1.0.0` — the Immigration Division (Ministry of
+> National Security)'s live e-Visa portal, `evisa.ttservices.online`. Two
+> of three candidate PDF "Visa Application Form" specimens across
+> `nationalsecurity.gov.tt` and `foreign.gov.tt` proved image-only with no
+> extractable text layer; the third, a 2010 Adobe LiveCycle XFA specimen
+> with a genuine text layer, was confirmed superseded once
+> `foreign.gov.tt`'s own current "Visas" service page was found to redirect
+> entirely to this e-Visa portal — corroborated by a 2024-04-26 Ministry of
+> National Security media release announcing the portal's launch. Per this
+> registry's source-of-truth-fidelity practice, the live online system,
+> not the superseded paper form, is what this schema models. The portal
+> (a server-rendered Vaadin Flow Java app behind a Cloudflare bot check)
+> was reached with a real Playwright/Chromium session using this
+> registry's established sandboxed-launch recipe, and walked screen-by-
+> screen with mock applicant data — its combo-box option lists are fetched
+> live per-open from the server rather than shipped in a static
+> client-side bundle, so there is no offline specimen to re-extract the
+> way this registry's Angular-SPA e-visa schemas (e.g.
+> `zw/immigration/evisa-application`) were authored. Models 57 `fields[]`
+> across 8 steps (an eligibility pre-check, then the wizard's own Getting
+> Started / Application, Personal, Passport, Contact, and Additional
+> Information sub-sections) and 13 `documents[]`, including the Ministry's
+> own 11-item "EVISAS SUPPORTING DOCUMENTS" checklist PDF, the digital
+> passport-compliant photo, and the 800 TTD application fee (`category:
+> payment`); excludes, with disclosed rationale, the Additional
+> Information step's own dynamic, unbounded "Children Information"
+> add/remove grid, since the same screen's own instruction directs any
+> accompanying minor to a separate application regardless. Opens Trinidad
+> and Tobago's Visa vertical (5 of 6 — Passport/DMV/Taxes/Business
+> Formation already published); National ID & Civic Documents remains the
+> sole open vertical. See the Visa vertical update below and the
+> document's own VERIFICATION.md for the full sourcing record and 12
+> disclosed findings.
 
 > **Update (2026-07-23, GOV-4589, "GovSchema Standard Research"): Trinidad
 > and Tobago's Business Formation vertical opens (4 of 6)**, via
@@ -19591,7 +19627,35 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (71/90 jurisdictions — 79%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (72/91 jurisdictions — 79%)
+
+> **Update (2026-07-23, GOV-4596, "GovSchema Standard Research"): Trinidad
+> and Tobago's Visa vertical opens (5 of 6)**, via `tt/imd/visa-application@1.0.0`
+> — the Immigration Division (Ministry of National Security)'s live e-Visa
+> portal (`evisa.ttservices.online`), reached with a real Playwright/
+> Chromium session behind a Cloudflare bot check and walked screen-by-screen
+> with mock applicant data, since combo-box option lists are fetched live
+> per-open from this Vaadin Flow server app rather than shipped in a
+> static client-side bundle. Two of three candidate PDF forms on
+> `nationalsecurity.gov.tt`/`foreign.gov.tt` proved image-only with no
+> extractable text layer, and the third (a 2010 Adobe LiveCycle XFA
+> specimen with a real text layer) was confirmed superseded once
+> `foreign.gov.tt`'s own current "Visas" service page was found to redirect
+> entirely to this e-Visa portal, corroborated by a 2024-04-26 Ministry of
+> National Security media release announcing the portal's launch. Models
+> 57 `fields[]` across 8 steps (the eligibility pre-check plus the wizard's
+> own Getting Started / Application, Personal, Passport, Contact, and
+> Additional Information sub-sections) and 13 `documents[]` (the Ministry's
+> own 11-item "EVISAS SUPPORTING DOCUMENTS" checklist, the applicant photo,
+> and the 800 TTD payment); excludes, with disclosed rationale, the
+> Additional Information step's own dynamic, unbounded "Children
+> Information" add/remove grid. This also corrects the denominator:
+> Trinidad and Tobago (GOV-4568, 91st jurisdiction) opened via Passport
+> without this section's own denominator being bumped at the time;
+> numerator and denominator both move together: 71/90 to 72/91. National ID
+> & Civic Documents remains Trinidad and Tobago's sole unscreened vertical.
+> See the Executive Summary update above and the document's own
+> VERIFICATION.md for the full sourcing record and 12 disclosed findings.
 
 > **Update (2026-07-23, GOV-4539, "GovSchema Standard Research"): Côte
 > d'Ivoire opens as the registry's 90th jurisdiction, via this vertical**,
@@ -21233,7 +21297,7 @@ now closed.
 | **SN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| **TT** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| **TT** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **UG** | 3 | ✗ | ✓ | ✓ | ✗ | ✗ | ✓ |
@@ -22246,7 +22310,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Business Formation was re-examined and authored under GOV-4589 (see
       above) as `tt/rgd/partnership-beneficial-ownership-statement@1.0.0`,
       once Form 1 and Form 6 were both found mischaracterized on closer
-      reading; Visa and National ID & Civic Documents remain open backlog.
+      reading. **Update (GOV-4596, 2026-07-23): Visa is now authored** as
+      `tt/imd/visa-application@1.0.0`, the Immigration Division's live
+      e-Visa portal (`evisa.ttservices.online`) rather than any of three
+      candidate PDF forms (two image-only, the third confirmed superseded
+      by the live portal) — see the Executive Summary and Visa vertical
+      updates above. **Opens Trinidad and Tobago's Visa vertical (5/6).**
+      This cycle also partially re-checked National ID & Civic Documents:
+      Trinidad and Tobago's Elections and Boundaries Commission (EBC, per
+      `ebctt.com`) does run a National Identification Card program distinct
+      from the passport/driver's-licence documents, correcting the prior
+      cycle's own unconfirmed preliminary read — but EBC's own published
+      process states applicants 15 years of age and over must apply in
+      person at their district Registration Area Office, with no
+      downloadable application form found on `ebctt.com` this cycle
+      (not exhaustively confirmed dead-end; a closer look at `ebctt.com`'s
+      full site is the natural next step). National ID & Civic Documents
+      remains Trinidad and Tobago's sole open backlog item.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
