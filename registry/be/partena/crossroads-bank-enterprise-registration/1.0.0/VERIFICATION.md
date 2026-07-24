@@ -41,14 +41,37 @@ architecture stands between the applicant and the register itself.
 
 ## Reaching the live source
 
-`https://www.partena-professional.be/sites/default/files/uploads/Administrative%20docs%20&%20forms%20FR/EOL/Formulaire%20d'inscription%20BCE.pdf`
-(exact path uses "Administrative" in URL-encoded form; see the literal query
-string in `source.url` above for the byte-exact path used).
+`https://www.partena-professional.be/sites/default/files/uploads/Administratieve%20docs%20&%20forms%20FR/EOL/Formulaire%20d'inscription%20BCE.pdf`
+(exact path uses "Administratieve", the Dutch spelling, inside an
+otherwise-French folder name — a quirk of Partena's own file layout; see the
+literal query string in `source.url` above for the byte-exact path used).
 
-- Located via Partena Professional's own "Créer mon entreprise" (Start My
-  Business) public process page, which links this form directly.
-- Plain unauthenticated `curl` request (`curl -sIL` then `curl -sL`), no
-  session/cookie state, no CAPTCHA/WAF challenge.
+- **Correction (post-review):** the PR as first submitted cited
+  `partena-professional.be/fr/independant/creer-mon-entreprise/` as
+  `authority.url`, described as the guichet's own "Créer mon entreprise"
+  process page linking this form directly. That page does not exist — live
+  `curl` returns a genuine `404` (styled 404 page, not a bot-block: no 403/
+  429/WAF challenge), and the Wayback Machine CDX API has zero snapshots of
+  it, ever, at that exact path or any `creer-mon-entreprise*` prefix on the
+  domain. This was caught in review (GOV-4697) as the "404 + zero Wayback
+  history" fabricated-citation signature `tools/verify-sources.mjs` was
+  built to catch per GOV-1760, and the original discovery-path prose above
+  was inaccurate. Re-investigated and replaced below with the actual live
+  page found to link this form.
+- **Actual discovery path:** Partena Professional's own "Documents &
+  formulaires administratifs" page
+  (`partena-professional.be/fr/nos-connaissances/documents-formulaires`,
+  reached from the site's own `/fr/guichet-d'entreprises` landing page via
+  its "Téléchargez nos documents" link) contains a section headed "Guichet
+  d'entreprises de Partena Professional" (anchor
+  `#scrollto-guichetdentreprises`) — a table of category/form-download pairs
+  whose first row, "Inscription BCE", links directly to "Inscription d'une
+  entreprise à la BCE", i.e. this exact PDF at this exact path. `authority.url`
+  now cites this page (with its anchor) instead of the nonexistent process
+  page.
+- Plain unauthenticated `curl` request (`curl -sIL` then `curl -sL`) against
+  both the corrected authority page and the PDF itself, no session/cookie
+  state, no CAPTCHA/WAF challenge.
 - HTTP 200, **600,346 bytes** retrieved, `content-type: application/pdf`,
   `last-modified: Mon, 22 Dec 2025 14:06:47 GMT`.
 - sha256 of the retrieved bytes:
