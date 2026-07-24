@@ -1,10 +1,42 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-23** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-24** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**92 jurisdictions** | **638 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**92 jurisdictions** | **639 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4624, "GovSchema Standard Research"): Mauritius's
+> Business Formation vertical opens, closing the jurisdiction's entire
+> GOV-4603-banked backlog (4 of 6)**, via
+> `mu/cbrd/limited-partnership-registration@1.0.0` — the Corporate and
+> Business Registration Department's "Application for Registration of a
+> Limited Partnership" (Form S19/F LP2), fetched directly and
+> unauthenticated from `companies.govmu.org` (60,153 bytes, sha256
+> `788c50b20dc7a82c52dc7f751e541151bcec65443164c6777a5d83cfff9e5403` — an
+> exact match to the "~60,000 bytes" figure GOV-4603 banked for this
+> candidate). Full company incorporation itself remains routed through the
+> login-gated CBRIS portal with no static equivalent (re-confirmed, no
+> change), so this candidate is scoped to the directly-downloadable
+> Limited Partnership registration form. Unlike this registry's other
+> three Mauritius schemas (all flat scanned images), this specimen carries
+> a genuine positioned text layer with no AcroForm annotations, extracted
+> via a positional `(x, y)` text dump rather than a canvas render (which
+> failed to rasterize most glyphs, a distinct node-canvas failure mode
+> from a clean text-layer extraction). Models 53 `fields[]` across 4 steps,
+> including bounded 7-slot General Partner and Limited Partner grids (per
+> this registry's `director1`/`director2`-style bounded-slot convention,
+> since unbounded repeating groups remain an unratified proposal) — slot 1
+> of each partner type required (a Limited Partnership by definition needs
+> at least one of each under the Limited Partnerships Act 2011), slots 2-7
+> optional with no gating field, since the source prints no "number of
+> partners" count or checkbox to condition on. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed
+> judgment call. Mauritius now stands at 4 of 6 verticals (Passport, DMV,
+> Business Formation, Visa); Taxes (MRA's individual-return filing is
+> login-gated) and National ID (no standard first-issue NIC application
+> form) remain confirmed dead ends per GOV-4603/GOV-4617's own scouting
+> record.
 
 > **Update (2026-07-23, GOV-4617, "GovSchema Standard Research"): Mauritius's
 > Visa vertical opens (3 of 6 for the jurisdiction)**, via
@@ -22463,8 +22495,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
 0n. **Mauritius opened as a new jurisdiction (GOV-4603, 2026-07-23), with
     three further verticals banked as open, STRONG backlog; Guatemala
     re-scouted and found weak. Update (GOV-4610, 2026-07-23): DMV now
-    authored. Update (GOV-4617, 2026-07-23): Visa now authored, Business
-    Formation remains banked:**
+    authored. Update (GOV-4617, 2026-07-23): Visa now authored. Update
+    (GOV-4624, 2026-07-24): Business Formation now authored too, closing
+    Mauritius's entire banked backlog (4/6):**
     - **Mauritius** — re-scouted this cycle as one of two runner-up
       new-jurisdiction candidates from Trinidad and Tobago's own GOV-4568
       scouting pass (the other being Guatemala, below), not previously
@@ -22501,7 +22534,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       form, ~60,000 bytes); full company incorporation itself routes
       through the login-gated CBRIS portal, so this candidate is scoped to
       the directly-downloadable forms (Limited Partnership, LLP,
-      Foundation, etc.), not company incorporation. **Visa**: the Passport
+      Foundation, etc.), not company incorporation. **Update (GOV-4624,
+      2026-07-24): now authored** as
+      `mu/cbrd/limited-partnership-registration@1.0.0`, scoped to the
+      Limited Partnership registration form (`LP2.pdf`) specifically — see
+      the Executive Summary update above. **Opens Mauritius's Business
+      Formation vertical (4/6), closing this jurisdiction's entire
+      GOV-4603-banked backlog.** **Visa**: the Passport
       and Immigration Office's own bilingual "Application for a Visa for
       Mauritius / Demande de Visa pour Maurice",
       `passport.govmu.org/passport/?mdocs-file=712` (296,537 bytes) —
@@ -22518,8 +22557,9 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       return" notes PDF surviving unauthenticated) and National ID (the
       National Identity Card Unit's own site has no standard first-issue
       NIC application form, only a narrow home-visit-registration form for
-      bedridden citizens) are confirmed dead ends. Business Formation
-      remains open, STRONG banked backlog for a future cycle.
+      bedridden citizens) are confirmed dead ends. **Update (GOV-4624,
+      2026-07-24): Business Formation now authored too** (see above) —
+      Mauritius's entire GOV-4603-banked backlog is now closed at 4/6.
     - **Guatemala** — re-scouted in the same cycle, found weak: **Business
       Formation** is STRONG (the Registro Mercantil's own live,
       unauthenticated multi-section web form at
