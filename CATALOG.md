@@ -4,7 +4,59 @@
 
 ## Executive Summary
 
-**98 jurisdictions** | **658 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**98 jurisdictions** | **659 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4769, "GovSchema Standard Research"): Lesotho
+> gains a second Taxes companion schema** (vertical count unchanged —
+> already open since GOV-4755), via `ls/rsl/fbt-return@1.0.0` — Revenue
+> Services Lesotho's (RSL) Form FBT1, "Fringe Benefits Tax (FBT) Return".
+> Re-scanned RSL's own "Forms & Instructions" page fresh
+> (`https://www.rsl.org.ls/forms-and-instructions`, HTTP 200, re-verified
+> rather than trusting the prior cycle's own disclosure) and confirmed the
+> FBT Return and two editions of the Income Tax Return for Trusts and
+> Estates are still open backlog after GOV-4762 closed the Company Income
+> Tax Return candidate from the same library. Picked the FBT Return: a
+> genuinely distinct, quarterly (not annual) return type, and — at 2 pages
+> — a much tighter form than the Trusts and Estates return's own
+> Parts-A-through-G annual-return structure, needing no scope deferral.
+> Fetched live and unauthenticated
+> (`https://www.rsl.org.ls/sites/default/files/2024-07/FBT%20Return.pdf`,
+> HTTP 200, `application/pdf`, 1,006,801 bytes, sha256
+> `e4cb6a6a4e9ce9a99961eb83042ff7533a5ffed96453b3f14c83a834290a53d6`,
+> `Last-Modified: 2024-07-22`), no login/CAPTCHA gate. Like its Company
+> Income Tax Return sibling, the source is a flat, non-fillable PDF (2
+> pages) with zero AcroForm annotations, and this specimen's raw text
+> layer was found internally consistent (no ghost-text or scrambled-order
+> artifacts) — but its dense multi-column tables (Part 1's benefit-category
+> grid, Part 2's four-vehicle grid, Part 3's five-property grid) still
+> required rendering every page with node-canvas to correctly resolve
+> which columns are shaded/not-applicable (Motor Vehicles and Housing rows
+> have no "Employees' Contribution" column in Part 1 — visible only from
+> the rendered image's grey shading, not stated anywhere in the form's own
+> prose). Modeled the **complete form**, no deferred sections: Return
+> Details (header), Part 1 (Calculation of FBT Due, all nine benefit
+> categories), Part 2 (Motor Vehicles, four vehicle slots plus a
+> continuation-sheet total), Part 3 (Housing, five property slots plus a
+> continuation-sheet total), and the Declaration. 98 `fields[]` across 5
+> steps (using this registry's established bounded-slot pattern for the
+> repeated vehicle/property entities), 1 `documents[]` entry (the form's
+> own generic continuation-sheet allowance), and 3 `crossFieldValidation`
+> rules asserting each transcribed total matches its source line (Part
+> 2/Part 3 transfers into Part 1; Part 1's own Less Employees'
+> Contributions line against its Total row). The ×1.67 gross-up and @40%
+> rate relationships are disclosed in field descriptions rather than
+> enforced, since this registry's `crossFieldValidation` only supports
+> field-to-field comparison operators, not a scalar-multiple check. 6 mock
+> conformance scenarios (a no-benefits-provided minimal filing, a
+> motor-vehicle-plus-housing filing with matching transfers, two
+> deliberate cross-part transcription mismatches, a missing-required-field
+> case, and a loan-benefit filing exercising the Employees' Contribution
+> column that Motor Vehicles/Housing lack) reproduced via an ephemeral
+> checker; both validators pass (659/659). Lesotho's DMV vertical remains
+> soft backlog; the Income Tax Return for Trusts and Estates (two editions
+> found, current edition not yet resolved) remains RSL's own last
+> disclosed Taxes backlog item. See the document's own VERIFICATION.md for
+> the full sourcing record and every disclosed scoping/judgment call.
 
 > **Update (2026-07-24, GOV-4762, "GovSchema Standard Research"): Lesotho's
 > Taxes vertical gains a companion schema**, via
@@ -18701,6 +18753,17 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (81/94 jurisdictions — 86%)
 
+> **Update (2026-07-24, GOV-4769, "GovSchema Standard Research"): Lesotho
+> gains a third Taxes schema** (vertical count unchanged — already open
+> since GOV-4755), via `ls/rsl/fbt-return@1.0.0` — RSL's Form FBT1,
+> "Fringe Benefits Tax (FBT) Return", a quarterly return modeled in full
+> (no scope deferral): all nine benefit categories in Part 1, four
+> motor-vehicle slots in Part 2, five housing-property slots in Part 3,
+> and the Declaration. See the Executive Summary update above and the
+> document's own VERIFICATION.md for the full record. RSL's forms library
+> still discloses the Income Tax Return for Trusts and Estates (two
+> editions) as open backlog.
+
 > **Update (2026-07-24, GOV-4762, "GovSchema Standard Research"): Lesotho
 > gains a companion Taxes schema** (vertical count unchanged — already open
 > since GOV-4755), via `ls/rsl/company-income-tax-return@1.0.0` — RSL's
@@ -22474,7 +22537,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KZ** | 10 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **LS** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **LS** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **LV** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **MA** | 2 | ✓ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -23980,6 +24043,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       — see the Executive Summary and Taxes vertical updates above for the
       full record. The FBT Return and the Income Tax Return for Trusts and
       Estates remain open backlog from the same RSL forms library.
+      **Update (GOV-4769): the FBT Return backlog candidate is now closed
+      too**, via `ls/rsl/fbt-return@1.0.0` (RSL's Form FBT1), modeled in
+      full with no scope deferral — see the Executive Summary and Taxes
+      vertical updates above for the full record. RSL's own forms library
+      still discloses the Income Tax Return for Trusts and Estates (two
+      editions found, current edition not yet resolved) as the last open
+      Taxes backlog item; Lesotho's DMV, Passport, National ID, and Visa
+      verticals remain soft backlog / stated-suspended per the prior
+      cycles' own findings.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
