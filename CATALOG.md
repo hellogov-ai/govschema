@@ -4,7 +4,83 @@
 
 ## Executive Summary
 
-**97 jurisdictions** | **655 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**98 jurisdictions** | **656 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4748, "GovSchema Standard Research"): Lesotho
+> opens as the registry's 98th jurisdiction**, via
+> `ls/obfc/company-incorporation-application@1.0.0` — the Companies
+> Registry's Form 1, "Application for Incorporation of a Company"
+> (Companies Act 2011, sections 4, 5, 6 and 16), fetched live and
+> unauthenticated from the One-Stop Business Facilitation Centre's own
+> domain (`http://www.obfc.org.ls/legislation/form%201.pdf`, HTTP 200,
+> `application/pdf`, 480,143 bytes, sha256
+> `c6538309c9b9e2af0f69d01c00e749d2d178db74699417de849594651cad0b26`,
+> `Last-Modified: 2016-07-08`). This cycle first re-confirmed every
+> recently-banked backlog candidate for a partway-open jurisdiction is now
+> exhausted: Hungary's Business Formation candidate is a **newly confirmed
+> dead end** (`ceginformaciosszolgalat.kormany.hu`'s own "Szerzodesmintak"
+> page states that, since 2025-03-01, its former downloadable Word-format
+> company-constitution templates are no longer accepted, and incorporation
+> now runs exclusively through a sealed third-party XML e-filing tool);
+> Tunisia's DMV candidate (`attt.com.tn`) remains unreachable on a fresh
+> timeout; Belgium's National ID candidate remains this registry's own
+> standing confirmed-weak finding; Morocco's four remaining verticals
+> (Business Formation/OMPIC, DMV/NARSA, Taxes/DGI, National ID/CNIE)
+> remain unreachable or login-gated, unchanged from three days prior; and
+> North Macedonia's own banked Visa candidate remains a soft dead end (a
+> pre-2019-rename PDF with no live-site corroboration). Georgia's own
+> disclosed backlog (DMV, Passport, National ID, and a Taxes re-attempt)
+> was also screened this cycle: the Public Service Development Agency's
+> (SDA, formerly the Civil Registry Agency) own `id-card`/`passport`
+> service pages both confirm in-person biometric enrollment only, with no
+> citizen-filled application form published; SDA's own products listing
+> carries no vehicle-registration service at all (that function sits
+> elsewhere in Georgia's government), and the Ministry of Internal
+> Affairs' patrol-police site (`police.ge`) renders as an empty
+> JavaScript shell to this cycle's tooling; the Revenue Service's own
+> `rs.ge` continues to publish only brochures/video guides, not a
+> downloadable declaration. Georgia's own remaining backlog is left as
+> **weak, not a hard dead end** — a future cycle with real browser
+> automation should re-check `police.ge` specifically. Pivoted to
+> scouting genuinely new jurisdictions and found Lesotho (ISO code `LS`,
+> absent from the registry entirely) via `obfc.org.ls`'s own extensive,
+> live, unauthenticated PDF forms library. `www.obfc.org.ls` resolves
+> (the bare `obfc.org.ls`, without `www`, does not). The source PDF is
+> flat (non-AcroForm, confirmed via a raw `AcroForm` byte-search) but
+> every checkbox glyph on every page is emitted at the very end of that
+> page's own `pdfjs-dist` text-item stream, out of visual sequence with
+> its own label — a distinct non-sequential-reading-order pattern from
+> every prior case this registry has documented, resolved by
+> cross-referencing each checkbox's own x/y position against its printed
+> label's y-coordinate rather than trusting item order. Models 101
+> `fields[]` across 11 steps mirroring the form's own 11 numbered
+> sections: the presenter's own particulars; the proposed company name
+> and a name-similarity declaration; the company's constitution (Model
+> Articles adoption, and public/non-profit/private character, each a
+> single "tick if yes" box with no printed "No" counterpart); share
+> capital and anticipated turnover; when the company expects to start
+> business (one printed "Later" option plus a second, unlabelled tick-box
+> read by elimination as "immediately") and whether it will have
+> employees; business-activity codes; the registered office; the main
+> business address if different; where legal documents may be served;
+> a table of directors/secretaries/executives/nominated
+> officers/accountants/agents (bounded to 3 slots — the source's own
+> "Use continuation sheet if necessary" instruction prints no maximum,
+> matched here to Section 11's own fixed 3-block tax-purpose capacity);
+> and, for whichever of those officials hold the position of Director,
+> further bank/marital-status/spouse particulars the form itself
+> restricts to directors specifically. 4 valid conformance fixtures (0
+> errors each) plus 43 mutation-control fixtures (34 static-required, 8
+> requiredWhen-gate, 1 unknown-field) reproduced via an ephemeral
+> checker; both validators pass (656/656). **Lesotho opens with 1 of 6
+> verticals** (Business Formation). Form 1A/1B (shareholder lists), Form
+> 8 (director's consent to act), and Schedules 2-4 (Model Articles for
+> private/public/single-shareholder companies) — each independently
+> confirmed live and unauthenticated this cycle from the same forms
+> library — are disclosed, open backlog for future companion schemas;
+> Lesotho's other five verticals are not yet screened. See the document's
+> own VERIFICATION.md for the full sourcing record and every disclosed
+> scoping/judgment call.
 
 > **Update (2026-07-24, GOV-4741, "GovSchema Standard Research"): Bosnia and
 > Herzegovina's DMV vertical opens (5 of 6)**, via
@@ -17236,7 +17312,15 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (85/89 jurisdictions — 96%)
+### Business Formation — Incorporation, LLC, Company Registration (86/90 jurisdictions — 96%)
+
+> **Update (2026-07-24, GOV-4748, "GovSchema Standard Research"): Lesotho
+> opens this vertical, and the jurisdiction itself (1 of 6)**, via
+> `ls/obfc/company-incorporation-application@1.0.0` — see the Executive
+> Summary update above for the full record. Numerator and denominator both
+> updated from 85/89 to 86/90 (a brand-new jurisdiction, reached for
+> Business Formation first). DMV, Taxes, Visa, Passport, and National ID
+> remain open backlog, not yet screened.
 
 > **Update (2026-07-24, GOV-4713, "GovSchema Standard Research"): Bosnia
 > and Herzegovina opens this vertical, and the jurisdiction itself (1 of
@@ -22250,6 +22334,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KZ** | 10 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **LS** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **LV** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **MA** | 2 | ✓ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -23678,6 +23763,60 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       other Federation of Bosnia and Herzegovina canton's own Ministry of
       Interior are disclosed, open backlog — see the document's own
       VERIFICATION.md.
+0q. **Backlog exhaustion re-confirmed and Lesotho opened as the registry's
+    98th jurisdiction (GOV-4748, 2026-07-24):**
+    - **Hungary Business Formation — newly confirmed a dead end.**
+      `ceginformaciosszolgalat.kormany.hu/szerzodesmintak` (reachable this
+      cycle with `curl -k`, unlike the GOV-4638 cycle's own broken-TLS-chain
+      finding — a client trust-store issue, not a site outage) states in
+      its own prose that, since 2025-03-01, the site's former downloadable
+      Word-format company-constitution templates are accepted only through
+      2025-02-28 and incorporation now runs exclusively through a sealed
+      third-party XML e-filing tool (Wolters Kluwer / eGov / ORAC / Net-
+      Solicitor / ViBaStile). The site's own "nyomtatványok" (forms) page
+      lists only company-information-request forms, not an incorporation
+      template. A hard dead end for this publishing channel, not merely a
+      TLS/connectivity issue as previously banked.
+    - **Tunisia DMV** — `attt.com.tn` timed out again this cycle, unchanged
+      from the GOV-4638/GOV-4673 findings; still weak/unreachable, not
+      re-confirmed as a hard dead end.
+    - **Morocco's four remaining verticals** (Business Formation via
+      `directentreprise.ma`/OMPIC, DMV via NARSA, Taxes via DGI/SIMPL,
+      National ID via `cnie.ma`) were each re-fetched fresh this cycle:
+      `directentreprise.ma` no longer resolves, `ompic.ma` refuses
+      connection, and `narsa.ma`/`cnie.ma` both time out — unchanged from
+      the GOV-4114 finding three days prior. Still open backlog, not a
+      hard dead end (Passport already open via `ma/dgsn/passport-application`).
+    - **North Macedonia Visa** — the GOV-3238-banked 2014 pre-Prespa-
+      Agreement PDF remains the only specimen found; not re-authored,
+      remains a soft dead end for lack of live-site corroboration.
+    - **Georgia's own disclosed backlog** (DMV, Passport, National ID, and
+      a "re-attempt" of Taxes) was screened fresh: the Public Service
+      Development Agency's (`sda.gov.ge`, the Ministry of Justice body
+      administering ID cards, passports, and civil registration) own
+      `id-card` and `passport` product pages both state in full prose that
+      applications are filed in person at a Public Service Hall with no
+      citizen-completed form (biometric capture + clerk-entered data,
+      matching this registry's own CZ/Czech-style in-person-only pattern);
+      `sda.gov.ge`'s own products listing carries no vehicle-registration
+      service at all — that function sits with a different agency, whose
+      civilian-facing domain (`police.ge`) rendered as an empty
+      JavaScript-only shell to this cycle's plain-`curl` tooling, not
+      independently confirmed reachable or unreachable by a real browser;
+      the Revenue Service's own `rs.ge` continues to publish only
+      brochures and video guides for individual income-tax declarations,
+      not a downloadable blank return. Left as **weak backlog, not
+      confirmed dead ends** — `police.ge` specifically warrants a future
+      cycle with real browser automation before being written off.
+    - **Lesotho** — scouted next as a genuinely new jurisdiction (ISO code
+      `LS`, absent from the registry entirely). Opened via
+      `ls/obfc/company-incorporation-application@1.0.0` — see the
+      Executive Summary and Business Formation vertical updates above for
+      the full record. Companion forms 1A/1B (shareholder lists), 8
+      (director's consent to act), and Schedules 2-4 (Model Articles for
+      private/public/single-shareholder companies) are disclosed, open
+      backlog for future companion schemas; Lesotho's DMV, Taxes, Visa,
+      Passport, and National ID verticals remain entirely unscreened.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
