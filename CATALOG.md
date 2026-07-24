@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**98 jurisdictions** | **660 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**99 jurisdictions** | **661 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4783, "GovSchema Standard Research"): Eswatini
+> opens as the registry's 99th jurisdiction**, via
+> `sz/ebc/special-voting-application@1.0.0` — the Elections and Boundaries
+> Commission's (EBC) "Application for Special Voting" (Election Act 6/2013
+> ss.46(5)&46; Elections Amendment Act No.8/2023 s.46 bis), opening the
+> National ID & Civic Documents vertical (1 of 6). This cycle first
+> re-screened two standing "weak, not confirmed dead" leads with a real
+> Chromium/Playwright browser rather than plain `curl`, per those leads'
+> own disclosed next step: Lesotho's DMV/Passport/Visa verticals were
+> re-fetched fresh with no change (still soft backlog), and Georgia's DMV
+> lead (`police.ge`) now renders fully in a real browser — confirming it
+> is the Ministry of Internal Affairs' own live news/services portal, not
+> a dead JS shell — but its own linked vehicle-registration/driving-licence
+> authority (`sa.gov.ge`, the LEPL "Service Agency") states on every one of
+> its own process pages that applications are filled out on-site at a
+> branch counter, now a **confirmed dead end** rather than merely
+> unconfirmed. Pivoted to scouting a genuinely new jurisdiction: Eswatini
+> (ISO 3166-1 alpha-2 code SZ), absent from the registry entirely. Its
+> Business Formation e-service portal (`online.gov.sz`) is login-gated
+> with no field-level guide (a dead end for this schema); its Elections
+> and Boundaries Commission (`elections.org.sz`) publishes a small library
+> of real, unauthenticated PDFs directly, including the Special Voting
+> application authored here — a 2-page flat, non-fillable PDF (HTTP 200,
+> 622,079 bytes, sha256
+> `ad75c665b90e9aae46944aa6e100a30d4b5bc3894f13167c93aa4bcf3ebf764d`,
+> `Last-Modified: 2023-09-14`), no login/CAPTCHA gate, with checkbox
+> layout confirmed via `node-canvas` rendering. Models the applicant's own
+> registration/polling particulars, the election phase(s) applied for
+> (Primary/Secondary/Both), the single category the applicant falls under
+> for consideration, a free-text reasons statement, contact details, and
+> signature — 13 `fields[]` across 5 steps. The form's own
+> Commission-completed "Approval"/"Reasons for rejection" panel and
+> "Head of Secretariat"/Date sign-off are out of scope, being agency- not
+> applicant-completed. General voter registration itself (distinct from
+> this Special Voting application) was independently checked and confirmed
+> in-person/chiefdom-based with no downloadable form. 4 mock conformance
+> scenarios (including a positive and negative control for the
+> `individualOrEntitySpecify` requiredWhen gate) plus 13 required-field and
+> 1 unknown-field mutation fixtures — 18 total — reproduced via an
+> ephemeral checker; both validators pass (661/661). Eswatini's DMV,
+> Business Formation, Taxes, Visa, and Passport verticals remain entirely
+> unscreened. See the document's own VERIFICATION.md for the full sourcing
+> record and every disclosed scoping/judgment call.
 
 > **Update (2026-07-24, GOV-4776, "GovSchema Standard Research"): Lesotho
 > gains a fourth Taxes companion schema**, via
@@ -21768,7 +21812,49 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (55/81 jurisdictions — 68%)
+### National ID & Civic Documents (56/82 jurisdictions — 68%)
+
+> **Update (2026-07-24, GOV-4783, "GovSchema Standard Research"): Eswatini
+> opens as the registry's 99th jurisdiction, via National ID & Civic
+> Documents (1 of 6)**, via `sz/ebc/special-voting-application@1.0.0` —
+> the Elections and Boundaries Commission's (EBC) "Application for Special
+> Voting" (Election Act 6/2013 ss.46(5)&46; Elections Amendment Act
+> No.8/2023 s.46 bis). A registered voter unavailable at their own polling
+> station on polling day (electoral staff, security personnel, disciplined
+> force, essential services, or a Swazi national/entity such as a foreign
+> or diplomatic mission residing outside the Kingdom) applies to the
+> Commission to be considered for a special vote ahead of the Primary
+> Election, the Secondary Election, or both. Fetched live and
+> unauthenticated
+> (`https://www.elections.org.sz/2023/wp-content/uploads/2023/09/EBC-Special-voting-form-2023-1.pdf`,
+> HTTP 200, `application/pdf`, 622,079 bytes, sha256
+> `ad75c665b90e9aae46944aa6e100a30d4b5bc3894f13167c93aa4bcf3ebf764d`,
+> `Last-Modified: 2023-09-14`), no login/CAPTCHA gate, linked directly from
+> the Commission's own current homepage. A flat, non-fillable 2-page PDF
+> with zero AcroForm annotations; the text layer read in natural order but
+> every checkbox rendered as a zero-glyph item, so `node-canvas` rendering
+> (scale 2.0) confirmed the two single-choice checkbox groups (a 3-box
+> election-phase row; a 6-box vertical applicant-category stack). Models
+> the applicant's registration/polling particulars (Details of Applicant
+> table), the election phase(s) applied for, the single applicant category
+> for consideration, a `requiredWhen`-gated free-text specification for
+> the "Individual or Entity" category, a free-text reasons statement,
+> contact details (a mobile number and email address distinct from the
+> Details table's own separate contact number), and a signature — 13
+> `fields[]` across 5 steps. The form's own Commission-completed
+> "Approval"/"Reasons for rejection" panel and "Head of
+> Secretariat"/Date sign-off are out of scope, being agency- not
+> applicant-completed. Eswatini's Business Formation e-service portal
+> (`online.gov.sz`) was screened and found login-gated with no
+> field-level user guide — a dead end for this schema; general voter
+> registration (distinct from this Special Voting application) was
+> independently confirmed in-person/chiefdom-based with no downloadable
+> form. Eswatini's DMV, Business Formation, Taxes, Visa, and Passport
+> verticals remain entirely unscreened. 4 mock conformance scenarios
+> (including a positive and negative control for the
+> `individualOrEntitySpecify` gate) plus 13 required-field and 1
+> unknown-field mutation fixtures reproduced via an ephemeral checker;
+> both validators pass (661/661).
 
 > **Update (2026-07-24, GOV-4734, "GovSchema Standard Research"): Bosnia and
 > Herzegovina's National ID & Civic Documents vertical opens (4 of 6)**, via
@@ -22638,6 +22724,7 @@ now closed.
 | **SI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **SN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
+| **SZ** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **TN** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
@@ -24080,6 +24167,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       not a downloadable blank return. Left as **weak backlog, not
       confirmed dead ends** — `police.ge` specifically warrants a future
       cycle with real browser automation before being written off.
+      **Update (GOV-4783, 2026-07-24): `police.ge`'s DMV lead is now a
+      confirmed dead end.** Re-fetched with a real Chromium/Playwright
+      session (not plain `curl`): the domain renders fully — it is the
+      Ministry of Internal Affairs' own news/services portal, not a dead
+      JS shell — and links out to `sa.gov.ge`, the LEPL "Service Agency"
+      (მომსახურების სააგენტო) that actually administers vehicle
+      registration and driving licences. Every one of that agency's own
+      process pages (`/p/vehicle/registration`, `/p/vehicle/transfer`,
+      `/p/driver-license/change-recovery` and its `/nonresident` variant)
+      states in its own prose that the application ("განცხადება") is
+      filled out on-site ("ივსება ადგილზე") at a Service Agency branch
+      counter, alongside supporting documents — a genuine in-person/
+      counter-mediated process with no citizen-fillable form published
+      online, now confirmed via a real rendered browser rather than
+      inferred from an unreachable JS shell. Do not re-attempt without a
+      genuinely new source (e.g. a leaked/republished paper application
+      or a policy change to online filing).
     - **Lesotho** — scouted next as a genuinely new jurisdiction (ISO code
       `LS`, absent from the registry entirely). Opened via
       `ls/obfc/company-incorporation-application@1.0.0` — see the
@@ -24131,6 +24235,31 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       library backlog from this cycle's own scouting is now fully closed;
       Lesotho's DMV, Passport, National ID, and Visa verticals remain soft
       backlog / stated-suspended per the prior cycles' own findings.
+      **Update (GOV-4783, 2026-07-24): DMV, Passport, and Visa re-fetched
+      fresh, no change.** `mopwt.gov.ls` still publishes no Traffic and
+      Transport Department page or downloadable driving-licence/vehicle-
+      registration form; `passports.homeaffairs.gov.ls` resolves only to a
+      passport-status-checker single-page app ("Lesotho Passport Status"),
+      not an application form; `evisa.gov.ls` did not resolve at all.
+      Still soft backlog, not hard-confirmed dead ends — unchanged from
+      the GOV-4748/GOV-4755/GOV-4762 findings.
+0r. **Eswatini opened as the registry's 99th jurisdiction (GOV-4783,
+    2026-07-24), via National ID & Civic Documents:** the Elections and
+    Boundaries Commission's (EBC) "Application for Special Voting"
+    (Election Act 6/2013 ss.46(5)&46; Elections Amendment Act No.8/2023
+    s.46 bis), authored as `sz/ebc/special-voting-application@1.0.0` — see
+    the Executive Summary and National ID & Civic Documents vertical
+    updates above for the full record. Eswatini's Business Formation
+    candidate (the Registrar of Companies' own e-service portal,
+    `online.gov.sz`) is a login-gated ASP.NET wizard with a "Sign Up"-only
+    registration path and no field-level user guide published alongside
+    it — a dead end for a field-by-field schema, consistent with this
+    registry's standing precedent of not authoring against a wizard whose
+    fields cannot be independently observed. General voter registration
+    (as distinct from the Special Voting application authored here) was
+    independently checked and confirmed in-person/chiefdom-based, with no
+    citizen-fillable form published. Eswatini's DMV, Business Formation,
+    Taxes, Visa, and Passport verticals remain entirely unscreened.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
