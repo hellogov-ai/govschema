@@ -4,7 +4,58 @@
 
 ## Executive Summary
 
-**98 jurisdictions** | **657 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**98 jurisdictions** | **658 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4762, "GovSchema Standard Research"): Lesotho's
+> Taxes vertical gains a companion schema**, via
+> `ls/rsl/company-income-tax-return@1.0.0` — Revenue Services Lesotho's
+> (RSL) Form S128-C, "Company Income Tax Return for Year Ended 31 March
+> 2023". Screened Lesotho's DMV vertical first per the prior cycle's own
+> recommendation: the Ministry of Public Works and Transport's own site
+> (`mopwt.gov.ls`) publishes only building/electrical
+> contractor-categorization and roads-policy documents under its own
+> "Downloads" section, with no driving-licence, vehicle-registration, or
+> Traffic and Transport Department form; `gov.ls`'s own driving-licence
+> e-service page lists requirements/fees/timeline only, with no
+> downloadable application form (Lesotho's Form T.C. 28/T.C. 14 is
+> described by third-party sources as issued in person at the Ministry's
+> own office, not published online) — left as soft backlog, not a
+> hard-confirmed dead end, since a future cycle with real browser
+> automation against the Traffic and Transport Department (phone-only
+> contact found this cycle) may still turn up an online channel. Pivoted
+> to RSL's own disclosed Taxes backlog instead, fetched live and
+> unauthenticated
+> (`https://www.rsl.org.ls/sites/default/files/2024-07/Company%20Income%20Tax%20Return%202023%20%282%29.pdf`,
+> HTTP 200, `application/pdf`, 317,637 bytes, sha256
+> `28953225051c61749a395001faba1ae1e96c4dbd58b4dbe21314abf25327cc53`,
+> `Last-Modified: 2024-07-22`), no login/CAPTCHA gate. Like its individual
+> counterpart, the source is a flat, non-fillable 6-page PDF with zero
+> AcroForm annotations, but unlike the individual return's own
+> duplicated-text extraction finding, this specimen's raw text layer was
+> found consistent with the rendered page images on every page used in
+> this schema. Scoped v1.0.0 to the **core declaration** a Lesotho-resident
+> company with only Lesotho-source business income completes — Details of
+> Company, Part A (Lesotho-Source Business Income & Expenses), Part D
+> (Chargeable Income, Lesotho-source lines only), Part F (Tax
+> Computation), and the Declaration of Paid Preparer / Declaration of
+> Nominated Officer sections — deferring Part B (Foreign-Source Business
+> Income & Expenses), Part C (Property & Other Income and Expenses), Part
+> E (Credit for Foreign Tax Paid), and Part G (Related Parties
+> Transactions Reporting) to a future minor version, consistent with this
+> registry's established main-form-now/companion-schedules-later
+> precedent. 47 `fields[]` across 5 steps, 2 `documents[]` entries, and 6
+> `crossFieldValidation` rules asserting each transcribed total matches
+> its source line (Part A → Part D → Part F). 6 mock conformance scenarios
+> (a clean resident-manufacturer filing, an overpayment-claim pair with
+> and without the required proof-of-banking-details attachment, two
+> deliberate cross-part transcription mismatches, and a non-resident
+> company electing the section 109 flat 40% rate) reproduced via an
+> ephemeral checker; both validators pass (658/658). Lesotho's DMV vertical
+> remains unopened; RSL's own forms library still separately discloses the
+> FBT Return and the Income Tax Return for Trusts and Estates as open
+> backlog for future companion schemas. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed
+> scoping/judgment call.
 
 > **Update (2026-07-24, GOV-4755, "GovSchema Standard Research"): Lesotho's
 > Taxes vertical opens (2 of 6)**, via
@@ -18650,6 +18701,24 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (81/94 jurisdictions — 86%)
 
+> **Update (2026-07-24, GOV-4762, "GovSchema Standard Research"): Lesotho
+> gains a companion Taxes schema** (vertical count unchanged — already open
+> since GOV-4755), via `ls/rsl/company-income-tax-return@1.0.0` — RSL's
+> Form S128-C, "Company Income Tax Return for Year Ended 31 March 2023",
+> fetched live and unauthenticated from the same "Forms & Instructions"
+> page as the individual return. Also a flat, non-fillable PDF (6 pages),
+> but unlike the individual return's own ghost-text finding, this
+> specimen's text layer was found consistent with the rendered page
+> images. Scoped to the core declaration a Lesotho-resident company with
+> only Lesotho-source business income completes (Details of Company, Part
+> A Lesotho-Source Business Income, Part D Chargeable Income Lesotho-only,
+> Part F Tax Computation, Declaration of Paid Preparer/Nominated Officer),
+> deferring Parts B/C/E/G (foreign-source income, property & other income,
+> foreign tax credit, related-party reporting) to a future minor version.
+> See the Executive Summary update above and the document's own
+> VERIFICATION.md for the full record. RSL's forms library still discloses
+> the FBT Return and Trusts/Estates return as open backlog.
+
 > **Update (2026-07-24, GOV-4755, "GovSchema Standard Research"): Lesotho's
 > Taxes vertical opens (2 of 6 for the jurisdiction)**, via
 > `ls/rsl/individual-income-tax-return@1.0.0` — Revenue Services Lesotho's
@@ -22405,7 +22474,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KZ** | 10 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **LS** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **LS** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **LV** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **MA** | 2 | ✓ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -23895,10 +23964,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       were screened this cycle and left as soft backlog (Ministry of Home
       Affairs in-person/biometric-only, no downloadable form); Visa
       (e-VISA) is stated "currently suspended" on the ministry's own FAQ
-      page. Lesotho's DMV vertical remains entirely unscreened. RSL's own
-      forms library separately discloses open backlog for a future
-      companion Taxes schema: Company Income Tax Return, FBT Return, and
-      the Income Tax Return for Trusts and Estates.
+      page. RSL's own forms library separately discloses open backlog for a
+      future companion Taxes schema: Company Income Tax Return, FBT
+      Return, and the Income Tax Return for Trusts and Estates.
+      **Update (GOV-4762): Lesotho's DMV vertical was screened and left as
+      soft backlog, not a hard-confirmed dead end** — the Ministry of
+      Public Works and Transport's own site (`mopwt.gov.ls`) publishes only
+      building/electrical contractor-categorization and roads-policy
+      documents, with no driving-licence or vehicle-registration form; the
+      Traffic and Transport Department (Form T.C. 28/T.C. 14, phone
+      `22313739`) appears to be in-person/office-issued only, but a future
+      cycle with real browser automation should still confirm this rather
+      than treat it as exhausted. **The Company Income Tax Return backlog
+      candidate is now closed**, via `ls/rsl/company-income-tax-return@1.0.0`
+      — see the Executive Summary and Taxes vertical updates above for the
+      full record. The FBT Return and the Income Tax Return for Trusts and
+      Estates remain open backlog from the same RSL forms library.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
