@@ -1,0 +1,143 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "be/mobilit/vehicle-registration-application",
+  "version": "1.0.0",
+  "title": "Belgium Vehicle Registration Application (DIV / Federal Public Service Mobility and Transport)",
+  "description": "The Federal Public Service Mobility and Transport's (SPF Mobilité et Transports, publicly branded \"mobilit.belgium.be\") Vehicle Registration Directorate (Direction pour l'Immatriculation des Véhicules, DIV) \"Demande d'immatriculation d'un véhicule\" — the pink vehicle-registration request form used, per the authority's own site, for registering cars, vans, heavy commercial vehicles, motorcycles, mopeds, trailers, and caravans alike under a single federal form, sidestepping Belgium's regional (Flemish/Walloon/Brussels-Capital) fragmentation of other DMV-adjacent processes. Fetched directly and unauthenticated as a static, watermarked \"SPECIMEN\" PDF from mobilit.belgium.be. Advances Belgium's DMV vertical, previously banked as open, STRONG backlog by GOV-4638 (\"GovSchema Standard Research\") alongside Visa, once Belgium opened as the registry's 95th jurisdiction via Passport (GOV-4645). This edition is the French-language specimen; the same form is also published in parallel, functionally identical Dutch- and German-language editions. Models the applicant-facing registration-type, vehicle-data, and applicant-identity sections of this single-page, densely coded form; excludes the vehicle-inspection-station reservation frame and the insurer's own block, both of which are completed by parties other than the applicant. This schema does not submit the application itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Belgium or its Federal Public Service Mobility and Transport.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "BE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Federal Public Service Mobility and Transport (Service public fédéral Mobilité et Transports), Vehicle Registration Directorate (Direction pour l'Immatriculation des Véhicules)",
+    "abbreviation": "DIV",
+    "url": "https://mobilit.belgium.be/fr/route/immatriculer/immatriculer/immatriculer-une-voiture"
+  },
+  "process": {
+    "type": "application",
+    "language": "fr"
+  },
+  "source": {
+    "url": "https://mobilit.belgium.be/sites/default/files/documents/publications/2023/dim_fr_recto_specimen.pdf",
+    "retrievedAt": "2026-07-24",
+    "documentRef": "Demande d'immatriculation d'un véhicule (DIV registration-request form, French \"recto\"/front-side specimen), 2023 edition, 1 page."
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-24",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-24",
+    "notes": "See VERIFICATION.md for the full write-up: source fetch/hash, the coded-field-label extraction method (glyph x/y position clustering, since the printed field codes such as C9/C1.1/X7 do not always sit adjacent to their own labels in a single reading order), node-canvas visual confirmation of the checkbox/grid layout, disclosed exclusions (inspection-station frame, insurer block), and every scoping/judgment call."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-24"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "registration_and_plate",
+      "title": "Registration Type, Plate, and Fuel",
+      "fields": ["registrationCategory", "plateAlreadyAvailable", "vehicleCondition", "plateFormat", "fuelType"],
+      "next": "vehicle_data"
+    },
+    {
+      "id": "vehicle_data",
+      "title": "Vehicle Data",
+      "fields": ["makeAndModel", "chassisNumber", "chassisCode", "chassisUnifierCode", "category", "genre", "wvtaNumber", "belgianReferenceNumber", "typeCode", "variantCode", "versionCode", "curbMass", "maxAuthorizedMass", "co2Emissions", "environmentalClass", "importedFromCountry", "firstRegistrationDate", "maxSpeed", "engineDisplacement", "enginePower", "seats", "standingPlaces", "colorCode", "powerToWeightRatio"],
+      "next": "applicant"
+    },
+    {
+      "id": "applicant",
+      "title": "The Applicant for Registration",
+      "fields": ["applicantType", "name", "firstName", "vatOrCompanyNumber", "establishmentUnitNumber", "legalForm", "nationalRegisterNumber", "street", "houseNumber", "boxNumber", "postalCode", "municipality", "contactPhoneOrEmail"],
+      "next": "additional_and_delivery"
+    },
+    {
+      "id": "additional_and_delivery",
+      "title": "Additional Declarations, Proxy, Delivery Address, and Express Delivery",
+      "fields": ["additionalDeclarationsOrProxyOrDeliveryAddress", "expressDeliveryRequested", "expressDeliverySignature"],
+      "next": "moped_and_plate_type"
+    },
+    {
+      "id": "moped_and_plate_type",
+      "title": "Moped-Specific Frame and Special Plate Type",
+      "fields": ["isSpeedPedelec", "speedPedelecAssistanceType", "plateTypeSpecial"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Language, Date, and Signature",
+      "fields": ["preferredLanguage", "applicationDate", "applicantSignature", "legalEntityDelegateName"]
+    }
+  ],
+  "fields": [
+    { "name": "registrationCategory", "label": "Registration Category", "type": "enum", "required": true, "sourceRef": "Code X1 — \"Immatriculation\": ☐ Normale ☐ Transit ☐ Nationale", "validation": { "enum": ["NORMAL", "TRANSIT", "NATIONAL"] } },
+    { "name": "plateAlreadyAvailable", "label": "Plate Already Available", "type": "boolean", "required": true, "description": "Whether the applicant already holds a physical plate to reuse, printed immediately beside the registration-category checkboxes.", "sourceRef": "Code A — \"Plaque disponible\": ☐ OUI ☐ NON" },
+    { "name": "vehicleCondition", "label": "Vehicle Condition", "type": "enum", "required": true, "sourceRef": "Code X2 — \"cocher UNE case\": ☐ Véhicule NEUF ☐ Véhicule USAGE", "validation": { "enum": ["NEW", "USED"] } },
+    { "name": "plateFormat", "label": "Plate Format", "type": "enum", "required": true, "sourceRef": "Code X3 — \"cocher UNE case\": ☐ Plaque normale (52x11 cm) ☐ Format carré (34x21 cm) ☐ Format moto (21x14 cm) ☐ Format cyclo (10x12 cm)", "validation": { "enum": ["NORMAL_52X11", "SQUARE_34X21", "MOTORCYCLE_21X14", "MOPED_10X12"] } },
+    { "name": "fuelType", "label": "Fuel Type", "type": "enum", "required": true, "sourceRef": "Code P3 — \"Carburant\", numbered list 1-15 plus 25", "validation": { "enum": ["GASOLINE", "DIESEL", "LPG_AND_GASOLINE", "ELECTRIC", "OTHER", "CNG", "GASOLINE_AND_ELECTRIC", "DIESEL_AND_ELECTRIC", "HYDROGEN", "MIXED", "DIESEL_AND_LPG", "ELECTRIC_AND_LPG", "BIOETHANOL", "HYDROGEN_AND_ELECTRIC", "GASOLINE_AND_CNG", "LNG"] } },
+
+    { "name": "makeAndModel", "label": "Make and Model", "type": "string", "required": true, "sourceRef": "Codes D1-D3 — \"Marque et Modèle\"" },
+    { "name": "chassisNumber", "label": "Chassis Number (VIN)", "type": "string", "required": true, "sourceRef": "Code E — \"N° de châssis\"" },
+    { "name": "chassisCode", "label": "Chassis Code", "type": "string", "required": false, "description": "A short type-approval code accompanying the chassis number, transcribed from the vehicle's own Certificate of Conformity or prior registration certificate.", "sourceRef": "Code E1 — \"Code\"" },
+    { "name": "chassisUnifierCode", "label": "Chassis Unifier Code", "type": "string", "required": false, "sourceRef": "Code E2 — \"Unifier\"" },
+    { "name": "category", "label": "Vehicle Category", "type": "string", "required": true, "description": "EU vehicle-category code (e.g. M1, N1, L1e), transcribed from the vehicle's own documentation.", "sourceRef": "Code J — \"Categ.\"" },
+    { "name": "genre", "label": "Vehicle Genre", "type": "string", "required": false, "sourceRef": "Code J1 — \"Genre\"" },
+    { "name": "wvtaNumber", "label": "Whole-Vehicle Type-Approval (WVTA) Number", "type": "string", "required": false, "sourceRef": "Code K — \"N° WVTA\"" },
+    { "name": "belgianReferenceNumber", "label": "Belgian Reference Number", "type": "string", "required": false, "sourceRef": "Code K1 — \"N° réf belge\"" },
+    { "name": "typeCode", "label": "Type Code", "type": "string", "required": false, "sourceRef": "Code D2-01 — \"Type\"" },
+    { "name": "variantCode", "label": "Variant Code", "type": "string", "required": false, "sourceRef": "Code D2-02 — \"Variante\"" },
+    { "name": "versionCode", "label": "Version Code", "type": "string", "required": false, "sourceRef": "Code D2-03 — \"Version\"" },
+    { "name": "curbMass", "label": "Curb Mass, kg (\"en ordre de marche\")", "type": "number", "required": true, "sourceRef": "Code G — \"Masse e.o.m.\"" },
+    { "name": "maxAuthorizedMass", "label": "Maximum Authorized Mass (MTM), kg", "type": "number", "required": true, "sourceRef": "Code F1 — \"MTM\"" },
+    { "name": "co2Emissions", "label": "CO2 Emissions, g/km", "type": "number", "required": false, "sourceRef": "Code V7 — \"CO2\"" },
+    { "name": "environmentalClass", "label": "Environmental Class", "type": "string", "required": false, "sourceRef": "Code V9 — \"Classe environ.\"" },
+    { "name": "importedFromCountry", "label": "Imported From (Country)", "type": "string", "required": false, "description": "Only completed if applicable, per the form's own \"cocher si applicable\" (check if applicable) instruction.", "sourceRef": "Code X6 — \"Véhicule importé de …………………….…(pays)\"" },
+    { "name": "firstRegistrationDate", "label": "Date of First Registration", "type": "date", "required": true, "description": "For a moped, the form's own footnote directs the applicant to enter the presumed date of first use if the exact date is unknown.", "sourceRef": "Code B — \"Date 1ère mise en circulation(*)\" / footnote \"(*) Pour cyclomoteur date présumée de 1ère mise en circulation\"" },
+    { "name": "maxSpeed", "label": "Maximum Speed, km/h", "type": "number", "required": false, "sourceRef": "Code T — \"Vitesse max\"" },
+    { "name": "engineDisplacement", "label": "Engine Displacement, cc", "type": "number", "required": false, "description": "Not applicable to purely electric vehicles.", "sourceRef": "Code P1 — \"cc\"" },
+    { "name": "enginePower", "label": "Engine Power, kW", "type": "number", "required": true, "sourceRef": "Code P2 — \"kW\"" },
+    { "name": "seats", "label": "Seating Places", "type": "number", "required": true, "sourceRef": "Code S1 — \"Places assises\"" },
+    { "name": "standingPlaces", "label": "Standing Places", "type": "number", "required": false, "sourceRef": "Code S2 — \"Places de bout\"" },
+    { "name": "colorCode", "label": "Color Code", "type": "string", "required": true, "sourceRef": "Code R — \"Code couleur\"" },
+    { "name": "powerToWeightRatio", "label": "Power-to-Weight Ratio, kW/kg", "type": "number", "required": false, "description": "Printed under a \"Motocyclette\" (Motorcycle) sub-heading — applicable to motorcycle registrations only.", "sourceRef": "Code Q — \"Rapport kW/kg\" (Motocyclette)" },
+
+    { "name": "applicantType", "label": "Applicant Type", "type": "enum", "required": true, "description": "Inferred from this form's own two-column layout under \"Le DEMANDEUR de l'immatriculation\" — a \"Personne morale\" (legal entity) column of company-identification fields printed beside a \"Personne physique\" (natural person) column, rather than a single explicit checkbox pair; see VERIFICATION.md.", "sourceRef": "\"Le DEMANDEUR de l'immatriculation\": \"Personne morale\" / \"Personne physique\"", "validation": { "enum": ["INDIVIDUAL", "LEGAL_ENTITY"] } },
+    { "name": "name", "label": "Name", "type": "string", "required": true, "classification": "pii", "description": "For a natural person, the surname per their identity card; for a legal entity, the registered name per the Crossroads Bank for Enterprises (Banque Carrefour des Entreprises).", "sourceRef": "Code C1.1 — \"Nom (suivant carte d'identité ou Banque Carrefour des Entreprises)\"" },
+    { "name": "firstName", "label": "First Name", "type": "string", "required": false, "requiredWhen": { "field": "applicantType", "equals": "INDIVIDUAL" }, "classification": "pii", "sourceRef": "Code C1.2 — \"1er prénom (carte d'identité)\"" },
+    { "name": "vatOrCompanyNumber", "label": "VAT or Company (Enterprise) Number", "type": "string", "required": false, "requiredWhen": { "field": "applicantType", "equals": "LEGAL_ENTITY" }, "sourceRef": "Code C9 — \"N° TVA ou N° d'entreprise\"" },
+    { "name": "establishmentUnitNumber", "label": "Establishment Unit Number", "type": "string", "required": false, "description": "A supplementary Crossroads Bank for Enterprises branch/unit identifier, not required on its own even for a legal-entity applicant.", "sourceRef": "Code C9.1 — \"N° d'unité d'établissement\"" },
+    { "name": "legalForm", "label": "Legal Form", "type": "string", "required": false, "requiredWhen": { "field": "applicantType", "equals": "LEGAL_ENTITY" }, "sourceRef": "Code C9.2 — \"Forme juridique\"" },
+    { "name": "nationalRegisterNumber", "label": "National Register Number", "type": "string", "required": false, "requiredWhen": { "field": "applicantType", "equals": "INDIVIDUAL" }, "classification": "sensitive-pii", "sourceRef": "Code C10 — \"N° Registre national\"" },
+    { "name": "street", "label": "Street", "type": "string", "required": true, "classification": "pii", "sourceRef": "Code C1.3 — \"Rue\"" },
+    { "name": "houseNumber", "label": "House Number", "type": "string", "required": true, "classification": "pii", "sourceRef": "Code C1.3 — \"N° maison\"" },
+    { "name": "boxNumber", "label": "Box Number", "type": "string", "required": false, "classification": "pii", "sourceRef": "Code C1.3 — \"N° boîte\"" },
+    { "name": "postalCode", "label": "Postal Code", "type": "string", "required": true, "classification": "pii", "sourceRef": "\"N° postal\"" },
+    { "name": "municipality", "label": "Municipality", "type": "string", "required": true, "classification": "pii", "description": "The form's own label notes this includes municipalities within the Brussels-Capital Region (\"y compris pour la région de Bruxelles\").", "sourceRef": "\"Commune (dénomination officielle, y compris pour la région de Bruxelles)\"" },
+    { "name": "contactPhoneOrEmail", "label": "Phone/GSM/Email", "type": "string", "required": true, "classification": "pii", "description": "Printed as a single blank line covering phone, mobile (GSM), or email, unlike this registry's convention of splitting these into separate fields elsewhere — modelled as one field matching this specimen's own single-line layout, so that the service can contact the applicant about any issues (per the form's own adjacent note).", "sourceRef": "\"Téléphone / GSM / Adresse E-mail:…… (Permet au service de vous contacter en cas d'éventuels problèmes)\"" },
+
+    { "name": "additionalDeclarationsOrProxyOrDeliveryAddress", "label": "Additional Declarations, Power of Attorney, or Delivery Address", "type": "string", "required": false, "sourceRef": "Code X10 — \"DECLARATIONS COMPLEMENTAIRES EVENTUELLES OU PROCURATION OU ADRESSE DE LIVRAISON\"" },
+    { "name": "expressDeliveryRequested", "label": "Express Delivery Requested (Surcharge Applies)", "type": "boolean", "required": false, "sourceRef": "Code X11 — \"ACCORD pour LIVRAISON EXPRESS contre SURCOUT (voir verso)\"" },
+    { "name": "expressDeliverySignature", "label": "Signature for Express-Delivery Agreement", "type": "string", "required": false, "requiredWhen": { "field": "expressDeliveryRequested", "equals": true }, "classification": "pii", "sourceRef": "\"SIGNATURE pour ACCORD\"" },
+
+    { "name": "isSpeedPedelec", "label": "Is a Speed Pedelec", "type": "boolean", "required": false, "description": "Only applicable to moped/e-bike registrations, per this frame's own \"CADRE SPECIAL POUR CYCLOMOTEURS\" (special frame for mopeds) heading.", "sourceRef": "Code X15 — \"Speedpedelec\": ☐ Oui (Vitesse avec assistance jusqu'à 45 km/h) ☐ Non" },
+    { "name": "speedPedelecAssistanceType", "label": "Speed Pedelec Assistance Type", "type": "enum", "required": false, "requiredWhen": { "field": "isSpeedPedelec", "equals": true }, "sourceRef": "\"Si oui\": ☐ assistance au pédalage uniquement ☐ assistance au pédalage et moteur autonome", "validation": { "enum": ["PEDAL_ASSIST_ONLY", "PEDAL_ASSIST_AND_AUTONOMOUS_MOTOR"] } },
+    { "name": "plateTypeSpecial", "label": "Special Plate Type", "type": "enum", "required": false, "description": "Only completed for the four special vehicle/use categories listed; left blank for an ordinary registration.", "sourceRef": "Code X16 — \"TYPE DE PLAQUE\": ☐ Oldtimer (O) ☐ Taxi (TX) ☐ Location avec chauffeur (TL) ☐ Tracteur agricole (G)", "validation": { "enum": ["OLDTIMER", "TAXI", "CHAUFFEURED_HIRE", "AGRICULTURAL_TRACTOR"] } },
+
+    { "name": "preferredLanguage", "label": "Preferred Language of Correspondence", "type": "enum", "required": true, "sourceRef": "Code X9 — \"Indiquer la langue souhaitée\": ☐ Français ☐ Nederlands ☐ Deutsch", "validation": { "enum": ["FRENCH", "DUTCH", "GERMAN"] } },
+    { "name": "applicationDate", "label": "Date", "type": "date", "required": true, "sourceRef": "Code X7 — \"Fait le………..\"" },
+    { "name": "applicantSignature", "label": "Applicant's Signature", "type": "string", "required": true, "classification": "pii", "sourceRef": "Code X8 — \"SIGNATURE du demandeur\"" },
+    { "name": "legalEntityDelegateName", "label": "Legal Entity's Delegate Name (in Capitals)", "type": "string", "required": false, "requiredWhen": { "field": "applicantType", "equals": "LEGAL_ENTITY" }, "classification": "pii", "description": "The form's own footnote directs that, for a legal-entity applicant, the signing delegate's name must also be printed in capital letters alongside the signature.", "sourceRef": "Code X8 footnote — \"S'il s'agit d'une personne juridique: le nom du délégué en MAJUSCULES également\"" }
+  ]
+}

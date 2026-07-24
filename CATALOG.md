@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**95 jurisdictions** | **646 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**95 jurisdictions** | **647 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4680, "GovSchema Standard Research"): Belgium's
+> DMV vertical opens (2 of 6)**, via `be/mobilit/vehicle-registration-application@1.0.0`
+> — the Federal Public Service Mobility and Transport's Vehicle Registration
+> Directorate (DIV) "Demande d'immatriculation d'un véhicule," the pink
+> vehicle-registration request form used across cars, vans, heavy vehicles,
+> motorcycles, and mopeds alike under one federal form, sidestepping
+> Belgium's 3-region fragmentation. Independently located and verified live
+> from GOV-4638's own banked description (no exact URL had been recorded)
+> at `mobilit.belgium.be` (HTTP 200, 200,538 bytes, a "SPECIMEN"-watermarked
+> reference copy). A fifth distinct PDF-extraction pattern for this
+> registry: a clean, non-scrambled text layer whose printed reading order
+> does not match a simple top-to-bottom pass (short alphanumeric field
+> codes are not always adjacent to their own labels), resolved via
+> y-band/x-column clustering and a node-canvas render that, unlike some
+> prior Latin-script cycles, painted essentially every glyph and checkbox
+> correctly. Models 52 `fields[]` across 6 steps (registration/plate/fuel;
+> vehicle technical data; applicant identity with an inferred
+> individual-vs-legal-entity discriminator; additional declarations/express
+> delivery; a moped-specific frame and special plate types; language/date/
+> signature), explicitly excluding the vehicle-inspection-station
+> reservation frame and the insurer's own block, both completed by parties
+> other than the applicant. 7 conformance scenarios reproduced via an
+> ephemeral checker; both validators pass. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed
+> scoping/judgment call. **Belgium now has 2 of 6 verticals** (Passport,
+> DMV); Visa, Business Formation, Taxes, and National ID remain confirmed
+> STRONG/caveated/weak per GOV-4638's own findings, not re-screened this
+> cycle.
 
 > **Update (2026-07-24, GOV-4673, "GovSchema Standard Research"): Tunisia's
 > Visa vertical opens (5 of 6)**, via `tn/mfa/visa-application@1.0.0` — the
@@ -16147,7 +16176,21 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (64/92 jurisdictions — 70%)
+### DMV — Vehicle Registration, Licensing, Permits (65/95 jurisdictions — 68%)
+
+> **Update (2026-07-24, GOV-4680, "GovSchema Standard Research"): Belgium's
+> DMV vertical opens (2 of 6 for the jurisdiction)**, via
+> `be/mobilit/vehicle-registration-application@1.0.0` — the Federal Public
+> Service Mobility and Transport's Vehicle Registration Directorate (DIV)
+> "Demande d'immatriculation d'un véhicule." See the Executive Summary's
+> GOV-4680 update above and the document's own VERIFICATION.md for the
+> full sourcing record, including the disclosed `applicantType`
+> discriminator (inferred, not a printed checkbox) and the exclusions of
+> the inspection-station and insurer blocks. Belgium's other three open
+> verticals (Visa, Business Formation, Taxes) remain STRONG/caveated
+> banked backlog (see Known Gaps entry 0o). Numerator updated from 64 to
+> 65; denominator corrected from 92 to 95 to match the registry's current
+> total jurisdiction count.
 
 > **Update (2026-07-23, GOV-4610, "GovSchema Standard Research"): Mauritius's
 > DMV vertical opens (2 of 6 for the jurisdiction)**, via
@@ -21665,7 +21708,7 @@ now closed.
 | **AT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BE** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| **BE** | 2 | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BO** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **BR** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -22924,6 +22967,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       registry's 95th jurisdiction (1/6).** Visa, DMV, Business Formation,
       Taxes, and National ID remain confirmed strong/caveated/weak per this
       item's own findings above, not re-screened this cycle.
+      **Update (GOV-4680, 2026-07-24): DMV now authored** as
+      `be/mobilit/vehicle-registration-application@1.0.0` — this item's own
+      banked description ("the federal DIV vehicle-registration specimen
+      PDF via mobilit.belgium.be") had no specific URL recorded, so this
+      cycle independently located and verified a live match at
+      `mobilit.belgium.be` itself (the authority's own domain), HTTP 200,
+      200,538 bytes — see the Executive Summary and DMV vertical updates
+      above. **Belgium now has 2 of 6 verticals** (Passport, DMV); Visa,
+      Business Formation, and Taxes remain confirmed STRONG/caveated open
+      backlog; National ID remains this item's own confirmed-weak finding,
+      not re-screened this cycle.
     - **Tunisia** — **Update (GOV-4638, 2026-07-24): now authored** as
       `tn/dgsn/passport-application@1.0.0` — see the Executive Summary and
       Passport vertical updates above. **Opens Tunisia as the registry's
