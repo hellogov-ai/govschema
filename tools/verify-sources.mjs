@@ -56,20 +56,24 @@ const FETCH_TIMEOUT_MS = 15_000;
 const RETRIES = 2; // additional attempts after the first, for 5xx/timeout only
 const RETRY_BACKOFF_MS = 1_500;
 
-// Parens and brackets are both allowed inside the match (some government
-// sites, e.g. CZ's md.gov.cz, put literal "(1)" disambiguators in attachment
-// paths; Wayback CDX `filter=` queries commonly embed a literal regex like
-// "[Ee]3" in the URL itself) — the trailing-punctuation trim below removes
-// only a genuinely unbalanced closing paren/bracket (the kind markdown's
-// `[text](url)` wraps around the URL), not one that's part of the URL's own
-// content. Excluding "]" from this class previously truncated any URL with a
-// literal "]" mid-path at the first occurrence (GOV-2660).
-const URL_RE = /https?:\/\/[^\s"'`<>]+/g;
+// Parens, brackets, and single quotes are all allowed inside the match (some
+// government sites, e.g. CZ's md.gov.cz, put literal "(1)" disambiguators in
+// attachment paths; Wayback CDX `filter=` queries commonly embed a literal
+// regex like "[Ee]3" in the URL itself; French-language document titles
+// commonly embed a literal apostrophe, e.g. "Formulaire%20d'inscription%20BCE.pdf")
+// — the trailing-punctuation trim below removes only a genuinely unbalanced
+// closing paren/bracket (the kind markdown's `[text](url)` wraps around the
+// URL) or a wrapping single quote, not punctuation that's part of the URL's
+// own content. Excluding "]" from this class previously truncated any URL
+// with a literal "]" mid-path at the first occurrence (GOV-2660); excluding
+// "'" previously truncated any URL with a literal apostrophe mid-path
+// (GOV-4698).
+const URL_RE = /https?:\/\/[^\s"`<>]+/g;
 // Trailing characters that are almost always markdown/JSON punctuation, not
 // part of the URL itself (a sentence's trailing period/comma, a trailing
-// backtick already excluded above). Brackets are handled separately by
-// stripUnbalancedTrailingBracket, since a trailing "]" can legitimately be
-// part of the URL's own content (see above).
+// backtick already excluded above). Brackets and single quotes are handled
+// separately (stripUnbalancedTrailingBracket, stripWrappingTrailingQuote)
+// since both can legitimately be part of the URL's own content (see above).
 const TRAILING_PUNCT_RE = /[.,;:!?]+$/;
 
 // Strip a trailing ")" only while it has no matching "(" earlier in the
@@ -100,6 +104,21 @@ function stripUnbalancedTrailingBracket(url) {
     s = s.slice(0, -1);
   }
   return s;
+}
+
+// Mirrors stripUnbalancedTrailingParen/Bracket, but for a wrapping single
+// quote: unlike "()" and "[]", "'" is the same character on both ends, so
+// there's no open/close count to balance. Instead, only treat a trailing "'"
+// as wrapping punctuation (and strip it) when the character immediately
+// before the match itself was a "'" — i.e. the URL was written as
+// 'https://example.com/foo'. A URL whose own path contains a literal
+// apostrophe (not preceded by an opening quote) survives extraction intact
+// (GOV-4698).
+function stripWrappingTrailingQuote(url, precededByQuote) {
+  if (precededByQuote && url.endsWith("'")) {
+    return url.slice(0, -1);
+  }
+  return url;
 }
 
 function log(msg) {
@@ -165,9 +184,11 @@ function extractUrls(text) {
   const found = new Map(); // url -> disclosedDead
   for (const m of text.matchAll(URL_RE)) {
     let url = m[0];
+    const precededByQuote = m.index > 0 && text[m.index - 1] === "'";
     url = url.replace(TRAILING_PUNCT_RE, "");
     url = stripUnbalancedTrailingParen(url);
     url = stripUnbalancedTrailingBracket(url);
+    url = stripWrappingTrailingQuote(url, precededByQuote);
     const start = Math.max(0, m.index - CONTEXT_WINDOW);
     const end = Math.min(text.length, m.index + m[0].length + CONTEXT_WINDOW);
     const context = text.slice(start, end);
