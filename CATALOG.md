@@ -4,7 +4,59 @@
 
 ## Executive Summary
 
-**97 jurisdictions** | **654 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**97 jurisdictions** | **655 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4741, "GovSchema Standard Research"): Bosnia and
+> Herzegovina's DMV vertical opens (5 of 6)**, via
+> `ba/bih/kanton-sarajevo/mup-ks/lost-or-stolen-vehicle-registration-certificate-report@1.0.0`
+> — the Ministry of Interior of Sarajevo Canton's (Ministarstvo unutrašnjih
+> poslova Kantona Sarajevo, MUP KS) Obrazac MP-7, Obr. br. 2, "Zahtjev za
+> oglašavanje nevažećom potvrde o registraciji vozila" (Request to Declare a
+> Vehicle Registration Certificate Invalid). Three prior cycles (GOV-4720,
+> GOV-4727, GOV-4734) had each re-screened MUP RS and IDDEEA fresh and found
+> no downloadable DMV specimen; this cycle instead read Bosnia and
+> Herzegovina's own state-level vehicle-registration rulebook directly
+> (`bihamk.ba`'s "Pravilnik o registriranju vozila"), whose own Article
+> 71(1) explains why — it expressly excludes the citizen-facing registration
+> request form from the set of forms IDDEEA itself standardizes, confirming
+> the request form is designed and published locally by each competent
+> authority rather than as one nationwide specimen. Following that lead to
+> Sarajevo Canton's own Ministry of Interior (one of ten cantons making up
+> the Federation of Bosnia and Herzegovina) surfaced a live, unauthenticated
+> flat PDF — not a first-registration application, but a request to
+> invalidate a lost or stolen registration certificate as a prerequisite to
+> replacement, the closest available match to this registry's established
+> main-form-substitute convention (mirroring `ba/mup-rs/lost-or-stolen-travel-document-report@1.0.0`'s
+> own role for the Passport vertical). This is the first BA schema scoped
+> below the entity level — `jurisdiction.level: "municipal"` with a
+> `locality` naming Sarajevo Canton specifically, since MUP KS's forms are
+> cantonal, not Federation-wide. A flat, non-fillable single-page PDF; the
+> raw text layer came back visibly corrupted in several words (a
+> font-encoding artifact distinct from every prior BA extraction finding),
+> resolved via `node-canvas` rendering, which also confirmed this form's
+> "lost/stolen" answer is a single free-text blank rather than the checkbox
+> pair `ba/mup-rs/lost-or-stolen-travel-document-report@1.0.0` uses for the
+> same concept. 12 fields plus a 5-item `documents[]` checklist (identity
+> document, police report, Official Gazette notice, administrative fee,
+> and a conditionally-relevant legal-entity authorization item left
+> unconditionally optional since the source prints no discriminator field to
+> gate it on); 12 conformance fixtures (2 valid scenarios, 9 static-required
+> mutations, 1 unknown-field rejection) reproduced via an ephemeral checker;
+> both validators pass (655/655). This cycle also converted Kyrgyzstan's own
+> GOV-4410 "inconclusive" Passport/National ID finding into a **confirmed
+> dead end** via Wayback Machine snapshots of `grs.gov.kg` (both processes'
+> own application forms are staff-completed, not citizen-filled), after
+> `grs.gov.kg` itself remained unreachable (`502 Bad Gateway`) on fresh
+> direct re-fetch; Kyrgyzstan stays at 2/6. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed
+> scoping/judgment call. **Bosnia and Herzegovina now has 5 of 6 verticals**
+> (Business Formation, Passport, Taxes, National ID, DMV); Visa remains a
+> confirmed dead end — Bosnia and Herzegovina's last open slot. MUP KS's own
+> companion forms for an invalid vehicle-ownership certificate (Obr. br. 3),
+> invalid registration plates (Obr. br. 4), and a registration-status
+> certificate (MP-10, Obr. br. 3) are disclosed, open backlog for future
+> companion schemas; every other Federation of Bosnia and Herzegovina
+> canton's own Ministry of Interior remains unscreened.
 
 > **Update (2026-07-24, GOV-4734, "GovSchema Standard Research"): Bosnia and
 > Herzegovina's National ID & Civic Documents vertical opens (4 of 6)**, via
@@ -16493,7 +16545,22 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (65/95 jurisdictions — 68%)
+### DMV — Vehicle Registration, Licensing, Permits (66/95 jurisdictions — 69%)
+
+> **Update (2026-07-24, GOV-4741, "GovSchema Standard Research"): Bosnia and
+> Herzegovina's DMV vertical opens (5 of 6 for the jurisdiction)**, via
+> `ba/bih/kanton-sarajevo/mup-ks/lost-or-stolen-vehicle-registration-certificate-report@1.0.0`
+> — Sarajevo Canton's own Ministry of Interior (MUP KS) Obrazac MP-7, Obr.
+> br. 2, a request to declare a lost or stolen vehicle-registration
+> certificate invalid (a prerequisite to replacement), the closest
+> available DMV-vertical specimen after Bosnia and Herzegovina's own
+> state-level rulebook confirmed the primary registration request form is
+> published locally per competent authority rather than nationwide. See the
+> Executive Summary's GOV-4741 update above and the document's own
+> VERIFICATION.md for the full sourcing record, including this registry's
+> first BA schema scoped to a canton (`jurisdiction.level: "municipal"`,
+> Sarajevo Canton) rather than an entity or the whole state. Numerator
+> updated from 65 to 66.
 
 > **Update (2026-07-24, GOV-4680, "GovSchema Standard Research"): Belgium's
 > DMV vertical opens (2 of 6 for the jurisdiction)**, via
@@ -22137,7 +22204,7 @@ now closed.
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BA** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **BA** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BE** | 3 | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -23588,6 +23655,28 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       end. **Bosnia and Herzegovina now has 4 of 6 verticals** (Business
       Formation, Passport, Taxes, National ID); DMV remains open backlog
       and Visa remains a confirmed dead end — see the document's own
+      VERIFICATION.md.
+      **Update (GOV-4741, 2026-07-24): DMV now authored too**, via Sarajevo
+      Canton's own Ministry of Interior (MUP KS) Obrazac MP-7, Obr. br. 2,
+      `ba/bih/kanton-sarajevo/mup-ks/lost-or-stolen-vehicle-registration-certificate-report@1.0.0`
+      — see the Executive Summary and DMV vertical updates above. Bosnia
+      and Herzegovina's own state-level vehicle-registration rulebook
+      confirmed the primary registration request form is not standardized
+      nationwide by IDDEEA but published locally per competent authority,
+      which led this cycle to Sarajevo Canton's MUP rather than a fourth
+      re-screening of MUP RS/IDDEEA. This is a request to invalidate a lost
+      or stolen registration certificate (prerequisite to replacement), not
+      a first-registration application — the closest available specimen,
+      mirroring `ba/mup-rs/lost-or-stolen-travel-document-report@1.0.0`'s
+      own role for Passport — and the first BA schema scoped to a canton
+      (`jurisdiction.level: "municipal"`) rather than an entity or the
+      whole state. **Bosnia and Herzegovina now has 5 of 6 verticals**
+      (Business Formation, Passport, Taxes, National ID, DMV); Visa remains
+      a confirmed dead end — Bosnia and Herzegovina's last open slot. MUP
+      KS's own companion forms (invalid ownership certificate, invalid
+      registration plates, registration-status certificate) and every
+      other Federation of Bosnia and Herzegovina canton's own Ministry of
+      Interior are disclosed, open backlog — see the document's own
       VERIFICATION.md.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
