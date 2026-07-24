@@ -1,0 +1,120 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "tn/dgsn/passport-application",
+  "version": "1.0.0",
+  "title": "Tunisia Application for an Ordinary Passport (Form IL.02-12/2013)",
+  "description": "The Ministry of the Interior's Direction Générale de la Sûreté Nationale (DGSN, \"الإدارة العامة للأمن الوطني\")'s \"Demande de passeport\" / \"مطلب جواز سفر عادي\" (ordinary passport application), form IL.02-12/2013, distributed unauthenticated as a static PDF via the Tunisian government's own multi-ministry e-services portal, sicad.gov.tn. Opens Tunisia as a new jurisdiction in the registry (GOV-4638, \"GovSchema Standard Research\"), scouted this cycle alongside Hungary and Belgium as new-jurisdiction candidates; Tunisia's Passport vertical came back the cleanest of the three — a genuine, uncaveated, directly fetchable field-by-field specimen, versus Hungary's strongest candidate (its Taxes return) needing a much larger multi-page model and Belgium's own passport form being a close but unscored second. The single form covers four distinct request types printed on its own face (first-time issuance, validity extension, renewal, and replacement/duplicate for a lost, stolen, or damaged passport). This schema does not submit the application itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Tunisia, its Ministry of the Interior, or the Direction Générale de la Sûreté Nationale.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "TN",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Direction Générale de la Sûreté Nationale (Ministère de l'Intérieur)",
+    "abbreviation": "DGSN",
+    "url": "http://www.sicad.gov.tn/"
+  },
+  "process": {
+    "type": "application",
+    "language": "ar"
+  },
+  "source": {
+    "url": "http://www.sicad.gov.tn/Fr/upload/1428663339.pdf",
+    "retrievedAt": "2026-07-24",
+    "documentRef": "طلب جواز سفر عادي — Demande de passeport, Form IL.02-12/2013"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-24",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-24",
+    "notes": "See VERIFICATION.md for the full write-up: source fetch/hash, bilingual (Arabic/French) extraction method, document structure, disclosed exclusions (the entire police/administration-only page 2), and scoping judgment calls."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-24"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "request_details",
+      "title": "Request Type & Fee",
+      "fields": ["requestType", "paymentReceiptNumber", "fiscalStampFeeAmount"],
+      "next": "identity_and_signature"
+    },
+    {
+      "id": "identity_and_signature",
+      "title": "National ID Card Number & Specimen Signature",
+      "fields": ["nationalIdCardNumber", "applicantSignature"],
+      "next": "applicant_particulars"
+    },
+    {
+      "id": "applicant_particulars",
+      "title": "Applicant's Own Name and Parentage",
+      "fields": ["firstName", "fatherFirstName", "grandfatherFirstName", "familyOrMaidenName", "motherFullName"],
+      "next": "birth_and_description"
+    },
+    {
+      "id": "birth_and_description",
+      "title": "Birth Particulars & Personal Description",
+      "fields": ["dateOfBirth", "placeOfBirth", "governorateOfBirth", "profession", "height", "sex", "eyeColor", "otherNationalities"],
+      "next": "address"
+    },
+    {
+      "id": "address",
+      "title": "Address",
+      "fields": ["addressNumber", "addressStreet", "addressCityOrVillage", "addressGovernorate"],
+      "next": "marital_status"
+    },
+    {
+      "id": "marital_status",
+      "title": "Marital Status",
+      "fields": ["maritalStatus", "spouseFirstName", "spouseFamilyName", "spouseNationality"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Place and Date of Declaration",
+      "fields": ["placeOfSigning", "dateOfSigning"]
+    }
+  ],
+  "fields": [
+    { "name": "requestType", "label": "Type of Request", "type": "enum", "required": true, "sourceRef": "Page 1 — four numbered checkboxes: \"1) لأول مرة (pour la première fois)\", \"2) تمديد\", \"3) تجديد\", \"4) تعويض\"", "description": "The four request types printed on this specimen: first-time issuance, validity extension, renewal (issuance of an entirely new passport), and replacement (duplicate, for a lost/stolen/damaged passport per this form's own web-listing description).", "validation": { "enum": ["FIRST_TIME", "EXTENSION", "RENEWAL", "REPLACEMENT"] } },
+    { "name": "paymentReceiptNumber", "label": "Payment Receipt Number", "type": "string", "required": false, "description": "Printed inline beside the request-type checkboxes, not under the page's later \"خاص بالإدارة\" (for administration use) heading — modelled as applicant-supplied on the assumption the applicant purchases the fiscal stamp and records its receipt number themselves, though this registry cannot rule out an officer completing it at intake; see VERIFICATION.md.", "sourceRef": "Page 1 — \"رقم وصل خلاص\"" },
+    { "name": "fiscalStampFeeAmount", "label": "Fiscal Stamp Fee Amount", "type": "string", "required": false, "description": "Same scoping judgment call as paymentReceiptNumber above.", "sourceRef": "Page 1 — \"معلوم الطابع الجبائي\"" },
+    { "name": "nationalIdCardNumber", "label": "National ID Card Number", "type": "string", "required": true, "classification": "sensitive-pii", "sourceRef": "Page 1 — \"N° de la Carte d'Identité Nationale / رقم بطاقة التعريف الوطنية\"" },
+    { "name": "applicantSignature", "label": "Applicant's Signature (Mandatory, Inside the Box)", "type": "string", "required": true, "classification": "pii", "description": "A single specimen-signature box printed immediately beside the National ID Card Number line, marked by footnote (**). The same (**) marker recurs later on the page against the sworn statement \"My signature on this application makes me responsible and exposes me to legal proceedings in case of violation or forgery\" — this schema models one signature field satisfying both, not two separate signatures, since only one physical signature box was found on the specimen.", "sourceRef": "Page 1 — \"التوقيع وجوبي داخل الخانة(**)\"; declaration footnote \"(**) إنّ إمضائي بهذا المطلب يحملني مسؤوليتي...\"" },
+    { "name": "firstName", "label": "First Name", "type": "string", "required": true, "classification": "pii", "sourceRef": "Page 1 — \"Prénom / الإسم\"" },
+    { "name": "fatherFirstName", "label": "Father's First Name", "type": "string", "required": true, "classification": "pii", "sourceRef": "Page 1 — \"Prénom du père / إسم الأب\"" },
+    { "name": "grandfatherFirstName", "label": "Grandfather's First Name", "type": "string", "required": true, "classification": "pii", "sourceRef": "Page 1 — \"Prénom du grand-père / إسم الجد\"" },
+    { "name": "familyOrMaidenName", "label": "Family Name or Maiden Name", "type": "string", "required": true, "classification": "pii", "sourceRef": "Page 1 — \"Nom de famille ou de jeune fille / اللقب العائلي\"" },
+    { "name": "motherFullName", "label": "Mother's Full Name (Name and Surname)", "type": "string", "required": true, "classification": "pii", "sourceRef": "Page 1 — \"Nom et prénom de la mère / إسم الأم ولقبها\"" },
+    { "name": "dateOfBirth", "label": "Date of Birth", "type": "date", "required": true, "classification": "sensitive-pii", "sourceRef": "Page 1 — \"تاريخ الولادة\" (اليوم الشهر السنة / day month year)" },
+    { "name": "placeOfBirth", "label": "Place of Birth", "type": "string", "required": true, "sourceRef": "Page 1 — \"مكان الولادة\"" },
+    { "name": "governorateOfBirth", "label": "Governorate of Birth", "type": "string", "required": true, "description": "A distinct printed blank from placeOfBirth, on the same line (\"مكان الولادة ... ولايتها ...\", place of birth, then its own governorate) — modelled as two fields matching the specimen's own layout, not merged into one.", "sourceRef": "Page 1 — \"ولايتها\" (directly beside مكان الولادة)" },
+    { "name": "profession", "label": "Profession", "type": "string", "required": true, "sourceRef": "Page 1 — \"Profession / المهنة\"" },
+    { "name": "height", "label": "Height", "type": "number", "required": true, "description": "Printed as a single blank line (unlike some other registry sources that split height into separate metre/centimetre blanks) — modelled as one field matching this specimen's own layout.", "sourceRef": "Page 1 — \"القامـة\"", "validation": { "minimum": 0 } },
+    { "name": "sex", "label": "Sex", "type": "enum", "required": true, "classification": "sensitive-pii", "sourceRef": "Page 1 — \"الجنس\": \"ذكر\" (Male) / \"أنثى\" (Female)", "validation": { "enum": ["MALE", "FEMALE"] } },
+    { "name": "eyeColor", "label": "Eye Color", "type": "string", "required": true, "sourceRef": "Page 1 — \"لون العينين\"" },
+    { "name": "otherNationalities", "label": "Other Nationalities", "type": "string", "required": false, "description": "Modelled optional as a supplementary disclosure distinct from the form's core identity data, consistent with this registry's standard treatment of comparable supplementary fields.", "sourceRef": "Page 1 — \"جنسيـات أخرى\"" },
+    { "name": "addressNumber", "label": "Address: Street Number", "type": "string", "required": true, "classification": "pii", "sourceRef": "Page 1 — \"العنوان\" table column \"الرقم\" / \"N°\"" },
+    { "name": "addressStreet", "label": "Address: Street", "type": "string", "required": true, "classification": "pii", "sourceRef": "Page 1 — \"العنوان\" table column \"النهج والشارع\" / \"Rue\"" },
+    { "name": "addressCityOrVillage", "label": "Address: City or Village", "type": "string", "required": true, "classification": "pii", "sourceRef": "Page 1 — \"العنوان\" table column \"المدينة أو القرية\" / \"Ville\"" },
+    { "name": "addressGovernorate", "label": "Address: Governorate", "type": "string", "required": true, "classification": "pii", "sourceRef": "Page 1 — \"العنوان\" table column \"الولاية\" / \"Gouvernorat\"" },
+    { "name": "maritalStatus", "label": "Marital Status", "type": "enum", "required": true, "sourceRef": "Page 1 — four numbered checkboxes: \"1) أعزب/عزباء\", \"2) أرمل(ة)\", \"3) مطلق(ة)\", \"4) متزوج(ة)\"", "validation": { "enum": ["SINGLE", "WIDOWED", "DIVORCED", "MARRIED"] } },
+    { "name": "spouseFirstName", "label": "Spouse's First Name", "type": "string", "required": false, "requiredWhen": { "field": "maritalStatus", "equals": "MARRIED" }, "classification": "pii", "sourceRef": "Page 1 — \"Prénom de l'Epoux(se) / إسم الزوج(ة)\"" },
+    { "name": "spouseFamilyName", "label": "Spouse's Family Name", "type": "string", "required": false, "requiredWhen": { "field": "maritalStatus", "equals": "MARRIED" }, "classification": "pii", "sourceRef": "Page 1 — \"Nom de l'Epoux(se) / لقب الزوج(ة)\"" },
+    { "name": "spouseNationality", "label": "Spouse's Nationality", "type": "string", "required": false, "requiredWhen": { "field": "maritalStatus", "equals": "MARRIED" }, "classification": "pii", "sourceRef": "Page 1 — \"Nationalité de l'Epoux(se) / جنسيـة الزوج(ة)\"" },
+    { "name": "placeOfSigning", "label": "Place Where This Application Was Drawn Up", "type": "string", "required": true, "sourceRef": "Page 1 — \"حرر بـ...\" (\"Fait à...\")" },
+    { "name": "dateOfSigning", "label": "Date This Application Was Drawn Up", "type": "date", "required": true, "sourceRef": "Page 1 — \"...في...\" (\"...le...\")" }
+  ]
+}

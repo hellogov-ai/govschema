@@ -4,7 +4,35 @@
 
 ## Executive Summary
 
-**93 jurisdictions** | **640 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**94 jurisdictions** | **641 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4638, "GovSchema Standard Research"): Tunisia
+> opens as the registry's 94th jurisdiction, via Passport (1 of 6)**, via
+> `tn/dgsn/passport-application@1.0.0` — the Ministry of the Interior's
+> Direction Générale de la Sûreté Nationale's (DGSN) "Demande de
+> passeport" (Form IL.02-12/2013), fetched directly and unauthenticated
+> (HTTP 200, plain HTTP only — the domain does not serve HTTPS — 48,909
+> bytes) from `sicad.gov.tn`, the Tunisian government's own multi-ministry
+> e-services portal. This cycle scouted three jurisdictions not yet in the
+> registry in parallel — Hungary, Belgium, and Tunisia — across all 6
+> verticals each; Tunisia came back with the cleanest overall showing (5
+> of 6 verticals STRONG or near-STRONG per this cycle's scouting pass,
+> only DMV weak due to an unreachable agency site), so its Passport
+> vertical was authored first, opening the jurisdiction. Models 27
+> `fields[]` across 7 steps (Tunisia's own request-type checklist
+> covering first-time issuance, validity extension, renewal, and
+> replacement all on one form), with 0 `documents[]` entries — this
+> specimen's own document-related content is blank officer-completed
+> lines, not a printed named checklist, so no `documents[]` array was
+> fabricated. See the document's own VERIFICATION.md for the full
+> sourcing record, the bilingual (Arabic/French) right-to-left extraction
+> method, and every disclosed scoping/judgment call. Tunisia's other five
+> verticals (Taxes, Business Formation, Visa, National ID all scouted
+> STRONG or near-STRONG this cycle; DMV weak) remain open backlog for a
+> future cycle. Hungary (strongest candidate: Taxes, NAV's 24SZJA return)
+> and Belgium (strongest candidate: Passport, diplomatie.belgium.be) were
+> both scouted this same cycle and remain banked, genuinely open
+> new-jurisdiction candidates — see Known Gaps below.
 
 > **Update (2026-07-24, GOV-4631, "GovSchema Standard Research"): Guatemala
 > opens as the registry's 93rd jurisdiction, via Business Formation (1 of
@@ -15321,7 +15349,18 @@
 
 ## By Vertical
 
-### Passport (60/92 jurisdictions — 65%)
+### Passport (61/94 jurisdictions — 65%)
+
+> **Update (2026-07-24, GOV-4638, "GovSchema Standard Research"): Tunisia
+> opens this vertical, and the jurisdiction itself (1 of 6)**, via
+> `tn/dgsn/passport-application@1.0.0` — the Direction Générale de la
+> Sûreté Nationale's "Demande de passeport" (Form IL.02-12/2013). See the
+> Executive Summary update above for the full sourcing record, scope
+> decisions, and disclosed findings. This vertical's own denominator is
+> bumped by 2 (92 to 94), not 1 — Guatemala's own jurisdiction-opening
+> cycle (GOV-4631) omitted the matching denominator bump when it opened as
+> the registry's 93rd jurisdiction via Business Formation; that miss is
+> backfilled here alongside Tunisia's own +1.
 
 > **Update (2026-07-23, GOV-4603, "GovSchema Standard Research"): Mauritius
 > opens this vertical, and the jurisdiction itself (1 of 6)**, via
@@ -21497,6 +21536,7 @@ now closed.
 | **SN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **TN** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | **TT** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -22636,6 +22676,61 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Guatemala as the registry's 93rd jurisdiction (1/6).** Visa, DMV,
       Passport, Taxes, and National ID remain confirmed weak/dead-end per
       this item's own findings above, not re-screened this cycle.
+0o. **Three new-jurisdiction candidates scouted in parallel (GOV-4638,
+    2026-07-24) — Hungary, Belgium, Tunisia:**
+    - **Hungary** — strongest on **Taxes**: NAV's 24SZJA individual
+      income-tax return, a genuine ~30-page blank form (711KB) plus a
+      matching field-by-field instruction guide (2.9MB), both fetched
+      unauthenticated from `nav.gov.hu` (HTTP 200). **Visa** is also
+      STRONG (the EU-harmonized Schengen form, hosted on the Foreign
+      Ministry's own `konzinfo.mfa.gov.hu`, 430KB) but would be a
+      confirmed-duplicate dead end per this registry's standing
+      EU/Schengen-harmonized-template precedent (see GOV-1774). **DMV** is
+      weak (a narrow temporary-vehicle-circulation-permit form only, not
+      full registration). **Business Formation** is weak (a real Kft/Bt
+      articles-of-association template exists under ministerial decree,
+      but `ceginformaciosszolgalat.kormany.hu` failed on a broken TLS
+      chain this cycle, and the modern registration process itself now
+      runs through a sealed XML e-filing tool). **Passport** and
+      **National ID** are both confirmed dead ends (fully in-person
+      biometric enrolment/issuance, no citizen-filled form). Banked: Taxes
+      is the strongest candidate to open Hungary in a future cycle.
+    - **Belgium** — strongest on **Passport**: the Foreign Affairs
+      ministry's own 2024 adult/child passport application PDF
+      (`diplomatie.belgium.be`, 164KB, HTTP 200, no caveats). **Visa**
+      (a full 37-field national long-stay visa PDF, hosted on a Belgian
+      embassy subdomain since short-stay Schengen visas are online-only)
+      and **DMV** (the federal — not regional — DIV vehicle-registration
+      specimen PDF via `mobilit.belgium.be`, sidestepping Belgium's
+      3-region fragmentation) are both also STRONG. **Business Formation**
+      and **Taxes** are each STRONG but caveated (a supplementary
+      "missing-data" KBO form rather than the primary incorporation path;
+      an exhaustive box-code preparation guide rather than the blank
+      return itself, which is mailed pre-printed rather than posted
+      online). **National ID** is weak (the only found form is a 2-field
+      deregistration certificate, not an ID application; municipal
+      voter-registration forms are too fragmented to have a single
+      federal source). Banked: Passport is the strongest candidate to
+      open Belgium in a future cycle.
+    - **Tunisia** — **Update (GOV-4638, 2026-07-24): now authored** as
+      `tn/dgsn/passport-application@1.0.0` — see the Executive Summary and
+      Passport vertical updates above. **Opens Tunisia as the registry's
+      94th jurisdiction (1/6).** This cycle's own scouting found Tunisia's
+      other five verticals STRONG or near-STRONG (not yet independently
+      byte-re-verified beyond the scouting pass): **National ID** (a
+      companion CIN application PDF on the same `sicad.gov.tn` portal,
+      form IL.01-12/2013, 41KB), **Taxes** (the Ministry of Finance/DGI's
+      IRPP declaration, `finances.gov.tn`, 804KB, 13 pages), **Business
+      Formation** (a "Déclaration d'existence" tax-registration-trigger
+      form, `finances.gov.tn`, 254KB — the Registre National des
+      Entreprises' own site offers only document checklists, not a
+      fillable form), and **Visa** (a trilingual AR/FR/EN MFA visa
+      application form hosted on a Tunisian embassy site, since
+      `e-visa.tn` itself does not resolve). **DMV** came back weak (the
+      vehicle-registration agency's own site, `attt.com.tn`, was
+      unreachable this cycle — right agency/procedure identified via a
+      Wayback snapshot, but no live PDF located). All five remain open
+      backlog for a future cycle.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
