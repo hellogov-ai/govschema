@@ -4,7 +4,38 @@
 
 ## Executive Summary
 
-**95 jurisdictions** | **644 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**95 jurisdictions** | **645 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4666, "GovSchema Standard Research"): Tunisia's
+> Taxes vertical opens (4 of 6)**, via `tn/dgi/irpp-declaration@1.0.0` — the
+> Ministry of Finance's Direction Générale des Impôts (DGI)'s "التصريح
+> بالضريبة على دخل الأشخاص الطبيعيين" (Déclaration de l'Impôt sur le Revenu
+> des Personnes Physiques, IRPP), Tunisia's individual income tax return,
+> fetched directly and unauthenticated (HTTP 200, 803,784 bytes) from
+> `finances.gov.tn`, matching GOV-4638's own banked "804KB" estimate almost
+> exactly. Re-scouted and confirmed live from a candidate GOV-4638 had banked
+> STRONG. A genuinely large 13-PDF-page specimen (12 printed pages of core
+> declaration plus a separately-paginated withholding-annex 13th page); this
+> v1.0.0 models the core declaration — identification, the nine-category
+> income summary grid (17 cells across categories 1-9, several with real-
+> regime/flat-rate/sectoral-standard/partner-share sub-breakdowns), common
+> deductions, the progressive tax computation, withholding credits, and the
+> final summary/signature — 64 `fields[]` across 9 steps plus 11
+> `documents[]` entries, explicitly deferring the per-category detailed
+> build-up schedules (pages 2-5), the minimum-tax floor computation, the
+> ~60-row tax-incentive code nomenclature, most of the documents checklist,
+> and the withholding annex to a future minor version, matching this
+> registry's established main-form-now/companion-schedules-later convention
+> (Kazakhstan's 220.00/250.00 series). Same fourth-failure-mode Arabic-glyph-
+> scramble extraction as `tn/dgi/declaration-of-existence@1.0.0` — a
+> `node-canvas` render (3x scale, 6x for one detail crop) was the primary
+> reading method. 5 conformance scenarios (2 positive, 3 negative) reproduced
+> via an ephemeral from-scratch checker; both validators pass. See the
+> document's own VERIFICATION.md for the full sourcing record and every
+> disclosed scoping/judgment call. **Tunisia now has 4 of 6 verticals**
+> (Passport, National ID, Business Formation, Taxes); Visa remains confirmed
+> STRONG open backlog per GOV-4638's own scouting record (DMV remains weak),
+> not re-screened this cycle.
 
 > **Update (2026-07-24, GOV-4659, "GovSchema Standard Research"): Tunisia's
 > Business Formation vertical opens (3 of 6)**, via
@@ -17997,7 +18028,19 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (77/91 jurisdictions — 85%)
+### Taxes — Income Tax Return, Tax Filing (78/92 jurisdictions — 85%)
+
+> **Update (2026-07-24, GOV-4666, "GovSchema Standard Research"): Tunisia's
+> Taxes vertical opens (4 of 6 for the jurisdiction)**, via
+> `tn/dgi/irpp-declaration@1.0.0` — the Direction Générale des Impôts' IRPP
+> individual income tax return — see the Executive Summary update above for
+> the full sourcing record and the document's own VERIFICATION.md. This
+> vertical's own denominator moves from 91 to 92: Tunisia's Taxes candidate
+> was actually first reached (scouted and banked STRONG) back in the
+> GOV-4638 cycle alongside its Passport, Business Formation, and Visa
+> candidates, but that cycle's own catalog update did not bump this
+> vertical's denominator at the time — corrected here now that the
+> candidate is authored.
 
 > **Update (2026-07-23, GOV-4575, "GovSchema Standard Research"): Trinidad
 > and Tobago's Taxes vertical opens (2 of 6 for the jurisdiction)**, via
@@ -21660,7 +21703,7 @@ now closed.
 | **SN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| **TN** | 3 | ✓ | ✗ | ✓ | ✗ | ✗ | ✓ |
+| **TN** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **TT** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -22880,6 +22923,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Business Formation).** Taxes and Visa remain confirmed STRONG/
       near-strong open backlog; DMV remains weak, per this item's own
       findings above, not re-screened this cycle.
+      **Update (GOV-4666, 2026-07-24): Taxes now authored** as
+      `tn/dgi/irpp-declaration@1.0.0` (re-verified live and unauthenticated,
+      HTTP 200, 803,784 bytes, matching this item's own "804KB" estimate) —
+      see the Executive Summary and Taxes vertical updates above. **Tunisia
+      now has 4 of 6 verticals (Passport, National ID, Business Formation,
+      Taxes).** Visa remains confirmed STRONG open backlog; DMV remains
+      weak, per this item's own findings above, not re-screened this cycle.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
