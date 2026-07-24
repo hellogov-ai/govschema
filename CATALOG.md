@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**95 jurisdictions** | **643 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**95 jurisdictions** | **644 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4659, "GovSchema Standard Research"): Tunisia's
+> Business Formation vertical opens (3 of 6)**, via
+> `tn/dgi/declaration-of-existence@1.0.0` — the Ministry of Finance's
+> Direction Générale des Impôts (DGI)'s "تصريح بالوجود" (Declaration of
+> Existence), the tax-registration filing that doubles as Tunisia's business/
+> tax registration trigger, fetched directly and unauthenticated (HTTP 200,
+> 254,216 bytes) from `finances.gov.tn`. Re-scouted and confirmed live from a
+> candidate GOV-4638 had banked STRONG. A new authority for this jurisdiction
+> (DGI, Ministry of Finance, distinct from the DGSN/Ministry of the Interior
+> forms already published for Tunisia's Passport and National ID verticals).
+> This specimen's text layer decodes to genuine Arabic Unicode codepoints but
+> its glyph-paint order does not reassemble into readable text by string
+> manipulation alone — a fourth, distinct PDF-extraction failure mode for
+> this registry (see the document's own VERIFICATION.md) — so a
+> `node-canvas` render at 3x scale was used as the *primary* reading method
+> for every field label, checkbox group, and footnote, not merely a
+> checkbox-layout confirmation as in prior cycles. Introduces an
+> `isLegalEntity` boolean discriminator (not printed explicitly on the form,
+> inferred from its own natural-person/legal-person structure), matching
+> this registry's `isBodyCorporate` precedent. Models 85 `fields[]` across
+> 14 steps, 1 `documents[]` entry (a branch-list attachment gated on having
+> secondary branches). The SUARL single-member-LLC founder block and the
+> form's own second legal-representative row are disclosed, excluded, open
+> backlog for a future companion/minor-version cycle. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed scoping/
+> judgment call. Tunisia's remaining two verticals (Taxes, Visa — both
+> scouted STRONG or near-STRONG by GOV-4638) and DMV (weak) remain open
+> backlog per GOV-4638's own scouting record — not re-screened this cycle.
 
 > **Update (2026-07-24, GOV-4652, "GovSchema Standard Research"): Tunisia's
 > National ID vertical opens (2 of 6)**, via
@@ -16721,7 +16750,17 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (81/86 jurisdictions — 94%)
+### Business Formation — Incorporation, LLC, Company Registration (82/87 jurisdictions — 94%)
+
+> **Update (2026-07-24, GOV-4659, "GovSchema Standard Research"): Tunisia's
+> Business Formation vertical opens (3 of 6)**, via
+> `tn/dgi/declaration-of-existence@1.0.0` — see the Executive Summary update
+> above for the full record. Numerator updated from 81 to 82; denominator
+> updated from 86 to 87 (Tunisia had not yet been reached for this vertical
+> specifically, though it was scouted STRONG alongside the rest of Tunisia's
+> backlog in GOV-4638). Tunisia now has Passport, National ID, and Business
+> Formation authored (3 of 6); Taxes, Visa, and DMV remain open backlog per
+> GOV-4638's own scouting record.
 
 > **Update (2026-07-24, GOV-4631, "GovSchema Standard Research"): Guatemala
 > opens as the registry's 93rd jurisdiction, via its first Business
@@ -21621,7 +21660,7 @@ now closed.
 | **SN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| **TN** | 2 | ✓ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| **TN** | 3 | ✓ | ✗ | ✓ | ✗ | ✗ | ✓ |
 | **TT** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -22831,6 +22870,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       ID).** Taxes, Business Formation, Visa, and DMV remain confirmed
       strong/near-strong/weak per this item's own findings above, not
       re-screened this cycle.
+      **Update (GOV-4659, 2026-07-24): Business Formation now authored** as
+      `tn/dgi/declaration-of-existence@1.0.0` (re-verified live and
+      unauthenticated, HTTP 200, 254,216 bytes, matching this item's own
+      "254KB" estimate) — see the Executive Summary and Business Formation
+      vertical updates above. A new authority for Tunisia (DGI, Ministry of
+      Finance, distinct from the DGSN/Ministry of the Interior forms already
+      published). **Tunisia now has 3 of 6 verticals (Passport, National ID,
+      Business Formation).** Taxes and Visa remain confirmed STRONG/
+      near-strong open backlog; DMV remains weak, per this item's own
+      findings above, not re-screened this cycle.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
