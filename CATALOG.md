@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**95 jurisdictions** | **642 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**95 jurisdictions** | **643 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4652, "GovSchema Standard Research"): Tunisia's
+> National ID vertical opens (2 of 6)**, via
+> `tn/dgsn/national-identity-card-application@1.0.0` — the Ministry of the
+> Interior's DGSN "مطلب بطاقة التعريف الوطنية" (national identity card
+> application), form IL.01-12/2013, fetched directly and unauthenticated
+> (HTTP 200, 40,619 bytes) from `sicad.gov.tn`, the same portal as this
+> jurisdiction's own Passport schema. Re-scouted and confirmed live from a
+> candidate GOV-4638 had banked STRONG. Unlike the companion Passport
+> specimen, this form carries **no French text anywhere** — it is
+> monolingual Modern Standard Arabic, so every field's English label is
+> this registry's own direct translation rather than a source-printed
+> bilingual pair (each field's `sourceRef` quotes the original Arabic for
+> independent review). A `node-canvas` render at 3x scale confirmed the
+> checkbox layout cleanly and resolved one genuine ambiguity the text
+> layer alone left open: this specimen's marital-status grid has only
+> **three** options (single/married/widowed — no divorced), unlike the
+> companion Passport schema's four. Page 2 is an internal DGSN
+> document-routing memo (not applicant-facing) that nonetheless prints a
+> named list of eleven possible supporting-document types — this
+> registry's first case of inferring `documents[]` from an internal
+> office checklist rather than an applicant-facing instructions page;
+> five of the eleven were gated with a defensible `requiredWhen`
+> correlate (`requestType`/`maritalStatus`/`isOrganDonor` equality), the
+> remaining six left unconditional-optional rather than inventing a
+> condition the source does not state (deliberately avoiding this
+> registry's known `notEquals ""`-against-an-optional-field pitfall for
+> `bloodTypeCertificate`/`employmentCertificate`). Models 22 `fields[]`
+> across 5 steps, 11 `documents[]` entries. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed
+> scoping/judgment call. Tunisia's remaining four verticals (Taxes,
+> Business Formation, Visa, DMV) remain open backlog per GOV-4638's own
+> scouting record — Taxes/Business Formation/Visa scouted STRONG or
+> near-STRONG, DMV weak — not re-screened this cycle.
 
 > **Update (2026-07-24, GOV-4645, "GovSchema Standard Research"): Belgium
 > opens as the registry's 95th jurisdiction, via Passport (1 of 6)**, via
@@ -20758,7 +20792,17 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (53/79 jurisdictions — 67%)
+### National ID & Civic Documents (54/80 jurisdictions — 68%)
+
+> **Update (2026-07-24, GOV-4652, "GovSchema Standard Research"): Tunisia's
+> National ID & Civic Documents vertical opens (2 of 6)**, via
+> `tn/dgsn/national-identity-card-application@1.0.0` — see the Executive
+> Summary update above for the full record. Numerator updated from 53 to
+> 54; denominator updated from 79 to 80 (Tunisia had not yet been reached
+> for this vertical specifically, though it was scouted STRONG alongside
+> the rest of Tunisia's backlog in GOV-4638). Tunisia now has Passport and
+> National ID authored (2 of 6); Taxes, Business Formation, Visa, and DMV
+> remain open backlog per GOV-4638's own scouting record.
 
 > **Update (2026-07-23, GOV-4506, "GovSchema Standard Research"): Tajikistan's
 > National ID & Civic Documents vertical opens (3 of 6)**, via
@@ -21577,7 +21621,7 @@ now closed.
 | **SN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| **TN** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| **TN** | 2 | ✓ | ✗ | ✗ | ✗ | ✗ | ✓ |
 | **TT** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -22779,6 +22823,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       unreachable this cycle — right agency/procedure identified via a
       Wayback snapshot, but no live PDF located). All five remain open
       backlog for a future cycle.
+      **Update (GOV-4652, 2026-07-24): National ID now authored** as
+      `tn/dgsn/national-identity-card-application@1.0.0` (re-verified live
+      and unauthenticated, HTTP 200, 40,619 bytes, matching this item's own
+      "41KB" estimate) — see the Executive Summary and National ID vertical
+      updates above. **Tunisia now has 2 of 6 verticals (Passport, National
+      ID).** Taxes, Business Formation, Visa, and DMV remain confirmed
+      strong/near-strong/weak per this item's own findings above, not
+      re-screened this cycle.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
