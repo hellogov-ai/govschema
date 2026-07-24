@@ -4,7 +4,56 @@
 
 ## Executive Summary
 
-**96 jurisdictions** | **648 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**96 jurisdictions** | **649 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4694, "GovSchema Standard Research"): Belgium's
+> Business Formation vertical opens (3 of 6)**, via
+> `be/partena/crossroads-bank-enterprise-registration@1.0.0` — the primary
+> intake form for registering with Belgium's central business register, the
+> Crossroads Bank for Enterprises (Banque-Carrefour des Entreprises /
+> Kruispuntbank van Ondernemingen, BCE/KBO). This cycle first re-screened
+> both of Belgium's remaining STRONG-but-caveated verticals banked by
+> GOV-4638: **Taxes was re-confirmed a dead end** — `finances.belgium.be`
+> publishes only box-by-box preparation guides for Tax-on-web/MyMinfin,
+> never a blank downloadable return, which is mailed pre-printed directly to
+> taxpayers. **Business Formation's caveat is overturned**: GOV-4638 had
+> found only a narrower supplementary "missing-data" KBO form, but Belgium's
+> BCE does not offer direct self-registration at all — federal law (Royal
+> Decree of 11 June 2003) requires every registration to route through one
+> of a small number of officially recognized private "guichets
+> d'entreprises" acting as the BCE's registration agents, and one such
+> guichet, Partena Professional asbl, publishes its own **primary**
+> registration form directly and unauthenticated (HTTP 200, 600,346 bytes,
+> a genuine 6-page AcroForm PDF with 106 auto-named form fields whose real
+> labels had to be recovered entirely from surrounding printed text, unlike
+> this specimen's own field names). Models the BCE inscription proper —
+> entrepreneur identity (with an `INDIVIDUAL`/`COMPANY`/
+> `UNINCORPORATED_ORGANIZATION` discriminator), correspondence address, and
+> establishment-unit/activity data — plus the closing client declaration and
+> signature: 34 `fields[]` across 5 steps, 2 `documents[]` entries.
+> Explicitly excludes this same document's further sections, each phrased as
+> a request that Partena Professional additionally handle a separate paid
+> service (VAT-identification activation, professional-competence
+> formalities, ancillary licenses, self-employed/company social-insurance-
+> fund affiliation, payroll secretariat), plus the accountant/mandataire's
+> own particulars and a standalone helper-spouse decision-tree diagram with
+> no fillable fields of its own. Also hit a variant of this registry's own
+> `notequals-empty-string-absent-field-bug` precedent: two of the source's
+> own document-attachment triggers ("attach a copy of your ID if you don't
+> yet have a National Register number," "attach the articles of association
+> if a company's enterprise number isn't yet known") depend on an optional
+> field being left blank, which this registry's Condition grammar has no
+> safe way to express in either direction (`equals ""` has the same
+> undefined-comparison-against-absent-field problem as the already-
+> documented `notEquals ""` case) — resolved by gating only the unambiguous
+> case and disclosing the rest in the document's own `handling` text rather
+> than risking a spurious gate. 7 conformance scenarios reproduced via an
+> ephemeral checker; both validators pass. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed scoping/
+> judgment call. **Belgium now has 3 of 6 verticals** (Passport, DMV,
+> Business Formation); Taxes is now a confirmed dead end; Visa remains a
+> confirmed duplicate dead end per GOV-4687's own finding; National ID
+> remains GOV-4638's own confirmed-weak finding, not re-screened this cycle.
 
 > **Update (2026-07-24, GOV-4687, "GovSchema Standard Research"): Hungary
 > opens as the registry's 96th jurisdiction, via its Taxes vertical (1 of
@@ -16898,7 +16947,19 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (82/87 jurisdictions — 94%)
+### Business Formation — Incorporation, LLC, Company Registration (83/87 jurisdictions — 95%)
+
+> **Update (2026-07-24, GOV-4694, "GovSchema Standard Research"): Belgium's
+> Business Formation vertical opens (3 of 6)**, via
+> `be/partena/crossroads-bank-enterprise-registration@1.0.0` — see the
+> Executive Summary update above for the full record. Numerator updated
+> from 82 to 83; denominator unchanged (Belgium had already been reached
+> for this vertical, banked STRONG-but-caveated by GOV-4638, since
+> GOV-4645 opened the jurisdiction via Passport). Belgium now has
+> Passport, DMV, and Business Formation authored (3 of 6); Taxes is a
+> confirmed dead end (re-screened this cycle); Visa is a confirmed
+> duplicate dead end per GOV-4687; National ID remains GOV-4638's own
+> confirmed-weak finding.
 
 > **Update (2026-07-24, GOV-4659, "GovSchema Standard Research"): Tunisia's
 > Business Formation vertical opens (3 of 6)**, via
@@ -21761,7 +21822,7 @@ now closed.
 | **AT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BE** | 2 | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ |
+| **BE** | 3 | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BO** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **BR** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -23053,6 +23114,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Visa vertical is therefore a **confirmed duplicate dead end**, not
       open backlog; **Business Formation and Taxes remain Belgium's only
       two open (STRONG-but-caveated) verticals**, unscreened this cycle.
+      **Update (GOV-4694, 2026-07-24): Business Formation now authored**
+      as `be/partena/crossroads-bank-enterprise-registration@1.0.0` — this
+      item's own "supplementary missing-data KBO form" caveat is
+      overturned: Belgium's BCE registration is statutorily routed through
+      recognized private "guichets d'entreprises," and one such guichet,
+      Partena Professional asbl, publishes the genuine primary intake form
+      directly (HTTP 200, 600,346 bytes) — see the Executive Summary and
+      Business Formation vertical updates above. **Taxes is re-screened
+      this cycle and confirmed a dead end**: `finances.belgium.be` /
+      `fin.belgium.be` publish only box-by-box preparation guides for
+      Tax-on-web/MyMinfin, never a blank downloadable return (which is
+      mailed pre-printed directly to taxpayers), matching this item's own
+      original caveat exactly. **Belgium now has 3 of 6 verticals**
+      (Passport, DMV, Business Formation); Taxes and Visa are both
+      confirmed dead ends; National ID remains this item's own
+      confirmed-weak finding, not re-screened this cycle.
     - **Tunisia** — **Update (GOV-4638, 2026-07-24): now authored** as
       `tn/dgsn/passport-application@1.0.0` — see the Executive Summary and
       Passport vertical updates above. **Opens Tunisia as the registry's
