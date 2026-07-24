@@ -1,0 +1,115 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "tn/mfa/visa-application",
+  "version": "1.0.0",
+  "title": "Tunisia Short-Stay/Transit Visa Application (Demande de Visa — Court Séjour - Transit)",
+  "description": "The Ministry of Foreign Affairs' (\"وزارة الشؤون الخارجية\" / Ministère des Affaires étrangères) \"طلب تأشيرة\" / \"Demande de VISA\" (visa application) for a short-stay or transit visa to Tunisia, submitted by third-country nationals at a Tunisian embassy or consulate abroad. This specimen was retrieved from the Consulate General of the Republic of Tunisia in Montreal, Canada (`consulat-tunisie.ca`), a Tunisian diplomatic mission's own site, since the centralized `e-visa.tn` portal did not resolve during this and the prior cycle's scouting (GOV-4638, \"GovSchema Standard Research\"); an identical specimen is mirrored by other Tunisian consular sites abroad (e.g. the Tunisian Consulate-General in Paris and the Tunisian Embassy in France), consistent with this registry's standard treatment of a single national form distributed identically across a country's diplomatic missions. A short, 2-page, trilingual (Arabic/French/English) flat print-and-fill form: applicant identity and travel-document particulars, trip details (dates, duration, reason, transport, point of entry), Tunisia-specific contacts/address, a signed pledge not to work or overstay, and a signature — followed by an entirely consular-staff/decision section excluded from this schema. Closes Tunisia's disclosed Visa backlog from GOV-4638, bringing Tunisia to 5 of 6 verticals (Passport, National ID, Business Formation, Taxes, Visa); DMV remains the jurisdiction's sole remaining confirmed-weak vertical. This schema does not submit the application itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Tunisia, its Ministry of Foreign Affairs, or any Tunisian embassy or consulate.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "TN",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Ministère des Affaires étrangères (وزارة الشؤون الخارجية)",
+    "abbreviation": "MFA",
+    "url": "http://consulat-tunisie.ca/"
+  },
+  "process": {
+    "type": "application",
+    "language": "fr"
+  },
+  "source": {
+    "url": "http://consulat-tunisie.ca/wp-content/uploads/2015/11/FORMULAIRE-VISA.pdf",
+    "retrievedAt": "2026-07-24",
+    "documentRef": "طلب تأشيرة — Demande de VISA (Court Séjour - Transit / Short Stay - Transit)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-24",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-24",
+    "notes": "See VERIFICATION.md for the full write-up: source fetch/hash, the diplomatic-mission-vs-issuing-authority distinction, trilingual extraction method, document structure, disclosed exclusions (the entire consular-staff/decision tail), and scoping judgment calls."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-24"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "filing_post",
+      "title": "Embassy or Consulate Where Filed",
+      "fields": ["filingEmbassyOrConsulateName", "filingLocationCity"],
+      "next": "applicant_identity"
+    },
+    {
+      "id": "applicant_identity",
+      "title": "Applicant Identity",
+      "fields": ["familyName", "givenNames", "dateAndPlaceOfBirth", "maritalStatus", "presentNationality", "nationalityAtBirth", "profession", "residenceLast2Years"],
+      "next": "travel_document"
+    },
+    {
+      "id": "travel_document",
+      "title": "Passport",
+      "fields": ["passportNumber", "passportIssuePlaceAndDate"],
+      "next": "travel_details"
+    },
+    {
+      "id": "travel_details",
+      "title": "Trip Details",
+      "fields": ["dateOfEntryToTunisia", "durationOfStay", "detailedReasonOfTravel", "businessTripContacts", "conferenceOrEventDetails", "studiesOrTrainingDetails", "anticipatedModeOfTransportation", "pointOfEntry"],
+      "next": "tunisia_contacts"
+    },
+    {
+      "id": "tunisia_contacts",
+      "title": "Address & Contacts in Tunisia",
+      "fields": ["addressInTunisia", "personsKnownInTunisia", "theirAddresses", "personsAccompanyingYou", "previousStayInTunisiaDetails"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Pledge & Signature",
+      "fields": ["applicantSignature"]
+    }
+  ],
+  "fields": [
+    { "name": "filingEmbassyOrConsulateName", "label": "Embassy or Consulate Name", "type": "string", "required": true, "description": "The specific Tunisian embassy or consulate the applicant is filing with, handwritten on the specimen's own header blank.", "sourceRef": "Page 1 header — \"Ambassade – Consulat ……………… / السفارة – القنصلية ………………\"", "validation": { "maxLength": 200 } },
+    { "name": "filingLocationCity", "label": "City of the Embassy or Consulate", "type": "string", "required": true, "sourceRef": "Page 1 header — \"…………… à …………… / …………… بـ ……………\" (the city following the embassy/consulate blank)", "validation": { "maxLength": 200 } },
+    { "name": "familyName", "label": "Family Name", "type": "string", "required": true, "classification": "pii", "sourceRef": "Page 1 — \"Nom / Family name / اللقب\"", "validation": { "maxLength": 200 } },
+    { "name": "givenNames", "label": "Given Names", "type": "string", "required": true, "classification": "pii", "sourceRef": "Page 1 — \"Prénoms / Given Names / الاسم\"", "validation": { "maxLength": 200 } },
+    { "name": "dateAndPlaceOfBirth", "label": "Date and Place of Birth", "type": "string", "required": true, "classification": "sensitive-pii", "description": "Printed as a single combined blank, matching this registry's established `dateAndPlaceOfBirth` combined-field precedent (see e.g. `ci/cepici/sole-trader-registration`) rather than two separate date/place fields.", "sourceRef": "Page 1 — \"Date et lieu de naissance / Date and Place of Birth / تاريخ الولادة\"", "validation": { "maxLength": 250 } },
+    { "name": "maritalStatus", "label": "Marital Status", "type": "string", "required": true, "sourceRef": "Page 1 — \"Situation de famille / Marital Status / الحالة العائلية\"", "description": "A single free-text blank on this specimen, not a checkbox list (unlike this registry's `tn/dgsn/passport-application`, which does print a 4-option marital-status checklist) — modelled as a plain string, not an enum, to match this source's own layout.", "validation": { "maxLength": 100 } },
+    { "name": "presentNationality", "label": "Present Nationality", "type": "string", "required": true, "sourceRef": "Page 1 — \"Nationalité actuelle / Present Nationality / الجنسية الحالية\"", "validation": { "maxLength": 100 } },
+    { "name": "nationalityAtBirth", "label": "Nationality at Birth", "type": "string", "required": true, "sourceRef": "Page 1 — \"Nationalité d'origine / Nationality at Birth / الجنسية الأصلية\"", "validation": { "maxLength": 100 } },
+    { "name": "profession", "label": "Profession", "type": "string", "required": true, "sourceRef": "Page 1 — \"Profession / المهنة\"", "validation": { "maxLength": 200 } },
+    { "name": "residenceLast2Years", "label": "Residence During the Last 2 Years", "type": "string", "required": true, "classification": "pii", "sourceRef": "Page 1 — \"Résidence au cours des 2 dernières années / Residence during the last 2 years / الإقامة في السنتين الأخيرتين\"", "validation": { "maxLength": 300 } },
+    { "name": "passportNumber", "label": "Passport Number", "type": "string", "required": true, "classification": "sensitive-pii", "sourceRef": "Page 1 — \"N° du passeport / Passport number / رقم جواز السفر\"", "validation": { "maxLength": 50 } },
+    { "name": "passportIssuePlaceAndDate", "label": "Date and Place of Passport Issue", "type": "string", "required": true, "description": "Printed as a single combined blank, same treatment as dateAndPlaceOfBirth above.", "sourceRef": "Page 1 — \"Date et lieu de la délivrance / Date and place of issue / تاريخ و مكان إصداره\"", "validation": { "maxLength": 250 } },
+    { "name": "dateOfEntryToTunisia", "label": "Date of Entry to Tunisia", "type": "date", "required": true, "sourceRef": "Page 1 — \"Date d'entrée en Tunisie / Date of entry to Tunisia / تاريخ الدخول إلى تونس\"" },
+    { "name": "durationOfStay", "label": "Duration of Stay", "type": "string", "required": true, "sourceRef": "Page 1 — \"Durée de séjour / Duration of stay / مدة الإقامة بها\"", "validation": { "maxLength": 100 } },
+    { "name": "detailedReasonOfTravel", "label": "Detailed Reason of Travel", "type": "string", "required": true, "sourceRef": "Page 1 — \"Motif détaillé du voyage / Detailed reason of travel / أسباب السفر بالتفصيل\"", "validation": { "maxLength": 500 } },
+    { "name": "businessTripContacts", "label": "If a Business Trip: Names and Addresses of Persons to Contact", "type": "string", "required": false, "description": "One of three elaboration blocks printed on page 2 as footnoted guidance for detailedReasonOfTravel, each with its own blank lines, applicable only when the corresponding trip type applies.", "sourceRef": "Page 2, footnote (1) — \"S'il s'agit d'un voyage d'affaires, citer les noms et adresses des personnes à contacter\"", "validation": { "maxLength": 500 } },
+    { "name": "conferenceOrEventDetails", "label": "If Attending a Conference or Event: Organizer, Place, Date, and Duration", "type": "string", "required": false, "description": "Same elaboration-block treatment as businessTripContacts above, for trips to attend a congress, seminar, or other event.", "sourceRef": "Page 2, footnote (1) — \"S'il s'agit d'un voyage pour participation à un congrès ou manifestation, citer le nom de l'organisateur, le lieu, la date et la durée\"", "validation": { "maxLength": 500 } },
+    { "name": "studiesOrTrainingDetails", "label": "If for Studies or Training: Institution Name(s), Duration, and Funding Source", "type": "string", "required": false, "description": "Same elaboration-block treatment as businessTripContacts above, for trips for university studies or technical training, including whether the applicant is financially supported by a Tunisian organization or person.", "sourceRef": "Page 2, footnote (1) — \"S'il s'agit d'un voyage d'études universitaires ou de stages technique. Citer les noms des établissements à fréquenter... [indiquer] si le voyageur est aux frais d'un organisme ou d'une personne résidant en Tunisie\"", "validation": { "maxLength": 500 } },
+    { "name": "anticipatedModeOfTransportation", "label": "Anticipated Mode of Transportation", "type": "string", "required": true, "sourceRef": "Page 1 — \"Mode de locomotion envisagé / Anticipated mode of transportation / وسائل النقل المتوقعة\"", "validation": { "maxLength": 150 } },
+    { "name": "pointOfEntry", "label": "Point of Entry", "type": "string", "required": true, "sourceRef": "Page 1 — \"Point d'entrée / Point of entry / نقطة الدخول\"", "validation": { "maxLength": 150 } },
+    { "name": "addressInTunisia", "label": "Address in Tunisia", "type": "string", "required": true, "classification": "pii", "sourceRef": "Page 1 — \"Adresse en Tunisie / Address in Tunisia / العنوان بتونس\"", "validation": { "maxLength": 300 } },
+    { "name": "personsKnownInTunisia", "label": "Persons Known in Tunisia", "type": "string", "required": false, "classification": "pii", "description": "Modelled optional since not every applicant will have contacts in Tunisia; the specimen prints no discrete yes/no control gating it.", "sourceRef": "Page 1 — \"Personnes connues en Tunisie / Persons known in Tunisia / الأشخاص المعروفون بتونس\"", "validation": { "maxLength": 300 } },
+    { "name": "theirAddresses", "label": "Their Addresses", "type": "string", "required": false, "classification": "pii", "sourceRef": "Page 1 — \"Leurs adresses / Their addresses / عناوينهم\"", "validation": { "maxLength": 300 } },
+    { "name": "personsAccompanyingYou", "label": "Persons Accompanying You", "type": "string", "required": false, "classification": "pii", "sourceRef": "Page 1 — \"Personnes devant vous accompagner / Persons accompanying you / الأشخاص المصاحبون\"", "validation": { "maxLength": 300 } },
+    { "name": "previousStayInTunisiaDetails", "label": "Previous Stay(s) in Tunisia", "type": "string", "required": false, "description": "The specimen poses this as a yes/no question but prints only a single free-text blank beneath it (no checkbox control) — modelled as an optional free-text answer, not a boolean, to match this source's own layout.", "sourceRef": "Page 2 — \"Avez-vous déjà séjourné en Tunisie? / Have you previously stayed in Tunisia? / هل سبقت لكم الإقامة بالبلاد التونسية؟\"", "validation": { "maxLength": 300 } },
+    { "name": "applicantSignature", "label": "Applicant's Signature", "type": "string", "required": true, "classification": "pii", "description": "A single signature line following two printed declaration paragraphs: a pledge not to accept paid or unpaid employment during the stay, not to seek to settle in Tunisia, and to leave Tunisian territory upon the visa's expiry; and a statement that the applicant's signature carries legal responsibility and that a false declaration will bar the applicant from obtaining any future visa, without prejudice to legal proceedings.", "sourceRef": "Page 2 — \"Signature / Signature / الإمضاء\", preceded by the pledge (\"Je m'engage à n'accepter aucun emploi...\") and liability statement (\"Ma signature engage ma responsabilité...\")", "validation": { "maxLength": 200 } }
+  ],
+  "documents": [
+    { "id": "applicantPhoto", "label": "Applicant's photograph", "category": "identity-document", "required": true, "belongsTo": "applicant", "sourceRef": "\"PHOTO / الصورة\" placeholder box, top right of page 1" }
+  ]
+}
