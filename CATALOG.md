@@ -4,7 +4,57 @@
 
 ## Executive Summary
 
-**98 jurisdictions** | **659 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**98 jurisdictions** | **660 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4776, "GovSchema Standard Research"): Lesotho
+> gains a fourth Taxes companion schema**, via
+> `ls/rsl/trusts-and-estates-income-tax-return@1.0.0` — Revenue Services
+> Lesotho's (RSL) Form S128-TE, "Income Tax Return for Trusts and Estates
+> for Year Ended 31 March 2020". This closes the last item the GOV-4769
+> cycle left banked from RSL's own forms library: two editions of the
+> Trusts and Estates return were found ("Income Tax Return for Trusts and
+> Estates.pdf" and "...-17022020.pdf"), and this cycle resolved which is
+> current by downloading and diffing both — structurally identical
+> page-for-page, differing only in the "Year Ended 31 March" year (2019 vs.
+> 2020) and the personal tax credit base amount (M7,260.00 vs. M8,430.00) —
+> confirming the `-17022020` file is the newer, Year Ended 31 March 2020
+> edition. Fetched live and unauthenticated
+> (`https://www.rsl.org.ls/sites/default/files/2024-07/Income%20Tax%20Return%20for%20Trusts%20and%20Estates%20-%2017022020.pdf`,
+> HTTP 200, `application/pdf`, 781,711 bytes, sha256
+> `f4eecda355142b10e9a38691a622f6d9adcfffb260d2f2255a1f536247171c23`,
+> `Last-Modified: 2024-07-22`), no login/CAPTCHA gate. Like its siblings
+> from the same library, the source is a flat, non-fillable 7-page PDF with
+> zero AcroForm annotations; this specimen's raw text layer was found
+> internally consistent (no ghost-text artifacts), but Part I's dense,
+> conditionally-branching tax-bracket table (rows 3a-3d, row 5a) still
+> required rendering every page used in this schema with node-canvas to
+> correctly resolve the branching logic. Scoped v1.0.0 to the **core
+> declaration**: Details of Trust or Estate (header), Part A (Employment
+> Income & Expenses), Part B (Pension Income, including a 3-slot
+> not-earning-pension-income period block this form has that its
+> Individual-return sibling's own schema does not), Part I (Tax
+> Computation — including a synthetic `isEstateInYearOfDeathOrFollowingYear`
+> discriminator gating the form's own farming-income-flat-10%-rate-then-
+> death-year-dependent-20%/30%-vs-flat-40% bracket structure, matching this
+> registry's isLegalEntity/isBodyCorporate discriminator precedent), Part J
+> (Information on Beneficiaries, 5 identification slots), and the
+> Declaration of Paid Preparer / Declaration of Nominated Officer sections.
+> 91 `fields[]` across 6 steps, 7 `documents[]` entries, and 7
+> `crossFieldValidation` rules. Parts C-H (Business/Commercial
+> Farming/Property/Other Income and both foreign-tax-credit schedules) and
+> Part K (Allocation to Beneficiaries) are out of scope, deferred to a
+> future minor version — Part K in particular is entirely derived from
+> Parts C-H's own figures and cannot be meaningfully modeled independent of
+> them. 6 mock conformance scenarios (an ongoing trust taxed at the flat
+> 40% rate, an estate in the year of the deceased's death using the
+> 20%/30% brackets, one negative case per discriminator branch, an
+> employer-period-order violation, and a cross-part pension-income
+> mismatch) reproduced via an ephemeral checker; both validators pass
+> (660/660). This closes RSL's own disclosed Taxes backlog from this forms
+> library; Lesotho's DMV, Passport, National ID, and Visa verticals remain
+> soft backlog / stated-suspended per the prior cycles' own findings. See
+> the document's own VERIFICATION.md for the full sourcing record and every
+> disclosed scoping/judgment call.
 
 > **Update (2026-07-24, GOV-4769, "GovSchema Standard Research"): Lesotho
 > gains a second Taxes companion schema** (vertical count unchanged —
@@ -18753,6 +18803,25 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (81/94 jurisdictions — 86%)
 
+> **Update (2026-07-24, GOV-4776, "GovSchema Standard Research"): Lesotho
+> gains a fourth Taxes schema** (vertical count unchanged — already open
+> since GOV-4755), via `ls/rsl/trusts-and-estates-income-tax-return@1.0.0`
+> — RSL's Form S128-TE, "Income Tax Return for Trusts and Estates for Year
+> Ended 31 March 2020", closing the last item the GOV-4769 cycle left
+> banked from RSL's forms library. Resolved a two-edition ambiguity
+> (undated vs. `-17022020`) by diffing both PDFs, confirming the
+> `-17022020` file as the newer 2020 edition. Scoped to the core
+> declaration: Details of Trust or Estate, Part A (Employment), Part B
+> (Pension, including a not-earning-pension-income period block absent
+> from the Individual return's own schema), Part I (Tax Computation, with
+> a synthetic discriminator gating its farming-income-flat-10%-then-
+> death-year-dependent bracket structure), Part J (Information on
+> Beneficiaries), and both Declaration sections — deferring Parts C-H and
+> Part K (Allocation to Beneficiaries, entirely derived from the deferred
+> parts' own figures) to a future minor version. See the Executive Summary
+> update above and the document's own VERIFICATION.md for the full record.
+> RSL's own forms library backlog from this cycle is now fully closed.
+
 > **Update (2026-07-24, GOV-4769, "GovSchema Standard Research"): Lesotho
 > gains a third Taxes schema** (vertical count unchanged — already open
 > since GOV-4755), via `ls/rsl/fbt-return@1.0.0` — RSL's Form FBT1,
@@ -22537,7 +22606,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KZ** | 10 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **LS** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **LS** | 5 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **LV** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **MA** | 2 | ✓ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -24052,6 +24121,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Taxes backlog item; Lesotho's DMV, Passport, National ID, and Visa
       verticals remain soft backlog / stated-suspended per the prior
       cycles' own findings.
+      **Update (GOV-4776): the Income Tax Return for Trusts and Estates
+      backlog candidate is now closed too**, via
+      `ls/rsl/trusts-and-estates-income-tax-return@1.0.0` (RSL's Form
+      S128-TE) — the two-edition ambiguity was resolved by downloading and
+      diffing both PDFs, confirming the `-17022020` file as the current
+      (Year Ended 31 March 2020) edition — see the Executive Summary and
+      Taxes vertical updates above for the full record. RSL's own forms
+      library backlog from this cycle's own scouting is now fully closed;
+      Lesotho's DMV, Passport, National ID, and Visa verticals remain soft
+      backlog / stated-suspended per the prior cycles' own findings.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
