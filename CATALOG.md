@@ -4,7 +4,53 @@
 
 ## Executive Summary
 
-**95 jurisdictions** | **647 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**96 jurisdictions** | **648 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4687, "GovSchema Standard Research"): Hungary
+> opens as the registry's 96th jurisdiction, via its Taxes vertical (1 of
+> 6)**, with `hu/nav/individual-income-tax-return@1.0.0` — the National Tax
+> and Customs Administration's (NAV) annual personal income tax return,
+> form 24SZJA. This cycle first re-verified GOV-4638's own banked Belgium
+> Visa candidate (Belgium stood at 2/6, and this routine's standing
+> preference is to close a vertical on an already-open jurisdiction before
+> starting a new one), since it was the strongest remaining banked
+> candidate for a partially-open jurisdiction. A field-by-field comparison
+> against this registry's own `fr/france-visas/schengen-visa-application@1.0.0`
+> found Belgium's "national long-stay visa" PDF is a confirmed duplicate of
+> the harmonized EU Schengen visa application template (Annex I to
+> Regulation (EC) No 810/2009) — the same wall this registry's GOV-1774
+> precedent already hit for Poland, Spain, Portugal, and Switzerland's own
+> national D-visa forms. Not authoring a duplicate; Belgium's Visa vertical
+> is re-banked as a confirmed duplicate, not an open gap (Business
+> Formation and Taxes remain Belgium's two STRONG-but-caveated open
+> verticals, unscreened this cycle). With no non-duplicate strong candidate
+> left for an already-open jurisdiction, this cycle opens Hungary instead,
+> fetched directly and unauthenticated (HTTP 200, 727,940 bytes) from
+> `nav.gov.hu`, matching GOV-4638's own banked ~711KB estimate closely. A
+> genuinely large 30-page specimen (0 AcroForm widgets, a flat print-and-
+> write layout whose text layer decodes cleanly with no glyph-scramble
+> artifact, unlike several recent non-Latin-script cycles); this v1.0.0
+> models the main declaration — the cover sheet's identification/return-
+> type/refund-routing/declaration fields plus sheets A/B/C's full income,
+> allowance, tax-computation, and final-settlement rows (1-81) — 82
+> `fields[]` across 8 steps plus 1 `documents[]` entry (the taxpayer's
+> signed accuracy declaration), explicitly deferring this specimen's 24
+> further companion detail sheets (pages 5-30, covering agricultural
+> producers, individual entrepreneurs, EKHO-taxed performers, foreign
+> interest income, dependents/family-allowance declarations, and self-
+> revision annexes) to a future minor version, matching this registry's
+> established main-form-now/companion-schedules-later convention
+> (Kazakhstan's 220.00/250.00 series). 11 conformance scenarios reproduced
+> via an ephemeral checker, including the specific absent-optional-field
+> edge case this registry's own `notequals-empty-string-absent-field-bug`
+> precedent warns about (resolved here via an `in` gate rather than
+> `notEquals`); both validators pass. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed
+> scoping/judgment call. **Hungary now has 1 of 6 verticals** (Taxes);
+> Visa (STRONG but a confirmed dead end vs. the Schengen-harmonized
+> template, per this cycle's own finding), DMV (weak), Business Formation
+> (weak), Passport and National ID (both confirmed dead ends) remain
+> per GOV-4638's own findings, not re-screened this cycle.
 
 > **Update (2026-07-24, GOV-4680, "GovSchema Standard Research"): Belgium's
 > DMV vertical opens (2 of 6)**, via `be/mobilit/vehicle-registration-application@1.0.0`
@@ -18099,7 +18145,14 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (78/92 jurisdictions — 85%)
+### Taxes — Income Tax Return, Tax Filing (79/93 jurisdictions — 85%)
+
+> **Update (2026-07-24, GOV-4687, "GovSchema Standard Research"): Hungary
+> opens as a new jurisdiction via this vertical (1 of 6)**, via
+> `hu/nav/individual-income-tax-return@1.0.0` — NAV's 24SZJA annual
+> personal income tax return. See the Executive Summary update above for
+> the full sourcing record and the document's own VERIFICATION.md. This
+> vertical's own denominator moves from 92 to 93 for the new jurisdiction.
 
 > **Update (2026-07-24, GOV-4666, "GovSchema Standard Research"): Tunisia's
 > Taxes vertical opens (4 of 6 for the jurisdiction)**, via
@@ -21736,6 +21789,7 @@ now closed.
 | **GR** | 4 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **GT** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
+| **HU** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 13 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **IL** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -22943,6 +22997,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       **National ID** are both confirmed dead ends (fully in-person
       biometric enrolment/issuance, no citizen-filled form). Banked: Taxes
       is the strongest candidate to open Hungary in a future cycle.
+      **Update (GOV-4687, 2026-07-24): Taxes now authored** as
+      `hu/nav/individual-income-tax-return@1.0.0` (re-verified live and
+      unauthenticated, HTTP 200, 727,940 bytes) — see the Executive Summary
+      and Taxes vertical updates above. **Opens Hungary as the registry's
+      96th jurisdiction (1/6).** Visa, DMV, Business Formation, Passport,
+      and National ID remain confirmed duplicate/weak/dead-end per this
+      item's own findings above, not re-screened this cycle.
     - **Belgium** — strongest on **Passport**: the Foreign Affairs
       ministry's own 2024 adult/child passport application PDF
       (`diplomatie.belgium.be`, 164KB, HTTP 200, no caveats). **Visa**
@@ -22978,6 +23039,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Business Formation, and Taxes remain confirmed STRONG/caveated open
       backlog; National ID remains this item's own confirmed-weak finding,
       not re-screened this cycle.
+      **Update (GOV-4687, 2026-07-24): Belgium's Visa candidate
+      re-verified and found to be a confirmed duplicate, not an open gap.**
+      This cycle fetched the live PDF at
+      `cotedivoire.diplomatie.belgium.be/sites/default/files/documents/blancobelgianapplicationform-fr.pdf`
+      (HTTP 200, 275,272 bytes) and compared it field-by-field against this
+      registry's own `fr/france-visas/schengen-visa-application@1.0.0`: the
+      Belgian "national long-stay visa" form is the same 32-numbered-box
+      harmonized EU Schengen visa application template (Annex I to
+      Regulation (EC) No 810/2009), field-for-field, the same wall this
+      registry's GOV-1774 precedent already hit for Poland's, Spain's,
+      Portugal's, and Switzerland's own national D-visa forms. Belgium's
+      Visa vertical is therefore a **confirmed duplicate dead end**, not
+      open backlog; **Business Formation and Taxes remain Belgium's only
+      two open (STRONG-but-caveated) verticals**, unscreened this cycle.
     - **Tunisia** — **Update (GOV-4638, 2026-07-24): now authored** as
       `tn/dgsn/passport-application@1.0.0` — see the Executive Summary and
       Passport vertical updates above. **Opens Tunisia as the registry's
@@ -25618,27 +25693,42 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   Commission) has no applicant-facing registration form at all — election
   cards are auto-generated for every citizen 18+ directly from the
   civil-status database. Do not re-attempt without a genuinely new source.
-- **Hungary — all six verticals** — GOV-2969, screened 2026-07-14. **Visa**:
+- **Hungary — five of six verticals; Taxes reopened** — GOV-2969, screened
+  2026-07-14; **Taxes finding superseded GOV-4687, 2026-07-24.** **Visa**:
   the Consular Service's (`konzuliszolgalat.kormany.hu`) visa questionnaire
   PDF is a confirmed field-for-field duplicate (all 34 numbered fields
   independently verified) of the harmonized EU Schengen Annex I template
   already modelled at `fr/france-visas/schengen-visa-application` — the
   form's own heading reads "Harmonised application form — Application for
   Schengen Visa," citing Regulation (EU) 2016/399, the same finding already
-  reached for Czechia, Poland, and Switzerland's own copies of this form.
-  **Taxes** (NAV) and **Business Formation** (T101E sole-trader
-  registration) both require the proprietary ÁNYK ("Általános
-  Nyomtatványkitöltő") framework program, not a standard PDF or AcroForm.
-  **Passport** and **National ID** (e-személyi): `police.hu` states both are
-  issued entirely in person, with the licence/card centrally
-  system-generated and biometrics captured at the counter; the one
-  downloadable "ID card" form found on `police.hu` turned out, on
-  inspection, to actually be a private-investigator/security-guard permit,
-  not the citizen national ID card. **DMV**: driving-licence issuance is
-  "centrally issued" and clerk-entered electronically; vehicle registration
-  is explicitly "prepared electronically during proceedings" by the traffic
-  authority, with no citizen-fillable form. Do not re-attempt any of
-  Hungary's six verticals without a genuinely new source.
+  reached for Czechia, Poland, and Switzerland's own copies of this form
+  (independently reconfirmed via a second, embassy-hosted Schengen-visa PDF
+  candidate during GOV-4638's own scouting pass). **Business Formation**
+  (T101E sole-trader registration) requires the proprietary ÁNYK
+  ("Általános Nyomtatványkitöltő") framework program, not a standard PDF or
+  AcroForm — still a dead end. **Taxes (NAV) is NO LONGER a dead end**:
+  GOV-2969's own finding that NAV's return "requires the proprietary ÁNYK
+  framework program, not a standard PDF" evidently missed (or predates) a
+  separate, directly downloadable static "nyomtatványkép" (form-image) PDF
+  specimen of the same form — a genuine blank/printable specimen distinct
+  from the ÁNYK fill-in software, fetched live and unauthenticated this
+  cycle (HTTP 200, 727,940 bytes) from `nav.gov.hu`. Now authored as
+  `hu/nav/individual-income-tax-return@1.0.0` — see the Executive Summary
+  and Taxes vertical updates above. **Passport** and **National ID**
+  (e-személyi): `police.hu` states both are issued entirely in person, with
+  the licence/card centrally system-generated and biometrics captured at
+  the counter; the one downloadable "ID card" form found on `police.hu`
+  turned out, on inspection, to actually be a private-investigator/
+  security-guard permit, not the citizen national ID card — still dead
+  ends. **DMV**: driving-licence issuance is "centrally issued" and
+  clerk-entered electronically; vehicle registration is explicitly
+  "prepared electronically during proceedings" by the traffic authority,
+  with no citizen-fillable form — still a dead end (GOV-4638's own
+  independent scouting separately found only a narrow temporary-vehicle-
+  circulation-permit form, not full registration, consistent with this
+  finding). Do not re-attempt Hungary's remaining five verticals (Visa,
+  Business Formation, Passport, National ID, DMV) without a genuinely new
+  source; **Hungary now has 1 of 6 verticals (Taxes)**.
 - **TH National ID (DOPA)** — GOV-2976, 2026-07-14. Thailand is otherwise
   5 of 6 (only National ID open). Checked `bora.dopa.go.th`'s own
   "download" page (pages 1-3, 5) and all 7 `/service-downloads/items{1-7}`
