@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**92 jurisdictions** | **639 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**93 jurisdictions** | **640 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4631, "GovSchema Standard Research"): Guatemala
+> opens as the registry's 93rd jurisdiction, via Business Formation (1 of
+> 6)**, via `gt/rgm/mercantile-company-registration@1.0.0` — the Registro
+> Mercantil General de la República's and SAT's joint live, unauthenticated
+> web form "SOLICITUD DE INSCRIPCIÓN DE SOCIEDADES MERCANTILES ANTE LA
+> SUPERINTENDENCIA DE ADMINISTRACIÓN TRIBUTARIA Y EL REGISTRO MERCANTIL"
+> (Form SAT-RM-02), fetched directly and unauthenticated at
+> `servicios.registromercantil.gob.gt` (HTTP 200, 127,192 bytes). Picked up
+> from Guatemala's own banked Known Gaps entry (originally scouted during
+> GOV-4568's parallel new-jurisdiction pass, set aside there in favor of
+> Mauritius's stronger 4-of-6 showing). Unlike every other schema this
+> registry has authored to date, the live source is not a PDF/DOCX
+> specimen but a server-rendered HTML form whose own inline `<script>`
+> blocks distinguish genuinely mutually-exclusive checkbox pairs (document
+> type, applicant capacity, and a book-registration medium election that
+> cascades across an entire repeating table) from checkbox groups the
+> source itself leaves independently toggleable (administration/oversight
+> bodies, ISR calculation method, inventory valuation, accounting system).
+> Models 113 `fields[]` across 9 steps, combining the company's own
+> mercantile registration, its first business establishment, SAT taxpayer
+> registration (IVA/ISR regime elections), and initial accounting-books
+> authorization — all filed together per this jurisdiction's "single
+> window" design. See the document's own VERIFICATION.md for the full
+> sourcing record and every disclosed scoping/judgment call, including a
+> genuine printed-numbering defect (item 42 skipped, item 43 reused twice).
+> Guatemala's other five verticals (Visa, DMV, Passport, Taxes, National
+> ID) remain confirmed weak/dead-end per GOV-4568's own scouting record,
+> not re-screened this cycle.
 
 > **Update (2026-07-24, GOV-4624, "GovSchema Standard Research"): Mauritius's
 > Business Formation vertical opens, closing the jurisdiction's entire
@@ -16579,7 +16608,26 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (79/84 jurisdictions — 94%)
+### Business Formation — Incorporation, LLC, Company Registration (81/86 jurisdictions — 94%)
+
+> **Update (2026-07-24, GOV-4631, "GovSchema Standard Research"): Guatemala
+> opens as the registry's 93rd jurisdiction, via its first Business
+> Formation schema**, via `gt/rgm/mercantile-company-registration@1.0.0` —
+> see the Executive Summary update above for the full sourcing record and
+> the document's own VERIFICATION.md. Numerator updated from 80 to 81;
+> denominator updated from 85 to 86 (Guatemala had not previously been
+> reached for any vertical).
+
+> **Update (2026-07-24, GOV-4624, "GovSchema Standard Research"): Mauritius
+> gains its Business Formation schema, closing this jurisdiction's entire
+> banked backlog (4/6)**, via
+> `mu/cbrd/limited-partnership-registration@1.0.0` — see the Executive
+> Summary update above for the full sourcing record and the document's own
+> VERIFICATION.md. Numerator updated from 79 to 80; denominator updated
+> from 84 to 85 (Mauritius had not yet been reached for Business
+> Formation — it opened via Passport under GOV-4603). *(This update was
+> omitted from this vertical section in the original GOV-4624 cycle; added
+> retroactively here for accuracy.)*
 
 > **Update (2026-07-23, GOV-4589, "GovSchema Standard Research"): Trinidad
 > and Tobago gains its first Business Formation schema (4/6 for the
@@ -21399,6 +21447,7 @@ now closed.
 | **GE** | 2 | ✗ | ✗ | ✓ | ✗ | ✓ | ✗ |
 | **GH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **GR** | 4 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **GT** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **HR** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **ID** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **IE** | 13 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -21422,7 +21471,7 @@ now closed.
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| **MU** | 2 | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ |
+| **MU** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NA** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -22579,6 +22628,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       confirmed dead ends. Guatemala was not opened as a jurisdiction this
       cycle; its sole STRONG candidate (Business Formation) is banked
       should a future cycle find a second STRONG vertical to pair with it.
+      **Update (GOV-4631, 2026-07-24): Business Formation now authored**
+      as `gt/rgm/mercantile-company-registration@1.0.0` (re-verified live
+      and unauthenticated, HTTP 200, 127,192 bytes) — see the Executive
+      Summary and Business Formation vertical updates above and the
+      document's own VERIFICATION.md for the full scope record. **Opens
+      Guatemala as the registry's 93rd jurisdiction (1/6).** Visa, DMV,
+      Passport, Taxes, and National ID remain confirmed weak/dead-end per
+      this item's own findings above, not re-screened this cycle.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
