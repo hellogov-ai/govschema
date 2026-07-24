@@ -18,7 +18,7 @@
 > verticals each; Tunisia came back with the cleanest overall showing (5
 > of 6 verticals STRONG or near-STRONG per this cycle's scouting pass,
 > only DMV weak due to an unreachable agency site), so its Passport
-> vertical was authored first, opening the jurisdiction. Models 27
+> vertical was authored first, opening the jurisdiction. Models 28
 > `fields[]` across 7 steps (Tunisia's own request-type checklist
 > covering first-time issuance, validity extension, renewal, and
 > replacement all on one form), with 0 `documents[]` entries — this

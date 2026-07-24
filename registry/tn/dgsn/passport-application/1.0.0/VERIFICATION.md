@@ -253,5 +253,5 @@ tools/validate-ajv.mjs` (ajv 2020-12 against
 `spec/v0.3/govschema.schema.json`). `registry-index.json` regenerated via
 `npm run build-index` in `tools/govschema-client/`.
 
-Models 27 `fields[]` across 7 steps, 0 `documents[]` entries (omitted per
+Models 28 `fields[]` across 7 steps, 0 `documents[]` entries (omitted per
 the scoping note above).
