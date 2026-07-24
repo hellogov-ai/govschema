@@ -1,0 +1,94 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "be/diplomatie/passport-application",
+  "version": "1.0.0",
+  "title": "Belgium Passport Application (Adults and Children 6 Years and Older)",
+  "description": "The Federal Public Service Foreign Affairs, Foreign Trade and Development Cooperation's (SPF Affaires étrangères / FOD Buitenlandse Zaken, branded publicly as \"diplomatie.belgium.be\") \"Demande de passeport\" (Formulaire pour adultes et enfants à partir de 6 ans) — the ordinary passport application for adults and children aged 6 and older, filed at a Belgian consular post abroad or a Belgian municipal administration. Fetched directly and unauthenticated as a static PDF from diplomatie.belgium.be. Opens Belgium as a new jurisdiction in the registry (GOV-4645, \"GovSchema Standard Research\"), picked up from a candidate scouted and banked during GOV-4638's parallel new-jurisdiction pass alongside Hungary and Tunisia. This edition is the French-language specimen; the same form is also published in parallel, functionally identical Dutch- and German-language editions. This schema does not submit the application itself; the live source is always authoritative. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Belgium or its Federal Public Service Foreign Affairs, Foreign Trade and Development Cooperation.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "BE",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Federal Public Service Foreign Affairs, Foreign Trade and Development Cooperation (Service public fédéral Affaires étrangères, Commerce extérieur et Coopération au Développement)",
+    "abbreviation": "FPS Foreign Affairs",
+    "url": "https://diplomatie.belgium.be/en/belgians-abroad/belgian-passport/ordinary-passport"
+  },
+  "process": {
+    "type": "application",
+    "language": "fr"
+  },
+  "source": {
+    "url": "https://diplomatie.belgium.be/sites/default/files/2024-07/2024-FR-Demande-de-passeport-formulaire-pour-adultes-et-enfants-%C3%A0-partir-de-6-ans.pdf",
+    "retrievedAt": "2026-07-24",
+    "documentRef": "Demande de passeport (Formulaire pour adultes et enfants à partir de 6 ans), July 2024 edition"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-24",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-24",
+    "notes": "See VERIFICATION.md for the full write-up: source fetch/hash, the relative-URL host-resolution pitfall this cycle hit before reaching the live PDF, node-canvas visual checkbox confirmation, document structure, disclosed exclusions, and every scoping/judgment call."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-24"
+  },
+  "license": "CC-BY-4.0",
+  "steps": [
+    {
+      "id": "personal_data",
+      "title": "My Personal Data or the Child's",
+      "fields": ["lastName", "firstNames", "nobilityTitle", "spouseName", "dateOfBirth", "sex", "placeOfBirth", "otherNationalities", "maritalStatus", "address", "phoneNumber", "email"],
+      "next": "choices"
+    },
+    {
+      "id": "choices",
+      "title": "My Choices",
+      "fields": ["passportLanguage", "passportType", "biometricDataRegistrationLocation", "flyingConsulMissionLocation", "passportCollectionMethod", "longTermDataRetentionOptIn"],
+      "next": "declaration"
+    },
+    {
+      "id": "declaration",
+      "title": "Date, Signature, and Legal Representative(s) for a Minor",
+      "fields": ["applicationDate", "applicantSignature", "legalRepresentative1Name", "legalRepresentative1RelationshipToMinor", "legalRepresentative1Signature", "legalRepresentative2Name", "legalRepresentative2RelationshipToMinor", "legalRepresentative2Signature"]
+    }
+  ],
+  "fields": [
+    { "name": "lastName", "label": "Last Name", "type": "string", "required": true, "classification": "pii", "description": "Printed with its own sub-note: \"(de jeune fille pour femmes mariées)\" — maiden name, for married women.", "sourceRef": "Page 1, item 1 — \"Nom\"" },
+    { "name": "firstNames", "label": "First Name(s)", "type": "string", "required": true, "classification": "pii", "sourceRef": "Page 1, item 2 — \"Prénom(s)\"" },
+    { "name": "nobilityTitle", "label": "Title of Nobility", "type": "string", "required": false, "sourceRef": "Page 1, item 3 — \"Titre de noblesse\"" },
+    { "name": "spouseName", "label": "Spouse's Name", "type": "string", "required": false, "classification": "pii", "description": "Not gated behind maritalStatus — unlike this registry's usual adjacency-based conditional inference (e.g. tn/dgsn/passport-application's spouse block), this field sits several lines above the État civil (marital status) group with no adjacent or cross-referencing label linking the two, so no requiredWhen link is asserted; see VERIFICATION.md.", "sourceRef": "Page 1, item 4 — \"Nom du conjoint\"" },
+    { "name": "dateOfBirth", "label": "Date of Birth", "type": "date", "required": true, "classification": "sensitive-pii", "sourceRef": "Page 1, item 5 — \"Date de naissance\"" },
+    { "name": "sex", "label": "Sex", "type": "enum", "required": true, "classification": "sensitive-pii", "sourceRef": "Page 1, item 6 — \"Sexe\": ☐ Masculin ☐ Féminin", "validation": { "enum": ["MALE", "FEMALE"] } },
+    { "name": "placeOfBirth", "label": "Place of Birth (and Country)", "type": "string", "required": true, "classification": "pii", "description": "Printed as a single blank line covering both the place and country of birth, unlike some other registry sources that split these into separate fields — modelled as one field matching this specimen's own layout.", "sourceRef": "Page 1, item 7 — \"Lieu de naissance (+ pays)\"" },
+    { "name": "otherNationalities", "label": "Other Nationality/Nationalities", "type": "string", "required": false, "description": "This form's own item 8 pre-prints \"belge\" (Belgian) as a fixed value beside \"Nationalité(s):\", not an applicant-editable field — this schema does not model \"belge\" itself as an input. The adjoining blank \"Autre(s):\" line, for any additional (dual) nationality, is modelled here as an optional supplementary disclosure, consistent with this registry's treatment of comparable fields elsewhere (e.g. tn/dgsn/passport-application's otherNationalities).", "sourceRef": "Page 1, item 8 — \"Nationalité(s): belge / Autre(s):\"" },
+    { "name": "maritalStatus", "label": "Marital Status", "type": "enum", "required": true, "sourceRef": "Page 1, item 9 — \"État civil\": ☐ Célibataire ☐ Marié(e) ☐ Divorcé(e) ☐ Veuf/Veuve", "validation": { "enum": ["SINGLE", "MARRIED", "DIVORCED", "WIDOWED"] } },
+    { "name": "address", "label": "Address (Street, Number, Postal Code, Municipality, Country)", "type": "string", "required": true, "classification": "pii", "description": "Printed as a single blank line combining street, number, postal code, municipality, and country, unlike this registry's other address blocks that split a printed multi-column table into separate fields (e.g. tn/dgsn/passport-application's four-column address) — modelled as one field matching this specimen's own single-line layout.", "sourceRef": "Page 1, item 10 — \"Adresse (rue, numéro, code postal, commune, pays)\"" },
+    { "name": "phoneNumber", "label": "Phone Number", "type": "string", "required": true, "classification": "pii", "description": "This source carries no asterisk/mandatory-marking convention anywhere; phoneNumber and email are modelled required as the form's own sole named contact channels for the consular post to reach the applicant about appointment scheduling, flying-consul missions, and passport pickup — not treated as optional supplementary disclosures. See VERIFICATION.md.", "sourceRef": "Page 1, item 11 — \"Numéro de téléphone\"" },
+    { "name": "email", "label": "Email Address", "type": "string", "required": true, "classification": "pii", "description": "Same requiredness reasoning as phoneNumber above.", "sourceRef": "Page 1, item 12 — \"Adresse e-mail\"" },
+    { "name": "passportLanguage", "label": "First Language of the Passport", "type": "enum", "required": true, "sourceRef": "Page 2, item 4.1 — \"Première langue du passeport\": ☐ Français ☐ Nederlands ☐ Deutsch", "validation": { "enum": ["FRENCH", "DUTCH", "GERMAN"] } },
+    { "name": "passportType", "label": "Type of Passport", "type": "enum", "required": true, "description": "The 66-page option is printed with its own bolded caveat, \"Attention: surcoût à payer!\" (a surcharge applies) — recorded here for context, not as a separate fee field, since the form prints no fee amount.", "sourceRef": "Page 2, item 4.2 — \"Type de passeport\": ☐ ordinaire 34 pages ☐ ordinaire 66 pages", "validation": { "enum": ["ORDINARY_34_PAGES", "ORDINARY_66_PAGES"] } },
+    { "name": "biometricDataRegistrationLocation", "label": "Biometric Data Registration Location", "type": "enum", "required": true, "sourceRef": "Page 2, item 4.3 — \"Enregistrement des données biométriques\": ☐ dans mon poste consulaire ☐ lors de la mission flying consul prévue à …", "validation": { "enum": ["CONSULAR_POST", "FLYING_CONSUL_MISSION"] } },
+    { "name": "flyingConsulMissionLocation", "label": "Flying Consul Mission Location/Date", "type": "string", "required": false, "requiredWhen": { "field": "biometricDataRegistrationLocation", "equals": "FLYING_CONSUL_MISSION" }, "description": "The dotted blank line printed directly after \"lors de la mission flying consul prévue à …\" on the same option line, unlike spouseName above — here the blank is directly adjacent to and part of the same printed option, so this schema does assert the conditional link.", "sourceRef": "Page 2, item 4.3 — \"…prévue à ……………\"" },
+    { "name": "passportCollectionMethod", "label": "Passport Collection Method", "type": "enum", "required": true, "sourceRef": "Page 2, item 4.4 — \"Mode de retrait du passeport\": ☐ Je souhaite recevoir le passeport par courrier ☐ Je viendrai chercher le passeport en personne ☐ Je donnerai procuration à une tierce personne ☐ Je n'ai pas encore décidé", "validation": { "enum": ["MAIL", "IN_PERSON", "PROXY", "UNDECIDED"] } },
+    { "name": "longTermDataRetentionOptIn", "label": "Optional Long-Term Data Retention (7 Years)", "type": "boolean", "required": false, "description": "A single opt-in checkbox: the applicant may expressly request their (or the child's) personal data be retained for 7 years, rather than the standard 3 months, for a future replacement passport in case of loss/theft/manufacturing defect. The form's own note states this option is only available at consular posts, not municipal administrations.", "sourceRef": "Page 2, item 5 — \"Conservation facultative de longue durée des données\"" },
+    { "name": "applicationDate", "label": "Date", "type": "date", "required": true, "sourceRef": "Declaration block — \"Date\"" },
+    { "name": "applicantSignature", "label": "Applicant's Signature", "type": "string", "required": true, "classification": "pii", "description": "The form's own footnote clarifies \"demandeur\" (applicant) is used here in gender-neutral (epicene) form.", "sourceRef": "Declaration block — \"Signature du demandeur*\"" },
+    { "name": "legalRepresentative1Name", "label": "Legal Representative 1: Name(s)", "type": "string", "required": false, "classification": "pii", "description": "This form prints no separate \"is this application for a minor\" discriminator field, so this bounded 2-slot legal-representative block (matching the specimen's own two printed blank rows) is modelled as optional throughout rather than conditionally required via a fabricated discriminator; see VERIFICATION.md.", "sourceRef": "Declaration block, row 1 — \"Pour le mineur, signature du/des parent(s), tuteur(s) ou du représentant légal\" table, column \"Nom(s)\"" },
+    { "name": "legalRepresentative1RelationshipToMinor", "label": "Legal Representative 1: Relationship to the Minor", "type": "string", "required": false, "sourceRef": "Declaration block, row 1, column \"Lien avec le mineur\"" },
+    { "name": "legalRepresentative1Signature", "label": "Legal Representative 1: Signature", "type": "string", "required": false, "classification": "pii", "sourceRef": "Declaration block, row 1, column \"Signature(s)\"" },
+    { "name": "legalRepresentative2Name", "label": "Legal Representative 2: Name(s)", "type": "string", "required": false, "classification": "pii", "sourceRef": "Declaration block, row 2 — same table, second blank row" },
+    { "name": "legalRepresentative2RelationshipToMinor", "label": "Legal Representative 2: Relationship to the Minor", "type": "string", "required": false, "sourceRef": "Declaration block, row 2, column \"Lien avec le mineur\"" },
+    { "name": "legalRepresentative2Signature", "label": "Legal Representative 2: Signature", "type": "string", "required": false, "classification": "pii", "sourceRef": "Declaration block, row 2, column \"Signature(s)\"" }
+  ]
+}

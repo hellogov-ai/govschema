@@ -4,7 +4,40 @@
 
 ## Executive Summary
 
-**94 jurisdictions** | **641 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**95 jurisdictions** | **642 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4645, "GovSchema Standard Research"): Belgium
+> opens as the registry's 95th jurisdiction, via Passport (1 of 6)**, via
+> `be/diplomatie/passport-application@1.0.0` — the Federal Public Service
+> Foreign Affairs, Foreign Trade and Development Cooperation's "Demande de
+> passeport" (Formulaire pour adultes et enfants à partir de 6 ans),
+> fetched directly and unauthenticated (HTTP 200, 167,450 bytes) from
+> `diplomatie.belgium.be`. Picked up from GOV-4638's own banked candidate —
+> Passport was Belgium's cleanest, uncaveated showing among the six
+> verticals scouted that cycle. A relative-URL host-resolution pitfall
+> surfaced en route to the live PDF (the ministry's own forms-listing page
+> links it by a site-root-relative path with no `<base>` tag, so a first
+> guess at `www.belgium.be` returned a bot-challenge page and then a 404,
+> both artifacts of the wrong host rather than a live-source failure;
+> re-deriving the host from the linking page's own canonical URL,
+> `diplomatie.belgium.be`, resolved it). This specimen's checkbox squares
+> are vector-drawn line art producing no text-layer item at all (a third,
+> distinct PDF-extraction failure mode from this registry's other two
+> documented patterns), so every checkbox group was independently
+> confirmed via a `node-canvas` render at 3x scale. Models 26 `fields[]`
+> across 3 steps, 0 `documents[]` entries (the only document-related text
+> is a generic "attach supporting documents" instruction with no named
+> checklist). See the document's own VERIFICATION.md for the full sourcing
+> record and every disclosed scoping/judgment call, including why
+> `spouseName` is left unconditionally optional (no adjacency to the
+> marital-status group, unlike this registry's usual inference pattern)
+> while the legal-representative-for-a-minor block is also left
+> unconditionally optional (this form prints no explicit adult/minor
+> discriminator field). Belgium's other five verticals (Visa, DMV, Business
+> Formation, Taxes, National ID) remain open backlog per GOV-4638's own
+> scouting record — Visa and DMV were scouted STRONG, Business Formation
+> and Taxes STRONG-but-caveated, National ID weak — not re-screened this
+> cycle.
 
 > **Update (2026-07-24, GOV-4638, "GovSchema Standard Research"): Tunisia
 > opens as the registry's 94th jurisdiction, via Passport (1 of 6)**, via
@@ -15349,7 +15382,14 @@
 
 ## By Vertical
 
-### Passport (61/94 jurisdictions — 65%)
+### Passport (62/95 jurisdictions — 65%)
+
+> **Update (2026-07-24, GOV-4645, "GovSchema Standard Research"): Belgium
+> opens this vertical, and the jurisdiction itself (1 of 6)**, via
+> `be/diplomatie/passport-application@1.0.0` — the Federal Public Service
+> Foreign Affairs' "Demande de passeport" (Formulaire pour adultes et
+> enfants à partir de 6 ans). See the Executive Summary update above for
+> the full sourcing record, scope decisions, and disclosed findings.
 
 > **Update (2026-07-24, GOV-4638, "GovSchema Standard Research"): Tunisia
 > opens this vertical, and the jurisdiction itself (1 of 6)**, via
@@ -21461,6 +21501,7 @@ now closed.
 | **AT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **BE** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BO** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **BR** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -22712,6 +22753,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       voter-registration forms are too fragmented to have a single
       federal source). Banked: Passport is the strongest candidate to
       open Belgium in a future cycle.
+      **Update (GOV-4645, 2026-07-24): Passport now authored** as
+      `be/diplomatie/passport-application@1.0.0` (re-verified live and
+      unauthenticated, HTTP 200, 167,450 bytes) — see the Executive
+      Summary and Passport vertical updates above. **Opens Belgium as the
+      registry's 95th jurisdiction (1/6).** Visa, DMV, Business Formation,
+      Taxes, and National ID remain confirmed strong/caveated/weak per this
+      item's own findings above, not re-screened this cycle.
     - **Tunisia** — **Update (GOV-4638, 2026-07-24): now authored** as
       `tn/dgsn/passport-application@1.0.0` — see the Executive Summary and
       Passport vertical updates above. **Opens Tunisia as the registry's
