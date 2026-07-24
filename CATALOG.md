@@ -4,7 +4,50 @@
 
 ## Executive Summary
 
-**96 jurisdictions** | **649 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**96 jurisdictions** | **650 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4703, "GovSchema Standard Research"): Kyrgyzstan's
+> Business Formation vertical opens (2 of 6)**, via
+> `kg/gns/tax-registration-application@1.0.0` — the State Tax Service's
+> (GNS) "DOC STI-163", Заявление на регистрацию/перерегистрацию
+> налогоплательщика (Application for Registration/Re-registration of a
+> Taxpayer). This is the exact candidate GOV-4410 had banked as
+> Kyrgyzstan's strongest remaining Business Formation option but could
+> not author: `sti.gov.kg`'s file-serving endpoint was returning HTTP 500
+> for every file tested that cycle, confirmed via more than ten
+> independent fetch attempts. This cycle re-fetched the same URL fresh and
+> found the endpoint recovered (HTTP 200, 223,620 bytes, a flat
+> non-AcroForm 2-page specimen — one transient connection-level blip
+> recurred and resolved on retry within seconds, clearly distinct from
+> GOV-4410's own multi-minute, multi-tool-confirmed outage). A single form
+> serving seven distinct registration/re-registration actions selectable
+> by one checkbox group, of which individual-entrepreneur registration is
+> this registry's closest Kyrgyz equivalent to a sole-trader/self-
+> employment Business Formation pathway; models Section I (taxpayer
+> identification and address/contact particulars, 8 fields), Section II
+> (the registration-action checkbox, its sole disclosed ground, and an
+> 11-value tax-regime declaration checkbox spanning general VAT/non-VAT,
+> patent, transaction, free-economic-zone, high-tech-park, e-commerce,
+> mining, gambling, special-trade-zone, and unified-tax regimes), and the
+> applicant's own closing signature/date block — 13 `fields[]` across 4
+> steps. Excludes Section III (the tax authority's own receipt-stamp
+> block, staff-populated) and page 2 (a companion unified-tax
+> rate-selection appendix required only when the tax-regime checkbox
+> selects the unified-tax option), both disclosed as open backlog per this
+> registry's own established main-form-now/companion-annex-later
+> convention. A checkbox-grid layout printed in multiple side-by-side
+> columns rather than single top-to-bottom reading order — a variant of
+> this registry's already-documented non-sequential-reading-order
+> PDF-extraction pattern; no vector checkbox glyphs found in the text
+> layer, matching the already-documented vector-checkbox pattern. 15
+> conformance scenarios reproduced via an ephemeral checker, including two
+> `requiredWhen`-gate mutation fixtures for the `businessAddress` and
+> `economicActivityDescription` discriminator gates; both validators pass.
+> See the document's own VERIFICATION.md for the full sourcing record and
+> every disclosed scoping/judgment call. **Kyrgyzstan now has 2 of 6
+> verticals** (Taxes, Business Formation); DMV, Visa, and Passport/
+> National ID remain GOV-4410's own confirmed dead-end/inconclusive
+> findings, not re-screened this cycle.
 
 > **Update (2026-07-24, GOV-4694, "GovSchema Standard Research"): Belgium's
 > Business Formation vertical opens (3 of 6)**, via
@@ -16947,7 +16990,17 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (83/87 jurisdictions — 95%)
+### Business Formation — Incorporation, LLC, Company Registration (84/88 jurisdictions — 95%)
+
+> **Update (2026-07-24, GOV-4703, "GovSchema Standard Research"): Kyrgyzstan's
+> Business Formation vertical opens (2 of 6)**, via
+> `kg/gns/tax-registration-application@1.0.0` — see the Executive Summary
+> update above for the full record. Numerator updated from 83 to 84;
+> denominator updated from 87 to 88 (Kyrgyzstan had not yet been reached
+> for Business Formation specifically — it opened via Taxes under
+> GOV-4399). Kyrgyzstan now has Taxes and Business Formation authored
+> (2 of 6); DMV, Visa, and Passport/National ID remain GOV-4410's own
+> confirmed dead-end/inconclusive findings.
 
 > **Update (2026-07-24, GOV-4694, "GovSchema Standard Research"): Belgium's
 > Business Formation vertical opens (3 of 6)**, via
@@ -21861,7 +21914,7 @@ now closed.
 | **JO** | 3 | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
 | **JP** | 9 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **KE** | 4 | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
-| **KG** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
+| **KG** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **KH** | 7 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KZ** | 10 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
@@ -22451,6 +22504,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       likely next candidate for Kyrgyzstan; re-fetch
       `sti.gov.kg/section/view-pdf?filePath=websti%2F2026%2F01%2F23%2FDOC%20STI-163%20(русский).pdf`
       fresh once the endpoint recovers before authoring.
+      **Update (GOV-4703, 2026-07-24): now authored** as
+      `kg/gns/tax-registration-application@1.0.0` — the file-serving
+      endpoint's outage is confirmed recovered (re-fetched fresh, HTTP 200,
+      223,620 bytes) — see the Executive Summary and Business Formation
+      vertical updates above. **Kyrgyzstan now has 2 of 6 verticals**
+      (Taxes, Business Formation); DMV, Visa, Passport, and National ID
+      remain this item's own findings below, not re-screened this cycle.
     - **DMV — confirmed dead end.** Kyrgyzstan's driving-licence process has
       moved fully onto the Tunduk e-government portal (`portal.tunduk.kg` /
       `tunduk.gov.kg`), requiring Unified-ID authentication, an uploaded
