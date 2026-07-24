@@ -4,7 +4,61 @@
 
 ## Executive Summary
 
-**96 jurisdictions** | **650 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**97 jurisdictions** | **651 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4713, "GovSchema Standard Research"): Bosnia and
+> Herzegovina opens as the registry's 97th jurisdiction**, via
+> `ba/apif/business-entity-classification-application@1.0.0` — the Agency
+> for Intermediary, IT and Financial Services' (Agencija za posredničke,
+> informatičke i finansijske usluge, APIF) Form RPS-1, "Пријава за
+> разврставање пословног субјекта по дјелатности" (Application for
+> Classification of a Business Entity by Activity), opening the Business
+> Formation vertical (1 of 6). This cycle first re-confirmed every legacy
+> "GovSchema Standard Research" National ID candidate this issue's own
+> notes name (DE Steuer-ID, SG NRIC loss/damage + re-registration, NZ
+> RealMe, remaining voter registration) is already authored and closed —
+> see this catalog's own `gov2167`-family findings — then found every
+> recently-banked backlog candidate for a partway-open jurisdiction
+> (Kyrgyzstan, Belgium, Hungary, Tunisia, Mauritius, Trinidad and Tobago)
+> exhausted: each remaining vertical is a confirmed dead end, weak, or
+> unreachable. Pivoted to scouting genuinely new jurisdictions. Kosovo's
+> ARBK Form A0 (LLC registration) was found live and unauthenticated
+> (`arbk.rks-gov.net`, HTTP 200, 2,731,296 bytes) but set aside undecided:
+> Kosovo has no ISO 3166-1 alpha-2 country code (contested statehood, not
+> an ISO member), and this registry's own `id`/`jurisdiction.country`
+> fields require one — adopting an ad-hoc code (e.g. the widely-used but
+> non-ISO "XK") would be a governance precedent for handling non-ISO-
+> recognized territories, not a build decision, so it was left unauthored
+> and flagged for the Founding Engineer/CEO rather than decided
+> unilaterally. Bosnia and Herzegovina (ISO `BA`) was scouted next: APIF's
+> own primary court-registration form
+> ("Prijava za registraciju poslovnih subjekata u sudu", fetched HTTP 200,
+> a 4,983,253-byte specimen) turned out to be a dynamic XFA (Adobe
+> LiveCycle) form — confirmed via its own embedded
+> `!ADBE::0200_VersChkCode_XFACheck` JavaScript, a genuinely new
+> PDF-extraction failure mode for this registry, distinct from every
+> flat-scan/vector-checkbox/non-sequential-reading-order case documented
+> so far. APIF's own Form RPS-1 — a separate, freestanding registration
+> filed directly with APIF's Register of Business Entities (Registar
+> poslovnih subjekata), not a mere companion annex to the XFA form — is a
+> clean, flat, non-AcroForm PDF with a real extractable text layer
+> (fetched HTTP 200, 212,229 bytes, sha256
+> `e2229b6f432342498c4106562d14900b12d369c062e99389697a3a227fab16ff`,
+> stable since a 2020-01-14 `Last-Modified`), and was authored instead.
+> Scoped to Republika Srpska only (one of Bosnia and Herzegovina's three
+> constituent parts; the Federation of Bosnia and Herzegovina and Brčko
+> District each run separate registration systems) and to the form's own
+> six "emergence" change types (establishment, merger, division, spin-off,
+> joint venture, relocation-in) — the Business Formation use case; the
+> same form's cessation and pure-amendment change types are disclosed,
+> open backlog for a future companion schema. 34 `fields[]` across 7
+> steps. 32 conformance fixtures (3 valid scenarios, 27 static-required
+> mutations, 1 `requiredWhen`-gate mutation, 1 unknown-field rejection)
+> reproduced via an ephemeral checker; both validators pass. See the
+> document's own VERIFICATION.md for the full sourcing record and every
+> disclosed scoping/judgment call. **Bosnia and Herzegovina now has 1 of 6
+> verticals (Business Formation)**; DMV, Taxes, Visa, Passport, and
+> National ID are open backlog for a future cycle, not yet screened.
 
 > **Update (2026-07-24, GOV-4703, "GovSchema Standard Research"): Kyrgyzstan's
 > Business Formation vertical opens (2 of 6)**, via
@@ -16990,7 +17044,15 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (84/88 jurisdictions — 95%)
+### Business Formation — Incorporation, LLC, Company Registration (85/89 jurisdictions — 96%)
+
+> **Update (2026-07-24, GOV-4713, "GovSchema Standard Research"): Bosnia
+> and Herzegovina opens this vertical, and the jurisdiction itself (1 of
+> 6)**, via `ba/apif/business-entity-classification-application@1.0.0` —
+> see the Executive Summary update above for the full record. Numerator
+> and denominator both updated from 84/88 to 85/89 (a brand-new
+> jurisdiction, reached for Business Formation first). DMV, Taxes, Visa,
+> Passport, and National ID remain open backlog, not yet screened.
 
 > **Update (2026-07-24, GOV-4703, "GovSchema Standard Research"): Kyrgyzstan's
 > Business Formation vertical opens (2 of 6)**, via
@@ -21874,6 +21936,7 @@ now closed.
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **BA** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BE** | 3 | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -23244,6 +23307,47 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       vertical updates above. **Tunisia now has 5 of 6 verticals** (Passport,
       National ID, Business Formation, Taxes, Visa); DMV remains this
       item's own confirmed-weak finding, not re-screened this cycle.
+0p. **Bosnia and Herzegovina opened as the registry's 97th jurisdiction
+    (GOV-4713, 2026-07-24), via Business Formation; Kosovo scouted and
+    set aside on a governance ground, not a build one:**
+    - **Kosovo** — ARBK's (Kosovo Business Registration Agency) Form A0,
+      LLC registration, found live and unauthenticated at
+      `arbk.rks-gov.net/desk/inc/media/7317F4CF-BB07-4298-A5F9-ADA244C69965.pdf`
+      (HTTP 200, 2,731,296 bytes). Not authored: Kosovo has no ISO
+      3166-1 alpha-2 country code (contested statehood; not an ISO
+      member for country codes), and this registry's own `id`/
+      `jurisdiction.country` fields require one per
+      `spec/v0.3/govschema.schema.json`. Adopting a non-ISO code (e.g.
+      the widely-used "XK") would set a precedent for how this registry
+      handles non-ISO-recognized territories generally — a governance
+      call for the Founding Engineer/CEO, not a build decision to make
+      unilaterally, consistent with this registry's own charter
+      (independent, non-profit, no implied government endorsement).
+      Left as a disclosed, ready-to-author candidate pending that
+      decision, not a dead end for the underlying government process.
+    - **Bosnia and Herzegovina** — scouted next (ISO code `BA`,
+      uncontested). APIF's (Agencija za posredničke, informatičke и
+      финансијске услуге) own primary court-registration form
+      ("Prijava za registraciju poslovnih subjekata u sudu", a
+      4,983,253-byte specimen fetched HTTP 200) is a dynamic XFA (Adobe
+      LiveCycle) form, confirmed via its own embedded
+      `!ADBE::0200_VersChkCode_XFACheck` JavaScript — a genuinely new
+      PDF-extraction failure mode for this registry (see
+      `gov-form-pdf-extraction`), not renderable by this registry's
+      pdfjs-dist-based toolchain. **Update (GOV-4713, 2026-07-24): now
+      authored instead** via APIF's own Form RPS-1, a freestanding
+      registration filed directly with APIF's Register of Business
+      Entities — `ba/apif/business-entity-classification-application@1.0.0`
+      — see the Executive Summary and Business Formation vertical updates
+      above. **Opens Bosnia and Herzegovina as the registry's 97th
+      jurisdiction (1 of 6), scoped to Republika Srpska only** (one of
+      Bosnia and Herzegovina's three constituent parts — the Federation
+      of Bosnia and Herzegovina and Brčko District each run separate
+      registration systems, not covered). DMV, Taxes, Visa, Passport, and
+      National ID remain open backlog, not yet screened; the same RPS-1
+      form's own cessation and pure-amendment change types (codes 21-29,
+      31-92) are also disclosed, open backlog for a future companion
+      schema — see the document's own VERIFICATION.md.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
