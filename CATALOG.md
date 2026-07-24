@@ -4,7 +4,47 @@
 
 ## Executive Summary
 
-**97 jurisdictions** | **652 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**97 jurisdictions** | **653 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4727, "GovSchema Standard Research"): Bosnia and
+> Herzegovina's Taxes vertical opens (3 of 6)**, via
+> `ba/purs/annual-income-tax-return@1.0.0` — the Tax Administration of
+> Republika Srpska's (Poreska uprava Republike Srpske, PURS) Form 1004,
+> Годишња пореска пријава за порез на доходак (Annual Tax Return for Income
+> Tax). This cycle screened Republika Srpska's remaining open verticals
+> (DMV, Taxes, National ID) directly: PURS's own public forms page
+> (`poreskaupravars.org`) surfaced a live, unauthenticated, genuinely
+> fillable AcroForm PDF — this registry's usual strongest source class —
+> though every one of its 106 raw PDF form-field names turned out to be a
+> meaningless auto-generated token (`fill_1`, `Text2`, `comb_4`, ...), the
+> signature of an automated scan-to-fillable conversion tool distinct from
+> every prior PDF-extraction failure mode this registry has documented; every
+> field's real meaning was instead recovered by rendering the page visually
+> and correlating each widget's position against its nearest printed label.
+> One structurally ambiguous part of the form — an unlabelled two-row
+> "Порески период" (tax period) box block, with no "Од"/"До" or
+> day/month/year captions anywhere near it — was resolved by
+> cross-referencing the Tax Administration's own worked example for this
+> same form, which shows the identical box layout filled in as a
+> period-start/period-end date pair. 93 fields across 4 steps, modelling a
+> fixed six-income-category table (personal earnings, copyright income,
+> capital income, capital gains, self-employment income, other income) plus
+> a total row; a loss-carryforward column is visually confirmed grey-shaded
+> (blocked) on the source for every row except self-employment income, and
+> is modelled only there, matching this registry's convention of not
+> fabricating an input the source itself structurally disallows. 13
+> conformance fixtures (2 valid scenarios, 10 static/`requiredWhen`-gate
+> mutations, 1 unknown-field rejection) reproduced via an ephemeral checker;
+> both validators pass (653/653). See the document's own VERIFICATION.md for
+> the full sourcing record and every disclosed scoping/judgment call. DMV
+> (MUP RS's vehicle-registration page) and National ID (MUP RS's
+> personal-documents page) were both re-fetched fresh this cycle and
+> confirmed to still publish no downloadable specimen — left open backlog,
+> not hard dead ends; the Ministry of Foreign Affairs' national visa form
+> remains a confirmed Schengen-template-duplicate dead end from GOV-4720.
+> **Bosnia and Herzegovina now has 3 of 6 verticals** (Business Formation,
+> Passport, Taxes); DMV and National ID remain open, unscreened-for-a-live-form
+> backlog.
 
 > **Update (2026-07-24, GOV-4720, "GovSchema Standard Research"): Bosnia and
 > Herzegovina's Passport vertical opens (2 of 6)**, via
@@ -18370,7 +18410,43 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (79/93 jurisdictions — 85%)
+### Taxes — Income Tax Return, Tax Filing (80/94 jurisdictions — 85%)
+
+> **Update (2026-07-24, GOV-4727, "GovSchema Standard Research"): Bosnia
+> and Herzegovina's Taxes vertical opens (3 of 6 for the jurisdiction)**,
+> via `ba/purs/annual-income-tax-return@1.0.0` — the Tax Administration of
+> Republika Srpska's (Poreska uprava Republike Srpske, PURS) Form 1004,
+> Годишња пореска пријава за порез на доходак (Annual Tax Return for
+> Income Tax). A live, unauthenticated, genuinely fillable AcroForm PDF —
+> though every one of its 106 raw form-field names is a meaningless
+> auto-generated token (`fill_1`, `Text2`, `comb_4`, ...), the signature of
+> an automated scan-to-fillable conversion tool; every field's real
+> meaning was recovered by rendering the page visually and correlating
+> each widget's position against its nearest printed label, not from the
+> field names themselves. One structurally ambiguous part of the form —
+> an unlabelled two-row "Порески период" (tax period) box block — was
+> resolved by cross-referencing the Tax Administration's own worked
+> example for this same form, which shows the identical box layout filled
+> in as a period-start/period-end day/month/year date pair. 93 fields
+> across 4 steps, modelling a fixed 6-income-category (personal earnings,
+> copyright income, capital income, capital gains, self-employment income,
+> other income) plus total-row table; a loss-carryforward column is
+> visually confirmed grey-shaded/blocked on the source for every row
+> except self-employment income, and is modelled only there. 13
+> conformance fixtures (2 valid scenarios, 10 static/`requiredWhen`-gate
+> mutations, 1 unknown-field rejection) reproduced via an ephemeral
+> checker; both validators pass (653/653). See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed
+> scoping/judgment call. This cycle also re-confirmed Bosnia and
+> Herzegovina's DMV and National ID both remain open, unscreened backlog —
+> MUP RS's own vehicle-registration and personal-documents pages still
+> publish no downloadable specimen — and that the Ministry of Foreign
+> Affairs' visa form remains a confirmed Schengen-template-duplicate dead
+> end. **Bosnia and Herzegovina now has 3 of 6 verticals** (Business
+> Formation, Passport, Taxes); DMV, Visa (dead end), and National ID
+> remain open backlog. This vertical's own denominator moves from 93 to
+> 94 for Bosnia and Herzegovina, which had not yet been screened for Taxes
+> specifically.
 
 > **Update (2026-07-24, GOV-4687, "GovSchema Standard Research"): Hungary
 > opens as a new jurisdiction via this vertical (1 of 6)**, via
@@ -21985,7 +22061,7 @@ now closed.
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BA** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **BA** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BE** | 3 | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -23411,6 +23487,15 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Obrazac GPI-2 (the same report filed abroad via a BiH
       diplomatic-consular mission instead of domestically) is disclosed,
       open backlog for a future companion schema — see the document's own
+      VERIFICATION.md. **Update (GOV-4727, 2026-07-24): Taxes now authored
+      too**, via the Tax Administration of Republika Srpska's Form 1004,
+      `ba/purs/annual-income-tax-return@1.0.0` — see the Executive Summary
+      and Taxes vertical updates above. DMV and National ID were both
+      re-fetched fresh this cycle and confirmed to still publish no
+      downloadable specimen (left open, unscreened-for-a-live-form
+      backlog, not hard dead ends). **Bosnia and Herzegovina now has 3 of
+      6 verticals** (Business Formation, Passport, Taxes); DMV, Visa (dead
+      end), and National ID remain open backlog — see the document's own
       VERIFICATION.md.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
