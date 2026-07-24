@@ -4,7 +4,58 @@
 
 ## Executive Summary
 
-**98 jurisdictions** | **656 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**98 jurisdictions** | **657 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4755, "GovSchema Standard Research"): Lesotho's
+> Taxes vertical opens (2 of 6)**, via
+> `ls/rsl/individual-income-tax-return@1.0.0` — Revenue Services Lesotho's
+> (RSL) Form S128-I, "Individual Income Tax Return, Year Ended 31 March
+> 2023", following the prior cycle's own recommendation to deepen
+> Lesotho's remaining verticals before scouting yet another new
+> jurisdiction. Screened the Ministry of Home Affairs first: Passport
+> issuance and the National Identity and Civil Registration (NICR)
+> department both publish no downloadable form (in-person/biometric-only,
+> matching this registry's Czechia/Georgia pattern), and the ministry's
+> own e-VISA service is stated as "currently suspended" on its own FAQ
+> page — all three left as soft backlog for a future cycle. Fetched
+> directly from RSL's own "Forms & Instructions" page
+> (`https://www.rsl.org.ls/sites/default/files/2024-07/Individual%20Income%20Tax%20Return%202023%20%281%29.pdf`,
+> HTTP 200, `application/pdf`, 373,694 bytes, sha256
+> `ed5366829b61bbbc0f8ff757be43155f03daa7c04b1ec3ed92b140140e28ea3a`,
+> `Last-Modified: 2024-07-22`), no login/CAPTCHA gate. The source is a
+> flat, non-fillable 8-page PDF (zero AcroForm annotations on every page)
+> and surfaced a new, sixth distinct PDF-extraction failure mode for this
+> registry: the raw text layer for page 1 contains duplicated/extraneous
+> "ghost" text co-resident with the real content — a spurious "d. Other
+> unreimbursed work expenses" line not present anywhere in the printed
+> form, and a genuinely present "e. Home office expenses" line entirely
+> absent from the text-item stream — resolved by rendering every page used
+> in this schema (`node-canvas` at 2.5x scale) and reading the visual
+> layout directly rather than trusting the text layer alone. Given the
+> source's genuine size (six income categories plus a foreign-tax-credit
+> schedule across 8 pages), this v1.0.0 schema follows this registry's
+> established main-form-now/companion-schedules-later precedent, scoping
+> to the **core declaration** a typical employee/pensioner taxpayer
+> completes in full — Your Details, Part A (Employment Income &
+> Expenses, up to 3 employers), Part B (Pension Income, up to 2 payers),
+> Part H (Tax Computation, Payments, Tax Due/Overpaid), and both
+> Declaration sections — while deferring Parts C-G (the detailed
+> Business/Commercial-Farming/Property/Other-Income schedules and the
+> Credit for Foreign Tax Paid schedule) to a future minor version; Part
+> H's own summary lines referencing those deferred parts are still
+> modeled as optional pass-through fields. 88 `fields[]` across 5 steps, 6
+> `documents[]` entries, and 7 `crossFieldValidation` rules (including two
+> asserting Part H's copied-forward totals equal their Part A/Part B
+> source values). 6 mock conformance scenarios (2 positive, 1
+> `requiredWhen`-gate negative, 1 employer-date-order negative, 1
+> Part-H/Part-A-mismatch negative, 1 pensioner-only positive) reproduced
+> via an ephemeral checker; both validators pass (657/657). **Lesotho now
+> stands at 2 of 6 verticals** (Business Formation, Taxes); Company Income
+> Tax Return, FBT Return, and the Trusts/Estates return are disclosed,
+> open backlog from the same RSL forms library for a future companion
+> schema; DMV, Visa, Passport, and National ID remain unscreened or soft
+> backlog. See the document's own VERIFICATION.md for the full sourcing
+> record and every disclosed scoping/judgment call.
 
 > **Update (2026-07-24, GOV-4748, "GovSchema Standard Research"): Lesotho
 > opens as the registry's 98th jurisdiction**, via
@@ -18597,7 +18648,27 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (80/94 jurisdictions — 85%)
+### Taxes — Income Tax Return, Tax Filing (81/94 jurisdictions — 86%)
+
+> **Update (2026-07-24, GOV-4755, "GovSchema Standard Research"): Lesotho's
+> Taxes vertical opens (2 of 6 for the jurisdiction)**, via
+> `ls/rsl/individual-income-tax-return@1.0.0` — Revenue Services Lesotho's
+> (RSL) Form S128-I, "Individual Income Tax Return, Year Ended 31 March
+> 2023", fetched live and unauthenticated from RSL's own "Forms &
+> Instructions" page. A flat, non-fillable 8-page PDF whose raw text layer
+> was found to contain duplicated/extraneous "ghost" text alongside a
+> genuinely missing line (a new, sixth distinct PDF-extraction failure
+> mode for this registry), resolved by rendering every page used in this
+> schema and reading the visual layout directly rather than trusting the
+> text layer alone. Scoped to the core declaration (Your Details, Part A
+> Employment, Part B Pension, Part H Tax Computation/Payments/Tax
+> Due-Overpaid, and both Declaration sections), deferring Parts C-G (the
+> detailed Business/Commercial-Farming/Property/Other-Income schedules and
+> the foreign-tax-credit schedule) to a future minor version, per this
+> registry's established main-form-now/companion-schedules-later
+> precedent. 88 `fields[]`, 6 `documents[]`, 7 `crossFieldValidation`
+> rules. See the Executive Summary update above and the document's own
+> VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-24, GOV-4727, "GovSchema Standard Research"): Bosnia
 > and Herzegovina's Taxes vertical opens (3 of 6 for the jurisdiction)**,
@@ -22334,7 +22405,7 @@ now closed.
 | **KR** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **KZ** | 10 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LK** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **LS** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **LS** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **LT** | 4 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **LV** | 2 | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ |
 | **MA** | 2 | ✓ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -23817,6 +23888,17 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       private/public/single-shareholder companies) are disclosed, open
       backlog for future companion schemas; Lesotho's DMV, Taxes, Visa,
       Passport, and National ID verticals remain entirely unscreened.
+      **Update (GOV-4755): Lesotho's Taxes vertical is now open too**, via
+      `ls/rsl/individual-income-tax-return@1.0.0` (Revenue Services
+      Lesotho's Form S128-I) — see the Executive Summary and Taxes
+      vertical updates above for the full record. Passport and National ID
+      were screened this cycle and left as soft backlog (Ministry of Home
+      Affairs in-person/biometric-only, no downloadable form); Visa
+      (e-VISA) is stated "currently suspended" on the ministry's own FAQ
+      page. Lesotho's DMV vertical remains entirely unscreened. RSL's own
+      forms library separately discloses open backlog for a future
+      companion Taxes schema: Company Income Tax Return, FBT Return, and
+      the Income Tax Return for Trusts and Estates.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
