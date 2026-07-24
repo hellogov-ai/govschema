@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**97 jurisdictions** | **651 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**97 jurisdictions** | **652 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4720, "GovSchema Standard Research"): Bosnia and
+> Herzegovina's Passport vertical opens (2 of 6)**, via
+> `ba/mup-rs/lost-or-stolen-travel-document-report@1.0.0` — the Ministry of
+> Interior of Republika Srpska's (MUP RS) Obrazac GPI-1, "Prijava nestanka
+> putne isprave/putovnice (ukradena, izgubljena)" (Report of Loss of a
+> Travel Document/Passport (stolen, lost)). This cycle screened GOV-4713's
+> disclosed BA backlog directly (DMV, Taxes, Visa, Passport, National ID),
+> since no candidate had yet been banked for any of them. The Ministry of
+> Foreign Affairs' own national visa application form
+> (`bihembassy.org/konzdoc/Visa_application_form.pdf`) was found live but,
+> on field-by-field comparison against `fr/france-visas/schengen-visa-application@1.0.0`,
+> confirmed a duplicate of the harmonized EU Schengen Annex I template —
+> the same pattern this registry already declined for Belgium's national
+> D-visa (GOV-4687), now also seen in a non-Schengen country's own
+> national visa form. Not authored; banked as a dead end. MUP RS's own
+> vehicle-registration page publishes no downloadable request form (DMV
+> left unscreened, disclosed as open backlog, not a confirmed dead end),
+> and the primary passport application itself is stated to be an
+> in-person/electronic-only counter form with no public blank specimen —
+> but the same MUP RS site separately links Obrazac GPI-1 (filed
+> domestically) and its companion Obrazac GPI-2 (filed abroad via a BiH
+> diplomatic-consular mission, DKP), both live, unauthenticated, flat PDFs.
+> GPI-1 was authored; GPI-2 is disclosed backlog for a future companion
+> schema. 21 `fields[]` across 5 steps, rendered to PNG with `node-canvas`
+> to confirm one checkbox-vs-free-text ambiguity the text layer alone left
+> unclear. 22 conformance fixtures (2 valid scenarios, 19 static-required
+> mutations, 1 unknown-field rejection) reproduced via an ephemeral
+> checker; both validators pass (652/652). See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed
+> scoping/judgment call. **Bosnia and Herzegovina now has 2 of 6 verticals**
+> (Business Formation, Passport); DMV, Taxes, Visa, and National ID remain
+> open backlog — DMV and Passport's own primary application confirmed
+> unreachable/dead-end this cycle, Taxes and National ID not yet screened.
 
 > **Update (2026-07-24, GOV-4713, "GovSchema Standard Research"): Bosnia and
 > Herzegovina opens as the registry's 97th jurisdiction**, via
@@ -15725,7 +15759,22 @@
 
 ## By Vertical
 
-### Passport (62/95 jurisdictions — 65%)
+### Passport (63/97 jurisdictions — 65%)
+
+> **Update (2026-07-24, GOV-4720, "GovSchema Standard Research"): Bosnia
+> and Herzegovina's Passport vertical opens (2 of 6)**, via
+> `ba/mup-rs/lost-or-stolen-travel-document-report@1.0.0` — MUP RS's
+> Obrazac GPI-1, report of a lost or stolen travel document. See the
+> Executive Summary update above for the full sourcing record, scope
+> decisions, and disclosed findings. This vertical's own denominator is
+> bumped by 2, not 1 (95 to 97) — a catch-up of 2 missed bumps: Hungary
+> opened as the registry's 96th jurisdiction via Taxes (GOV-4687) and
+> Bosnia and Herzegovina opened as the 97th via Business Formation
+> (GOV-4713), neither of which bumped this vertical's own denominator at
+> the time since neither opened via Passport; both misses are backfilled
+> here to match the registry's current jurisdiction count, following the
+> same convention Tunisia's own cycle (GOV-4638) used to backfill a prior
+> Guatemala miss.
 
 > **Update (2026-07-24, GOV-4645, "GovSchema Standard Research"): Belgium
 > opens this vertical, and the jurisdiction itself (1 of 6)**, via
@@ -21936,7 +21985,7 @@ now closed.
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BA** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **BA** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BE** | 3 | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -23347,7 +23396,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       National ID remain open backlog, not yet screened; the same RPS-1
       form's own cessation and pure-amendment change types (codes 21-29,
       31-92) are also disclosed, open backlog for a future companion
-      schema — see the document's own VERIFICATION.md.
+      schema — see the document's own VERIFICATION.md. **Update
+      (GOV-4720, 2026-07-24): Passport now authored too**, via MUP RS's
+      Obrazac GPI-1 (report of a lost or stolen travel document),
+      `ba/mup-rs/lost-or-stolen-travel-document-report@1.0.0` — see the
+      Executive Summary and Passport vertical updates above. The Ministry
+      of Foreign Affairs' own national visa form was screened and found
+      to be a Schengen-template duplicate (banked as a dead end); MUP RS's
+      vehicle-registration page publishes no downloadable form (DMV left
+      unscreened); the primary passport application itself is in-person/
+      electronic-only with no public specimen. **Bosnia and Herzegovina
+      now has 2 of 6 verticals** (Business Formation, Passport); DMV,
+      Taxes, Visa, and National ID remain open backlog. MUP RS's own
+      Obrazac GPI-2 (the same report filed abroad via a BiH
+      diplomatic-consular mission instead of domestically) is disclosed,
+      open backlog for a future companion schema — see the document's own
+      VERIFICATION.md.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
