@@ -4,7 +4,35 @@
 
 ## Executive Summary
 
-**95 jurisdictions** | **645 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**95 jurisdictions** | **646 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4673, "GovSchema Standard Research"): Tunisia's
+> Visa vertical opens (5 of 6)**, via `tn/mfa/visa-application@1.0.0` — the
+> Ministry of Foreign Affairs' "طلب تأشيرة" / "Demande de VISA" (short-stay/
+> transit visa application), independently located and verified this cycle
+> from GOV-4638's own banked "trilingual AR/FR/EN MFA visa application form
+> hosted on a Tunisian embassy site" description (no exact URL had been
+> banked). Retrieved directly and unauthenticated (HTTP 200, 314,072 bytes)
+> from `consulat-tunisie.ca`, the Consulate General of the Republic of
+> Tunisia in Montreal, Canada — a Tunisian diplomatic mission's own site,
+> since the centralized `e-visa.tn` portal remains non-resolving. A short,
+> clean 2-page flat specimen whose trilingual text layer (Arabic, French,
+> English) decodes cleanly and in correct reading order — unlike the fourth
+> extraction-failure mode seen on this jurisdiction's two DGI specimens, no
+> glyph-scrambling was present here, though a `node-canvas` render (used
+> only to confirm layout, not as the primary reading method) separately
+> failed to paint the Latin-script glyphs, a fifth distinct rendering
+> artifact for this registry. Models 25 `fields[]` across 6 steps
+> (identity, passport, trip details including three trip-type elaboration
+> blocks, Tunisia contacts/address, and a pledge/signature) plus 1
+> `documents[]` entry (applicant photo), explicitly excluding the entire
+> consular-staff/decision tail on page 2. 5 conformance scenarios (4
+> positive, 1 negative) reproduced via an ephemeral from-scratch checker;
+> both validators pass. See the document's own VERIFICATION.md for the
+> full sourcing record and every disclosed scoping/judgment call.
+> **Tunisia now has 5 of 6 verticals** (Passport, National ID, Business
+> Formation, Taxes, Visa); DMV remains this jurisdiction's sole confirmed-
+> weak vertical, not re-screened this cycle.
 
 > **Update (2026-07-24, GOV-4666, "GovSchema Standard Research"): Tunisia's
 > Taxes vertical opens (4 of 6)**, via `tn/dgi/irpp-declaration@1.0.0` — the
@@ -19999,7 +20027,17 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (73/92 jurisdictions — 79%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (74/92 jurisdictions — 80%)
+
+> **Update (2026-07-24, GOV-4673, "GovSchema Standard Research"): Tunisia's
+> Visa vertical opens (5 of 6 for the jurisdiction)**, via
+> `tn/mfa/visa-application@1.0.0` — the Ministry of Foreign Affairs' short-
+> stay/transit visa application, independently located this cycle from
+> GOV-4638's own banked description — see the Executive Summary update
+> above for the full sourcing record and the document's own
+> VERIFICATION.md. This closes Tunisia's last disclosed STRONG Visa
+> candidate from GOV-4638; DMV remains Tunisia's sole confirmed-weak
+> vertical, not re-screened this cycle.
 
 > **Update (2026-07-23, GOV-4617, "GovSchema Standard Research"): Mauritius's
 > Visa vertical opens (3 of 6 for the jurisdiction)**, via
@@ -21703,7 +21741,7 @@ now closed.
 | **SN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| **TN** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| **TN** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | **TT** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -22930,6 +22968,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       now has 4 of 6 verticals (Passport, National ID, Business Formation,
       Taxes).** Visa remains confirmed STRONG open backlog; DMV remains
       weak, per this item's own findings above, not re-screened this cycle.
+      **Update (GOV-4673, 2026-07-24): Visa now authored** as
+      `tn/mfa/visa-application@1.0.0` — this item's own banked description
+      ("a trilingual AR/FR/EN MFA visa application form hosted on a
+      Tunisian embassy site") had no specific URL recorded, so this cycle
+      independently located and verified a live match at
+      `consulat-tunisie.ca` (the Tunisian Consulate General in Montreal,
+      Canada), HTTP 200, 314,072 bytes — see the Executive Summary and Visa
+      vertical updates above. **Tunisia now has 5 of 6 verticals** (Passport,
+      National ID, Business Formation, Taxes, Visa); DMV remains this
+      item's own confirmed-weak finding, not re-screened this cycle.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
