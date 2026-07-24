@@ -4,7 +4,43 @@
 
 ## Executive Summary
 
-**97 jurisdictions** | **653 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**97 jurisdictions** | **654 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-24, GOV-4734, "GovSchema Standard Research"): Bosnia and
+> Herzegovina's National ID & Civic Documents vertical opens (4 of 6)**, via
+> `ba/iddeea/national-identity-card-application@1.0.0` — Obrazac LK/OI-1,
+> "Zahtjev za izdavanje - zamjenu lične karte/osobne iskaznice" (Request
+> for Issuance/Replacement of the National Identity Card). This cycle
+> re-screened the DMV and National ID backlog the GOV-4727 cycle left
+> open: DMV again turned up no downloadable specimen (IDDEEA's own
+> vehicle registers are informational-only; Brčko District's eUprava
+> portal, checked via a Wayback Machine snapshot after the live site
+> returned a DNS `SERVFAIL`, hosts only a prose service description), but
+> National ID surfaced a live, unauthenticated flat PDF — Obrazac LK/OI-1
+> — hosted by the Ministry of Interior of Sarajevo Canton. Unlike this
+> registry's three existing Bosnia and Herzegovina schemas (all scoped to
+> Republika Srpska only), this form's own legal basis (the Zakon o ličnoj
+> karti državljana BiH and its implementing Pravilnik, "Službeni glasnik
+> BiH" 39/02) and administering agency (IDDEEA, the state-level Agency for
+> Identification Documents, Registers and Data Exchange of Bosnia and
+> Herzegovina, whose own site hosts a copy of the regulation) confirm the
+> identical template is filed nationwide — so this schema is scoped
+> `jurisdiction.level: "national"`, the first for Bosnia and Herzegovina.
+> A flat, non-fillable single-page PDF with no AcroForm/XFA layer and a
+> non-sequential raw text-reading order; `node-canvas` rendering confirmed
+> the checkbox layout for a Yes/No previous-card-enclosed field, a
+> three-way collection-method field, and a sixteen-option
+> replacement-reason grid (including an apparent near-duplicate pair,
+> "Promjena ličnog imena" and "Promjena imena", preserved verbatim as two
+> distinct checkboxes rather than merged). 22 fields across 5 steps; 22
+> conformance fixtures (2 valid scenarios, 19 static/`requiredWhen`-gate
+> mutations, 1 unknown-field rejection) reproduced via an ephemeral
+> checker; both validators pass (654/654). See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed
+> scoping/judgment call. **Bosnia and Herzegovina now has 4 of 6
+> verticals** (Business Formation, Passport, Taxes, National ID); DMV
+> remains open, unscreened-for-a-downloadable-form backlog, and Visa
+> remains a confirmed dead end.
 
 > **Update (2026-07-24, GOV-4727, "GovSchema Standard Research"): Bosnia and
 > Herzegovina's Taxes vertical opens (3 of 6)**, via
@@ -21309,7 +21345,47 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (54/80 jurisdictions — 68%)
+### National ID & Civic Documents (55/81 jurisdictions — 68%)
+
+> **Update (2026-07-24, GOV-4734, "GovSchema Standard Research"): Bosnia and
+> Herzegovina's National ID & Civic Documents vertical opens (4 of 6)**, via
+> `ba/iddeea/national-identity-card-application@1.0.0` — Obrazac LK/OI-1,
+> "Zahtjev za izdavanje - zamjenu lične karte/osobne iskaznice" (Request
+> for Issuance/Replacement of the National Identity Card). Unlike this
+> registry's three existing Bosnia and Herzegovina schemas (all scoped to
+> Republika Srpska only), this form is prescribed at the **state level** —
+> its legal basis (the Zakon o ličnoj karti državljana BiH and its
+> implementing Pravilnik, "Službeni glasnik BiH" 39/02) and administering
+> agency (IDDEEA, the state-level Agency for Identification Documents,
+> Registers and Data Exchange of Bosnia and Herzegovina, which itself
+> hosts a copy of the regulation) confirm the identical LK/OI-1 template
+> is filed nationwide regardless of which entity, canton, or the Brčko
+> District a citizen submits it in — so this schema is scoped
+> `jurisdiction.level: "national"`, the first for Bosnia and Herzegovina.
+> The specimen itself was fetched live from the Ministry of Interior of
+> Sarajevo Canton's public forms page (one of dozens of cantonal/entity
+> front-counters that accept it), a flat, non-fillable single-page PDF
+> with no AcroForm/XFA layer and a non-sequential raw text-reading order;
+> `node-canvas` rendering confirmed the checkbox layout for the
+> Yes/No previous-card-enclosed field, the three-way collection-method
+> field, and a sixteen-option replacement-reason grid (which itself
+> includes an apparent near-duplicate pair — "Promjena ličnog imena" and
+> "Promjena imena" — preserved verbatim as two distinct checkboxes rather
+> than merged). 22 fields across 5 steps; 22 conformance fixtures (2 valid
+> scenarios, 19 static/`requiredWhen`-gate mutations, 1 unknown-field
+> rejection) reproduced via an ephemeral checker; both validators pass
+> (654/654). See the document's own VERIFICATION.md for the full sourcing
+> record and every disclosed scoping/judgment call. This cycle also
+> re-screened Bosnia and Herzegovina's DMV: IDDEEA's own registers are
+> informational-only, and Brčko District's eUprava portal (checked via a
+> Wayback Machine snapshot after the live site returned a DNS `SERVFAIL`)
+> hosts only a prose service description with no downloadable form — DMV
+> remains open, unscreened-for-a-downloadable-form backlog, not a
+> confirmed dead end. **Bosnia and Herzegovina now has 4 of 6 verticals**
+> (Business Formation, Passport, Taxes, National ID); DMV and Visa (dead
+> end) remain open. This vertical's own denominator moves from 80 to 81,
+> since Bosnia and Herzegovina had not yet been screened for National ID
+> specifically.
 
 > **Update (2026-07-24, GOV-4652, "GovSchema Standard Research"): Tunisia's
 > National ID & Civic Documents vertical opens (2 of 6)**, via
@@ -22061,7 +22137,7 @@ now closed.
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BA** | 3 | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| **BA** | 4 | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BE** | 3 | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -23496,6 +23572,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       backlog, not hard dead ends). **Bosnia and Herzegovina now has 3 of
       6 verticals** (Business Formation, Passport, Taxes); DMV, Visa (dead
       end), and National ID remain open backlog — see the document's own
+      VERIFICATION.md. **Update (GOV-4734, 2026-07-24): National ID now
+      authored too**, via IDDEEA's own state-level Obrazac LK/OI-1,
+      `ba/iddeea/national-identity-card-application@1.0.0` — see the
+      Executive Summary and National ID vertical updates above. Unlike
+      this document's other three Bosnia and Herzegovina schemas, this one
+      is scoped `jurisdiction.level: "national"`, since the underlying
+      form and legal basis are uniform nationwide rather than
+      Republika-Srpska-specific. DMV was re-screened fresh this cycle
+      (IDDEEA's own registers are informational-only; Brčko District's
+      eUprava portal, checked via a Wayback Machine snapshot after the
+      live site returned a DNS `SERVFAIL`, hosts only a prose service
+      description with no downloadable form) and remains open,
+      unscreened-for-a-downloadable-form backlog, not a confirmed dead
+      end. **Bosnia and Herzegovina now has 4 of 6 verticals** (Business
+      Formation, Passport, Taxes, National ID); DMV remains open backlog
+      and Visa remains a confirmed dead end — see the document's own
       VERIFICATION.md.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
