@@ -4,8 +4,46 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **673 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **674 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-25, GOV-4875, "GovSchema Standard Research"): Türkiye's
+> National ID & Civic Documents vertical gains a ninth schema**, via
+> `tr/nvi/acquisition-of-turkish-citizenship-by-place-of-birth-application@1.0.0`
+> — Form Vat-2, "Doğum Yeri Esasına Göre Türk Vatandaşlığının Kazanılması
+> Başvuru Formu/Beyan Formu" (Application/Declaration Form for Acquisition
+> of Turkish Citizenship on the Basis of Place of Birth), published by the
+> same NVI authority as Vat-1/3/4/5/6/8/9/11, for an applicant who already
+> holds Turkish citizenship by operation of law through having been born
+> on Turkish soil but was never formally registered, under Article 8 of
+> Law No. 5901. This cycle re-scraped the NVI's
+> `vatandaslik-ile-ilgili-formlar` listing page fresh, re-fetched and
+> field-counted all three still-unauthored VAT forms (VAT-2, VAT-7,
+> VAT-10) via `pdfjs-dist`, and selected VAT-2 as the strongest remaining
+> candidate — the largest widget count of the three (a 72-AcroForm-widget,
+> single-page PDF,
+> `https://www.nvi.gov.tr/kurumlar/nvi.gov.tr/mevzuat/nufusmevzuat/Formlar/Vatandaslik/Vat2-FormDogumYeriEsasinaGoreTurkVatKaz.pdf`,
+> HTTP 200, 708,415 bytes, sha256
+> `879955ad8ca02d19114bcd3846a34f077d76043c5d52b7f900c8b36630a4a591`).
+> Mirrors Vat-1's two-full-parent-block structure (father's and mother's
+> information, each including the applicant's own paternal/maternal
+> grandparents), both left fully optional per the same disclosed
+> at-least-one-of-N judgment call. A genuine source-document finding is
+> disclosed in this document's own VERIFICATION.md: each parent block's
+> closing residential-address widget carries the wrong internal AcroForm
+> field name/`alternativeText` ("Eğitim Durumu"/education level, evidently
+> copy-pasted from the applicant's own education field higher on the
+> page), resolved by the widget's rendered position against the extracted
+> text layer rather than its internal name — modelled as
+> `fatherResidenceAddress`/`motherResidenceAddress`, fields that do not
+> appear on the otherwise-similar Vat-1. 27 conformance fixtures (3 valid
+> scenarios, 23 required/`requiredWhen` mutations, 1 unknown-field-
+> rejected) all passing as expected, with every `foreignIdentityNumber`
+> fixture value asserted programmatically to match the schema's own
+> 11-character pattern before being written to disk (per the GOV-4862
+> review finding on a prior VAT sibling). Both validators pass (674/674).
+> Türkiye remains 1 of 6 verticals open; VAT-7 and VAT-10 remain banked,
+> unscreened backlog.
+>
 > **Update (2026-07-25, GOV-4868, "GovSchema Standard Research"): Türkiye's
 > National ID & Civic Documents vertical gains an eighth schema**, via
 > `tr/nvi/acquisition-of-turkish-citizenship-by-descent-application@1.0.0`
@@ -22472,6 +22510,20 @@ candidate, the other two as confirmed dead ends).
 
 ### National ID & Civic Documents (57/83 jurisdictions — 69%)
 
+> **Update (2026-07-25, GOV-4875, "GovSchema Standard Research"): Türkiye
+> gains a ninth schema within this already-open vertical**, via
+> `tr/nvi/acquisition-of-turkish-citizenship-by-place-of-birth-application@1.0.0`
+> — Form Vat-2, the NVI's Acquisition of Turkish Citizenship by Place of
+> Birth application, selected as the strongest of the three remaining
+> unauthored VAT forms on the same NVI page (the largest widget count).
+> Mirrors Vat-1's two-full-parent-block structure; a genuine
+> source-document finding (a mislabeled residential-address widget in
+> each parent block) is disclosed in this schema's own VERIFICATION.md.
+> See the Executive Summary update above for the full sourcing record and
+> every disclosed scoping call. Jurisdiction count for this vertical is
+> unchanged (57/83) — Türkiye was already counted here by GOV-4818's
+> Vat-3 schema.
+>
 > **Update (2026-07-25, GOV-4868, "GovSchema Standard Research"): Türkiye
 > gains an eighth schema within this already-open vertical**, via
 > `tr/nvi/acquisition-of-turkish-citizenship-by-descent-application@1.0.0`
@@ -23479,7 +23531,7 @@ now closed.
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **TN** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
-| **TR** | 8 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| **TR** | 9 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
 | **TT** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -25155,6 +25207,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     within the already-open National ID vertical, not a new vertical);
     VAT-2, VAT-7, and VAT-10 remain open, unscreened backlog candidates
     on the same NVI page.
+    **Update (GOV-4875, 2026-07-25): the strongest of the remaining three
+    banked VAT candidates, VAT-2, is now authored**, via
+    `tr/nvi/acquisition-of-turkish-citizenship-by-place-of-birth-application@1.0.0`
+    (Form Vat-2, "Doğum Yeri Esasına Göre Türk Vatandaşlığının Kazanılması
+    Başvuru Formu/Beyan Formu," under Law No. 5901 Article 8 — the
+    place-of-birth pathway for an applicant already a Turkish citizen by
+    operation of law through having been born on Turkish soil but never
+    formally registered) — see the Executive Summary and National ID &
+    Civic Documents vertical updates above for the full record, including
+    a genuine source-document finding (a mislabeled residential-address
+    widget in each of the form's two parent-information blocks). Türkiye
+    remains 1 of 6 verticals open (a ninth schema within the already-open
+    National ID vertical, not a new vertical); VAT-7 and VAT-10 remain
+    open, unscreened backlog candidates on the same NVI page.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
