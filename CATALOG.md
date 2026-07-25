@@ -1,10 +1,78 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-24** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-25** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**99 jurisdictions** | **661 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**99 jurisdictions** | **662 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-25, GOV-4790, "GovSchema Standard Research"): Eswatini's
+> Taxes vertical opens (2 of 6)**, via
+> `sz/ers/return-of-income-individual@1.0.0` — the Eswatini Revenue
+> Service's (ERS) Form IT 12, "Return of Income - Individual" (Domestic
+> Taxes Department, Version 2-2022). Following up directly on the
+> GOV-4783 cycle's own disclosed lead (ERS's forms library), this cycle
+> found the live form on `ers.org.sz`'s "IncomeForms" page — a Next.js
+> app whose form table only renders after JS hydration (plain `curl`
+> returns an empty shell; a real Chromium/Playwright session was used to
+> paginate its 30-row table and trigger the row's own DOWNLOAD button) —
+> row 23, "Return of Income - Individual", linking directly to
+> `https://www.ers.org.sz:8000/form-files/1713854893090-Individual_Income_Tax_Return_Editable_2022.pdf`
+> (HTTP 200, `application/pdf`, 8,230,988 bytes, sha256
+> `e4a72dec8907da44956ff527b61fef645efae3b45ad1fa55659fa35719c88b24`,
+> `Last-Modified: 2024-10-14`), no login/CAPTCHA gate on the file itself
+> (the host's own TLS certificate needs `-k`/`--insecure` to reach, a
+> genuine cert misconfiguration, not a bot-block). The form is a genuine
+> 11-page AcroForm PDF with 446 raw field objects, but almost every field
+> name is a meaningless auto-generated one (`Text2`, `Text7.15`, `Group5`,
+> etc., no `/TU` tooltips) — this registry's now-familiar
+> all-raw-field-names-meaningless pattern (first hit on
+> `ba/purs/annual-income-tax-return`, GOV-4727) — so every field was
+> recovered by rendering all 11 pages with `node-canvas` (2.2x scale) and
+> overlaying each field's own rect/page as a labeled box on the rendered
+> image to read its printed position, including a 7-row employer table
+> whose raw names do not sort in row order. Scoped v1.0.0 to the **core
+> declaration**: PART A (Taxpayer Particulars, incl. bank details), PART D
+> (Income from Employment — this form's own guidelines define "employment
+> income" to include pension/retiring allowance, so this doubles as
+> pension income, modeled at its full printed capacity of 7 employer rows
+> rather than an artificially smaller bound), PART E (Benefits from
+> Employment), PART F (Allowable Deductions), PART G (Net Income from
+> Employment), PART N (Tax Computation, incl. the two-line
+> "tax on the first ___/balance at ___%" bracket computation and the four
+> 104A rebates/credits), the "Less Tax Already Paid" block plus Tax
+> Due/Refund Due, and the Declaration/Signature. PART B/C (a local/foreign
+> net-worth statement not referenced by the tax computation at all), PART
+> H (Other Receipts and Accruals), PART I-L (the five-column
+> business/farming/rental income schedule and its adjustment/profit-loss
+> companions), PART M (non-taxable amounts), and PART O (income already
+> taxed/non-taxable income) are out of scope and deferred to a future
+> minor version — PART N's own lines 99/100 that copy forward PART H's
+> and PART L's totals are still kept as pass-through optional numeric
+> fields so a taxpayer with such income can still record the bottom-line
+> total. 90 `fields[]` across 7 steps, 6 `documents[]` entries (five
+> gated by `requiredWhen greaterThan 0` against the amount field each
+> attachment supports), and 2 `crossFieldValidation` rules. 23 mock
+> conformance fixtures (2 positive scenarios, 5 requiredWhen gates each
+> with a positive/negative pair, 2 cross-field negative controls, 1
+> unknown-field rejection, and all 8 required fields individually mutated
+> to absent) reproduced via an ephemeral checker, all passing; both
+> validators pass (662/662). This cycle also screened Eswatini's remaining
+> verticals: the eVisa portal (`evisa.gov.sz`, launched August 2025) was
+> re-confirmed via a real Chromium/Playwright session to be a login/
+> sign-up-gated wizard with no field-level content visible before
+> authentication — a **confirmed dead end**, consistent with this
+> registry's standing precedent (matching Business Formation's own
+> `online.gov.sz` dead end from GOV-4783). DMV (driving-licence/vehicle-
+> registration application forms, per `gov.sz`'s own prose, available only
+> in person at Revenue Offices) and Passport (Ministry of Home Affairs,
+> no downloadable application form found on `gov.sz`) were both screened
+> and left as **soft backlog, not confirmed dead ends** — neither was
+> re-checked with a real rendered browser this cycle, only plain
+> `WebSearch`/`curl`-style lookups, so a future cycle should still
+> re-attempt both before writing them off. See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed
+> scoping/judgment call.
 
 > **Update (2026-07-24, GOV-4783, "GovSchema Standard Research"): Eswatini
 > opens as the registry's 99th jurisdiction**, via
@@ -18845,7 +18913,31 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (81/94 jurisdictions — 86%)
+### Taxes — Income Tax Return, Tax Filing (82/95 jurisdictions — 86%)
+
+> **Update (2026-07-25, GOV-4790, "GovSchema Standard Research"): Eswatini's
+> Taxes vertical opens (2 of 6)**, via
+> `sz/ers/return-of-income-individual@1.0.0` — the Eswatini Revenue
+> Service's (ERS) Form IT 12, "Return of Income - Individual". Found on
+> `ers.org.sz`'s JS-hydrated "IncomeForms" table (row 23 of 30, reached via
+> a real Chromium/Playwright session), a genuine 11-page AcroForm PDF with
+> 446 raw, almost entirely auto-named fields (`Text2`, `Group5`, etc., no
+> `/TU` tooltips) — this registry's now-familiar all-raw-field-names-
+> meaningless pattern (first hit on `ba/purs/annual-income-tax-return`,
+> GOV-4727) — resolved by rendering all 11 pages with node-canvas and
+> overlaying each field's own rect as a labeled box on the image. Scoped
+> to the core declaration (Taxpayer Particulars, Income from Employment —
+> which this form's own guidelines fold pension income into, modeled at
+> its full 7-employer-row printed capacity — Benefits from Employment,
+> Allowable Deductions, Net Income from Employment, Tax Computation, Less
+> Tax Already Paid, and Declaration), deferring the net-worth statement,
+> the Other Receipts and five-column business/farming/rental income
+> schedule, the non-taxable-amounts statement, and the already-taxed-
+> income disclosure to a future minor version, per this registry's
+> established main-form-now/companion-schedules-later precedent. 90
+> `fields[]`, 6 `documents[]`, 2 `crossFieldValidation` rules. See the
+> Executive Summary update above and the document's own VERIFICATION.md
+> for the full sourcing record.
 
 > **Update (2026-07-24, GOV-4776, "GovSchema Standard Research"): Lesotho
 > gains a fourth Taxes schema** (vertical count unchanged — already open
@@ -22724,7 +22816,7 @@ now closed.
 | **SI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **SN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
-| **SZ** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| **SZ** | 2 | ✗ | ✗ | ✗ | ✓ | ✗ | ✓ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **TN** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
@@ -24260,6 +24352,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     independently checked and confirmed in-person/chiefdom-based, with no
     citizen-fillable form published. Eswatini's DMV, Business Formation,
     Taxes, Visa, and Passport verticals remain entirely unscreened.
+    **Update (GOV-4790, 2026-07-25): Taxes is now open**, via
+    `sz/ers/return-of-income-individual@1.0.0` (ERS Form IT 12) — see the
+    Executive Summary and Taxes vertical updates above for the full
+    record. This cycle also re-confirmed the eVisa portal
+    (`evisa.gov.sz`) as a **confirmed dead end**: a real
+    Chromium/Playwright session shows a login/sign-up-gated wizard with no
+    field content visible before authentication, same pattern as the
+    Business Formation dead end above. DMV (driving-licence/vehicle-
+    registration, in-person at Revenue Offices per `gov.sz`'s own prose)
+    and Passport (Ministry of Home Affairs, no downloadable form found on
+    `gov.sz`) were screened via `WebSearch` only (no real-browser
+    re-check yet) and left as **soft backlog, not confirmed dead ends**.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
