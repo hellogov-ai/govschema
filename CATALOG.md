@@ -4,7 +4,65 @@
 
 ## Executive Summary
 
-**99 jurisdictions** | **665 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **666 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-25, GOV-4818, "GovSchema Standard Research"): Türkiye
+> opens as the registry's 100th jurisdiction, via National ID & Civic
+> Documents**, via `tr/nvi/general-acquisition-of-turkish-citizenship-application@1.0.0`
+> — Form Vat-3, "Genel Olarak Türk Vatandaşlığının Kazanılması Başvuru
+> Formu" (General Acquisition of Turkish Citizenship Application Form),
+> published by the T.C. İçişleri Bakanlığı Nüfus ve Vatandaşlık İşleri
+> Genel Müdürlüğü (Ministry of Interior's General Directorate of
+> Population and Citizenship Affairs, NVI) under Article 11 of Law No.
+> 5901 on Turkish Citizenship. This cycle screened all six verticals for
+> Türkiye fresh (it had never been screened beyond a single prior-cycle
+> check of the Visa e-portal): Passport (biometric/in-person only via
+> e-Devlet appointment; the only downloadable forms on `nvi.gov.tr` are
+> for service/diplomatic passports, not applicant-facing — **dead end**),
+> DMV (registration/exam forms obtained only in person or via a
+> login-gated e-Sınav portal — **dead end**), Business Formation (MERSIS,
+> Türkiye's central trade registry, is fully login/e-imza-gated before any
+> field is shown — **dead end**), Taxes (GİB's own "Hazır Formlar" library
+> returned zero records live; every filing path requires e-Devlet login —
+> **dead end**), and Visa (`evisa.gov.tr` re-screened with a real
+> Playwright browser: it does reach a real application wizard step, but
+> gates the actual data-entry page behind a reCAPTCHA before fields become
+> observable — **dead end**, for a different reason than the prior
+> cycle's "unrelated commercial domain" note, which this cycle also
+> corrected: the redirect target is a real MFA-affiliated intermediary,
+> not an unrelated third party). National ID & Civic Documents alone
+> yielded a viable candidate: `nvi.gov.tr/vatandaslik-ile-ilgili-formlar`
+> publishes 11 live, unauthenticated AcroForm PDFs (VAT-1 through VAT-11);
+> VAT-3 was fetched directly
+> (`https://www.nvi.gov.tr/kurumlar/nvi.gov.tr/mevzuat/nufusmevzuat/Formlar/Vatandaslik/Vat3_Genel_Kazanma.pdf`,
+> HTTP 200, `application/pdf`, 870,243 bytes, sha256
+> `e94cafefbbf09d9ec13c3b0849e8b227b2758ee959472824d9ce58f00d4f4533`,
+> `Last-Modified: 2020-08-04`) and confirmed via `pdfjs-dist` to carry 100
+> genuine AcroForm fields on a single dense page. Because several field
+> names on this form are not self-describing (e.g. `Soy` for a bare "Soyu"
+> column, `Ad_33`/`Soyad_33` reused within the minor-children table
+> alongside `Ad_3`/`Soyad_3`), the page was additionally rendered via
+> `node-canvas` at scale 2.2 and visually cross-checked section by section
+> to resolve every field name to the label it actually sits under. Models
+> the applicant's foreign/Turkish-script identity, birth particulars,
+> criminal-history declaration, contact details, a 4-way marital-status
+> enum with the form's own footnote-derived conditional gating
+> (`marriageDate`/`divorceDate`/`spouseDeathDate`/the 10-field spouse block,
+> each `requiredWhen` the applicable marital status), a maiden-name
+> `requiredWhen` gate, and a bounded-slot 3-column minor-children table (12
+> fields per child, following this registry's established
+> `child1`/`child2`/`child3` precedent) — 75 `fields[]` across 9 steps. The
+> header's office-completed registration date/number, the biometric-photo
+> box, and the closing signature/printed-name line are out of scope; the
+> declaration date itself is kept in scope as applicant-provided data. 4
+> mock conformance scenarios (single/married/widowed-with-children/
+> maiden-name-in-use) plus 21 static-required and 14 `requiredWhen`
+> mutation fixtures and 1 unknown-field rejection (40 fixtures total)
+> reproduced via an ephemeral checker, all passing as expected. Both
+> validators pass (666/666). Türkiye's other five verticals are all
+> confirmed dead ends this cycle; National ID & Civic Documents is its
+> sole open vertical (1 of 6), with VAT-1/2/4-11 banked as future
+> companion-schema candidates.
 
 > **Update (2026-07-25, GOV-4811, "GovSchema Standard Research"): Bosnia and
 > Herzegovina's Passport vertical gains a companion schema**, via
@@ -16411,7 +16469,16 @@
 
 ## By Vertical
 
-### Passport (63/97 jurisdictions — 65%)
+### Passport (63/98 jurisdictions — 64%)
+
+> **Update (2026-07-25, GOV-4818, "GovSchema Standard Research"): Türkiye
+> screened and confirmed a dead end for Passport this cycle** — ordinary
+> passport issuance is biometric/in-person via e-Devlet appointment only;
+> `nvi.gov.tr`'s downloadable forms are limited to service/diplomatic
+> passports (government officials), not applicant-facing. Denominator
+> bumped 97 to 98 (screened, not opened); numerator unchanged. See the
+> Executive Summary's GOV-4818 update above for the full six-vertical
+> record.
 
 > **Update (2026-07-25, GOV-4811, "GovSchema Standard Research"): Bosnia
 > and Herzegovina gains a Passport companion schema**, via
@@ -17083,7 +17150,15 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (67/96 jurisdictions — 70%)
+### DMV — Vehicle Registration, Licensing, Permits (67/97 jurisdictions — 69%)
+
+> **Update (2026-07-25, GOV-4818, "GovSchema Standard Research"): Türkiye
+> screened and confirmed a dead end for DMV this cycle** — vehicle
+> registration forms (EK-1, M1) are obtained only in person from Şoförler
+> Odası, and driver-license exam applications route through a
+> login-gated e-Sınav portal. Denominator bumped 96 to 97 (screened, not
+> opened); numerator unchanged. See the Executive Summary's GOV-4818
+> update above for the full six-vertical record.
 
 > **Update (2026-07-25, GOV-4804, "GovSchema Standard Research"): Eswatini
 > gains a DMV companion schema**, via
@@ -17800,7 +17875,14 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (86/90 jurisdictions — 96%)
+### Business Formation — Incorporation, LLC, Company Registration (86/91 jurisdictions — 95%)
+
+> **Update (2026-07-25, GOV-4818, "GovSchema Standard Research"): Türkiye
+> screened and confirmed a dead end for Business Formation this cycle** —
+> MERSIS, the central trade registry, requires a MERSIS account or
+> e-Devlet/e-imza login before any field is shown. Denominator bumped 90
+> to 91 (screened, not opened); numerator unchanged. See the Executive
+> Summary's GOV-4818 update above for the full six-vertical record.
 
 > **Update (2026-07-24, GOV-4748, "GovSchema Standard Research"): Lesotho
 > opens this vertical, and the jurisdiction itself (1 of 6)**, via
@@ -19085,7 +19167,15 @@ PEZA/BOI incentive-registration panel, and Authority-to-Print-Invoices
 panel, all deliberately scoped out of `ph/bir/tin-application-corporations-partnerships`
 v1.0.0.
 
-### Taxes — Income Tax Return, Tax Filing (82/95 jurisdictions — 86%)
+### Taxes — Income Tax Return, Tax Filing (82/96 jurisdictions — 85%)
+
+> **Update (2026-07-25, GOV-4818, "GovSchema Standard Research"): Türkiye
+> screened and confirmed a dead end for Taxes this cycle** — GİB's own
+> "Hazır Formlar" (Ready Forms) library returned zero records live for
+> every category; all filing paths require e-Devlet login. Denominator
+> bumped 95 to 96 (screened, not opened); numerator unchanged. See the
+> Executive Summary's GOV-4818 update above for the full six-vertical
+> record.
 
 > **Update (2026-07-25, GOV-4790, "GovSchema Standard Research"): Eswatini's
 > Taxes vertical opens (2 of 6)**, via
@@ -21191,7 +21281,18 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (74/92 jurisdictions — 80%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (74/93 jurisdictions — 80%)
+
+> **Update (2026-07-25, GOV-4818, "GovSchema Standard Research"): Türkiye
+> screened and confirmed a dead end for Visa this cycle** —
+> `evisa.gov.tr` re-screened live with a real Playwright browser reaches a
+> genuine application-wizard step, but gates the actual data-entry page
+> behind a reCAPTCHA before the field structure becomes observable (also
+> correcting a prior cycle's "unrelated commercial domain" note: the
+> redirect target is a real MFA-affiliated intermediary). Denominator
+> bumped 92 to 93 (screened, not opened); numerator unchanged. See the
+> Executive Summary's GOV-4818 update above for the full six-vertical
+> record.
 
 > **Update (2026-07-24, GOV-4673, "GovSchema Standard Research"): Tunisia's
 > Visa vertical opens (5 of 6 for the jurisdiction)**, via
@@ -22076,7 +22177,18 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (56/82 jurisdictions — 68%)
+### National ID & Civic Documents (57/83 jurisdictions — 69%)
+
+> **Update (2026-07-25, GOV-4818, "GovSchema Standard Research"): Türkiye
+> opens as the registry's 100th jurisdiction, and this vertical, via**
+> `tr/nvi/general-acquisition-of-turkish-citizenship-application@1.0.0` —
+> Form Vat-3, the NVI's (Nüfus ve Vatandaşlık İşleri Genel Müdürlüğü,
+> Ministry of Interior) General Acquisition of Turkish Citizenship
+> application under Law No. 5901 Article 11. See the Executive Summary
+> update above for the full sourcing record, the six-vertical screening
+> results, and every disclosed scoping call. Türkiye's other five
+> verticals (Passport, DMV, Business Formation, Taxes, Visa) are all
+> confirmed dead ends this cycle.
 
 > **Update (2026-07-24, GOV-4783, "GovSchema Standard Research"): Eswatini
 > opens as the registry's 99th jurisdiction, via National ID & Civic
@@ -22992,6 +23104,7 @@ now closed.
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **TN** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| **TR** | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
 | **TT** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -24569,6 +24682,25 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     record. Eswatini remains 3 of 6 jurisdictions open (a second schema
     within the already-open DMV vertical, not a new vertical); Business
     Formation, Visa, and Passport remain confirmed dead ends.
+0s. **Türkiye opened as the registry's 100th jurisdiction (GOV-4818,
+    2026-07-25), via National ID & Civic Documents:** Form Vat-3, the
+    NVI's (Nüfus ve Vatandaşlık İşleri Genel Müdürlüğü, Ministry of
+    Interior) General Acquisition of Turkish Citizenship application form
+    under Law No. 5901 Article 11, authored as
+    `tr/nvi/general-acquisition-of-turkish-citizenship-application@1.0.0`
+    — see the Executive Summary and National ID & Civic Documents
+    vertical updates above for the full record. All five other verticals
+    were screened fresh this same cycle and are **confirmed dead ends**:
+    Passport (biometric/in-person only, downloadable forms limited to
+    service/diplomatic passports), DMV (registration/exam forms obtained
+    only in person or via a login-gated portal), Business Formation
+    (MERSIS fully login/e-imza-gated), Taxes (GİB's own forms library
+    empty live; every filing path e-Devlet-login-gated), and Visa
+    (`evisa.gov.tr`'s real application wizard gates the data-entry page
+    behind a reCAPTCHA before fields become observable). Türkiye is 1 of
+    6 open, with the remaining VAT-1/2/4-11 citizenship-related forms on
+    the same NVI page banked as future National ID & Civic Documents
+    companion-schema candidates, not yet screened field-by-field.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
