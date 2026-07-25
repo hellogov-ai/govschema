@@ -4,8 +4,41 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **674 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **675 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-25, GOV-4883, "GovSchema Standard Research"): Türkiye's
+> National ID & Civic Documents vertical gains a tenth schema**, via
+> `tr/nvi/loss-of-turkish-citizenship-by-right-of-option-application@1.0.0`
+> — Form Vat-10, "Seçme Hakkı ile Türk Vatandaşlığının Kaybı Başvuru
+> Formu" (Application Form for Loss of Turkish Citizenship by Right of
+> Option), published by the same NVI authority as Vat-1/2/3/4/5/6/8/9/11,
+> under Article 34 of Law No. 5901 — the mechanism by which a current
+> Turkish citizen elects to lose citizenship, run in the opposite
+> direction from the already-modelled Vat-8 (which uses the same
+> right-of-option mechanism, under Article 21, to gain citizenship). This
+> cycle re-scraped the NVI's `vatandaslik-ile-ilgili-formlar` listing page
+> fresh, re-fetched and field-counted both still-unauthored VAT forms
+> (VAT-7, 51 widgets; VAT-10, 62 widgets) via `pdfjs-dist`, and selected
+> VAT-10 as the stronger candidate on this registry's own widget-count
+> bar (`https://www.nvi.gov.tr/kurumlar/nvi.gov.tr/mevzuat/nufusmevzuat/Formlar/Vatandaslik/Vat10-FormSecmeHakkiIleTurkVatKaybi.pdf`,
+> HTTP 200, 1,063,528 bytes, sha256
+> `457c4bc0847199b2772b3a9b9ad5fc6d4b9b31635d0ebbe931d1950c17e0f040`).
+> Closely mirrors the already-authored Vat-9 (renunciation with
+> permission) — the other "loss of citizenship" form in this family —
+> reusing its field model directly (identity/contact/birth block plus a
+> 3-column bounded minor-children table). A genuine source-document
+> finding, already flagged once before on the Vat-9 sibling's own
+> VERIFICATION.md, recurs verbatim here: the minor-children table's
+> `Cinsiyet_N`/`Din_N` (gender/religion) widgets all carry the identical
+> miscopied `alternativeText` tooltip "Eğitim Durumu" (education level)
+> rather than their own row label, resolved by internal field name and
+> rendered position rather than tooltip text. 18 conformance fixtures (2
+> valid scenarios, 15 required-field mutations, 1 unknown-field-rejected)
+> all passing as expected. Both validators pass (675/675). Türkiye
+> remains 1 of 6 verticals open; VAT-7 (acquisition through adoption)
+> remains the sole banked, unscreened backlog candidate on the same NVI
+> page.
+>
 > **Update (2026-07-25, GOV-4875, "GovSchema Standard Research"): Türkiye's
 > National ID & Civic Documents vertical gains a ninth schema**, via
 > `tr/nvi/acquisition-of-turkish-citizenship-by-place-of-birth-application@1.0.0`
@@ -22510,6 +22543,17 @@ candidate, the other two as confirmed dead ends).
 
 ### National ID & Civic Documents (57/83 jurisdictions — 69%)
 
+> **Update (2026-07-25, GOV-4883, "GovSchema Standard Research"): Türkiye
+> gains a tenth schema within this already-open vertical**, via
+> `tr/nvi/loss-of-turkish-citizenship-by-right-of-option-application@1.0.0`
+> — Form Vat-10, the NVI's Loss of Turkish Citizenship by Right of Option
+> application under Law No. 5901 Article 34, selected as the stronger of
+> the two remaining unauthored VAT forms on the same NVI page (62 widgets
+> vs. VAT-7's 51). See the Executive Summary update above for the full
+> sourcing record and every disclosed scoping call. Jurisdiction count
+> for this vertical is unchanged (57/83) — Türkiye was already counted
+> here by GOV-4818's Vat-3 schema.
+>
 > **Update (2026-07-25, GOV-4875, "GovSchema Standard Research"): Türkiye
 > gains a ninth schema within this already-open vertical**, via
 > `tr/nvi/acquisition-of-turkish-citizenship-by-place-of-birth-application@1.0.0`
@@ -23531,7 +23575,7 @@ now closed.
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **TN** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
-| **TR** | 9 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| **TR** | 10 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
 | **TT** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -25221,6 +25265,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     remains 1 of 6 verticals open (a ninth schema within the already-open
     National ID vertical, not a new vertical); VAT-7 and VAT-10 remain
     open, unscreened backlog candidates on the same NVI page.
+    **Update (GOV-4883, 2026-07-25): the stronger of the two remaining
+    banked VAT candidates, VAT-10, is now authored**, via
+    `tr/nvi/loss-of-turkish-citizenship-by-right-of-option-application@1.0.0`
+    (Form Vat-10, "Seçme Hakkı ile Türk Vatandaşlığının Kaybı Başvuru
+    Formu," under Law No. 5901 Article 34 — the right-of-option mechanism
+    run in the opposite direction from the already-modelled Vat-8, which
+    uses the same mechanism under Article 21 to gain citizenship) — see
+    the Executive Summary and National ID & Civic Documents vertical
+    updates above for the full record, including the recurrence of a
+    mislabeled-tooltip finding already disclosed once before on the Vat-9
+    sibling's own VERIFICATION.md. Türkiye remains 1 of 6 verticals open
+    (a tenth schema within the already-open National ID vertical, not a
+    new vertical); VAT-7 (acquisition through adoption) remains the sole
+    open, unscreened backlog candidate on the same NVI page.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
