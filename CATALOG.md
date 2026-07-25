@@ -4,7 +4,44 @@
 
 ## Executive Summary
 
-**99 jurisdictions** | **664 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**99 jurisdictions** | **665 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-25, GOV-4811, "GovSchema Standard Research"): Bosnia and
+> Herzegovina's Passport vertical gains a companion schema**, via
+> `ba/mup-rs/lost-or-stolen-travel-document-report-abroad@1.0.0` — the
+> Ministry of Interior of Republika Srpska's (MUP RS) Obrazac GPI-2, the
+> abroad-filing (diplomatic-consular mission, DKP) variant of the same
+> "Report of Loss of a Travel Document/Passport" already modelled as
+> `ba/mup-rs/lost-or-stolen-travel-document-report@1.0.0` (Obrazac GPI-1,
+> domestic filing) in GOV-4720. GPI-2 was disclosed as open backlog at that
+> time, along with its exact byte count (158,466 bytes) and sha256; this
+> cycle independently re-fetched both GPI-1 and GPI-2 fresh (both
+> byte-identical to their prior records) and diffed their extracted text
+> streams directly side-by-side rather than trusting the banked description
+> alone. This confirmed the two previously-predicted differences — the
+> header addresses a DKP rather than a domestic authority
+> (`receivingMissionName` replacing `receivingAuthorityName`), and the
+> loss-location item asks for place *and country* rather than place alone
+> (`placeAndCountryOfLoss` replacing `placeOfLoss`) — and surfaced one
+> difference the GOV-4720 banked note had **not** recorded: GPI-2's Section
+> 4 prints an additional line, "ORGAN KOME JE PRIJAVLJEN NESTANAK PUTNE
+> ISPRAVE/PUTOVNICE" (the authority the loss/theft was itself first
+> reported to, distinct from the DKP the form is filed with), with no
+> counterpart on GPI-1 — modelled as the new field
+> `authorityLossReportedTo`. Every other field (holder identity, permanent/
+> temporary residence, `documentStatus`, `issuingAuthority`, `dateOfLoss`,
+> `circumstancesDescription`, and the filing/reporter-identification block)
+> is unchanged from GPI-1. 20 `fields[]` across 5 steps, no `requiredWhen`
+> gates (every field's requiredness is unconditional, matching GPI-1's own
+> finding). 23 mock conformance fixtures (2 positive scenarios — one
+> exercising the DKP-abroad-filing pattern with a foreign local-police
+> `authorityLossReportedTo`, one exercising the optional temporary-
+> residence fields' absent case — all 20 unconditionally required fields
+> individually mutated to absent, and 1 unknown-field rejection) reproduced
+> via an ephemeral checker, all passing as expected. Both validators pass
+> (665/665). This is a second schema within Bosnia and Herzegovina's
+> already-open Passport vertical (5 of 6, unchanged); Visa remains the
+> jurisdiction's sole confirmed dead end.
 
 > **Update (2026-07-25, GOV-4804, "GovSchema Standard Research"): Eswatini's
 > DMV vertical gains a companion schema**, via
@@ -16376,6 +16413,20 @@
 
 ### Passport (63/97 jurisdictions — 65%)
 
+> **Update (2026-07-25, GOV-4811, "GovSchema Standard Research"): Bosnia
+> and Herzegovina gains a Passport companion schema**, via
+> `ba/mup-rs/lost-or-stolen-travel-document-report-abroad@1.0.0` — MUP
+> RS's Obrazac GPI-2, the abroad-filing (diplomatic-consular mission)
+> variant of the same lost/stolen-travel-document report already modelled
+> as Obrazac GPI-1 by the GOV-4720 cycle below, disclosed there as open
+> backlog. See the Executive Summary's GOV-4811 update above and the
+> document's own VERIFICATION.md for the full sourcing record, including
+> the field-for-field diff against GPI-1 and one previously-undisclosed
+> field this cycle's independent re-diff surfaced. Bosnia and Herzegovina
+> remains 5 of 6 jurisdictions open (this is a second schema within its
+> already-open Passport vertical, not a new vertical or jurisdiction);
+> numerator/denominator unchanged.
+
 > **Update (2026-07-24, GOV-4720, "GovSchema Standard Research"): Bosnia
 > and Herzegovina's Passport vertical opens (2 of 6)**, via
 > `ba/mup-rs/lost-or-stolen-travel-document-report@1.0.0` — MUP RS's
@@ -22859,7 +22910,7 @@ now closed.
 | **AR** | 5 | ✗ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **AT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **AU** | 8 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **BA** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **BA** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **BD** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BE** | 3 | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ |
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -24335,6 +24386,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       other Federation of Bosnia and Herzegovina canton's own Ministry of
       Interior are disclosed, open backlog — see the document's own
       VERIFICATION.md.
+      **Update (GOV-4811, 2026-07-25): the disclosed Obrazac GPI-2
+      companion candidate is now authored**, via
+      `ba/mup-rs/lost-or-stolen-travel-document-report-abroad@1.0.0` — see
+      the Executive Summary and Passport vertical updates above for the
+      full record, including one previously-undisclosed field
+      (`authorityLossReportedTo`) this cycle's independent re-diff
+      surfaced beyond the original GOV-4720 finding. Bosnia and Herzegovina
+      remains 5 of 6 jurisdictions open (a second schema within the
+      already-open Passport vertical, not a new vertical); MUP RS's own
+      GPI-1/GPI-2 pair is now fully modelled. MUP KS's own companion forms
+      and every other Federation of Bosnia and Herzegovina canton's own
+      Ministry of Interior remain disclosed, open backlog; Visa remains
+      the jurisdiction's sole confirmed dead end.
 0q. **Backlog exhaustion re-confirmed and Lesotho opened as the registry's
     98th jurisdiction (GOV-4748, 2026-07-24):**
     - **Hungary Business Formation — newly confirmed a dead end.**
