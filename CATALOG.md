@@ -4,7 +4,54 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **668 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **669 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-25, GOV-4839, "GovSchema Standard Research"): Türkiye's
+> National ID & Civic Documents vertical gains a fourth schema**, via
+> `tr/nvi/exceptional-acquisition-of-turkish-citizenship-application@1.0.0`
+> — Form Vat-4, "İstisnai Olarak Türk Vatandaşlığının Kazanılması Başvuru
+> Formu" (Application Form for the Exceptional Acquisition of Turkish
+> Citizenship), published by the same NVI authority as Vat-3/Vat-6/Vat-9,
+> under Article 12 of Law No. 5901 on Turkish Citizenship — the legal
+> basis underlying Türkiye's well-known citizenship-by-investment and
+> discretionary-naturalization pathways. This cycle re-scanned the NVI's
+> `vatandaslik-ile-ilgili-formlar` listing page fresh, re-fetched and
+> field-counted all eight still-unauthored VAT forms via `pdfjs-dist`, and
+> selected VAT-4 as the strongest remaining candidate — a 2-page,
+> 96-AcroForm-widget PDF (all 96 widgets on page 1; page 2 is a
+> supporting-documents checklist)
+> (`https://www.nvi.gov.tr/kurumlar/nvi.gov.tr/mevzuat/nufusmevzuat/Formlar/Vatandaslik/Vat4_Istisnai_Olarak_Kazanma.pdf`,
+> HTTP 200, 847,001 bytes, sha256
+> `ec84952a815bd114b381b77cc9de73e4db3a8962c21cb1b0d62a3ee3e3576acf`,
+> `Last-Modified: 2020-08-04`) covering the highest real-world-relevance
+> remaining pathway of the eight screened. Unlike Vat-6 (always-married
+> applicant) and Vat-9 (renunciation), this form carries a genuine
+> four-way `maritalStatus` (single/married/divorced/widowed) with a
+> `requiredWhen`-gated spouse block and conditional marriage/divorce/
+> death dates, reusing Vat-3's exact established pattern; its
+> minor-children table follows Vat-3's 12-field-per-child convention
+> (including the "Alacağı Soyadı" surname-to-be-acquired row that Vat-6's
+> table lacks). Several children-table widgets carry miscopied
+> `alternativeText` tooltips (`Cinsiyet`/`Din` columns tooltip as
+> "Eğitim Durumu," the same pattern already found on Vat-9), resolved this
+> cycle via the PDF's raw text-layer item positions matched against each
+> widget's `rect` rather than `node-canvas` rendering — an equally
+> rigorous, faster alternative when the text layer itself is intact.
+> Models the applicant's foreign/Turkish-script identity, birth
+> particulars, marital-status-gated spouse block, and a bounded-slot
+> 3-column minor-children table — 71 `fields[]` across 7 steps. The
+> header's office-completed intake fields, the biometric-photo box, and
+> the closing signature/printed-name line are out of scope, matching all
+> three siblings' own convention; `declarationDate` is kept in scope. 3
+> mock conformance scenarios (single-applicant-minimal,
+> married-applicant-with-spouse-consulate,
+> widowed-applicant-with-three-children) plus 21 static-required mutation
+> fixtures, 11 `requiredWhen` mutation fixtures (covering the married,
+> divorced, and widowed branches independently), and 1 unknown-field
+> rejection (36 fixtures total) reproduced via an ephemeral checker, all
+> passing as expected. Both validators pass (669/669). Türkiye remains 1
+> of 6 verticals open; VAT-1, VAT-2, VAT-5, VAT-7, VAT-8, VAT-10, and
+> VAT-11 remain open, unscreened backlog candidates on the same NVI page.
 
 > **Update (2026-07-25, GOV-4832, "GovSchema Standard Research"): Türkiye's
 > National ID & Civic Documents vertical gains a third schema**, via
@@ -22260,6 +22307,18 @@ candidate, the other two as confirmed dead ends).
 
 ### National ID & Civic Documents (57/83 jurisdictions — 69%)
 
+> **Update (2026-07-25, GOV-4839, "GovSchema Standard Research"): Türkiye
+> gains a fourth schema within this already-open vertical**, via
+> `tr/nvi/exceptional-acquisition-of-turkish-citizenship-application@1.0.0`
+> — Form Vat-4, the NVI's Exceptional Acquisition of Turkish Citizenship
+> application under Law No. 5901 Article 12 (the legal basis underlying
+> Türkiye's citizenship-by-investment/discretionary-naturalization
+> pathways), selected as the strongest of the eight remaining unauthored
+> VAT forms on the same NVI page. See the Executive Summary update above
+> for the full sourcing record and every disclosed scoping call.
+> Jurisdiction count for this vertical is unchanged (57/83) — Türkiye was
+> already counted here by GOV-4818's Vat-3 schema.
+
 > **Update (2026-07-25, GOV-4832, "GovSchema Standard Research"): Türkiye
 > gains a third schema within this already-open vertical**, via
 > `tr/nvi/marriage-based-acquisition-of-turkish-citizenship-application@1.0.0`
@@ -24824,6 +24883,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     the already-open National ID vertical, not a new vertical); VAT-1,
     VAT-2, VAT-4, VAT-5, VAT-7, VAT-8, VAT-10, and VAT-11 remain open,
     unscreened backlog candidates on the same NVI page.
+    **Update (GOV-4839, 2026-07-25): the strongest of the remaining eight
+    banked VAT candidates, VAT-4, is now authored**, via
+    `tr/nvi/exceptional-acquisition-of-turkish-citizenship-application@1.0.0`
+    (Form Vat-4, "İstisnai Olarak Türk Vatandaşlığının Kazanılması Başvuru
+    Formu," under Law No. 5901 Article 12 — the legal basis underlying
+    Türkiye's citizenship-by-investment/discretionary-naturalization
+    pathways) — see the Executive Summary and National ID & Civic
+    Documents vertical updates above for the full record. Türkiye remains
+    1 of 6 verticals open (a fourth schema within the already-open
+    National ID vertical, not a new vertical); VAT-1, VAT-2, VAT-5, VAT-7,
+    VAT-8, VAT-10, and VAT-11 remain open, unscreened backlog candidates
+    on the same NVI page.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
