@@ -4,7 +4,47 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **683 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **684 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-25, GOV-4946, "GovSchema Standard Research"): Mauritius's
+> Business Formation vertical gains a ninth schema**, via
+> `mu/cbrd/limited-liability-partnership-change-of-registered-office@1.0.0` —
+> the Corporate and Business Registration Department's "Notice of Change in
+> Registered Office," Form S42/F LLP4 under section 42 of the Limited
+> Liability Partnerships Act 2016, disclosed as confirmed-live backlog since
+> GOV-4911. This cycle re-fetched CBRD's downloadable-forms listing fresh
+> (`https://companies.govmu.org/cbrd/downloadable-forms/`, HTTP 200) and
+> grepped its raw HTML for the exact `LLP4` filename, then independently
+> re-verified the live source
+> (`https://companies.govmu.org/cbrd/wp-content/uploads/2025/08/NOTICE-OF-CHANGE-IN-REGISTERED-OFFICE-LLP4.pdf`,
+> HTTP 200, 47,286 bytes, sha256
+> `cc5fdb3754343231447f3375942ca2f17b4d75fcac23a7b25b31bab20d1abda7`), a clean
+> single-page, 119-text-item form. Two genuine structural findings, both
+> confirmed via a canvas render augmented with a text-baseline gridline
+> overlay (a refinement over prior cycles' plain box-confirmation renders):
+> (1) the existing-record identification block prints only two boxes
+> (Category, Registered No.), the same two-box pattern as the LP7 sibling,
+> not the three-box pattern (adding Date of Registration) used by this
+> form's own LLP5 change-of-name sibling within the same Act; and (2) unlike
+> LP7, which prints no "Presented By" block at all, this form prints a full
+> Presented By block plus officer column and footer checkboxes, the same as
+> LLP5/LP5 — combining a pattern from each sibling in a way no single prior
+> CBRD schema in this registry has. A third finding: a small bordered box
+> confirmed positioned directly beside the running sentence "The change in
+> the registered office ... takes effect on *" is paired with a footnote
+> disclosing the date is subject to the Department's own register-amendment
+> date (Section 42(3)), modelled as a required `effectiveDate` field with
+> the caveat disclosed in its own description. 12 conformance checks (2
+> valid scenarios, 10 required-field-omission mutations, 1
+> unknown-field-rejection) all passing as expected. Both validators pass
+> (684/684); registry index rebuilt. Mauritius remains 4 of 6 verticals open
+> (a ninth schema within the already-open Business Formation vertical, not a
+> new vertical); removal-from-register (LLP8) remains disclosed,
+> confirmed-live backlog, alongside the GOV-4925-surfaced unscreened batch
+> (LLP7 distinct from the already-authored LP7, change-of-general-partner,
+> change-of-manager/partner (LLP6), name-reservation (LP1, LLP3), annual
+> return (LP3), and a Foundation change-of-name form) and the two
+> dead-linked forms (consent-of-manager, LP4 removal).
 
 > **Update (2026-07-25, GOV-4939, "GovSchema Standard Research"): Mauritius's
 > Business Formation vertical gains an eighth schema**, via
@@ -18742,6 +18782,20 @@ within an already-covered vertical:
 > on the document's own VERIFICATION.md. Numerator and denominator both
 > unchanged (Mauritius already counted for this vertical since GOV-4624).
 
+> **Update (2026-07-25, GOV-4946, "GovSchema Standard Research"): Mauritius
+> gains a ninth Business Formation schema (still 4/6 for the jurisdiction —
+> an additional schema within an already-open vertical, not a new one)**,
+> via `mu/cbrd/limited-liability-partnership-change-of-registered-office@1.0.0`
+> (Form S42/F LLP4, "Notice of Change in Registered Office") — see the
+> Executive Summary update above for the full sourcing record, including
+> the two-box (not three-box) identification block shared with the LP7
+> sibling, the Presented-By block shared with the LLP5/LP5 siblings (a
+> combination no single prior CBRD schema in this registry has needed),
+> and the boxed effective-date field with its Section 42(3) footnote, all
+> disclosed on the document's own VERIFICATION.md. Numerator and
+> denominator both unchanged (Mauritius already counted for this vertical
+> since GOV-4624).
+
 > **Update (2026-07-23, GOV-4589, "GovSchema Standard Research"): Trinidad
 > and Tobago gains its first Business Formation schema (4/6 for the
 > jurisdiction)**, via
@@ -23985,7 +24039,7 @@ now closed.
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| **MU** | 10 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **MU** | 12 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NA** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -25256,6 +25310,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       partner, change-of-manager/partner (LLP6), name-reservation (LP1,
       LLP3), annual return (LP3), and a Foundation change-of-name form)
       and the two dead-linked forms (consent-of-manager, LP4 removal).
+      **Update (GOV-4946, 2026-07-25): change-of-registered-office (LLP4) is
+      now also authored**, via
+      `mu/cbrd/limited-liability-partnership-change-of-registered-office@1.0.0`
+      (Form S42/F LLP4, "Notice of Change in Registered Office") — see the
+      Executive Summary and Business Formation vertical updates above for
+      the full record, including the two-box (not three-box) identification
+      block shared with the LP7 sibling, the Presented-By block shared with
+      the LLP5/LP5 siblings, and the boxed effective-date field with its
+      Section 42(3) footnote. Mauritius remains at 4/6 (a ninth schema
+      within the already-open Business Formation vertical, not a new
+      vertical); **removal-from-register (LLP8)** remains disclosed, open
+      backlog for a future cycle, alongside the GOV-4925-surfaced
+      unscreened batch (LLP7 distinct from the already-authored LP7,
+      change-of-general-partner, change-of-manager/partner (LLP6),
+      name-reservation (LP1, LLP3), annual return (LP3), and a Foundation
+      change-of-name form) and the two dead-linked forms
+      (consent-of-manager, LP4 removal).
     - **Guatemala** — re-scouted in the same cycle, found weak: **Business
       Formation** is STRONG (the Registro Mercantil's own live,
       unauthenticated multi-section web form at
