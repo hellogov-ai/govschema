@@ -4,7 +4,50 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **667 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **668 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-25, GOV-4832, "GovSchema Standard Research"): Türkiye's
+> National ID & Civic Documents vertical gains a third schema**, via
+> `tr/nvi/marriage-based-acquisition-of-turkish-citizenship-application@1.0.0`
+> — Form Vat-6, "Evlenme Yoluyla Türk Vatandaşlığının Kazanılması Başvuru
+> Formu" (Application Form for the Acquisition of Turkish Citizenship
+> Through Marriage), published by the same NVI authority as Vat-3 and
+> Vat-9, under Article 16 of Law No. 5901 on Turkish Citizenship. This
+> cycle re-scanned the NVI's `vatandaslik-ile-ilgili-formlar` listing
+> page fresh, re-fetched and field-counted all nine still-unauthored VAT
+> forms via `pdfjs-dist`, and selected VAT-6 as the strongest remaining
+> candidate — a single-page, 86-AcroForm-widget PDF
+> (`https://www.nvi.gov.tr/kurumlar/nvi.gov.tr/mevzuat/nufusmevzuat/Formlar/Vatandaslik/Vat6_Evlenme.pdf`,
+> HTTP 200, 1,340,678 bytes, sha256
+> `e62a7748c75bef9c6f4c07258147c0e05bf93d80e7f6d501692823bc8e50797c`,
+> `Last-Modified: 2020-08-04`) covering one of the most common real-world
+> citizenship pathways: a foreign national married to a Turkish citizen.
+> Unlike Vat-3 (whose spouse fields are conditionally `requiredWhen`-gated
+> on marital status), this form carries a dedicated, always-required
+> Turkish-citizen-spouse information block, since the form's very premise
+> is marriage to a citizen. Because several widgets reuse ambiguous
+> numeric suffixes across distinct sections (e.g. `Ad_1`/`Soyad_1` for the
+> applicant's foreign name vs. `Ad_11`/`Soyad_11` for the same applicant's
+> Turkish-script name), the page was additionally rendered via
+> `node-canvas` at scale 2.2 and visually cross-checked against the
+> printed table headers to resolve every field. Models the applicant's
+> foreign/Turkish-script identity, birth particulars, a maiden-name
+> `requiredWhen` gate, criminal-history declaration, contact details, the
+> Turkish spouse's own identity and marriage-date particulars, and a
+> bounded-slot 3-column minor-children table (11 fields per child, one
+> fewer than Vat-3's 12 since this form has no separate "surname to be
+> acquired" row) — 68 `fields[]` across 6 steps. The header's
+> office-completed registration date/number, the biometric-photo box, and
+> the closing signature/printed-name line are out of scope, matching both
+> siblings' own convention; `declarationDate` is kept in scope. 2 mock
+> conformance scenarios (minimal-no-children-governorate,
+> consulate-general-with-three-children) plus 29 static-required mutation
+> fixtures, 1 `requiredWhen` mutation fixture, and 1 unknown-field
+> rejection (33 fixtures total) reproduced via an ephemeral checker, all
+> passing as expected. Both validators pass (668/668). Türkiye remains 1
+> of 6 verticals open; VAT-1, VAT-2, VAT-4, VAT-5, VAT-7, VAT-8, VAT-10,
+> and VAT-11 remain open, unscreened backlog candidates on the same NVI
+> page.
 
 > **Update (2026-07-25, GOV-4825, "GovSchema Standard Research"): Türkiye's
 > National ID & Civic Documents vertical gains a companion schema**, via
@@ -22217,6 +22260,17 @@ candidate, the other two as confirmed dead ends).
 
 ### National ID & Civic Documents (57/83 jurisdictions — 69%)
 
+> **Update (2026-07-25, GOV-4832, "GovSchema Standard Research"): Türkiye
+> gains a third schema within this already-open vertical**, via
+> `tr/nvi/marriage-based-acquisition-of-turkish-citizenship-application@1.0.0`
+> — Form Vat-6, the NVI's Acquisition of Turkish Citizenship Through
+> Marriage application under Law No. 5901 Article 16, selected as the
+> strongest of the nine remaining unauthored VAT forms on the same NVI
+> page. See the Executive Summary update above for the full sourcing
+> record and every disclosed scoping call. Jurisdiction count for this
+> vertical is unchanged (57/83) — Türkiye was already counted here by
+> GOV-4818's Vat-3 schema.
+
 > **Update (2026-07-25, GOV-4825, "GovSchema Standard Research"): Türkiye
 > gains a companion schema within this already-open vertical**, via
 > `tr/nvi/renunciation-of-turkish-citizenship-with-permission-application@1.0.0`
@@ -24760,6 +24814,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     the already-open National ID vertical, not a new vertical); VAT-1,
     VAT-2, and VAT-4 through VAT-8/VAT-10/VAT-11 remain open, unscreened
     backlog candidates on the same NVI page.
+    **Update (GOV-4832, 2026-07-25): the strongest of the remaining nine
+    banked VAT candidates, VAT-6, is now authored**, via
+    `tr/nvi/marriage-based-acquisition-of-turkish-citizenship-application@1.0.0`
+    (Form Vat-6, "Evlenme Yoluyla Türk Vatandaşlığının Kazanılması Başvuru
+    Formu," under Law No. 5901 Article 16) — see the Executive Summary and
+    National ID & Civic Documents vertical updates above for the full
+    record. Türkiye remains 1 of 6 verticals open (a third schema within
+    the already-open National ID vertical, not a new vertical); VAT-1,
+    VAT-2, VAT-4, VAT-5, VAT-7, VAT-8, VAT-10, and VAT-11 remain open,
+    unscreened backlog candidates on the same NVI page.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
