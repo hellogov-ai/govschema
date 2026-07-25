@@ -4,7 +4,61 @@
 
 ## Executive Summary
 
-**99 jurisdictions** | **662 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**99 jurisdictions** | **663 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-25, GOV-4797, "GovSchema Standard Research"): Eswatini's
+> DMV vertical opens (3 of 6)**, via
+> `sz/rtd/motor-vehicle-initial-registration-application@1.0.0` — the Road
+> Traffic Department's (RTD) Form MVR1-MIB, "Application for Initial
+> Registration of a Motor Vehicle" (Road Traffic Act, 2007; Road Traffic
+> Regulations, 2016), under the Ministry of Public Works and Transport.
+> Per GOV-4790's own disclosed next step, this cycle re-screened
+> Eswatini's DMV and Passport verticals — left as "soft backlog, not
+> confirmed dead ends" since they had only been checked via `WebSearch`/
+> `curl`, never a real rendered browser — with a real Chromium/Playwright
+> session. Passport is now a **confirmed dead end**: the Ministry of Home
+> Affairs' own "Application Forms" page lists only a Temporary Residence
+> Permit form, a medical certificate, a visa form, and a payment schedule,
+> and the homepage's "International Passport"/"Vehicle Application"
+> deep-links both 404 live. DMV upgraded to a genuine candidate: gov.sz's
+> own "Works Forms" page (Ministry of Public Works and Transport section)
+> publishes several real, unauthenticated, directly downloadable forms,
+> including `RTD - MVR1 and ACR FORMS.docx` (HTTP 200,
+> `application/vnd.openxmlformats-officedocument.wordprocessingml.document`,
+> 48,931 bytes, sha256
+> `c2ce9f0496d346ad29eee067253bc698c0125cde82b3c0c775d8579cb1bce265`,
+> `Last-Modified: 2025-09-25`), a genuine Office Open XML zip bundling two
+> distinct forms: MVR1-MIB (the Manufacturer/Importer/Builder variant of
+> the initial-vehicle-registration form) and ACR ("Application for
+> Certification of Roadworthiness", a separate roadworthiness-testing
+> process). Extracted directly from `word/document.xml`'s own native,
+> unscrambled OOXML text layer by walking every paragraph/table element in
+> document order — no rendering needed, unlike this registry's recurring
+> flat/scanned-PDF extraction cases. Authored MVR1-MIB (the more
+> foundational registration process, matching this vertical's own "Tag,
+> Title, Registration" framing); ACR is banked as a future companion-schema
+> candidate. Scoped v1.0.0 to the single-title-holder core declaration:
+> Part A (title holder + its proxy/representative), Declaration by Owner,
+> Part C (vehicle particulars: role, NaTIS model number, chassis/VIN,
+> make, series name, transmission, colour, gearbox/differential numbers,
+> odometer, plus the optional "complete only if different from NaTIS
+> model" dimension/capacity fields), and Declaration by Title Holder. The
+> source's own duplicate "Part B" second/joint-title-holder block (no
+> disclosed condition for when it applies) and its note that additional
+> vehicles may be applied for via extra copies of Part C are both out of
+> scope, deferred to a future minor version; the "FOR OFFICE USE ONLY"
+> panel (fees, registration-certificate serial number, RTD sign-off) is
+> excluded as agency-completed. 30 `fields[]` across 6 steps, 2
+> `documents[]` attestation entries (one per declaration), and 2
+> `requiredWhen` gates (`representativeCountryOfIssue` when the
+> representative's ID is foreign; `mainColourOther` when main colour is
+> "Other"). 24 mock conformance fixtures (2 positive scenarios, both
+> `requiredWhen` gates each exercised with a negative control, 1
+> unknown-field rejection, and all 19 unconditionally required fields
+> individually mutated to absent) reproduced via an ephemeral checker, all
+> passing; both validators pass (663/663). See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed
+> scoping/interpretation choice.
 
 > **Update (2026-07-25, GOV-4790, "GovSchema Standard Research"): Eswatini's
 > Taxes vertical opens (2 of 6)**, via
@@ -16937,7 +16991,21 @@ downloadable form was located. See its own VERIFICATION.md for six disclosed
 judgment calls, including a coordinate-level re-derivation of the form's
 dense five-column physical-description ("Filiación") checkbox grid.
 
-### DMV — Vehicle Registration, Licensing, Permits (66/95 jurisdictions — 69%)
+### DMV — Vehicle Registration, Licensing, Permits (67/96 jurisdictions — 70%)
+
+> **Update (2026-07-25, GOV-4797, "GovSchema Standard Research"): Eswatini's
+> DMV vertical opens (3 of 6 for the jurisdiction)**, via
+> `sz/rtd/motor-vehicle-initial-registration-application@1.0.0` — the Road
+> Traffic Department's Form MVR1-MIB, "Application for Initial
+> Registration of a Motor Vehicle." See the Executive Summary's GOV-4797
+> update above and the document's own VERIFICATION.md for the full
+> sourcing record, including the disclosed exclusion of the source's own
+> duplicate second-title-holder block and its bundled ACR (roadworthiness
+> certification) form, banked as a future companion-schema candidate.
+> Eswatini's Passport candidate, re-screened the same cycle, is now a
+> confirmed dead end. Numerator updated from 66 to 67; denominator updated
+> from 95 to 96, since Eswatini's DMV vertical was not yet counted in
+> either figure.
 
 > **Update (2026-07-24, GOV-4741, "GovSchema Standard Research"): Bosnia and
 > Herzegovina's DMV vertical opens (5 of 6 for the jurisdiction)**, via
@@ -22816,7 +22884,7 @@ now closed.
 | **SI** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **SK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **SN** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
-| **SZ** | 2 | ✗ | ✗ | ✗ | ✓ | ✗ | ✓ |
+| **SZ** | 3 | ✗ | ✓ | ✗ | ✓ | ✗ | ✓ |
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **TN** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
@@ -24364,6 +24432,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     and Passport (Ministry of Home Affairs, no downloadable form found on
     `gov.sz`) were screened via `WebSearch` only (no real-browser
     re-check yet) and left as **soft backlog, not confirmed dead ends**.
+    **Update (GOV-4797, 2026-07-25): DMV is now open**, via
+    `sz/rtd/motor-vehicle-initial-registration-application@1.0.0` (RTD
+    Form MVR1-MIB) — see the Executive Summary and DMV vertical updates
+    above for the full record. A real-browser re-screen this cycle found
+    gov.sz's own "Works Forms" page (Ministry of Public Works and
+    Transport) publishing several genuine downloadable driving/vehicle
+    forms, contradicting the prior `WebSearch`-only "in-person at Revenue
+    Offices" read. Passport is now a **confirmed dead end**: the Ministry
+    of Home Affairs' own "Application Forms" page lists no passport form
+    of any kind, and its "International Passport"/"Vehicle Application"
+    deep-links both 404 live. Business Formation and Visa remain confirmed
+    dead ends (see above); Eswatini is now 3 of 6 open, with the source
+    document's own bundled ACR (roadworthiness-certification) form banked
+    as a future DMV-vertical companion-schema candidate.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
