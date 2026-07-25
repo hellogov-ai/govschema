@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **666 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **667 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-25, GOV-4825, "GovSchema Standard Research"): Türkiye's
+> National ID & Civic Documents vertical gains a companion schema**, via
+> `tr/nvi/renunciation-of-turkish-citizenship-with-permission-application@1.0.0`
+> — Form Vat-9, "İzin Almak Suretiyle Türk Vatandaşlığından Çıkma Başvuru
+> Formu" (Renunciation of Turkish Citizenship with Permission Application
+> Form), published by the same NVI authority as Vat-3 (already modelled),
+> under Article 25 of Law No. 5901 on Turkish Citizenship. The GOV-4818
+> cycle that opened Türkiye had scouted this exact form as a ~62-field
+> fallback candidate but left it unauthored; this cycle re-fetched it
+> fresh (`https://www.nvi.gov.tr/kurumlar/nvi.gov.tr/mevzuat/nufusmevzuat/Formlar/Vatandaslik/Vat9-FormIzinAlarakTurkVatCikma.pdf`,
+> HTTP 200, `application/pdf`, 1,063,612 bytes, sha256
+> `13782150337782532aa58952192e10bbb9faf0f952e4cc6c87c2e8aa2a7d26d0`,
+> `Last-Modified: 2020-08-04`) and confirmed 62 genuine AcroForm fields via
+> `pdfjs-dist`. Unlike Vat-3 (a foreign national acquiring citizenship),
+> Vat-9's applicant is an existing Turkish citizen renouncing it, so its
+> identity field is a genuine 11-digit T.C. Kimlik No rather than a
+> `99...`-prefixed foreign identity number; its salutation line also
+> offers a Consulate-General filing path (for applicants living abroad) in
+> addition to the Governorship path, unlike Vat-3's Governorship-only
+> salutation. Because several minor-children-table AcroForm widgets carry
+> miscopied `alternativeText` tooltips (e.g. the table's Cinsiyet/Din
+> columns tooltip as "Eğitim Durumu"), the page was additionally rendered
+> via `node-canvas` at scale 2.5 and visually cross-checked against each
+> field's rendered position to resolve every field to its real row label.
+> Models the applicant's identity, birth, and contact particulars plus a
+> bounded-slot 3-column minor-children table (10 fields per child,
+> following Vat-3's own precedent) — 48 `fields[]` across 4 steps. The
+> header's office-completed registration date/number, the biometric-photo
+> box, and the closing signature/printed-name line are out of scope,
+> matching Vat-3's own convention; `declarationDate` is kept in scope. 2
+> mock conformance scenarios (minimal-no-children-governorate,
+> consulate-general-with-three-children) plus 15 static-required mutation
+> fixtures and 1 unknown-field rejection (18 fixtures total) reproduced via
+> an ephemeral checker, all passing as expected — this schema has no
+> `requiredWhen` gates. Both validators pass (667/667). Türkiye remains 1
+> of 6 verticals open; VAT-1, VAT-2, and VAT-4 through VAT-8/VAT-10/VAT-11
+> remain open, unscreened backlog candidates on the same NVI page.
 
 > **Update (2026-07-25, GOV-4818, "GovSchema Standard Research"): Türkiye
 > opens as the registry's 100th jurisdiction, via National ID & Civic
@@ -22179,6 +22217,17 @@ candidate, the other two as confirmed dead ends).
 
 ### National ID & Civic Documents (57/83 jurisdictions — 69%)
 
+> **Update (2026-07-25, GOV-4825, "GovSchema Standard Research"): Türkiye
+> gains a companion schema within this already-open vertical**, via
+> `tr/nvi/renunciation-of-turkish-citizenship-with-permission-application@1.0.0`
+> — Form Vat-9, the NVI's Renunciation of Turkish Citizenship with
+> Permission application under Law No. 5901 Article 25, closing the
+> ~62-field fallback candidate the GOV-4818 cycle had scouted but left
+> unauthored. See the Executive Summary update above for the full
+> sourcing record and every disclosed scoping call. Jurisdiction count
+> for this vertical is unchanged (57/83) — Türkiye was already counted
+> here by GOV-4818's Vat-3 schema.
+
 > **Update (2026-07-25, GOV-4818, "GovSchema Standard Research"): Türkiye
 > opens as the registry's 100th jurisdiction, and this vertical, via**
 > `tr/nvi/general-acquisition-of-turkish-citizenship-application@1.0.0` —
@@ -24701,6 +24750,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     6 open, with the remaining VAT-1/2/4-11 citizenship-related forms on
     the same NVI page banked as future National ID & Civic Documents
     companion-schema candidates, not yet screened field-by-field.
+    **Update (GOV-4825, 2026-07-25): the banked VAT-9 fallback candidate is
+    now authored**, via
+    `tr/nvi/renunciation-of-turkish-citizenship-with-permission-application@1.0.0`
+    (Form Vat-9, "İzin Almak Suretiyle Türk Vatandaşlığından Çıkma Başvuru
+    Formu," under Law No. 5901 Article 25) — see the Executive Summary and
+    National ID & Civic Documents vertical updates above for the full
+    record. Türkiye remains 1 of 6 verticals open (a second schema within
+    the already-open National ID vertical, not a new vertical); VAT-1,
+    VAT-2, and VAT-4 through VAT-8/VAT-10/VAT-11 remain open, unscreened
+    backlog candidates on the same NVI page.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
