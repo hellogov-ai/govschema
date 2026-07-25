@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**99 jurisdictions** | **663 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**99 jurisdictions** | **664 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-25, GOV-4804, "GovSchema Standard Research"): Eswatini's
+> DMV vertical gains a companion schema**, via
+> `sz/rtd/certification-of-roadworthiness-application@1.0.0` — the Road
+> Traffic Department's (RTD) Form ACR, "Application for Certification of
+> Roadworthiness" (Road Traffic Act, 2007; Road Traffic Regulations, 2016),
+> bundled in the same `.docx` as `sz/rtd/motor-vehicle-initial-registration-
+> application@1.0.0` (Form MVR1-MIB) and banked as a future companion-schema
+> candidate when that document opened Eswatini's DMV vertical the previous
+> cycle (GOV-4797). Re-fetched the same source and confirmed it byte-
+> identical (HTTP 200, `application/vnd.openxmlformats-officedocument.
+> wordprocessingml.document`, 48,931 bytes, sha256
+> `c2ce9f0496d346ad29eee067253bc698c0125cde82b3c0c775d8579cb1bce265`,
+> `Last-Modified: 2025-09-25`) before re-running the same native-OOXML
+> `word/document.xml` extraction method over the document's ACR section.
+> ACR certifies that an already-identified vehicle is roadworthy — a
+> distinct process from MVR1-MIB's initial-registration filing — and this
+> v1.0.0 schema is scoped to its applicant-facing portion only:
+> "Identification of Applicant (Person presenting the motor vehicle)"
+> (identification type/number, country of issue if foreign ID, surname,
+> initials and first names), "Details of Application" (vehicle class,
+> licence/vehicle-register number or "Not allocated", preferred language),
+> and the "Declaration by Owner" attestation. Unlike MVR1-MIB's two
+> declarations, this form's single declaration prints no separate role
+> checkbox and no separate Place/Date blanks, just one inline attestation-
+> and-signature line, modelled as a single `documents[]` attestation entry.
+> The form's extensive "FOR OFFICE USE ONLY" panels (vehicle
+> classification/VIN, category, drive configuration, engine/fuel/
+> transmission/colour/steering particulars, dimensions, the roadworthiness
+> test sheet, examiner/data-capturing sign-off, and the certificate fee
+> panel) and the trailing "Motor Vehicle Descriptions" glossary table are
+> excluded entirely as post-submission, examiner/RTD-staff-completed. 10
+> `fields[]` across 2 steps, 1 `documents[]` attestation entry, and 1
+> `requiredWhen` gate (`countryOfIssue` when identification is a foreign
+> ID). 10 mock conformance fixtures (2 positive scenarios, the
+> `requiredWhen` gate exercised with a negative control, 1 unknown-field
+> rejection, and all 6 unconditionally required fields/documents
+> individually mutated to absent) reproduced via an ephemeral checker, all
+> passing; both validators pass (664/664). See the document's own
+> VERIFICATION.md for the full sourcing record and every disclosed
+> scoping/interpretation choice.
 
 > **Update (2026-07-25, GOV-4797, "GovSchema Standard Research"): Eswatini's
 > DMV vertical opens (3 of 6)**, via
@@ -16993,6 +17034,18 @@ dense five-column physical-description ("Filiación") checkbox grid.
 
 ### DMV — Vehicle Registration, Licensing, Permits (67/96 jurisdictions — 70%)
 
+> **Update (2026-07-25, GOV-4804, "GovSchema Standard Research"): Eswatini
+> gains a DMV companion schema**, via
+> `sz/rtd/certification-of-roadworthiness-application@1.0.0` — the Road
+> Traffic Department's Form ACR, "Application for Certification of
+> Roadworthiness", bundled in the same source `.docx` as
+> `sz/rtd/motor-vehicle-initial-registration-application@1.0.0` and banked
+> as a future candidate by the GOV-4797 cycle above. See the Executive
+> Summary's GOV-4804 update above and the document's own VERIFICATION.md
+> for the full sourcing record. Eswatini remains 3 of 6 jurisdictions open
+> (this is a second schema within its already-open DMV vertical, not a new
+> vertical or jurisdiction); numerator/denominator unchanged.
+
 > **Update (2026-07-25, GOV-4797, "GovSchema Standard Research"): Eswatini's
 > DMV vertical opens (3 of 6 for the jurisdiction)**, via
 > `sz/rtd/motor-vehicle-initial-registration-application@1.0.0` — the Road
@@ -24446,6 +24499,12 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     dead ends (see above); Eswatini is now 3 of 6 open, with the source
     document's own bundled ACR (roadworthiness-certification) form banked
     as a future DMV-vertical companion-schema candidate.
+    **Update (GOV-4804, 2026-07-25): the banked ACR candidate is now
+    authored**, via `sz/rtd/certification-of-roadworthiness-application@1.0.0`
+    — see the Executive Summary and DMV vertical updates above for the full
+    record. Eswatini remains 3 of 6 jurisdictions open (a second schema
+    within the already-open DMV vertical, not a new vertical); Business
+    Formation, Visa, and Passport remain confirmed dead ends.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
