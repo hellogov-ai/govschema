@@ -4,8 +4,55 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **676 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **677 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-25, GOV-4897, "GovSchema Standard Research"): Mauritius's
+> Business Formation vertical gains a second schema**, via
+> `mu/cbrd/limited-liability-partnership-registration@1.0.0` — Form S23/F
+> LLP1, the Corporate and Business Registration Department's "Application
+> for Registration of a Limited Liability Partnership," under section 23
+> of the Limited Liability Partnerships Act 2016 — a sibling of the
+> already-published `mu/cbrd/limited-partnership-registration` (Form LP2),
+> disclosed as open backlog on that schema's own VERIFICATION.md. This
+> cycle first re-screened two banked single-vertical gaps with fresh live
+> evidence and found both exhausted: Tunisia DMV (`attt.com.tn`)
+> reconfirmed unreachable (only Wayback snapshot dates to 2012); and, via
+> a real headless-Chromium re-screen (not `curl`/`WebFetch` alone, per this
+> registry's own GOV-4783/GOV-4797 precedent), all three of Lesotho's
+> remaining soft-backlog verticals (DMV, Passport, Visa) are now
+> **confirmed dead ends** — `mopwt.gov.ls` has no Traffic and Transport
+> Department page or downloadable form in its real (non-JS-shell)
+> navigation, `passports.homeaffairs.gov.ls` is genuinely only a
+> passport-status checker with one link, and `evisa.gov.ls` fails DNS
+> resolution outright — so **Lesotho's real ceiling is 2 of 6** (Business
+> Formation, Taxes), not merely unscreened. Retreating to Mauritius's own
+> disclosed companion backlog instead, this cycle independently re-fetched
+> and compared LLP1 against the LP2 VERIFICATION.md's other disclosed
+> sibling (a Foundation registration form): LLP1 (2 pages, 255 positional
+> text items) is substantially denser than the Foundation form (4 pages,
+> 95 items, mostly boilerplate), so LLP1 was selected on this registry's
+> own widget/field-count-bar precedent
+> (`https://companies.govmu.org/cbrd/wp-content/uploads/2025/08/APPLICATION-FOR-REGISTRATION-OF-A-LIMITED-LIABILITY-PARTNERSHIP_-LLP1.pdf`,
+> HTTP 200, 61,101 bytes, sha256
+> `d334c4eac7637cdbdf6fe113bc5c41e2a8d508207e97165913674cab96beee3f`). A
+> genuine source-document finding is disclosed in this document's own
+> VERIFICATION.md: the form's Cash/Non-Cash capital-contribution column,
+> despite a header wording nearly identical to the LP2 sibling's own
+> per-partner contribution table, renders (confirmed via canvas render,
+> since glyph rasterization failed as on the LP2 sibling) as a single
+> undivided ruled box spanning the full height of both the bounded
+> 5-slot PARTNERS and 5-slot MANAGER tables, with no row-level division of
+> its own — modelled as one aggregate declaration per column rather than
+> a fabricated per-row split. 20 conformance mutations (2 valid scenarios,
+> 17 required-field mutations, 1 unknown-field-rejected, 1 invalid-enum)
+> all passing as expected; this schema has no `requiredWhen` gates. Both
+> validators pass (677/677). Mauritius remains 4 of 6 verticals open (a
+> second schema within the already-open Business Formation vertical, not
+> a new vertical); the Foundation registration form and several LLP1/LP2
+> companion notice forms (consent-of-partner, consent-of-manager,
+> change-of-name, change-of-registered-office, removal-from-register)
+> remain disclosed, open backlog for a future cycle.
+>
 > **Update (2026-07-25, GOV-4890, "GovSchema Standard Research"): Türkiye's
 > National ID & Civic Documents vertical gains an eleventh schema**, via
 > `tr/nvi/acquisition-of-turkish-citizenship-by-adoption-application@1.0.0`
@@ -18356,6 +18403,16 @@ within an already-covered vertical:
 > omitted from this vertical section in the original GOV-4624 cycle; added
 > retroactively here for accuracy.)*
 
+> **Update (2026-07-25, GOV-4897, "GovSchema Standard Research"): Mauritius
+> gains a second Business Formation schema (still 4/6 for the
+> jurisdiction — an additional schema within an already-open vertical, not
+> a new one)**, via `mu/cbrd/limited-liability-partnership-registration@1.0.0`
+> (Form S23/F LLP1) — see the Executive Summary update above for the full
+> sourcing record, including a genuine undivided-capital-contribution-box
+> finding disclosed on the document's own VERIFICATION.md. Numerator and
+> denominator both unchanged (Mauritius already counted for this vertical
+> since GOV-4624).
+
 > **Update (2026-07-23, GOV-4589, "GovSchema Standard Research"): Trinidad
 > and Tobago gains its first Business Formation schema (4/6 for the
 > jurisdiction)**, via
@@ -23599,7 +23656,7 @@ now closed.
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| **MU** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **MU** | 5 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NA** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -24747,6 +24804,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       bedridden citizens) are confirmed dead ends. **Update (GOV-4624,
       2026-07-24): Business Formation now authored too** (see above) —
       Mauritius's entire GOV-4603-banked backlog is now closed at 4/6.
+      **Update (GOV-4897, 2026-07-25): the Limited Liability Partnership
+      registration form (LLP1), disclosed as an open sibling on the LP2
+      schema's own VERIFICATION.md, is now authored too**, via
+      `mu/cbrd/limited-liability-partnership-registration@1.0.0` — see the
+      Executive Summary and Business Formation vertical updates above for
+      the full record, including a genuine undivided-capital-contribution-
+      box finding. Mauritius remains at 4/6 (a second schema within the
+      already-open Business Formation vertical, not a new vertical); the
+      Foundation registration form (compared against LLP1 this cycle and
+      found weaker — 4 pages/95 text items of mostly boilerplate vs.
+      LLP1's 2 pages/255 items) and several LLP1/LP2 companion notice
+      forms remain disclosed, open backlog.
     - **Guatemala** — re-scouted in the same cycle, found weak: **Business
       Formation** is STRONG (the Registro Mercantil's own live,
       unauthenticated multi-section web form at
@@ -25156,6 +25225,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       not an application form; `evisa.gov.ls` did not resolve at all.
       Still soft backlog, not hard-confirmed dead ends — unchanged from
       the GOV-4748/GOV-4755/GOV-4762 findings.
+      **Update (GOV-4897, 2026-07-25): DMV, Passport, and Visa re-screened
+      with a real headless-Chromium session (not `curl`/`WebFetch`
+      alone), and all three are now confirmed dead ends.** `mopwt.gov.ls`
+      renders fully as a real WordPress site (not a JS shell) with 49
+      enumerated links; its "Departments" page lists only Administration,
+      Building Design Services, and Roads Directorate, and its
+      "Documents"/"Other Downloads" pages list no driving-licence or
+      vehicle-registration form of any kind. `passports.homeaffairs.gov.ls`
+      renders as exactly one page ("Lesotho Passport Status") with one
+      link ("Need Help?") — a genuine, complete status-checker SPA, not a
+      partially-rendered shell hiding an application form.
+      `evisa.gov.ls` fails outright at the DNS level
+      (`net::ERR_NAME_NOT_RESOLVED`) even under a real browser. **Lesotho's
+      real ceiling is now confirmed at 2 of 6** (Business Formation,
+      Taxes); do not re-attempt DMV, Passport, or Visa without a
+      genuinely new source (e.g. a policy change to online filing or a
+      leaked/republished paper form).
 0r. **Eswatini opened as the registry's 99th jurisdiction (GOV-4783,
     2026-07-24), via National ID & Civic Documents:** the Elections and
     Boundaries Commission's (EBC) "Application for Special Voting"
