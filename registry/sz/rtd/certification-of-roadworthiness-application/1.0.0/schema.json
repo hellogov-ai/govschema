@@ -1,0 +1,168 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "sz/rtd/certification-of-roadworthiness-application",
+  "version": "1.0.0",
+  "title": "Eswatini — Application for Certification of Roadworthiness (Form ACR)",
+  "description": "The Road Traffic Department's (RTD) Form ACR, \"Application for Certification of Roadworthiness\" (Road Traffic Act, 2007; Road Traffic Regulations, 2016), under Eswatini's Ministry of Public Works and Transport — a DMV-vertical companion schema to `sz/rtd/motor-vehicle-initial-registration-application` (Form MVR1-MIB), bundled in the same source document and banked as a future candidate when that schema was authored (GOV-4797). ACR is a genuinely distinct process from MVR1-MIB: it certifies that an already-identified motor vehicle is roadworthy (a prerequisite to licensing/relicensing, following a road-worthiness test), rather than registering a vehicle for the first time. This v1.0.0 schema is scoped to the applicant-facing portion only: \"Identification of Applicant (Person presenting the motor vehicle)\" and \"Details of Application\" (vehicle class, licence/vehicle-register number, preferred language), plus the \"Declaration by Owner\" attestation. The form's own extensive \"FOR OFFICE USE ONLY\" panel — vehicle classification/VIN, make, series name, manufacturer's model derivative, vehicle category, drive configuration, engine/fuel/transmission/colour/steering particulars, tare and gross mass, axle/wheel counts, dimensions, gearbox/differential numbers, the roadworthiness test sheet/number, the RTD examiner's and data-capturing official's sign-off, and the \"Certificate of Roadworthiness\" fee panel — together with the shared \"Motor Vehicle Descriptions\" glossary table used only to help RTD staff classify the vehicle, are all excluded entirely: they are completed by the vehicle examiner and RTD staff during and after the roadworthiness test itself, not supplied by the applicant on submission. GovSchema is an independent, non-profit standards body and is not affiliated with, endorsed by, or operated by the Kingdom of Eswatini, its Ministry of Public Works and Transport, or the Road Traffic Department.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "SZ",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Road Traffic Department",
+    "abbreviation": "RTD",
+    "url": "https://www.gov.sz",
+    "operatedBy": {
+      "name": "Ministry of Public Works and Transport",
+      "basis": "Road Traffic Act, 2007; Road Traffic Regulations, 2016"
+    }
+  },
+  "process": {
+    "type": "application",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.gov.sz/images/Works/forms/RTD%20-%20MVR1%20and%20ACR%20FORMS.docx",
+    "retrievedAt": "2026-07-25",
+    "documentRef": "Form ACR, \"Application for Certification of Roadworthiness\", bundled with Form MVR1-MIB (\"Application for Initial Registration of a Motor Vehicle\") in a single .docx published on gov.sz's \"Works Forms\" page (Ministry of Public Works and Transport section)"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-25",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-25",
+    "notes": "GOV-4804 (\"GovSchema Standard Research\"). This cycle re-fetched the same .docx authored against for `sz/rtd/motor-vehicle-initial-registration-application@1.0.0` (GOV-4797), which had banked this document's own bundled ACR form as a future companion-schema candidate rather than modelling it. Re-fetch confirmed byte-for-byte identity with the prior cycle's own record: HTTP 200, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`, Content-Length 48,931, Last-Modified `Thu, 25 Sep 2025 20:01:36 GMT`, sha256 `c2ce9f0496d346ad29eee067253bc698c0125cde82b3c0c775d8579cb1bce265` — no re-verification of reachability or a new sha256 was needed beyond this confirmation. Extracted directly from the .docx's own `word/document.xml` (a genuine Office Open XML zip, confirmed via Python's `zipfile` module) by walking every `w:p`/`w:tbl` element in document order and reading each table row's own cell text — the same native, unscrambled OOXML text-layer method used for MVR1-MIB, re-run over the ACR section of the same document (paragraphs/tables following the \"ACR\" heading through to the end of the file). See this document's own VERIFICATION.md for the full table-by-table field map and disclosed scoping/interpretation choices."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-25"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "identificationType",
+      "label": "Type of identification for the applicant",
+      "type": "enum",
+      "required": true,
+      "description": "The applicant is the individual person presenting the motor vehicle for a roadworthiness test, not an organisation.",
+      "sourceRef": "ACR, \"Identification of Applicant (Person presenting the motor vehicle)\": \"Type of identification (Mark with X): Traffic register no / Swazi ID / Foreign ID\"",
+      "validation": {
+        "enum": ["traffic_registration_number", "swazi_id", "foreign_id"]
+      }
+    },
+    {
+      "name": "identificationNumber",
+      "label": "Applicant's identification number",
+      "type": "string",
+      "required": true,
+      "classification": "sensitive-pii",
+      "sourceRef": "ACR, \"Identification of Applicant\": \"Identification number\"",
+      "validation": { "minLength": 1, "maxLength": 30 }
+    },
+    {
+      "name": "countryOfIssue",
+      "label": "Country of issue, if the applicant's identification is a foreign ID",
+      "type": "string",
+      "required": false,
+      "requiredWhen": { "field": "identificationType", "equals": "foreign_id" },
+      "sourceRef": "ACR, \"Identification of Applicant\": \"Country of issue (if foreign ID)\"",
+      "validation": { "maxLength": 100 }
+    },
+    {
+      "name": "surname",
+      "label": "Applicant's surname",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "ACR, \"Identification of Applicant\": \"Surname\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "initialsAndFirstNames",
+      "label": "Applicant's initials and first names",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The source itself caps this at not more than 3 initials/first names.",
+      "sourceRef": "ACR, \"Identification of Applicant\": \"Initials and first names (not more than 3)\"",
+      "validation": { "minLength": 1, "maxLength": 100 }
+    },
+    {
+      "name": "vehicleClass",
+      "label": "Class of vehicle",
+      "type": "enum",
+      "required": true,
+      "sourceRef": "ACR, \"Details of Application\": \"Class of vehicle (Mark with X): bus / Goods vehicle (Excluding trailer) / Motor cycle / other\"",
+      "validation": {
+        "enum": ["bus", "goods_vehicle_excluding_trailer", "motor_cycle", "other"]
+      }
+    },
+    {
+      "name": "licenceNumber",
+      "label": "Licence number",
+      "type": "string",
+      "required": false,
+      "description": "Left optional and not gated against licenceNotAllocated: the source form's own \"Or\" between this blank and the \"Not allocated\" box indicates a single either/or choice the applicant makes directly, the same pattern as `sz/rtd/motor-vehicle-initial-registration-application`'s own disclosed choice for its odometer fields, not a declared boolean this schema can safely condition on.",
+      "sourceRef": "ACR, \"Details of Application\": \"Licence number and vehicle register\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "vehicleRegisterNumber",
+      "label": "Vehicle register number, if available",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ACR, \"Details of Application\": \"Number (if available)\"",
+      "validation": { "maxLength": 30 }
+    },
+    {
+      "name": "licenceNotAllocated",
+      "label": "Licence number not yet allocated",
+      "type": "boolean",
+      "required": false,
+      "sourceRef": "ACR, \"Details of Application\": \"Not allocated\"",
+      "validation": {}
+    },
+    {
+      "name": "preferredLanguage",
+      "label": "Preferred language",
+      "type": "string",
+      "required": false,
+      "sourceRef": "ACR, \"Details of Application\": \"Preferred language\"",
+      "validation": { "maxLength": 50 }
+    }
+  ],
+  "documents": [
+    {
+      "id": "declarationByApplicant",
+      "label": "Applicant declarant's handwritten signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I the applicant (a) declare that all the particulars furnished by me in this form are true and correct; and (b) realise that a false declaration is punishable with a fine or one year imprisonment or both.",
+      "sourceRef": "ACR, \"Declaration by Owner (if available)\""
+    }
+  ],
+  "steps": [
+    {
+      "id": "applicant_identification",
+      "title": "Identification of Applicant",
+      "fields": ["identificationType", "identificationNumber", "countryOfIssue", "surname", "initialsAndFirstNames"],
+      "next": "application_details"
+    },
+    {
+      "id": "application_details",
+      "title": "Details of Application",
+      "fields": ["vehicleClass", "licenceNumber", "vehicleRegisterNumber", "licenceNotAllocated", "preferredLanguage"]
+    }
+  ]
+}
