@@ -4,8 +4,49 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **675 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **676 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-25, GOV-4890, "GovSchema Standard Research"): Türkiye's
+> National ID & Civic Documents vertical gains an eleventh schema**, via
+> `tr/nvi/acquisition-of-turkish-citizenship-by-adoption-application@1.0.0`
+> — Form Vat-7, "Türk Vatandaşlığının Evlat Edinilme Yoluyla Kazanılması
+> Başvuru Formu" (Application Form for Acquisition of Turkish Citizenship
+> through Adoption), published by the same NVI authority as
+> Vat-1/2/3/4/5/6/8/9/10/11, under Article 17 of Law No. 5901 — filed by
+> an adoptive mother and/or father, as the child's guardian/custodian
+> ("Veli/Vasisi"), requesting that the adopted child acquire Turkish
+> citizenship through the adoption. This cycle re-scanned `CATALOG.md`
+> fresh and confirmed VAT-7 was the sole remaining banked, unscreened VAT
+> candidate on NVI's `vatandaslik-ile-ilgili-formlar` listing page,
+> proceeding straight to independent re-verification
+> (`https://www.nvi.gov.tr/kurumlar/nvi.gov.tr/mevzuat/nufusmevzuat/Formlar/Vatandaslik/Vat7-FormEvlatEdinilmeYoluylaTurkVatKaz.pdf`,
+> HTTP 200, 1,063,723 bytes, sha256
+> `70c4a1477f4d42d7c33d43746eeedb931c5db398274db49f681b674716a67e2f`) and
+> authoring without a comparative screening step. Structurally distinct
+> from every prior VAT companion: the applicant-identity block describes
+> the adopted child (not the form's own signer), carries no mother's-
+> name/father's-name question for the child at all, and a separate
+> two-column "EVLAT EDİNEN ANNE VE/VEYA BABAYA AİT BİLGİLER" block
+> captures the adoptive father's and mother's own particulars
+> (`adoptiveFather*`/`adoptiveMother*` fields, both modelled fully
+> optional per the same disclosed at-least-one-of-N judgment call used on
+> the Vat-1 sibling's two parent blocks). A genuine, novel field-
+> mislabeling finding is disclosed in this document's own
+> VERIFICATION.md, distinct from every prior VAT sibling's recurring
+> "Eğitim Durumu" tooltip bug: the two AcroForm widgets rendered directly
+> beneath the child's own printed "Türkçe Adı"/"Türkçe Soyadı" labels
+> carry the internal field names/tooltips "Anne Ad_1"/"Baba Ad_1"
+> (mother's name/father's name) — resolved by rendered position rather
+> than internal field name. The recurring "Eğitim Durumu" tooltip bug
+> also recurs here, on all four of the adoptive-parent block's Medeni
+> Hali/Yerleşim Yeri Adresi widgets. 20 conformance fixtures (3 valid
+> scenarios, 16 required-field mutations, 1 unknown-field-rejected) all
+> passing as expected; this schema has no `requiredWhen` gates. Both
+> validators pass (676/676). Türkiye remains 1 of 6 verticals open; **all
+> eleven of NVI's VAT-series citizenship forms are now authored as
+> companion schemas** — no VAT candidates remain banked on the same NVI
+> page.
+>
 > **Update (2026-07-25, GOV-4883, "GovSchema Standard Research"): Türkiye's
 > National ID & Civic Documents vertical gains a tenth schema**, via
 > `tr/nvi/loss-of-turkish-citizenship-by-right-of-option-application@1.0.0`
@@ -22543,6 +22584,17 @@ candidate, the other two as confirmed dead ends).
 
 ### National ID & Civic Documents (57/83 jurisdictions — 69%)
 
+> **Update (2026-07-25, GOV-4890, "GovSchema Standard Research"): Türkiye
+> gains an eleventh schema within this already-open vertical**, via
+> `tr/nvi/acquisition-of-turkish-citizenship-by-adoption-application@1.0.0`
+> — Form Vat-7, the NVI's Acquisition of Turkish Citizenship through
+> Adoption application under Law No. 5901 Article 17, the last VAT-series
+> form remaining on the same NVI page after ten prior cycles authored the
+> other ten. See the Executive Summary update above for the full sourcing
+> record and every disclosed scoping call. Jurisdiction count for this
+> vertical is unchanged (57/83) — Türkiye was already counted here by
+> GOV-4818's Vat-3 schema.
+>
 > **Update (2026-07-25, GOV-4883, "GovSchema Standard Research"): Türkiye
 > gains a tenth schema within this already-open vertical**, via
 > `tr/nvi/loss-of-turkish-citizenship-by-right-of-option-application@1.0.0`
@@ -23575,7 +23627,7 @@ now closed.
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **TN** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
-| **TR** | 10 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| **TR** | 11 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
 | **TT** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -25279,6 +25331,24 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     (a tenth schema within the already-open National ID vertical, not a
     new vertical); VAT-7 (acquisition through adoption) remains the sole
     open, unscreened backlog candidate on the same NVI page.
+    **Update (GOV-4890, 2026-07-25): the last banked VAT candidate,
+    VAT-7, is now authored, closing the GOV-4818-banked VAT-series
+    backlog entirely**, via
+    `tr/nvi/acquisition-of-turkish-citizenship-by-adoption-application@1.0.0`
+    (Form Vat-7, "Türk Vatandaşlığının Evlat Edinilme Yoluyla
+    Kazanılması Başvuru Formu," under Law No. 5901 Article 17 — filed by
+    an adoptive parent, as the child's guardian/custodian, requesting the
+    adopted child's acquisition of Turkish citizenship) — see the
+    Executive Summary and National ID & Civic Documents vertical updates
+    above for the full record, including a genuine field-mislabeling
+    finding distinct from every prior VAT sibling's own disclosed
+    tooltip bugs (the child's own "Türkçe Adı"/"Türkçe Soyadı" widgets
+    carry the internal field names/tooltips "Anne Ad_1"/"Baba Ad_1").
+    Türkiye remains 1 of 6 verticals open (an eleventh schema within the
+    already-open National ID vertical, not a new vertical); all eleven of
+    NVI's VAT-series forms (Vat-1 through Vat-6, Vat-8 through Vat-11)
+    are now authored. No VAT candidates remain banked on the same NVI
+    page.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
