@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **684 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **685 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-25, GOV-4953, "GovSchema Standard Research"): Mauritius's
+> Business Formation vertical gains a tenth schema**, via
+> `mu/cbrd/limited-liability-partnership-removal-from-register@1.0.0` — the
+> Corporate and Business Registration Department's "Application for Removal
+> of Limited Liability Partnership from Register for the Purpose of
+> Transferring its Registration to Another Country," Form S32(a)/F LLP8
+> under section 32 of the Limited Liability Partnerships Act 2016,
+> disclosed as confirmed-live backlog since GOV-4911 and the last
+> remaining item of that original five-item companion/notice backlog.
+> This cycle re-fetched CBRD's downloadable-forms listing fresh
+> (`https://companies.govmu.org/cbrd/downloadable-forms/`, HTTP 200) and
+> grepped its raw HTML for the exact `LLP-8` filename, then independently
+> re-verified the live source
+> (`https://companies.govmu.org/cbrd/wp-content/uploads/2025/08/APPLICATION-FOR-REMOVAL-OF-LIMITED-LIABILITY-PARTNERSHIP-FROM-REGISTER-FOR-THE-PURPOSE-OF-TRANSFERRING-ITS-REGISTRATION-TO-ANOTHER-COUNTRY-_-LLP-8.pdf`,
+> HTTP 200, 54,643 bytes, sha256
+> `a80bded581b66cc12a34e5dfdfd0fa0e06dd68137697f76a392ed3a6bc5975d4`), a
+> clean single-page, 96-text-item form. Three genuine structural findings,
+> all confirmed via a canvas render: (1) the first checkbox-modelled field
+> on any CBRD schema in this registry — a three-item "Enclosed herewith:"
+> checklist, two items unconditional (modelled required) and one
+> explicitly conditional on the LLP holding a Category One Global Business
+> License (modelled optional, no invented discriminator field); (2) the
+> existing-record identification block prints only the two-box (Category,
+> Registered No.) pattern shared with the LP7/LLP4 siblings, not the
+> three-box pattern used by the LLP5/LP5 change-of-name siblings; and (3)
+> the four-row partner signature grid's column order — Full Name(s) on
+> the left, Signature(s) on the right — is the reverse of the LP7
+> sibling's own grid, confirmed independently by each item's own
+> x-position. 12 conformance checks (2 valid scenarios, 9
+> required-field-omission mutations, 1 unknown-field-rejection) all
+> passing as expected. Both validators pass (685/685); registry index
+> rebuilt. Mauritius remains 4 of 6 verticals open (a tenth schema within
+> the already-open Business Formation vertical, not a new vertical); this
+> closes the original five-item CBRD companion/notice backlog first
+> disclosed on GOV-4911 (LLP5, LLP4, LLP8, LP5, LP7 all now authored) —
+> the GOV-4925-surfaced unscreened batch (a distinct LLP7 "Registered
+> Particulars" notice, change-of-general-partner, change-of-manager/
+> partner (LLP6), name-reservation (LP1, LLP3), annual return (LP3), and
+> a Foundation change-of-name form) and the two dead-linked forms
+> (consent-of-manager, LP4 removal) remain the sole disclosed backlog.
 
 > **Update (2026-07-25, GOV-4946, "GovSchema Standard Research"): Mauritius's
 > Business Formation vertical gains a ninth schema**, via
@@ -18796,6 +18837,22 @@ within an already-covered vertical:
 > denominator both unchanged (Mauritius already counted for this vertical
 > since GOV-4624).
 
+> **Update (2026-07-25, GOV-4953, "GovSchema Standard Research"): Mauritius
+> gains a tenth Business Formation schema (still 4/6 for the jurisdiction —
+> an additional schema within an already-open vertical, not a new one)**,
+> via `mu/cbrd/limited-liability-partnership-removal-from-register@1.0.0`
+> (Form S32(a)/F LLP8, "Application for Removal of Limited Liability
+> Partnership from Register for the Purpose of Transferring its
+> Registration to Another Country") — see the Executive Summary update
+> above for the full sourcing record, including the first checkbox-modelled
+> field on any CBRD schema in this registry, the two-box identification
+> block shared with the LP7/LLP4 siblings, and the Full-Name-before-
+> Signature partner-slot column order (the reverse of the LP7 sibling's own
+> order), all disclosed on the document's own VERIFICATION.md. This closes
+> the original five-item CBRD companion/notice backlog first disclosed on
+> GOV-4911. Numerator and denominator both unchanged (Mauritius already
+> counted for this vertical since GOV-4624).
+
 > **Update (2026-07-23, GOV-4589, "GovSchema Standard Research"): Trinidad
 > and Tobago gains its first Business Formation schema (4/6 for the
 > jurisdiction)**, via
@@ -24039,7 +24096,7 @@ now closed.
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| **MU** | 12 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **MU** | 13 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NA** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -25327,6 +25384,29 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       name-reservation (LP1, LLP3), annual return (LP3), and a Foundation
       change-of-name form) and the two dead-linked forms
       (consent-of-manager, LP4 removal).
+      **Update (GOV-4953, 2026-07-25): removal-from-register (LLP8) is now
+      also authored**, via
+      `mu/cbrd/limited-liability-partnership-removal-from-register@1.0.0`
+      (Form S32(a)/F LLP8, "Application for Removal of Limited Liability
+      Partnership from Register for the Purpose of Transferring its
+      Registration to Another Country") — see the Executive Summary and
+      Business Formation vertical updates above for the full record,
+      including the first checkbox-modelled field on any CBRD schema in
+      this registry (a three-item "Enclosed herewith:" checklist, two
+      unconditional and one conditional on holding a Category One Global
+      Business License), the two-box identification block shared with the
+      LP7/LLP4 siblings, and the Full-Name-before-Signature partner-slot
+      column order (the reverse of the LP7 sibling's own order). **This
+      closes the original five-item CBRD companion/notice backlog first
+      disclosed on GOV-4911** (LLP5, LLP4, LLP8, LP5, LP7 all now
+      authored). Mauritius remains at 4/6 (a tenth schema within the
+      already-open Business Formation vertical, not a new vertical); the
+      GOV-4925-surfaced unscreened batch (an LLP7 "Registered Particulars"
+      notice distinct from the already-authored LP7, change-of-general-
+      partner, change-of-manager/partner (LLP6), name-reservation (LP1,
+      LLP3), annual return (LP3), and a Foundation change-of-name form)
+      and the two dead-linked forms (consent-of-manager, LP4 removal)
+      remain the sole disclosed backlog for a future cycle.
     - **Guatemala** — re-scouted in the same cycle, found weak: **Business
       Formation** is STRONG (the Registro Mercantil's own live,
       unauthenticated multi-section web form at
