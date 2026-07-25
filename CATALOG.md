@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **677 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **678 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-25, GOV-4904, "GovSchema Standard Research"): Mauritius's
+> Business Formation vertical gains a third schema**, via
+> `mu/cbrd/foundation-registration@1.0.0` — the Corporate and Business
+> Registration Department's "Application Form for the Registration of a
+> Foundation," under section 23 of the Foundations Act 2012, disclosed as
+> open backlog on both the LP2 and LLP1 sibling schemas' own VERIFICATION.md
+> records after the GOV-4897 cycle's first-pass comparison found it sparser
+> (4 pages, 95 text items) than LLP1. This cycle independently re-fetched
+> (`https://companies.govmu.org/cbrd/wp-content/uploads/2025/11/APPLICATION-FORM-FOR-THE-REGISTRATION-OF-A-FOUNDATION.pdf`,
+> HTTP 200, 52,376 bytes, sha256
+> `87868a6ba5ae35b97cbce04fe60b70188819412dea7dac418bfa7e9e2abf054e`, a new
+> 2025/11-dated upload path distinct from the siblings' own 2025/08 paths)
+> and read it field-by-field rather than relying on the prior cycle's raw
+> item count alone, confirming ten distinct, real fields plus its own
+> eight-item accompanying-document checklist — a small but genuine
+> registration form, not merely boilerplate. Two genuine source-document
+> findings disclosed on this document's own VERIFICATION.md: (1) unlike
+> either CBRD sibling, four of this form's items (Founder(s), Beneficiary,
+> Secretary, Council members) are each a single **undivided, unruled**
+> entry box with no internal ruling at all — not even LP2/LLP1's own
+> numbered blank-line convention — so each is modelled as one aggregate
+> free-text field rather than a fabricated bounded-slot series; and (2)
+> this form prints **no signature/declaration block anywhere on its own 4
+> pages**, unlike both CBRD siblings — the sworn declaration is instead
+> required as its own separate attached document (checklist item (ii)),
+> modelled as an `attestation`-category `documents[]` entry rather than
+> invented applicant-signature fields. A first line-grouped extraction pass
+> also mis-collapsed the page-4 checklist to 5 items; re-dumping raw
+> per-item coordinates corrected this to the true 8 items, of which the
+> 8th (a separate BRF3 Business Registration Card application) is
+> disclosed as out of this schema's scope. 19 conformance mutations (2
+> valid scenarios, 10 required-field mutations, 6 required-document
+> mutations, 1 unknown-field-rejected) all passing as expected; no
+> `requiredWhen` gates. Both validators pass (678/678);
+> `tools/verify-sources.mjs` re-checked all 3 cited URLs, 0 warnings.
+> **This closes the last of the three CBRD forms (LP2, LLP1, Foundation)
+> identified as primary registration forms on the Department's
+> downloadable-forms page.** Mauritius remains 4 of 6 verticals open (a
+> third schema within the already-open Business Formation vertical, not a
+> new vertical); the LP2/LLP1 companion/notice forms (consent-of-partner,
+> consent-of-manager, change-of-name, change-of-registered-office,
+> removal-from-register) remain disclosed, open backlog for a future
+> cycle.
 
 > **Update (2026-07-25, GOV-4897, "GovSchema Standard Research"): Mauritius's
 > Business Formation vertical gains a second schema**, via
@@ -18413,6 +18457,18 @@ within an already-covered vertical:
 > denominator both unchanged (Mauritius already counted for this vertical
 > since GOV-4624).
 
+> **Update (2026-07-25, GOV-4904, "GovSchema Standard Research"): Mauritius
+> gains a third Business Formation schema (still 4/6 for the jurisdiction —
+> an additional schema within an already-open vertical, not a new one)**,
+> via `mu/cbrd/foundation-registration@1.0.0` — see the Executive Summary
+> update above for the full sourcing record, including two genuine
+> findings (undivided/unruled entry boxes distinct from the LLP1 finding,
+> and no signature/declaration block on the form itself) disclosed on the
+> document's own VERIFICATION.md. This closes the last of the three CBRD
+> forms (LP2, LLP1, Foundation) identified as primary registration forms on
+> the Department's downloadable-forms page. Numerator and denominator both
+> unchanged (Mauritius already counted for this vertical since GOV-4624).
+
 > **Update (2026-07-23, GOV-4589, "GovSchema Standard Research"): Trinidad
 > and Tobago gains its first Business Formation schema (4/6 for the
 > jurisdiction)**, via
@@ -23656,7 +23712,7 @@ now closed.
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| **MU** | 5 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **MU** | 6 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NA** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -24816,6 +24872,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       found weaker — 4 pages/95 text items of mostly boilerplate vs.
       LLP1's 2 pages/255 items) and several LLP1/LP2 companion notice
       forms remain disclosed, open backlog.
+      **Update (GOV-4904, 2026-07-25): the Foundation registration form is
+      now also authored**, via `mu/cbrd/foundation-registration@1.0.0` —
+      see the Executive Summary and Business Formation vertical updates
+      above for the full record, including two genuine findings (undivided/
+      unruled entry boxes distinct from the LLP1 finding, and no signature/
+      declaration block on the form itself). This closes the last of the
+      three CBRD forms (LP2, LLP1, Foundation) identified as primary
+      registration forms on the Department's downloadable-forms page.
+      Mauritius remains at 4/6 (a third schema within the already-open
+      Business Formation vertical, not a new vertical); only the LLP1/LP2
+      companion notice forms (consent-of-partner, consent-of-manager,
+      change-of-name, change-of-registered-office, removal-from-register)
+      remain disclosed, open backlog.
     - **Guatemala** — re-scouted in the same cycle, found weak: **Business
       Formation** is STRONG (the Registro Mercantil's own live,
       unauthenticated multi-section web form at
