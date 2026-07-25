@@ -4,7 +4,45 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **682 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **683 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-25, GOV-4939, "GovSchema Standard Research"): Mauritius's
+> Business Formation vertical gains an eighth schema**, via
+> `mu/cbrd/limited-liability-partnership-change-of-name@1.0.0` — the
+> Corporate and Business Registration Department's "Notice of Change of
+> Name of a Limited Liability Partnership," Form S20/F LLP5 under section
+> 20 of the Limited Liability Partnerships Act 2016, the direct Limited
+> Liability Partnerships Act analogue of the LP5 sibling authored two
+> cycles ago (GOV-4925) and disclosed as confirmed-live backlog since
+> GOV-4911. This cycle re-fetched CBRD's downloadable-forms listing fresh
+> (`https://companies.govmu.org/cbrd/downloadable-forms/`, HTTP 200) and
+> grepped its raw HTML for the exact `LLP5` filename rather than reusing a
+> banked guess, then independently re-verified the live source
+> (`https://companies.govmu.org/cbrd/wp-content/uploads/2025/08/NOTICE-OF-CHANGE-OF-NAME-OF-A-LIMITED-LIABILITY-PARTNERSHIP_LLP5.pdf`,
+> HTTP 200, 47,107 bytes, sha256
+> `adc86d07611430acc318600dde83871f5659c1509771c1f55761d8f2b23c1428`),
+> a clean single-page, 123-text-item form. Two genuine terminology
+> differences from the LP5 sibling disclosed on this schema's own
+> VERIFICATION.md: (1) the new-name field is explicitly labelled "Proposed
+> Name of Limited Liability Partnership" on the form itself, unlike LP5's
+> bare "Name of Limited Partnership" (disambiguated only by this
+> registry's own field naming); and (2) the declaration block prints only
+> "partner(s)" throughout, not LP5's "general partner(s)", reflecting that
+> the 2016 Act has no general-partner role. The existing-record
+> identification block (Registered No., Category, Date of Registration —
+> three boxes, confirmed via canvas render, same as LP5 and not the
+> two-box LP7 layout) and the two footer checkboxes (confirmed officer-only
+> marks, same as LP5) both carried over structurally unchanged. 12
+> conformance checks (2 valid scenarios, 9 required-field-omission
+> mutations, 1 unknown-field-rejection) all passing as expected. Both
+> validators pass (683/683); registry index rebuilt. Mauritius remains 4 of
+> 6 verticals open (an eighth schema within the already-open Business
+> Formation vertical, not a new vertical); LLP4 and LLP8 remain disclosed,
+> confirmed-live backlog, alongside the GOV-4925-surfaced unscreened batch
+> (a distinct LLP7 "Registered Particulars" notice, change-of-general-
+> partner, change-of-manager/partner (LLP6), name-reservation (LP1, LLP3),
+> annual return (LP3), and a Foundation change-of-name form) and the two
+> dead-linked forms (consent-of-manager, LP4 removal).
 
 > **Update (2026-07-25, GOV-4932, "GovSchema Standard Research"): Mauritius's
 > Business Formation vertical gains a seventh schema**, via
@@ -18691,6 +18729,19 @@ within an already-covered vertical:
 > Numerator and denominator both unchanged (Mauritius already counted for
 > this vertical since GOV-4624).
 
+> **Update (2026-07-25, GOV-4939, "GovSchema Standard Research"): Mauritius
+> gains an eighth Business Formation schema (still 4/6 for the jurisdiction —
+> an additional schema within an already-open vertical, not a new one)**,
+> via `mu/cbrd/limited-liability-partnership-change-of-name@1.0.0` (Form
+> S20/F LLP5, "Notice of Change of Name of a Limited Liability
+> Partnership") — see the Executive Summary update above for the full
+> sourcing record, including the direct Limited Liability Partnerships Act
+> 2016 analogue of the LP5 sibling (GOV-4925) and its two genuine
+> terminology differences ("Proposed Name" vs. LP5's bare "Name of ...
+> Partnership"; "partner(s)" vs. LP5's "general partner(s)"), all disclosed
+> on the document's own VERIFICATION.md. Numerator and denominator both
+> unchanged (Mauritius already counted for this vertical since GOV-4624).
+
 > **Update (2026-07-23, GOV-4589, "GovSchema Standard Research"): Trinidad
 > and Tobago gains its first Business Formation schema (4/6 for the
 > jurisdiction)**, via
@@ -25189,6 +25240,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       partner (LLP6), name-reservation (LP1, LLP3), annual return
       (LP3), and a Foundation change-of-name form) and the two
       dead-linked forms (consent-of-manager, LP4 removal).
+      **Update (GOV-4939, 2026-07-25): change-of-name (LLP5) is now also
+      authored**, via `mu/cbrd/limited-liability-partnership-change-of-name@1.0.0`
+      (Form S20/F LLP5, "Notice of Change of Name of a Limited Liability
+      Partnership") — see the Executive Summary and Business Formation
+      vertical updates above for the full record, including two genuine
+      terminology differences from the LP5 sibling ("Proposed Name" vs.
+      LP5's bare "Name of ... Partnership"; "partner(s)" vs. LP5's
+      "general partner(s)"). Mauritius remains at 4/6 (an eighth schema
+      within the already-open Business Formation vertical, not a new
+      vertical); **change-of-registered-office (LLP4) and
+      removal-from-register (LLP8)** remain disclosed, open backlog for
+      a future cycle, alongside the GOV-4925-surfaced unscreened batch
+      (LLP7 distinct from the already-authored LP7, change-of-general-
+      partner, change-of-manager/partner (LLP6), name-reservation (LP1,
+      LLP3), annual return (LP3), and a Foundation change-of-name form)
+      and the two dead-linked forms (consent-of-manager, LP4 removal).
     - **Guatemala** — re-scouted in the same cycle, found weak: **Business
       Formation** is STRONG (the Registro Mercantil's own live,
       unauthenticated multi-section web form at
