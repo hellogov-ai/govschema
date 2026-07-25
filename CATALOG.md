@@ -4,7 +4,46 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **669 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **670 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-25, GOV-4846, "GovSchema Standard Research"): Türkiye's
+> National ID & Civic Documents vertical gains a fifth schema**, via
+> `tr/nvi/reacquisition-of-turkish-citizenship-application@1.0.0` — Form
+> Vat-5, "Yeniden Türk Vatandaşlığının Kazanılması Başvuru Formu"
+> (Application Form for the Reacquisition of Turkish Citizenship),
+> published by the same NVI authority as Vat-3/Vat-4/Vat-6/Vat-9, under
+> Article 22 of Law No. 5901 on Turkish Citizenship — the pathway used by
+> former Turkish citizens (most commonly members of the Turkish diaspora
+> who renounced citizenship to naturalize elsewhere, e.g. in Germany) to
+> regain it. This cycle re-scanned the NVI's `vatandaslik-ile-ilgili-formlar`
+> listing page fresh, re-fetched and field-counted all seven still-unauthored
+> VAT forms via `pdfjs-dist`, and selected VAT-5 as the strongest remaining
+> candidate — a single-page, 97-AcroForm-widget PDF
+> (`https://www.nvi.gov.tr/kurumlar/nvi.gov.tr/mevzuat/nufusmevzuat/Formlar/Vatandaslik/Vat5-FormYenidenTurkVatKaz.pdf`,
+> HTTP 200, 1,162,702 bytes, sha256
+> `2f0a1fc3f390059e9e0b4846bb67356544df74fc43d882b7f0af62509930b6c6`,
+> `Last-Modified: 2020-08-04`). Reuses Vat-3's/Vat-4's four-way
+> `maritalStatus` `requiredWhen`-gated spouse block and 15-field-per-child
+> minor-children table (including the `Alacağı Soyadı` surname-to-be-acquired
+> row), but with two genuine structural differences disclosed in this
+> document's own VERIFICATION.md: the applicant's own T.C. Kimlik No is
+> required (not optional, since a reacquiring applicant previously held
+> one), and each child in the minor-children table carries both a T.C.
+> Kimlik No and a foreign (99…) identity number, since a child here may
+> have previously held Turkish citizenship alongside the applicant. A
+> genuine field-naming quirk was also found and disclosed: the
+> `TCKN_3`/`_4`/`_5` widgets in the children table actually hold the
+> **foreign** identity number, while `YKN_3`/`_4`/`_5` hold the **T.C.**
+> number — the reverse of what the names suggest, resolved via
+> `alternativeText` and text-layer position matching rather than the
+> field names themselves. 72 `fields[]` across 6 steps. 3 mock conformance
+> scenarios (single-applicant-minimal, married-applicant-with-spouse-consulate,
+> widowed-applicant-with-three-children) plus 17 static-required mutation
+> fixtures, 11 `requiredWhen` mutation fixtures, and 1 unknown-field
+> rejection (32 fixtures total) reproduced via an ephemeral checker, all
+> passing as expected. Both validators pass (670/670). Türkiye remains 1
+> of 6 verticals open; VAT-1, VAT-2, VAT-7, VAT-8, VAT-10, and VAT-11
+> remain open, unscreened backlog candidates on the same NVI page.
 
 > **Update (2026-07-25, GOV-4839, "GovSchema Standard Research"): Türkiye's
 > National ID & Civic Documents vertical gains a fourth schema**, via
@@ -22307,6 +22346,18 @@ candidate, the other two as confirmed dead ends).
 
 ### National ID & Civic Documents (57/83 jurisdictions — 69%)
 
+> **Update (2026-07-25, GOV-4846, "GovSchema Standard Research"): Türkiye
+> gains a fifth schema within this already-open vertical**, via
+> `tr/nvi/reacquisition-of-turkish-citizenship-application@1.0.0` — Form
+> Vat-5, the NVI's Reacquisition of Turkish Citizenship application under
+> Law No. 5901 Article 22 (the pathway most commonly used by the Turkish
+> diaspora who renounced citizenship to naturalize elsewhere and later
+> seek to regain it), selected as the strongest of the seven remaining
+> unauthored VAT forms on the same NVI page. See the Executive Summary
+> update above for the full sourcing record and every disclosed scoping
+> call. Jurisdiction count for this vertical is unchanged (57/83) —
+> Türkiye was already counted here by GOV-4818's Vat-3 schema.
+
 > **Update (2026-07-25, GOV-4839, "GovSchema Standard Research"): Türkiye
 > gains a fourth schema within this already-open vertical**, via
 > `tr/nvi/exceptional-acquisition-of-turkish-citizenship-application@1.0.0`
@@ -24895,6 +24946,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     National ID vertical, not a new vertical); VAT-1, VAT-2, VAT-5, VAT-7,
     VAT-8, VAT-10, and VAT-11 remain open, unscreened backlog candidates
     on the same NVI page.
+    **Update (GOV-4846, 2026-07-25): the strongest of the remaining seven
+    banked VAT candidates, VAT-5, is now authored**, via
+    `tr/nvi/reacquisition-of-turkish-citizenship-application@1.0.0` (Form
+    Vat-5, "Yeniden Türk Vatandaşlığının Kazanılması Başvuru Formu," under
+    Law No. 5901 Article 22 — the pathway most commonly used by the
+    Turkish diaspora who renounced citizenship to naturalize elsewhere and
+    later seek to regain it) — see the Executive Summary and National ID
+    & Civic Documents vertical updates above for the full record. Türkiye
+    remains 1 of 6 verticals open (a fifth schema within the already-open
+    National ID vertical, not a new vertical); VAT-1, VAT-2, VAT-7, VAT-8,
+    VAT-10, and VAT-11 remain open, unscreened backlog candidates on the
+    same NVI page.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
