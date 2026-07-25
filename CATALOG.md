@@ -4,8 +4,55 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **672 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **673 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
 
+> **Update (2026-07-25, GOV-4868, "GovSchema Standard Research"): Türkiye's
+> National ID & Civic Documents vertical gains an eighth schema**, via
+> `tr/nvi/acquisition-of-turkish-citizenship-by-descent-application@1.0.0`
+> — Form Vat-1, "Soy Bağı Esasına Göre Türk Vatandaşlığının Kazanılması
+> Başvuru Formu/Beyan Formu" (Application/Declaration Form for Acquisition
+> of Turkish Citizenship on the Basis of Descent), published by the same
+> NVI authority as Vat-3/Vat-4/Vat-5/Vat-6/Vat-8/Vat-9/Vat-11, for an adult
+> applicant who already holds Turkish citizenship by descent through a
+> Turkish-citizen mother and/or father but was never formally registered
+> (typically because born abroad) — a legal pathway distinct from every
+> other already-authored VAT companion, and the only one, uniquely among
+> this registry's VAT schemas, to carry two full parent-information blocks
+> (the applicant's father and mother, each including their own parents)
+> rather than a single spouse block. This cycle re-scraped the NVI's
+> `vatandaslik-ile-ilgili-formlar` listing page fresh, re-fetched and
+> field-counted all four still-unauthored VAT forms (VAT-1, VAT-2, VAT-7,
+> VAT-10) via `pdfjs-dist`, and selected VAT-1 as the strongest remaining
+> candidate — the largest of the four and the only one spanning 2 pages (a
+> 87-AcroForm-widget PDF,
+> `https://www.nvi.gov.tr/kurumlar/nvi.gov.tr/mevzuat/nufusmevzuat/Formlar/Vatandaslik/Vat1-FormOnsekizYasUstuYurtdisiBildirim.pdf`,
+> HTTP 200, 1,043,807 bytes, sha256
+> `64ee886b37d59168add7daa93feb1f8b487dba4b6e8ceb3054ca2fa4bf59a4d4`,
+> `Last-Modified: 2020-08-04`). No maiden-name question, no
+> criminal-conviction/pending-prosecution questions, a smaller 8-field
+> spouse block (no occupation/education), and a spouse identity-number
+> field accepting either a T.C. or foreign identity number — all matching
+> the Vat-8/Vat-9/Vat-11 precedent. Reuses seven of Vat-11's eight page-2
+> "Gerekli Diğer Bilgiler" declaration fields verbatim, plus one field
+> unique to this schema (`turkishParentAddressDeclaration`, modelled
+> required since this form's entire legal basis presupposes a
+> Turkish-citizen parent). Two genuine source-document findings are
+> disclosed in this document's own VERIFICATION.md: the PDF's own filename
+> describes an "over-18 abroad-birth notification," distinct from (but
+> consistent with) its printed "acquisition by descent" header title; and,
+> unlike every other VAT sibling, this form's closing declaration does not
+> cite its governing article by number, so Article 7 of Law No. 5901 is
+> disclosed as an inference (from the form's own "Soy Bağı" title and
+> sibling Vat-2's explicit Article-8 citation for the adjacent
+> place-of-birth ground) rather than a directly-sourced citation. 31
+> conformance fixtures (3 valid scenarios, 27 required/`requiredWhen`
+> mutations, 1 unknown-field-rejected) all passing as expected, with every
+> `foreignIdentityNumber` fixture value asserted programmatically to match
+> the schema's own 11-character pattern before being written to disk (per
+> the GOV-4862 review finding on a prior VAT sibling). Both validators pass
+> (673/673). Türkiye remains 1 of 6 verticals open; VAT-2, VAT-7, and
+> VAT-10 remain banked, unscreened backlog.
+>
 > **Update (2026-07-25, GOV-4860, "GovSchema Standard Research"): Türkiye's
 > National ID & Civic Documents vertical gains a seventh schema**, via
 > `tr/nvi/acquisition-of-turkish-citizenship-by-right-of-option-application@1.0.0`
@@ -22425,6 +22472,19 @@ candidate, the other two as confirmed dead ends).
 
 ### National ID & Civic Documents (57/83 jurisdictions — 69%)
 
+> **Update (2026-07-25, GOV-4868, "GovSchema Standard Research"): Türkiye
+> gains an eighth schema within this already-open vertical**, via
+> `tr/nvi/acquisition-of-turkish-citizenship-by-descent-application@1.0.0`
+> — Form Vat-1, the NVI's Acquisition of Turkish Citizenship by Descent
+> application, selected as the strongest of the four remaining unauthored
+> VAT forms on the same NVI page (the largest widget count and the only
+> one spanning 2 pages). Uniquely among this registry's VAT schemas, it
+> carries two full parent-information blocks rather than a single spouse
+> block. See the Executive Summary update above for the full sourcing
+> record and every disclosed scoping call. Jurisdiction count for this
+> vertical is unchanged (57/83) — Türkiye was already counted here by
+> GOV-4818's Vat-3 schema.
+>
 > **Update (2026-07-25, GOV-4860, "GovSchema Standard Research"): Türkiye
 > gains a seventh schema within this already-open vertical**, via
 > `tr/nvi/acquisition-of-turkish-citizenship-by-right-of-option-application@1.0.0`
@@ -23419,7 +23479,7 @@ now closed.
 | **TH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **TJ** | 3 | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
 | **TN** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
-| **TR** | 7 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| **TR** | 8 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
 | **TT** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **TZ** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **UA** | 5 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -25081,6 +25141,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     verticals open (a seventh schema within the already-open National ID
     vertical, not a new vertical); VAT-1, VAT-2, VAT-7, and VAT-10 remain
     open, unscreened backlog candidates on the same NVI page.
+    **Update (GOV-4868, 2026-07-25): the strongest of the remaining four
+    banked VAT candidates, VAT-1, is now authored**, via
+    `tr/nvi/acquisition-of-turkish-citizenship-by-descent-application@1.0.0`
+    (Form Vat-1, "Soy Bağı Esasına Göre Türk Vatandaşlığının Kazanılması
+    Başvuru Formu/Beyan Formu," under Law No. 5901 Article 7 (inferred —
+    see the document's own VERIFICATION.md) — the descent-based pathway
+    for an adult applicant whose Turkish citizenship already exists by
+    operation of law through a Turkish-citizen mother and/or father but
+    was never formally registered) — see the Executive Summary and
+    National ID & Civic Documents vertical updates above for the full
+    record. Türkiye remains 1 of 6 verticals open (an eighth schema
+    within the already-open National ID vertical, not a new vertical);
+    VAT-2, VAT-7, and VAT-10 remain open, unscreened backlog candidates
+    on the same NVI page.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
