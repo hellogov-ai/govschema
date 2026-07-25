@@ -4,7 +4,50 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **679 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **680 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-25, GOV-4918, "GovSchema Standard Research"): Mauritius's
+> Business Formation vertical gains a fifth schema**, via
+> `mu/cbrd/limited-partnership-consent-of-general-partner@1.0.0` — the
+> Corporate and Business Registration Department's "Consent of General
+> Partner," Form S19(2)(9)/F LP under section 19(2)(9) of the Limited
+> Partnerships Act 2011, the direct Limited Partnerships Act analogue of
+> the GOV-4911 cycle's own `limited-liability-partnership-consent-of-partner`
+> (LLP2) schema. This cycle re-fetched CBRD's downloadable-forms listing
+> fresh (`https://companies.govmu.org/cbrd/downloadable-forms/`, HTTP 200)
+> and independently re-verified the live source
+> (`https://companies.govmu.org/cbrd/wp-content/uploads/2025/08/CONSENT-OF-GENERAL-PARTNER-LP.pdf`,
+> HTTP 200, 48,599 bytes, sha256
+> `0bcafc20f00a278a4bdfc19ba941873e897e16e82e731557b931e2cd70d4aac6`,
+> byte-identical to the GOV-4911 cycle's own disclosed estimate), a clean
+> single-page, 9-field form requiring no canvas render, structurally near-
+> identical to its LLP2 sibling. Two genuine findings disclosed on this
+> document's own VERIFICATION.md, both recurring from the LLP2 sibling:
+> (1) the general-partner-identification block prints both a "BRN."
+> (Business Registration Number) blank and an "ID No." blank with no
+> discriminator field distinguishing a natural-person general partner
+> from a body-corporate general partner, so both are modelled optional
+> with no `requiredWhen` gate, following this registry's own established
+> either/or-pair convention; and (2) the same "director" boilerplate bug
+> already found on the LLP2 sibling recurs verbatim here — one of the
+> form's two "attach a separate sheet" notes refers to "director" rather
+> than "General Partner," evidently unedited boilerplate carried over
+> from a companies-registration template, since a Limited Partnership has
+> general and limited partners but never directors — disclosed, not
+> silently corrected. This cycle also re-verified two of the remaining
+> five disclosed companion forms as still live and byte-identical (LP5,
+> 46,918 bytes; LP7, 47,636 bytes); Consent of Manager (LLP2) and
+> Application for Removal of Limited Partnership from Register (LP4)
+> remain genuine dead links (HTTP 404) not re-tested this cycle. 10
+> conformance mutations (2 valid scenarios — natural-person and
+> body-corporate general partner — 7 required-field mutations, 1
+> unknown-field-rejected) all passing as expected; no `requiredWhen`
+> gates. Both validators pass (680/680); `tools/verify-sources.mjs`
+> re-checked all cited URLs. Mauritius remains 4 of 6 verticals open (a
+> fifth schema within the already-open Business Formation vertical, not a
+> new vertical); LLP4, LLP5, LLP8, LP5, and LP7 remain confirmed-live,
+> disclosed backlog, plus the two disclosed dead links (Consent of
+> Manager, LP4) for a future cycle.
 
 > **Update (2026-07-25, GOV-4911, "GovSchema Standard Research"): Mauritius's
 > Business Formation vertical gains a fourth schema**, via
@@ -18523,6 +18566,17 @@ within an already-covered vertical:
 > denominator both unchanged (Mauritius already counted for this vertical
 > since GOV-4624).
 
+> **Update (2026-07-25, GOV-4918, "GovSchema Standard Research"): Mauritius
+> gains a fifth Business Formation schema (still 4/6 for the jurisdiction
+> — an additional schema within an already-open vertical, not a new
+> one)**, via `mu/cbrd/limited-partnership-consent-of-general-partner@1.0.0`
+> (Form S19(2)(9)/F LP, "Consent of General Partner") — see the Executive
+> Summary update above for the full sourcing record, including the
+> mutually-exclusive BRN/ID No. finding and the recurring boilerplate
+> "director" reference disclosed on the document's own VERIFICATION.md.
+> Numerator and denominator both unchanged (Mauritius already counted for
+> this vertical since GOV-4624).
+
 > **Update (2026-07-23, GOV-4589, "GovSchema Standard Research"): Trinidad
 > and Tobago gains its first Business Formation schema (4/6 for the
 > jurisdiction)**, via
@@ -23766,7 +23820,7 @@ now closed.
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| **MU** | 6 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **MU** | 8 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NA** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -24959,6 +25013,25 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       a future cycle, and the two dead-linked forms (consent-of-manager,
       LP4 removal) are open backlog only if the Department's own hosting
       is fixed or a mirror surfaces.
+      **Update (GOV-4918, 2026-07-25): the Consent of General Partner
+      companion is now authored**, via
+      `mu/cbrd/limited-partnership-consent-of-general-partner@1.0.0`
+      (Form S19(2)(9)/F LP, the direct Limited Partnerships Act 2011
+      analogue of the LLP2 Consent of Partner form) — see the Executive
+      Summary and Business Formation vertical updates above for the full
+      record, including the same either/or BRN/ID No. finding and a
+      recurring "director" boilerplate bug identical in substance to the
+      one already disclosed on the LLP2 sibling. This cycle also
+      re-verified **change-of-name (LP5)** and **change-in-registered-
+      particulars (LP7)** still live and byte-identical to the prior
+      disclosure. Mauritius remains at 4/6 (a fifth schema within the
+      already-open Business Formation vertical, not a new vertical);
+      **change-of-name (LLP5), change-of-registered-office (LLP4),
+      removal-from-register (LLP8), change-of-name (LP5), and
+      change-in-registered-particulars (LP7)** remain disclosed, open
+      backlog for a future cycle, and the two dead-linked forms
+      (consent-of-manager, LP4 removal) remain open backlog only if the
+      Department's own hosting is fixed or a mirror surfaces.
     - **Guatemala** — re-scouted in the same cycle, found weak: **Business
       Formation** is STRONG (the Registro Mercantil's own live,
       unauthenticated multi-section web form at
