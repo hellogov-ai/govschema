@@ -4,7 +4,48 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **688 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **689 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-26, GOV-4981, "GovSchema Standard Research"): Mauritius's
+> Business Formation vertical gains a fourteenth schema**, via
+> `mu/cbrd/limited-liability-partnership-change-of-partner@1.0.0` — the
+> Corporate and Business Registration Department's "Notice of Change of
+> Partner," Form S44(5)-F LLP6 under section 44(5) of the Limited
+> Liability Partnerships Act 2016, re-scouted after a fresh scan of
+> `CATALOG.md` found both of the two most-recently-opened jurisdictions
+> (Türkiye, 100th; Eswatini, 99th) structurally capped this cycle, with
+> no further vertical or banked candidate to open. Independently
+> re-fetched the live source
+> (`https://companies.govmu.org/cbrd/wp-content/uploads/2025/08/NOTICE-OF-CHANGE-OF-PARTNER_LLP6.pdf`,
+> HTTP 200, 48,078 bytes, sha256
+> `360e3e695b843fcb811f0095f687ce9f9df42803d7de778062b1f298df4f2401`), a
+> clean single-page, 112-text-item form, the direct Limited Liability
+> Partnerships Act 2016 analogue of the already-authored LP6 (general
+> partner) sibling. Two genuine structural findings, confirmed via
+> text-layer extraction plus a supplementary canvas render: (1) this
+> form's "Category"/"Registered No." identification boxes are printed
+> side-by-side (not stacked), pairing it structurally with the LP6
+> sibling's own side-by-side layout rather than the LLP7/LP7 siblings'
+> stacked layout, while still retaining LP7's fuller "Registered No."
+> label rather than LP6's abbreviated "LP No." — a combination not seen
+> on any other CBRD schema; and (2) the partner identification block
+> prints a single combined "ID No. /BRN" label over one bordered box,
+> confirmed by a cropped canvas render showing exactly one box, not the
+> two separate either/or boxes used by the LLP2 consent-of-partner
+> sibling. This cycle also disclosed the recurring "director"-for-
+> "partner" boilerplate defect in a new position — printed above the
+> form's own identification block entirely, further from the signature
+> line it purports to describe than any prior CBRD sibling's own
+> instance. 15 conformance checks (3 valid scenarios, 11
+> required-field-omission mutations, 1 unknown-field-rejection) all
+> passing as expected. Both validators pass (689/689); registry index
+> rebuilt. Mauritius remains 4 of 6 verticals open (a fourteenth schema
+> within the already-open Business Formation vertical); the confirmed
+> dead link `NOTICE-OF-CHANGE-OF-MANAGER_LLP6.pdf`, the unscreened batch
+> (name-reservation LP1/LLP3, annual return LP3, a Foundation
+> change-of-name form), and the reappeared-but-unverified
+> consent-of-manager remain the sole disclosed backlog for a future
+> cycle.
 
 > **Update (2026-07-26, GOV-4974, "GovSchema Standard Research"): Mauritius's
 > Business Formation vertical gains a thirteenth schema**, via
@@ -18787,6 +18828,23 @@ within an already-covered vertical:
 
 ### Business Formation — Incorporation, LLC, Company Registration (86/91 jurisdictions — 95%)
 
+> **Update (2026-07-26, GOV-4981, "GovSchema Standard Research"): Mauritius
+> gains a fourteenth Business Formation schema (still 4/6 for the
+> jurisdiction — an additional schema within an already-open vertical, not
+> a new one)**, via `mu/cbrd/limited-liability-partnership-change-of-partner@1.0.0`
+> (Form S44(5)-F LLP6, "Notice of Change of Partner", Section 44(5) of the
+> Limited Liability Partnerships Act 2016) — see the Executive Summary
+> update above for the full sourcing record, including the side-by-side
+> "Category"/"Registered No." identification row pairing this form
+> structurally with the LP6 sibling, the single combined "ID No. /BRN"
+> box (distinct from the LLP2 consent-of-partner sibling's own two-box
+> either/or convention), and a new disclosed position for the recurring
+> "director"-for-"partner" boilerplate defect, all disclosed on the
+> document's own VERIFICATION.md. This closes the direct LLP-Act analogue
+> of the LP6 sibling from the GOV-4967-confirmed-live batch. Numerator
+> and denominator both unchanged (Mauritius already counted for this
+> vertical since GOV-4624).
+
 > **Update (2026-07-25, GOV-4818, "GovSchema Standard Research"): Türkiye
 > screened and confirmed a dead end for Business Formation this cycle** —
 > MERSIS, the central trade registry, requires a MERSIS account or
@@ -24261,7 +24319,7 @@ now closed.
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| **MU** | 15 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **MU** | 17 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NA** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -25636,6 +25694,31 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       change-of-name form) and the two still-dead links
       (consent-of-manager, change-of-manager LLP6) remain the sole
       disclosed backlog for a future cycle.
+      **Update (GOV-4981, 2026-07-26): `NOTICE-OF-CHANGE-OF-PARTNER_LLP6.pdf`
+      is now also authored**, via
+      `mu/cbrd/limited-liability-partnership-change-of-partner@1.0.0`
+      (Form S44(5)-F LLP6, Section 44(5) of the Limited Liability
+      Partnerships Act 2016, the direct LLP-Act analogue of the
+      already-authored LP6 general-partner sibling) — see the Executive
+      Summary and Business Formation vertical updates above for the full
+      record, including a genuine structural pairing with the LP6
+      sibling's own side-by-side (not stacked) "Category"/"Registered No."
+      identification row, a single combined "ID No. /BRN" box distinct
+      from the LLP2 consent-of-partner sibling's own two-box either/or
+      convention, and a new disclosed position for the recurring
+      "director"-for-"partner" boilerplate defect (printed above the
+      identification block entirely, further from the signature line it
+      purports to describe than any prior instance). This cycle also
+      re-scanned Türkiye (100th) and Eswatini (99th) fresh and found both
+      structurally capped, with no further vertical or banked candidate to
+      open — see this cycle's own VERIFICATION.md for the full
+      candidate-selection record. Mauritius remains at 4/6 (a fourteenth
+      schema within the already-open Business Formation vertical, not a
+      new vertical); the confirmed-dead `NOTICE-OF-CHANGE-OF-MANAGER_LLP6.pdf`,
+      the unscreened batch (name-reservation LP1/LLP3, annual return LP3,
+      a Foundation change-of-name form), and the reappeared-but-unverified
+      consent-of-manager remain the sole disclosed backlog for a future
+      cycle.
     - **Guatemala** — re-scouted in the same cycle, found weak: **Business
       Formation** is STRONG (the Registro Mercantil's own live,
       unauthenticated multi-section web form at
