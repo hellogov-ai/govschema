@@ -4,7 +4,40 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **690 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **691 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-26, GOV-4995, "GovSchema Standard Research"): Mauritius's
+> Business Formation vertical gains a sixteenth schema**, via
+> `mu/cbrd/limited-liability-partnership-name-reservation@1.0.0` — the
+> Corporate and Business Registration Department's "Application for
+> Reservation of Limited Liability Partnership Name," Form S19(1)-F LLP3
+> under section 19(1) of the Limited Liability Partnerships Act 2016, the
+> direct LLP-Act counterpart of the LP1 (Limited Partnerships Act)
+> name-reservation schema authored the prior cycle (GOV-4988), which had
+> flagged LLP3 as its own most likely next candidate. No open PR existed
+> from the prior cycle. Independently re-fetched the live source
+> (`https://companies.govmu.org/cbrd/wp-content/uploads/2025/08/RESERVATION-OF-NAME-LLP_LLP3.pdf`,
+> HTTP 200, 68,215 bytes, sha256
+> `7c0d4109235345e9636bc8ce2f70063636a44b80e88d9279c23eb0f218852f43`), a
+> clean single-page, 176-text-item form. Confirmed via text-layer
+> extraction plus a supplementary canvas render that LLP3 is a direct
+> structural twin of the LP1 sibling — identical Category checkbox,
+> identical three proposed-name rows each paired with its own
+> Department-only "(Office Use)" box, and the same orphaned "Tick where
+> appropriate." instruction with no adjacent checkbox — differing only in
+> Act/section reference and form code (also corrected the form code in
+> this schema's own title/description from an initially mis-transcribed
+> "S19.F" to the actual glyph order "S19(1)-F LLP3", confirmed by sorting
+> the extracted text items by x-position along the header's y-coordinate).
+> 13 conformance checks (3 valid scenarios, 8 required-field-omission
+> mutations, 1 unknown-field-rejection, 1 invalid-enum-value rejection)
+> all passing as expected. Both validators pass (691/691); registry index
+> rebuilt. Mauritius remains 4 of 6 verticals open (a sixteenth schema
+> within the already-open Business Formation vertical); the Annual Return
+> (LP3) and the Foundation change-of-name form remain the sole disclosed
+> backlog for a future cycle, alongside the reappeared-but-unverified
+> consent-of-manager candidate and the confirmed-dead
+> `NOTICE-OF-CHANGE-OF-MANAGER_LLP6.pdf` link.
 
 > **Update (2026-07-26, GOV-4988, "GovSchema Standard Research"): Mauritius's
 > Business Formation vertical gains a fifteenth schema**, via
@@ -18868,6 +18901,26 @@ within an already-covered vertical:
 
 ### Business Formation — Incorporation, LLC, Company Registration (86/91 jurisdictions — 95%)
 
+> **Update (2026-07-26, GOV-4995, "GovSchema Standard Research"): Mauritius
+> gains a sixteenth Business Formation schema (still 4/6 for the
+> jurisdiction — an additional schema within an already-open vertical, not
+> a new one)**, via `mu/cbrd/limited-liability-partnership-name-reservation@1.0.0`
+> (Form S19(1)-F LLP3, "Application for Reservation of Limited Liability
+> Partnership Name", Section 19(1) of the Limited Liability Partnerships
+> Act 2016) — see the Executive Summary update above for the full
+> sourcing record, including confirmation via text-layer extraction plus
+> a canvas render that this form is a direct structural twin of the LP1
+> sibling authored the prior cycle (identical Category checkbox,
+> office-use boxes beside each proposed-name row, and orphaned "Tick
+> where appropriate." instruction), and a form-code transcription
+> correction from an initial "S19.F" misread to the actual "S19(1)-F
+> LLP3", all disclosed on the document's own VERIFICATION.md. This closes
+> the LLP3 half of the GOV-4974/GOV-4981-disclosed backlog batch (LP1,
+> LLP3, Annual-Return LP3, Foundation change-of-name); the Annual Return
+> (LP3) and Foundation change-of-name form remain open. Numerator and
+> denominator both unchanged (Mauritius already counted for this vertical
+> since GOV-4624).
+
 > **Update (2026-07-26, GOV-4988, "GovSchema Standard Research"): Mauritius
 > gains a fifteenth Business Formation schema (still 4/6 for the
 > jurisdiction — an additional schema within an already-open vertical, not
@@ -24375,7 +24428,7 @@ now closed.
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| **MU** | 18 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **MU** | 19 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NA** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -25789,6 +25842,24 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       already-open Business Formation vertical, not a new vertical); LLP3
       (name-reservation, LLP Act — this schema's own direct analogue, the
       most likely next candidate), Annual-Return LP3, the Foundation
+      change-of-name form, the confirmed-dead
+      `NOTICE-OF-CHANGE-OF-MANAGER_LLP6.pdf`, and the
+      reappeared-but-unverified consent-of-manager remain the sole
+      disclosed backlog for a future cycle.
+      **Update (GOV-4995, 2026-07-26): the name-reservation (LLP3) half of
+      the unscreened batch is now authored**, via
+      `mu/cbrd/limited-liability-partnership-name-reservation@1.0.0` (Form
+      S19(1)-F LLP3, Section 19(1) of the Limited Liability Partnerships
+      Act 2016) — see the Executive Summary and Business Formation
+      vertical updates above for the full record, including confirmation
+      via text-layer extraction plus a canvas render that LLP3 is a
+      direct structural twin of the LP1 sibling (identical Category
+      checkbox, office-use boxes beside each proposed-name row, and
+      orphaned "Tick where appropriate." instruction), and a form-code
+      transcription correction from an initial "S19.F" misread to the
+      actual "S19(1)-F LLP3". Mauritius remains at 4/6 (a sixteenth
+      schema within the already-open Business Formation vertical, not a
+      new vertical); the Annual Return (LP3), the Foundation
       change-of-name form, the confirmed-dead
       `NOTICE-OF-CHANGE-OF-MANAGER_LLP6.pdf`, and the
       reappeared-but-unverified consent-of-manager remain the sole
