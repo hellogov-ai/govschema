@@ -4,7 +4,43 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **692 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **693 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-26, GOV-5076, "GovSchema Standard Research"): Switzerland
+> closes to 6 of 6 verticals**, via
+> `ch/zh/migrationsamt/gesuch-einreisebewilligung@1.0.0` — Canton Zürich's
+> Sicherheitsdirektion, Migrationsamt "Gesuch um Einreisebewilligung"
+> (Application for an Entry Permit), fetched directly and unauthenticated
+> from `zh.ch` (HTTP 200, 49,072 bytes, sha256
+> `cfb1a6c8918e9ff52fa13279cc852ab83d661548d9443811765ee1cee4c90ae9`). Rather
+> than extend the current Mauritius Business Formation companion run (17
+> schemas deep, permanently capped at 4/6 since Taxes/National ID were
+> confirmed dead ends at GOV-4603), this cycle re-scanned `CATALOG.md`'s own
+> Known Gaps for jurisdictions sitting at 5 of 6 verticals — the highest-
+> value shape of deliverable, since a single schema closes the jurisdiction
+> outright. Of thirteen such jurisdictions, only Switzerland's own gap
+> (Visa) had a disclosed, untested hypothesis rather than a confirmed dead
+> end: GOV-1774 found SEM's national/Schengen visa PDFs to be confirmed
+> duplicates of already-modelled EU-harmonized templates, but flagged as
+> untested whether a cantonal residence-permit process — Swiss cantons
+> administer residence permits, not SEM centrally — offered a genuinely
+> distinct pathway. It does: Canton Zürich's Migrationsamt intake form
+> centers on family circumstances (an accompanying-family table bounded to
+> 4 rows, confirmed by 4 printed checkbox pairs, and a family-abroad table
+> bounded to 1 spouse plus 3 children rows, confirmed via a supplementary
+> canvas crop measuring printed rule spacing) and an employer-completed
+> labour-market section (salary, working hours, a genuinely asymmetric
+> single "Ja"-only job-centre-reporting checkbox) that neither SEM PDF asks
+> for at all — a confirmed non-duplicate. 96 fields, 3 documents, 11
+> conformance checks (1 minimal-valid scenario, 4 requiredWhen mutation
+> pairs, 1 core-required-field-omission check, 1 enum-validity sweep, 1
+> field-name-hygiene check) all passing as expected. Both validators pass
+> (693/693); registry index rebuilt. Mauritius's own Annual Return (LP3)
+> remains banked backlog, structurally blocked pending GSP-0009 (the
+> array/repeating-value type proposal, still Proposed and CEO-gated) rather
+> than a scoping call this cycle could resolve. See the Visa vertical
+> section update below and the document's own VERIFICATION.md for the full
+> sourcing record.
 
 > **Update (2026-07-26, GOV-5069, "GovSchema Standard Research"): Mauritius's
 > Business Formation vertical gains a seventeenth schema**, via
@@ -22572,7 +22608,38 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (74/93 jurisdictions — 80%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (75/93 jurisdictions — 81%)
+
+> **Update (2026-07-26, GOV-5076, "GovSchema Standard Research"): Switzerland's
+> Visa vertical opens, closing Switzerland to 6 of 6 verticals**, via
+> `ch/zh/migrationsamt/gesuch-einreisebewilligung@1.0.0` — Canton Zürich's
+> Sicherheitsdirektion, Migrationsamt "Gesuch um Einreisebewilligung"
+> (Application for an Entry Permit), fetched directly and unauthenticated
+> from `zh.ch` (HTTP 200, 49,072 bytes, sha256
+> `cfb1a6c8918e9ff52fa13279cc852ab83d661548d9443811765ee1cee4c90ae9`). This
+> resolves GOV-1774's own disclosed open question (see the Known Gaps
+> entry below): SEM's national and short-stay Schengen visa PDFs are
+> confirmed duplicates of already-modelled EU-harmonized templates, but
+> Switzerland's cantons administer residence-permit/entry-authorization
+> intake themselves, and this cantonal form — centered on family
+> circumstances and an employer-completed labour-market section neither
+> SEM form asks for — is a genuinely distinct, non-duplicate pathway. A
+> 2-page, 96-field, non-AcroForm text-layer PDF: page 1 covers personal
+> and family data (an accompanying-family table bounded to 4 rows,
+> confirmed by 4 printed checkbox pairs, and a family-abroad table bounded
+> to 1 spouse row plus 3 children rows, confirmed by measuring printed
+> rule spacing via a supplementary canvas crop); page 2, completed by a
+> prospective employer, covers the gainful-employment particulars gating a
+> work permit, including a genuinely asymmetric single-checkbox ("Ja"
+> only, no "Nein" counterpart) job-centre-reporting field. This registry's
+> own current Mauritius-companion cycle (17 Business Formation schemas
+> deep, vertically capped at 4/6 since GOV-4603) was deliberately not
+> extended further this cycle in favor of this higher-value, jurisdiction-
+> closing candidate. 11 conformance checks (1 minimal-valid scenario, 4
+> requiredWhen mutation pairs, 1 core-required-field-omission check, 1
+> enum-validity sweep, 1 field-name-hygiene check) all passing as
+> expected. Both validators pass (693/693); registry index rebuilt. See
+> the document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-25, GOV-4818, "GovSchema Standard Research"): Türkiye
 > screened and confirmed a dead end for Visa this cycle** —
@@ -24439,7 +24506,7 @@ now closed.
 | **BR** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **BW** | 4 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CH** | 14 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **CH** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CI** | 4 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **CO** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -28833,6 +28900,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   vertical as a whole: untested is whether a cantonal residence-permit
   process (Switzerland's cantons administer residence permits, not SEM
   centrally) offers a genuinely distinct, non-duplicate pathway.
+  **Resolved (GOV-5076, 2026-07-26): the cantonal pathway is now
+  authored**, via `ch/zh/migrationsamt/gesuch-einreisebewilligung@1.0.0` —
+  Canton Zürich's own "Gesuch um Einreisebewilligung," confirmed
+  genuinely distinct from both SEM PDFs above (family-circumstances and
+  employer-completed labour-market fields neither SEM form asks for) —
+  see the Executive Summary and Visa vertical section updates above.
+  Closes Switzerland to 6 of 6 verticals.
 - **CH Business Formation (`easygov.swiss`)** — GOV-1840, 2026-07-08. The
   federal one-stop business-registration platform is a pure authenticated
   single-page application (SwissID/CH-Login-based digital signature); its
