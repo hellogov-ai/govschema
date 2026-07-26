@@ -4,7 +4,47 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **691 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **692 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-26, GOV-5069, "GovSchema Standard Research"): Mauritius's
+> Business Formation vertical gains a seventeenth schema**, via
+> `mu/cbrd/foundation-change-of-name@1.0.0` — the Corporate and Business
+> Registration Department's "Application to Change Name of a Foundation,"
+> under section 21(1)(a) of the Foundations Act 2012, disclosed as open
+> backlog on the GOV-4988/GOV-4995 cycles' own VERIFICATION.md records
+> alongside the Annual Return (LP3). Independently re-fetched the live
+> source
+> (`https://companies.govmu.org/cbrd/wp-content/uploads/2025/11/APPLICATION-TO-CHANGE-NAME-OF-A-FOUNDATION.pdf`,
+> HTTP 200, 63,218 bytes, sha256
+> `99a66677ba6707fc1f26953512b6b99c377478186ebabd7052c7bd90afeca281`), a
+> clean single-page, 70-text-item form. Picked over the Annual Return
+> (LP3) after extracting and comparing both: LP3's three partner tables
+> are each an undivided, unruled box with no printed row count to bind
+> this registry's bounded-slot convention to (a genuine structural
+> difference from the LP2 registration sibling's own 7 ruled lines),
+> so it remains banked pending a scoping decision, while the Foundation
+> form is a clean, fully-bounded single page. Four genuine structural
+> findings, confirmed via text-layer extraction plus a supplementary
+> canvas render: (1) the document's own footer prints "Page 1 of 2" but
+> the served PDF is genuinely and completely one page (confirmed via
+> `numPages`, a raw `/Type/Page` object count, and a well-formed
+> trailer/xref/`%%EOF`), treated as a leftover print-template artifact;
+> (2) an orphaned "*Tick where applicable" instruction with no adjacent
+> checkbox anywhere on the page; (3) an unlabelled blank box beside the
+> declaration-date comb boxes with no adjacent caption; and (4) a likely
+> recurrence of this registry's own "director"-boilerplate defect, here
+> printed on a Foundation enclosure instruction that should properly
+> read "Council member" under the Foundations Act 2012. 11 conformance
+> checks (1 valid scenario, 6 required-field-omission mutations, 1
+> unknown-field-rejection, 1 invalid-date-shape check, 2
+> document-requiredness checks) all passing as expected. Both validators
+> pass (692/692); registry index rebuilt. Mauritius remains 4 of 6
+> verticals open (a seventeenth schema within the already-open Business
+> Formation vertical); the Annual Return (LP3) remains the sole
+> disclosed backlog for a future cycle — the reappeared consent-of-manager
+> candidate is now confirmed dead (HTTP 404) and the change-of-manager
+> LLP6 link remains dead, closing out the rest of the prior cycles'
+> disclosed batch.
 
 > **Update (2026-07-26, GOV-4995, "GovSchema Standard Research"): Mauritius's
 > Business Formation vertical gains a sixteenth schema**, via
@@ -18901,6 +18941,23 @@ within an already-covered vertical:
 
 ### Business Formation — Incorporation, LLC, Company Registration (86/91 jurisdictions — 95%)
 
+> **Update (2026-07-26, GOV-5069, "GovSchema Standard Research"): Mauritius
+> gains a seventeenth Business Formation schema (still 4/6 for the
+> jurisdiction — an additional schema within an already-open vertical, not
+> a new one)**, via `mu/cbrd/foundation-change-of-name@1.0.0`
+> ("Application to Change Name of a Foundation", Section 21(1)(a) of the
+> Foundations Act 2012) — see the Executive Summary update above for the
+> full sourcing record, including the printed-but-inaccurate "Page 1 of 2"
+> footer, the orphaned "*Tick where applicable" instruction, an unlabelled
+> blank box beside the declaration date, and a likely recurrence of the
+> "director"-boilerplate defect on a Foundation enclosure instruction, all
+> disclosed on the document's own VERIFICATION.md. This closes the
+> Foundation change-of-name half of the GOV-4988/GOV-4995-disclosed
+> backlog; the Annual Return (LP3) remains open, banked pending a scoping
+> decision on its own unruled partner tables. Numerator and denominator
+> both unchanged (Mauritius already counted for this vertical since
+> GOV-4624).
+
 > **Update (2026-07-26, GOV-4995, "GovSchema Standard Research"): Mauritius
 > gains a sixteenth Business Formation schema (still 4/6 for the
 > jurisdiction — an additional schema within an already-open vertical, not
@@ -24428,7 +24485,7 @@ now closed.
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| **MU** | 19 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **MU** | 20 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NA** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -25864,6 +25921,26 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       `NOTICE-OF-CHANGE-OF-MANAGER_LLP6.pdf`, and the
       reappeared-but-unverified consent-of-manager remain the sole
       disclosed backlog for a future cycle.
+      **Update (GOV-5069, 2026-07-26): the Foundation change-of-name form
+      is now also authored**, via `mu/cbrd/foundation-change-of-name@1.0.0`
+      ("Application to Change Name of a Foundation", Section 21(1)(a) of
+      the Foundations Act 2012) — see the Executive Summary and Business
+      Formation vertical updates above for the full record, including the
+      printed-but-inaccurate "Page 1 of 2" footer (the served PDF is
+      genuinely one page), the orphaned "*Tick where applicable"
+      instruction, an unlabelled blank box beside the declaration date,
+      and a likely recurrence of the "director"-boilerplate defect on a
+      Foundation enclosure instruction. This cycle also re-tested the
+      reappeared-but-unverified consent-of-manager candidate
+      (`CONSENT-OF-MANAGER-_LLP2.pdf`) live and found it still HTTP 404 —
+      confirmed dead, not open backlog. Mauritius remains at 4/6 (a
+      seventeenth schema within the already-open Business Formation
+      vertical, not a new vertical); the Annual Return (LP3) — banked
+      pending a scoping decision on its own unruled, no-fixed-slot-count
+      partner tables (see this schema's own VERIFICATION.md,
+      "Candidate selection") — and the confirmed-dead
+      `NOTICE-OF-CHANGE-OF-MANAGER_LLP6.pdf` and `CONSENT-OF-MANAGER-_LLP2.pdf`
+      remain the sole disclosed backlog for a future cycle.
     - **Guatemala** — re-scouted in the same cycle, found weak: **Business
       Formation** is STRONG (the Registro Mercantil's own live,
       unauthenticated multi-section web form at
