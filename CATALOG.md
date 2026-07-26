@@ -4,7 +4,42 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **687 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **688 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-26, GOV-4974, "GovSchema Standard Research"): Mauritius's
+> Business Formation vertical gains a thirteenth schema**, via
+> `mu/cbrd/limited-partnership-removal-from-register@1.0.0` — the Corporate
+> and Business Registration Department's "Application for Removal of
+> Limited Partnership from Register for the Purpose of Transferring its
+> Registration to Another Country," Form S65.F LP4 under section 65 of the
+> Limited Partnerships Act 2011, the direct LP-Act analogue of the
+> already-authored LLP8 sibling. This closes the LP4 removal form flagged
+> as resurrected-but-unauthored by the GOV-4967 cycle: re-fetched CBRD's
+> downloadable-forms listing fresh (HTTP 200) and independently re-fetched
+> the live source
+> (`https://companies.govmu.org/cbrd/wp-content/uploads/2025/08/APPLICATION-FOR-REMOVAL-OF-LIMITED-PARTNERSHIP-FROM-REGISTER-FOR-THE-PURPOSE-OF-TRANFERRING-ITS-REGISTRATION-TO-ANOTHER-COUNTRY_-LP4.pdf`,
+> HTTP 200, 55,979 bytes exactly matching the banked estimate, sha256
+> `6ac6b206d31a9fea6175ff591f2baa950a620ede2042de861d57c2ac9cedd222`), a
+> clean single-page, 74-text-item form. Two genuine structural findings,
+> confirmed via text-layer extraction plus a supplementary canvas render
+> and a programmatic zero-dark-pixel scan: (1) unlike the LLP8 sibling's
+> own three checkboxes, this form's "Enclosed herewith" list prints **no
+> checkbox graphics at all** — a plain lettered (a)/(b)/(c) checklist —
+> modelled as `documents[]` entries rather than boolean `fields[]`,
+> following this registry's established non-fillable-checklist
+> convention; and (2) item (b) merges LLP8's separate unconditional-MRA/
+> conditional-FSC checkboxes into a single unconditional "MRA/Financial
+> Services Commission" confirmation, alongside a wholly new third item,
+> "Public Notice under Section 67," with no LLP8 equivalent. 10
+> conformance checks (2 valid scenarios, 7 required-field-omission
+> mutations, 1 unknown-field-rejection) all passing as expected. Both
+> validators pass (688/688); registry index rebuilt. Mauritius remains 4
+> of 6 verticals open (a thirteenth schema within the already-open
+> Business Formation vertical); the GOV-4925-surfaced unscreened batch
+> (`NOTICE-OF-CHANGE-OF-PARTNER_LLP6.pdf`, name-reservation LP1/LLP3,
+> annual return LP3, Foundation change-of-name) and the two genuine dead
+> links (consent-of-manager, change-of-manager LLP6) remain the sole
+> disclosed backlog for a future cycle.
 
 > **Update (2026-07-26, GOV-4967, "GovSchema Standard Research"): Mauritius's
 > Business Formation vertical gains a twelfth schema**, via
@@ -18952,6 +18987,22 @@ within an already-covered vertical:
 > GOV-4925-surfaced unscreened batch. Numerator and denominator both
 > unchanged (Mauritius already counted for this vertical since GOV-4624).
 
+> **Update (2026-07-26, GOV-4974, "GovSchema Standard Research"): Mauritius
+> gains a thirteenth Business Formation schema (still 4/6 for the
+> jurisdiction — an additional schema within an already-open vertical, not
+> a new one)**, via `mu/cbrd/limited-partnership-removal-from-register@1.0.0`
+> (Form S65.F LP4, "Application for Removal of Limited Partnership from
+> Register for the Purpose of Transferring its Registration to Another
+> Country", Section 65 of the Limited Partnerships Act 2011) — see the
+> Executive Summary update above for the full sourcing record, including
+> the direct LLP8-sibling analogue, the un-checkboxed "Enclosed herewith"
+> checklist modelled as `documents[]`, and the merged MRA/FSC confirmation
+> plus new Public Notice (Section 67) item, all disclosed on the
+> document's own VERIFICATION.md. This closes the LP4 removal form flagged
+> as resurrected-but-unauthored by the GOV-4967 cycle. Numerator and
+> denominator both unchanged (Mauritius already counted for this vertical
+> since GOV-4624).
+
 > **Update (2026-07-26, GOV-4960, "GovSchema Standard Research"): Mauritius
 > gains an eleventh Business Formation schema (still 4/6 for the
 > jurisdiction — an additional schema within an already-open vertical, not
@@ -24210,7 +24261,7 @@ now closed.
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
-| **MU** | 14 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| **MU** | 15 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **MX** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **MY** | 4 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
 | **NA** | 3 | ✗ | ✗ | ✓ | ✓ | ✓ | ✗ |
@@ -25567,6 +25618,24 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       change-of-name form), the now-resurrected LP4 removal form, and the
       two still-dead links (consent-of-manager, change-of-manager LLP6)
       remain the sole disclosed backlog for a future cycle.
+      **Update (GOV-4974, 2026-07-26): the resurrected LP4 removal form is
+      now also authored**, via
+      `mu/cbrd/limited-partnership-removal-from-register@1.0.0` (Form
+      S65.F LP4, Section 65 of the Limited Partnerships Act 2011, the
+      direct analogue of the already-authored LLP8 sibling) — see the
+      Executive Summary and Business Formation vertical updates above for
+      the full record, including the two genuine structural differences
+      from LLP8: an un-checkboxed "Enclosed herewith" list (confirmed via
+      a zero-dark-pixel canvas scan) modelled as `documents[]` rather than
+      boolean `fields[]`, and a merged MRA/FSC confirmation item plus a
+      wholly new "Public Notice under Section 67" item. Mauritius remains
+      at 4/6 (a thirteenth schema within the already-open Business
+      Formation vertical, not a new vertical); the GOV-4925-surfaced
+      unscreened batch (`NOTICE-OF-CHANGE-OF-PARTNER_LLP6.pdf`,
+      name-reservation (LP1, LLP3), annual return (LP3), and a Foundation
+      change-of-name form) and the two still-dead links
+      (consent-of-manager, change-of-manager LLP6) remain the sole
+      disclosed backlog for a future cycle.
     - **Guatemala** — re-scouted in the same cycle, found weak: **Business
       Formation** is STRONG (the Registro Mercantil's own live,
       unauthenticated multi-section web form at
