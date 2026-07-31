@@ -4,7 +4,58 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **697 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **698 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-31, GOV-5759, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains an eighth schema**, via
+> `pk/fbr/annexure-c-inadmissible-admissible-deductions@1.0.0` — the
+> Federal Board of Revenue's "Annex-C" worksheet ("Inadmissible /
+> Admissible Deductions"), the schedule that reconciles a taxpayer's
+> accounting profit to taxable income by adding back thirty-one named
+> disallowed-expenditure categories under specific sections of the Income
+> Tax Ordinance, 2001 and netting off ten named tax-admissible categories
+> (tax depreciation/amortization, unabsorbed carry-forwards, and
+> accounting-vs-tax gain/loss differences on disposals), from the same
+> nine-worksheet "Manual Return" workbook already modelled as
+> `pk/fbr/annual-individual-income-tax-return-it-1b` (Form IT-1B),
+> `pk/fbr/annual-individual-income-tax-return-it-2` (Form IT-2),
+> `pk/fbr/annexure-a-adjustable-tax`,
+> `pk/fbr/annexure-b-manufacturing-trading-profit-loss-account`, and
+> `pk/fbr/wealth-statement`. That Annex-B sibling's own v1.0.0 (GOV-5752)
+> had explicitly named "Annexes C through F" as this workbook's remaining
+> open backlog; with the 16-jurisdiction "5 of 6 verticals" list already
+> re-screened a dead end across four consecutive prior cycles (GOV-5731,
+> GOV-5738, GOV-5745, GOV-5752), this cycle picked up Annex-C, the next of
+> the four, rather than re-screening that list a fifth time. Independently
+> re-fetched the source (HTTP 200, 104,097 bytes, sha256
+> `4e2f9874e9a910713fae9a182fc5c5a578bcfd2649d2031f8144c8b5fba96b9f` —
+> byte-identical to every prior cycle's own figures, confirming no
+> revision). Unlike Annex-A's own plain, independently-entered header,
+> this worksheet's Name and CNIC cells are formula-linked directly to the
+> "IND (BUS PLUS)" (Form IT-2) worksheet — the same pattern already
+> disclosed for Annex-B — confirming this Annex is filed alongside Form
+> IT-2, not standalone. Like Annex-A and Annex-B, this worksheet's own
+> single `dataValidations` rule validates the entire Amount column
+> uniformly, **including both of the sheet's own headline computed
+> subtotals** ("Inadmissible Deductions [Sum of 2 to 32]" and "Admissible
+> Deductions [Sum of 34 to 43]") — so this version models all 43 rows
+> (Sr. 1–43, both subtotals and every named component) as individually
+> reportable fields, following the same convention as Annex-A/Annex-B.
+> Also disclosed: unlike every other worksheet in this workbook reviewed
+> so far, this sheet's own Sr. numbering carries **no skip at all** (all
+> 43 rows sequential); this worksheet carries no per-business "Separate
+> form should be filled for each business" instruction or Business Name
+> field (unlike Annex-B, it reconciles at the whole-taxpayer level); and
+> each line item's own FBR classification code is a fixed lookup key
+> recorded in its own field's `sourceRef`/`description` rather than
+> modelled as a separate field, following the same convention as
+> Annex-A/Annex-B. 48 fields, 8 conformance checks (2 valid scenarios, 6
+> mutation-control fixtures) all passing as expected. Both validators pass
+> (698/698); registry index rebuilt. Pakistan remains at 3 of 6 verticals
+> (an eighth schema within the already-open Taxes vertical, not a new
+> vertical); Annexes D through F remain this workbook's own disclosed,
+> open backlog. See the Taxes vertical section update below and this
+> document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-31, GOV-5752, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical gains a seventh schema**, via
@@ -20678,6 +20729,19 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (82/96 jurisdictions — 85%)
 
+> **Update (2026-07-31, GOV-5759, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains an eighth schema**, via
+> `pk/fbr/annexure-c-inadmissible-admissible-deductions@1.0.0` — the FBR's
+> "Annex-C" worksheet, an Inadmissible/Admissible Deductions reconciliation
+> schedule, from the same "Manual Return" workbook as
+> `pk/fbr/annexure-b-manufacturing-trading-profit-loss-account` (whose own
+> v1.0.0 named "Annexes C through F" as this workbook's remaining backlog).
+> See the Executive Summary's GOV-5759 update above for the full sourcing
+> record, disclosed structural findings, and conformance results. Not a
+> new vertical (Pakistan's Taxes vertical was already open); an eighth
+> schema for Pakistan overall. Annexes D through F remain this workbook's
+> own disclosed, open backlog; numerator/denominator unchanged.
+
 > **Update (2026-07-31, GOV-5752, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical gains a seventh schema**, via
 > `pk/fbr/annexure-b-manufacturing-trading-profit-loss-account@1.0.0` — the
@@ -24851,7 +24915,7 @@ now closed.
 | **PA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PK** | 7 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **PK** | 8 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PY** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -31139,6 +31203,32 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   printed label carries a source typo, "zforiegn" for "foreign"). Annexes
   B through F remain this workbook's own disclosed, open backlog for a
   future cycle.
+
+  **Update (GOV-5752, 2026-07-31): Annex-B ("Manufacturing / Trading /
+  Profit & Loss Account") is now also authored**, via
+  `pk/fbr/annexure-b-manufacturing-trading-profit-loss-account@1.0.0` —
+  see the Executive Summary's GOV-5752 update above and the document's own
+  VERIFICATION.md for the full sourcing record, including the three
+  disclosed structural findings (a skipped Sr. 49 in the loss
+  carry-forward schedule; the current year's own business result
+  deliberately excluded from the sheet's `≥0` validation since it can be
+  negative; a raw `mergeCell` collapsing two of the Statement of Affairs
+  section's own three amount columns into one). Annexes C through F
+  remain this workbook's own disclosed, open backlog.
+
+  **Update (GOV-5759, 2026-07-31): Annex-C ("Inadmissible / Admissible
+  Deductions") is now also authored**, via
+  `pk/fbr/annexure-c-inadmissible-admissible-deductions@1.0.0` — see the
+  Executive Summary's GOV-5759 update above and the document's own
+  VERIFICATION.md for the full sourcing record, including the genuine
+  structural differences this sheet's own `dataValidations` and header
+  cells surfaced (Name/CNIC formula-linked to Form IT-2, like Annex-B;
+  both headline subtotals — "Inadmissible Deductions" and "Admissible
+  Deductions" — uniformly validated alongside their own components, like
+  Annex-A/Annex-B; no Sr.-numbering skip, the first Annex reviewed so far
+  in this workbook without one; no Business Name field, reconciling at
+  the whole-taxpayer level rather than per-business). Annexes D through F
+  remain this workbook's own disclosed, open backlog for a future cycle.
 
 - **Georgia — screened, not viable this cycle (GOV-3078).** Visa
   (`geoconsul.gov.ge`/`evisa.gov.ge`) is fully e-Portal based; the MFA's
