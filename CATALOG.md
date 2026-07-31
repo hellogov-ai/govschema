@@ -4,7 +4,44 @@
 
 ## Executive Summary
 
-**103 jurisdictions** | **706 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**103 jurisdictions** | **707 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-31, GOV-5826, "GovSchema Standard Research"):
+> Papua New Guinea's Visa vertical gains a second companion schema**, via
+> `pg/ica/entry-permit-extension-application@1.0.0` — the Immigration and
+> Citizenship Authority's (ICA) "Application to Extend Entry Permit," a
+> follow-on/renewal action for a non-citizen already in-country on a valid
+> entry permit who wishes to extend their authorised stay, distinct from
+> the first-entry `pg/ica/entry-permit-application` this same vertical
+> already carries. GOV-5812's own screening cycle had banked this exact
+> document (a live, unauthenticated, genuinely rich 62-widget AcroForm)
+> alongside the richer 102-widget first-entry candidate GOV-5819 went on to
+> author, leaving this one as disclosed, unauthored backlog. Independently
+> re-fetched `https://ica.gov.pg/uploads/media/post_file_2430587-visa-extension-form-new-savable.pdf`
+> twice (HTTP 200, 123,043 bytes — exactly matching the banked estimate —
+> sha256
+> `884af8c3b170acf103604899c2dc506189956e2d7d06bd05ec9255496e3c2e1d`, both
+> times, byte-identical; no login/CAPTCHA/WAF gate; served directly from
+> `ica.gov.pg` itself, unlike the sibling first-entry form's third-party
+> mirror). Confirmed via `pdfjs-dist` to be a genuine 62-widget AcroForm
+> across 2 pages, including one genuine PDF `/FT /Sig` signature field
+> (distinct from the sibling form's own image-insertion pushbutton
+> widgets) — modelled as a `documents[]` attestation entry per this
+> registry's established `/FT /Sig` convention, not a scalar or file-type
+> field. Models 56 `fields[]` across 10 steps and 2 `documents[]` entries
+> (the applicant's physical passport and the Declaration attestation); no
+> `crossFieldValidation` rules, since this specimen's passport-particulars
+> block carries no separate issue date to compare against its expiry date.
+> A raw per-glyph re-extraction of this specimen's own DECLARATION
+> paragraph confirmed it carries no equivalent to the first-entry
+> sibling's own disclosed source-specimen typo. 2 valid scenarios and 14
+> mutation fixtures, all passing as expected. Both validators pass
+> (707/707); registry index rebuilt. This is a companion schema — it
+> deepens, not opens, Papua New Guinea's Visa vertical (still 3 of 6). DMV
+> and Taxes remain confirmed dead ends; National ID and the sibling IPA
+> Form A-2 remain open, unauthored backlog. See the Visa vertical update
+> below and the document's own VERIFICATION.md for the full sourcing
+> record and every disclosed scoping decision.
 
 > **Update (2026-07-31, GOV-5819, "GovSchema Standard Research"): Papua New
 > Guinea's Visa vertical opens (3 of 6)**, via
@@ -23422,6 +23459,15 @@ file-layout specification and authored a bounded 67-field core against it
 > registry's 101st jurisdiction, opened via Business Formation) now stands
 > at 3 of 6 verticals; DMV and Taxes remain confirmed dead ends, National
 > ID remains open, unscreened-into-authorship backlog.
+>
+> **Update (2026-07-31, GOV-5826, "GovSchema Standard Research"): the
+> banked 62-widget ICA "Application to Extend Entry Permit" is now also
+> authored**, via `pg/ica/entry-permit-extension-application@1.0.0` — a
+> companion schema for a non-citizen already in-country extending an
+> existing entry permit, distinct from this same form's first-entry
+> sibling above. Deepens, does not open, Papua New Guinea's Visa vertical
+> (still 3 of 6). See the Executive Summary update above and the
+> document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-31, GOV-5798, "GovSchema Standard Research"): the
 > Democratic Republic of the Congo's Visa vertical opens**, via
@@ -25390,7 +25436,7 @@ now closed.
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **PG** | 3 | ✓ | ✗ | ✓ | ✗ | ✓ | ✗ |
+| **PG** | 4 | ✓ | ✗ | ✓ | ✗ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PK** | 11 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -27502,6 +27548,14 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       extension action, not a first-entry application) remains unauthored
       backlog. DMV and Taxes remain confirmed dead ends; National ID and
       the sibling Form A-2 remain open, unscreened/unauthored backlog.
+      **Update (GOV-5826, 2026-07-31): the ICA's own 62-widget "Application
+      to Extend Entry Permit" is now also authored**, via
+      `pg/ica/entry-permit-extension-application@1.0.0` — see the Executive
+      Summary and Visa vertical updates above. This is a companion schema,
+      deepening (not opening) Papua New Guinea's Visa vertical (still 3 of
+      6). DMV and Taxes remain confirmed dead ends; National ID and the
+      sibling Form A-2 remain open, unscreened/unauthored backlog for a
+      future cycle.
     - **Kosovo** — ARBK's Form A0 (LLC registration) was re-scouted this
       cycle (still live and unauthenticated, `arbk.rks-gov.net`) and came
       back the single richest field-wise candidate found across all 18
