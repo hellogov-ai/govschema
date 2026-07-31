@@ -1,0 +1,1731 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "pk/fbr/annexure-b-manufacturing-trading-profit-loss-account",
+  "version": "1.0.0",
+  "title": "Pakistan FBR Annex-B — Manufacturing / Trading / Profit & Loss Account",
+  "description": "The Federal Board of Revenue's (FBR) official 'Manual Return' workbook for individuals, Tax Year 2024 edition, worksheet 'Annex-B' — \"Manufacturing / Trading / Profit & Loss Account (including Revenues subject to Final / Fixed Tax)\", the business income-statement schedule for an individual taxpayer's business (Manufacturing/Trading Profit & Loss, prior-year unadjusted business-loss carry-forward, and a business-specific Statement of Affairs / Balance Sheet), filed one instance per business per the source form's own instruction (\"Separate form should be filled for each business\"). This is the seventh schema authored from this same nine-worksheet workbook, alongside the already-modelled 'IND (PROP-CG-OS)' (Form IT-1B, `pk/fbr/annual-individual-income-tax-return-it-1b`), 'IND (BUS PLUS)' (Form IT-2, `pk/fbr/annual-individual-income-tax-return-it-2`), 'Annex-A' (`pk/fbr/annexure-a-adjustable-tax`), and 'Wealth Statement' (`pk/fbr/wealth-statement`) worksheets. Like Annex-A, this worksheet's own single `dataValidations` rule validates every Profit & Loss row uniformly — including the headline \"Cost of Sales / Services\", \"Gross Profit / (Loss)\", \"Other Revenues\", \"Management, Administrative, Selling & Financial Expenses\", and \"Accounting Profit / (Loss)\" computed subtotals themselves — a materially different shape from the IT-1B/IT-2/Wealth Statement siblings, where the equivalent computed-total rows were confirmed, by the absence of a numeric-entry validation rule, to be excluded. This version therefore models every Profit & Loss line (Sr. 1–45), each split into its own Total Amount / Amount Subject to Final Tax / Amount Subject to Normal Tax figures, as an individually reportable field, following the same convention already established for Annex-A. Two further, worksheet-specific structural findings are disclosed: the prior-year unadjusted business-loss carry-forward section (Sr. 46–52) skips Sr. 49 entirely (2018 is absent between 2017 and 2019, the same 'later insertion/removal, not renumbered' pattern already seen in the Wealth Statement's own roman-numeral skip and in Annex-A's own Sr. 7 skip), and the worksheet's trailing Statement of Affairs / Balance Sheet section (Sr. 53–63) is governed by a raw-XML `<mergeCell ref=\"E69:F79\"/>` that collapses two of the section's own three amount columns into a single block spanning all eleven rows, leaving only column G as a genuine per-row entry cell — modelled here, disclosed rather than silently normalized to the P&L section's own three-column shape. This document opens no new vertical for Pakistan (Taxes was already opened by `pk/fbr/annual-individual-income-tax-return-it-1b`); it is this workbook's seventh companion schema. Annexes C through F remain this workbook's own disclosed, open backlog for a future cycle. This document describes the form only; it does not submit anything on the filer's behalf, and does not imply endorsement by the Islamic Republic of Pakistan or the Federal Board of Revenue. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Pakistan.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Federal Board of Revenue",
+    "abbreviation": "FBR",
+    "url": "https://www.fbr.gov.pk"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://download1.fbr.gov.pk/Docs/2024791373958696MANUALRETURN2024-NEW24-6-2024.xlsx",
+    "retrievedAt": "2026-07-31",
+    "documentRef": "FBR 'Manual Return' workbook for individuals, Tax Year 2024 edition, worksheet 'Annex-B' — \"Manufacturing / Trading / Profit & Loss Account (including Revenues subject to Final / Fixed Tax)\""
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-31",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-31",
+    "notes": "GOV-5752 ('GovSchema Standard Research'). Re-scanned CATALOG.md fresh first: the immediately preceding GOV-5745 cycle's own VERIFICATION.md and this document's own workbook siblings (IT-1B, IT-2, Annex-A) had all explicitly named 'Annexes B through F' as this workbook's disclosed, open backlog, so this cycle picked up Annex-B, the next of the five, rather than re-screening the same already-exhausted 5-of-6-vertical jurisdiction list a fourth consecutive time. Independently re-fetched the same workbook this cycle via plain `curl`: HTTP 200, size 104,097 bytes, sha256 `4e2f9874e9a910713fae9a182fc5c5a578bcfd2649d2031f8144c8b5fba96b9f` — byte-identical to every prior cycle's own recorded figures for this same workbook (GOV-3104, GOV-5731, GOV-5738, GOV-5745), confirming no revision. Unzipped directly via Python's `zipfile` (no `unzip`/pip/openpyxl in this environment) and confirmed via `xl/workbook.xml`'s own `<sheets>` element that `Annex-B` (`sheetId=\"13\"`) maps to `r:id=\"rId4\"`, which `xl/_rels/workbook.xml.rels` resolves to `xl/worksheets/sheet4.xml`; parsed that sheet's own `sheetData` rows, `xl/sharedStrings.xml` table, `mergeCells`, and `dataValidations` block by hand from the raw XML.\n\nThis worksheet is printed across two pages that repeat the identification header: page 1 (rows 1–6 header, Sr. 1–45 Profit & Loss, row 54 bare \"Signature:\" footer) and page 2 (rows 55–61 repeated header, Sr. 46–63 unadjusted-loss carry-forward and Statement of Affairs). Both headers carry Name (formula-linked to `'IND (BUS PLUS)'!C3`), CNIC (formula-linked to `'IND (BUS PLUS)'!C4`), Tax Year (pre-filled 2024), and NTN — confirming this Annex is filed alongside Form IT-2, not standalone. A genuine internal labelling inconsistency was found and is disclosed rather than resolved: the page-1 header's own NTN label (row 5) reads unstarred \"NTN\", while the page-2 continuation header's own NTN label (row 59) for the identical field reads starred \"NTN*\". `taxpayerNtn` is modelled as optional, matching the page-1 label; the page-2 asterisk is quoted verbatim in the field's own description.\n\nThe sheet's own single `dataValidation` rule (`type=\"whole\"`, `operator=\"greaterThanOrEqual\"`, `formula1=0`, `sqref=\"E9:G53 G5 G59 E63:E67\"`) was decoded to cover the entire Profit & Loss section (rows 9–53, columns E–G) uniformly, **including every computed subtotal row itself** (Sr. 4 Cost of Sales/Services, Sr. 17 Gross Profit/(Loss), Sr. 18 Other Revenues, Sr. 24 Management/Admin/Selling/Financial Expenses, Sr. 45 Accounting Profit/(Loss)) — the same materially different validation shape already disclosed for this workbook's own Annex-A sibling, and a genuine, observed structural difference from the IT-1B/IT-2/Wealth Statement siblings, where the equivalent totals were excluded on the basis of carrying no validation rule at all. Because every P&L row here carries the identical constraint as its own components, this version models all 45 P&L lines as individually reportable fields, each split into Total Amount (E), Amount Subject to Final Tax (F), and Amount Subject to Normal Tax (G).\n\nThe same `dataValidations` rule's own `E63:E67` clause covers only Sr. 47–52 (rows 63–67) of the unadjusted-loss carry-forward section, deliberately excluding Sr. 46 itself (row 62, \"Income / (Loss) from Business before adjustment...\") — consistent with Sr. 46 being the current year's own business result, which (unlike the already-realized prior-year losses in Sr. 47–52, each of which is carried forward and reported as a positive magnitude) can genuinely be negative. `incomeLossBeforeAdjustment` is modelled with no `minimum`, matching this observed asymmetry; all of `unadjustedLoss2016`/`2017`/`2019`/`2020`/`2021` carry `minimum: 0`. A genuine Sr.-numbering skip was also found and is disclosed, not corrected: Sr. 49 (which by the sequence would be \"Unadjusted (Loss) from Business for 2018\") is entirely absent between Sr. 48 (2017) and Sr. 50 (2019) — the same 'later insertion/removal, not renumbered' pattern already disclosed in the Wealth Statement's own roman-numeral Inflows skip and in Annex-A's own Sr. 7 skip.\n\nThe worksheet's trailing Statement of Affairs / Balance Sheet section (Sr. 53–63, rows 69–79) carries no `dataValidation` coverage at all (the sheet's own single rule stops at row 67), and its own raw `mergeCells` block (independently parsed) contains `<mergeCell ref=\"E69:F79\"/>` — a single merged cell spanning columns E–F across all eleven rows of this section, even though the sheet's own `<cols>` definition gives columns E, F, and G an identical width and style matching the P&L section's three-column layout above. Column G is left unmerged, with its own individually styled (but unvalidated) cell in every row of this range, and is modelled here as this section's single per-line \"Amount\" field; the E:F merge is disclosed as a genuine source-document artifact rather than silently modelled as a second and third amount column that a filer could never actually populate per line. No `minimum` is modelled for any of these eleven fields, consistent with the section's own total absence of a `dataValidation` rule.\n\nNo other structural differences from Annex-A's own header shape were found: like Annex-A (and unlike IT-1B/IT-2/Wealth Statement), this worksheet carries no separate Address field, and (per the 13-digit CNIC convention already established across every other worksheet in this workbook) the same pattern is applied here by convention rather than independently confirmed by a `dataValidation` rule on this specific cell (neither C4/C5 nor C58/C59 carry one — they are formula cells, not direct-entry cells, consistent with Name/CNIC being pulled from Form IT-2 rather than re-entered).\n\nRow 54's own bare \"Signature:\" footer carries no accompanying declaration paragraph and no Date cell (unlike Annex-A's own \"Signature: ___ Date: ___\" footer), so no `declarationDate` field and no `documents[]` attestation entry are modelled for this document at all.\n\n7 conformance fixtures committed under `conformance/pk/fbr/annexure-b-manufacturing-trading-profit-loss-account/1.0.0/`: 2 valid scenarios (a sole-proprietor trading business reporting a full Profit & Loss with a small Statement of Affairs and no prior-year unadjusted losses; a manufacturing business reporting a larger Profit & Loss, two prior-year unadjusted losses, and a fuller Statement of Affairs) and 5 mutation-control fixtures (a missing statically-required `taxYear`, a missing required `taxpayerCnic`, an out-of-range CNIC pattern violation, a negative amount on a `minimum: 0` P&L field, and a negative amount on a `minimum: 0` unadjusted-loss field) were run against a from-scratch, ephemeral field-by-field conformance checker (derived directly from this schema's own `fields[]`, not committed) before being finalized: both valid scenarios at 0 errors, all 5 mutation controls each raising exactly 1 error. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. Pakistan remains at 3 of 6 verticals (a seventh schema within the already-open Taxes vertical, not a new vertical); Annexes C through F remain this workbook's own disclosed, open backlog."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-31"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxpayerName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "description": "Full name of the individual taxpayer this Annex-B business schedule belongs to. On this worksheet the cell is populated by an internal formula pulling from the 'IND (BUS PLUS)' (Form IT-2) worksheet in the same workbook, confirming this Annex is meant to be filed together with that return.",
+      "sourceRef": "Worksheet 'Annex-B', row 4 — \"Name*\" (cell C4, formula-linked to 'IND (BUS PLUS)'!C3)"
+    },
+    {
+      "name": "taxpayerCnic",
+      "label": "CNIC",
+      "type": "string",
+      "required": true,
+      "description": "Taxpayer's 13-digit Computerized National Identity Card (CNIC) number, issued by NADRA. Like the Name field, this cell is formula-linked to the 'IND (BUS PLUS)' worksheet rather than independently entered.",
+      "sourceRef": "Worksheet 'Annex-B', row 5 — \"CNIC*\" (cell C5, formula-linked to 'IND (BUS PLUS)'!C4)",
+      "validation": {
+        "pattern": "^\\d{13}$"
+      }
+    },
+    {
+      "name": "taxpayerNtn",
+      "label": "NTN",
+      "type": "string",
+      "required": false,
+      "description": "Taxpayer's National Tax Number (NTN). This worksheet's own single dataValidation rule (type \"whole\", operator \"greaterThanOrEqual\", formula1 0) covers this cell (G5) as well as its page-2 continuation-header counterpart (G59), constraining it to a non-negative whole number. Modelled as optional because this worksheet's own page-1 label reads unstarred \"NTN\", even though the page-2 continuation header for the identical field reads starred \"NTN*\" — an internal labelling inconsistency within this same worksheet, disclosed rather than silently resolved in either direction.",
+      "sourceRef": "Worksheet 'Annex-B', row 5 — \"NTN\" (cell G5); page-2 continuation header row 59 — \"NTN*\" (cell G59)",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxYear",
+      "label": "Tax Year",
+      "type": "string",
+      "required": true,
+      "description": "The tax year this Annex-B business schedule covers, e.g. \"2024\". This source is itself the Tax Year 2024 edition of the Manual Return workbook; the value is pre-filled identically on both this worksheet's page-1 and page-2 continuation headers.",
+      "sourceRef": "Worksheet 'Annex-B', row 4 — \"Tax Year\", pre-filled \"2024\" (cell G4); repeated at row 58 (cell G58)"
+    },
+    {
+      "name": "businessName",
+      "label": "Business Name",
+      "type": "string",
+      "required": true,
+      "description": "Name of the business this Manufacturing/Trading Profit & Loss account and Statement of Affairs belong to. The source form's own instruction directly beneath the worksheet title states \"Separate form should be filled for each business\" — i.e. a taxpayer with more than one business files one Annex-B instance per business.",
+      "sourceRef": "Worksheet 'Annex-B', row 6 — \"Business Name*\""
+    },
+    {
+      "name": "netRevenueTotal",
+      "label": "Sr. 1 — Net Revenue (excluding Sales Tax, Federal Excise, Brokerage, Commission, Discount, Freight Outward) [2-3] — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 1, Code 3029 — \"Net Revenue (excluding Sales Tax, Federal Excise, Brokerage, Commission, Discount, Freight Outward) [2-3]\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 9 — Sr. 1, Code 3029, \"Net Revenue (excluding Sales Tax, Federal Excise, Brokerage, Commission, Discount, Freight Outward) [2-3]\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "netRevenueFinalTax",
+      "label": "Sr. 1 — Net Revenue (excluding Sales Tax, Federal Excise, Brokerage, Commission, Discount, Freight Outward) [2-3] — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 1, Code 3029 — \"Net Revenue (excluding Sales Tax, Federal Excise, Brokerage, Commission, Discount, Freight Outward) [2-3]\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 9 — Sr. 1, Code 3029, \"Net Revenue (excluding Sales Tax, Federal Excise, Brokerage, Commission, Discount, Freight Outward) [2-3]\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "netRevenueNormalTax",
+      "label": "Sr. 1 — Net Revenue (excluding Sales Tax, Federal Excise, Brokerage, Commission, Discount, Freight Outward) [2-3] — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 1, Code 3029 — \"Net Revenue (excluding Sales Tax, Federal Excise, Brokerage, Commission, Discount, Freight Outward) [2-3]\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 9 — Sr. 1, Code 3029, \"Net Revenue (excluding Sales Tax, Federal Excise, Brokerage, Commission, Discount, Freight Outward) [2-3]\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "grossRevenueTotal",
+      "label": "Sr. 2 — Gross Revenue (excluding Sales Tax, Federal Excise) — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 2, Code 3009 — \"Gross Revenue (excluding Sales Tax, Federal Excise)\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 10 — Sr. 2, Code 3009, \"Gross Revenue (excluding Sales Tax, Federal Excise)\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "grossRevenueFinalTax",
+      "label": "Sr. 2 — Gross Revenue (excluding Sales Tax, Federal Excise) — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 2, Code 3009 — \"Gross Revenue (excluding Sales Tax, Federal Excise)\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 10 — Sr. 2, Code 3009, \"Gross Revenue (excluding Sales Tax, Federal Excise)\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "grossRevenueNormalTax",
+      "label": "Sr. 2 — Gross Revenue (excluding Sales Tax, Federal Excise) — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 2, Code 3009 — \"Gross Revenue (excluding Sales Tax, Federal Excise)\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 10 — Sr. 2, Code 3009, \"Gross Revenue (excluding Sales Tax, Federal Excise)\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "sellingExpensesTotal",
+      "label": "Sr. 3 — Selling Expenses (Freight Outward, Brokerage, Commission, Discount, etc.) — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 3, Code 3019 — \"Selling Expenses (Freight Outward, Brokerage, Commission, Discount, etc.)\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 11 — Sr. 3, Code 3019, \"Selling Expenses (Freight Outward, Brokerage, Commission, Discount, etc.)\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "sellingExpensesFinalTax",
+      "label": "Sr. 3 — Selling Expenses (Freight Outward, Brokerage, Commission, Discount, etc.) — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 3, Code 3019 — \"Selling Expenses (Freight Outward, Brokerage, Commission, Discount, etc.)\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 11 — Sr. 3, Code 3019, \"Selling Expenses (Freight Outward, Brokerage, Commission, Discount, etc.)\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "sellingExpensesNormalTax",
+      "label": "Sr. 3 — Selling Expenses (Freight Outward, Brokerage, Commission, Discount, etc.) — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 3, Code 3019 — \"Selling Expenses (Freight Outward, Brokerage, Commission, Discount, etc.)\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 11 — Sr. 3, Code 3019, \"Selling Expenses (Freight Outward, Brokerage, Commission, Discount, etc.)\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "costOfSalesServicesTotal",
+      "label": "Sr. 4 — Cost of Sales / Services [(sum of 5 to 15)-16] — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 4, Code 3030 — \"Cost of Sales / Services [(sum of 5 to 15)-16]\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 12 — Sr. 4, Code 3030, \"Cost of Sales / Services [(sum of 5 to 15)-16]\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "costOfSalesServicesFinalTax",
+      "label": "Sr. 4 — Cost of Sales / Services [(sum of 5 to 15)-16] — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 4, Code 3030 — \"Cost of Sales / Services [(sum of 5 to 15)-16]\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 12 — Sr. 4, Code 3030, \"Cost of Sales / Services [(sum of 5 to 15)-16]\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "costOfSalesServicesNormalTax",
+      "label": "Sr. 4 — Cost of Sales / Services [(sum of 5 to 15)-16] — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 4, Code 3030 — \"Cost of Sales / Services [(sum of 5 to 15)-16]\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 12 — Sr. 4, Code 3030, \"Cost of Sales / Services [(sum of 5 to 15)-16]\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "openingStockTotal",
+      "label": "Sr. 5 — Opening Stock — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 5, Code 3039 — \"Opening Stock\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 13 — Sr. 5, Code 3039, \"Opening Stock\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "openingStockFinalTax",
+      "label": "Sr. 5 — Opening Stock — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 5, Code 3039 — \"Opening Stock\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 13 — Sr. 5, Code 3039, \"Opening Stock\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "openingStockNormalTax",
+      "label": "Sr. 5 — Opening Stock — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 5, Code 3039 — \"Opening Stock\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 13 — Sr. 5, Code 3039, \"Opening Stock\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "netPurchasesTotal",
+      "label": "Sr. 6 — Net Purchases (excluding Sales Tax, Federal Excise) — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 6, Code 3059 — \"Net Purchases (excluding Sales Tax, Federal Excise)\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 14 — Sr. 6, Code 3059, \"Net Purchases (excluding Sales Tax, Federal Excise)\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "netPurchasesFinalTax",
+      "label": "Sr. 6 — Net Purchases (excluding Sales Tax, Federal Excise) — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 6, Code 3059 — \"Net Purchases (excluding Sales Tax, Federal Excise)\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 14 — Sr. 6, Code 3059, \"Net Purchases (excluding Sales Tax, Federal Excise)\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "netPurchasesNormalTax",
+      "label": "Sr. 6 — Net Purchases (excluding Sales Tax, Federal Excise) — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 6, Code 3059 — \"Net Purchases (excluding Sales Tax, Federal Excise)\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 14 — Sr. 6, Code 3059, \"Net Purchases (excluding Sales Tax, Federal Excise)\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "salariesWagesCostTotal",
+      "label": "Sr. 7 — Salaries / Wages — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 7, Code 3071 — \"Salaries / Wages\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 15 — Sr. 7, Code 3071, \"Salaries / Wages\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "salariesWagesCostFinalTax",
+      "label": "Sr. 7 — Salaries / Wages — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 7, Code 3071 — \"Salaries / Wages\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 15 — Sr. 7, Code 3071, \"Salaries / Wages\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "salariesWagesCostNormalTax",
+      "label": "Sr. 7 — Salaries / Wages — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 7, Code 3071 — \"Salaries / Wages\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 15 — Sr. 7, Code 3071, \"Salaries / Wages\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "fuelTotal",
+      "label": "Sr. 8 — Fuel — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 8, Code 3072 — \"Fuel\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 16 — Sr. 8, Code 3072, \"Fuel\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "fuelFinalTax",
+      "label": "Sr. 8 — Fuel — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 8, Code 3072 — \"Fuel\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 16 — Sr. 8, Code 3072, \"Fuel\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "fuelNormalTax",
+      "label": "Sr. 8 — Fuel — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 8, Code 3072 — \"Fuel\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 16 — Sr. 8, Code 3072, \"Fuel\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "powerTotal",
+      "label": "Sr. 9 — Power — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 9, Code 3073 — \"Power\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 17 — Sr. 9, Code 3073, \"Power\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "powerFinalTax",
+      "label": "Sr. 9 — Power — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 9, Code 3073 — \"Power\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 17 — Sr. 9, Code 3073, \"Power\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "powerNormalTax",
+      "label": "Sr. 9 — Power — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 9, Code 3073 — \"Power\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 17 — Sr. 9, Code 3073, \"Power\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "gasTotal",
+      "label": "Sr. 10 — Gas — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 10, Code 3074 — \"Gas\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 18 — Sr. 10, Code 3074, \"Gas\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "gasFinalTax",
+      "label": "Sr. 10 — Gas — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 10, Code 3074 — \"Gas\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 18 — Sr. 10, Code 3074, \"Gas\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "gasNormalTax",
+      "label": "Sr. 10 — Gas — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 10, Code 3074 — \"Gas\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 18 — Sr. 10, Code 3074, \"Gas\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "storesSparesTotal",
+      "label": "Sr. 11 — Stores / Spares — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 11, Code 3076 — \"Stores / Spares\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 19 — Sr. 11, Code 3076, \"Stores / Spares\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "storesSparesFinalTax",
+      "label": "Sr. 11 — Stores / Spares — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 11, Code 3076 — \"Stores / Spares\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 19 — Sr. 11, Code 3076, \"Stores / Spares\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "storesSparesNormalTax",
+      "label": "Sr. 11 — Stores / Spares — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 11, Code 3076 — \"Stores / Spares\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 19 — Sr. 11, Code 3076, \"Stores / Spares\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "repairMaintenanceCostTotal",
+      "label": "Sr. 12 — Repair / Maintenance — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 12, Code 3077 — \"Repair / Maintenance\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 20 — Sr. 12, Code 3077, \"Repair / Maintenance\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "repairMaintenanceCostFinalTax",
+      "label": "Sr. 12 — Repair / Maintenance — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 12, Code 3077 — \"Repair / Maintenance\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 20 — Sr. 12, Code 3077, \"Repair / Maintenance\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "repairMaintenanceCostNormalTax",
+      "label": "Sr. 12 — Repair / Maintenance — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 12, Code 3077 — \"Repair / Maintenance\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 20 — Sr. 12, Code 3077, \"Repair / Maintenance\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherDirectExpensesTotal",
+      "label": "Sr. 13 — Other Direct Expenses — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 13, Code 3083 — \"Other Direct Expenses\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 21 — Sr. 13, Code 3083, \"Other Direct Expenses\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherDirectExpensesFinalTax",
+      "label": "Sr. 13 — Other Direct Expenses — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 13, Code 3083 — \"Other Direct Expenses\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 21 — Sr. 13, Code 3083, \"Other Direct Expenses\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherDirectExpensesNormalTax",
+      "label": "Sr. 13 — Other Direct Expenses — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 13, Code 3083 — \"Other Direct Expenses\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 21 — Sr. 13, Code 3083, \"Other Direct Expenses\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingAmortizationCostTotal",
+      "label": "Sr. 14 — Accounting Amortization — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 14, Code 3087 — \"Accounting Amortization\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 22 — Sr. 14, Code 3087, \"Accounting Amortization\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingAmortizationCostFinalTax",
+      "label": "Sr. 14 — Accounting Amortization — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 14, Code 3087 — \"Accounting Amortization\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 22 — Sr. 14, Code 3087, \"Accounting Amortization\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingAmortizationCostNormalTax",
+      "label": "Sr. 14 — Accounting Amortization — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 14, Code 3087 — \"Accounting Amortization\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 22 — Sr. 14, Code 3087, \"Accounting Amortization\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingDepreciationCostTotal",
+      "label": "Sr. 15 — Accounting Depreciation — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 15, Code 3088 — \"Accounting Depreciation\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 23 — Sr. 15, Code 3088, \"Accounting Depreciation\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingDepreciationCostFinalTax",
+      "label": "Sr. 15 — Accounting Depreciation — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 15, Code 3088 — \"Accounting Depreciation\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 23 — Sr. 15, Code 3088, \"Accounting Depreciation\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingDepreciationCostNormalTax",
+      "label": "Sr. 15 — Accounting Depreciation — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 15, Code 3088 — \"Accounting Depreciation\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 23 — Sr. 15, Code 3088, \"Accounting Depreciation\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "closingStockTotal",
+      "label": "Sr. 16 — Closing Stock — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 16, Code 3099 — \"Closing Stock\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 24 — Sr. 16, Code 3099, \"Closing Stock\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "closingStockFinalTax",
+      "label": "Sr. 16 — Closing Stock — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 16, Code 3099 — \"Closing Stock\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 24 — Sr. 16, Code 3099, \"Closing Stock\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "closingStockNormalTax",
+      "label": "Sr. 16 — Closing Stock — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 16, Code 3099 — \"Closing Stock\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 24 — Sr. 16, Code 3099, \"Closing Stock\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "grossProfitLossTotal",
+      "label": "Sr. 17 — Gross Profit / (Loss) [1-4] — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 17, Code 3100 — \"Gross Profit / (Loss) [1-4]\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 25 — Sr. 17, Code 3100, \"Gross Profit / (Loss) [1-4]\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "grossProfitLossFinalTax",
+      "label": "Sr. 17 — Gross Profit / (Loss) [1-4] — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 17, Code 3100 — \"Gross Profit / (Loss) [1-4]\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 25 — Sr. 17, Code 3100, \"Gross Profit / (Loss) [1-4]\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "grossProfitLossNormalTax",
+      "label": "Sr. 17 — Gross Profit / (Loss) [1-4] — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 17, Code 3100 — \"Gross Profit / (Loss) [1-4]\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 25 — Sr. 17, Code 3100, \"Gross Profit / (Loss) [1-4]\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherRevenuesTotal",
+      "label": "Sr. 18 — Other Revenues [Sum of 19 to 22] — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 18, Code 3129 — \"Other Revenues [Sum of 19 to 22]\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 26 — Sr. 18, Code 3129, \"Other Revenues [Sum of 19 to 22]\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherRevenuesFinalTax",
+      "label": "Sr. 18 — Other Revenues [Sum of 19 to 22] — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 18, Code 3129 — \"Other Revenues [Sum of 19 to 22]\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 26 — Sr. 18, Code 3129, \"Other Revenues [Sum of 19 to 22]\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherRevenuesNormalTax",
+      "label": "Sr. 18 — Other Revenues [Sum of 19 to 22] — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 18, Code 3129 — \"Other Revenues [Sum of 19 to 22]\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 26 — Sr. 18, Code 3129, \"Other Revenues [Sum of 19 to 22]\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingGainSaleIntangiblesTotal",
+      "label": "Sr. 19 — Accounting Gain on Sale of Intangibles — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 19, Code 3115 — \"Accounting Gain on Sale of Intangibles\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 27 — Sr. 19, Code 3115, \"Accounting Gain on Sale of Intangibles\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingGainSaleIntangiblesFinalTax",
+      "label": "Sr. 19 — Accounting Gain on Sale of Intangibles — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 19, Code 3115 — \"Accounting Gain on Sale of Intangibles\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 27 — Sr. 19, Code 3115, \"Accounting Gain on Sale of Intangibles\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingGainSaleIntangiblesNormalTax",
+      "label": "Sr. 19 — Accounting Gain on Sale of Intangibles — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 19, Code 3115 — \"Accounting Gain on Sale of Intangibles\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 27 — Sr. 19, Code 3115, \"Accounting Gain on Sale of Intangibles\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingGainSaleAssetsTotal",
+      "label": "Sr. 20 — Accounting Gain on Sale of Assets — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 20, Code 3116 — \"Accounting Gain on Sale of Assets\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 28 — Sr. 20, Code 3116, \"Accounting Gain on Sale of Assets\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingGainSaleAssetsFinalTax",
+      "label": "Sr. 20 — Accounting Gain on Sale of Assets — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 20, Code 3116 — \"Accounting Gain on Sale of Assets\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 28 — Sr. 20, Code 3116, \"Accounting Gain on Sale of Assets\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingGainSaleAssetsNormalTax",
+      "label": "Sr. 20 — Accounting Gain on Sale of Assets — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 20, Code 3116 — \"Accounting Gain on Sale of Assets\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 28 — Sr. 20, Code 3116, \"Accounting Gain on Sale of Assets\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherRevenueOthersTotal",
+      "label": "Sr. 21 — Others — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 21, Code 3128 — \"Others\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 29 — Sr. 21, Code 3128, \"Others\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherRevenueOthersFinalTax",
+      "label": "Sr. 21 — Others — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 21, Code 3128 — \"Others\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 29 — Sr. 21, Code 3128, \"Others\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherRevenueOthersNormalTax",
+      "label": "Sr. 21 — Others — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 21, Code 3128 — \"Others\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 29 — Sr. 21, Code 3128, \"Others\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "shareUntaxedIncomeAopTotal",
+      "label": "Sr. 22 — Share in untaxed Income from AOP — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 22, Code 3131 — \"Share in untaxed Income from AOP\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 30 — Sr. 22, Code 3131, \"Share in untaxed Income from AOP\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "shareUntaxedIncomeAopFinalTax",
+      "label": "Sr. 22 — Share in untaxed Income from AOP — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 22, Code 3131 — \"Share in untaxed Income from AOP\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 30 — Sr. 22, Code 3131, \"Share in untaxed Income from AOP\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "shareUntaxedIncomeAopNormalTax",
+      "label": "Sr. 22 — Share in untaxed Income from AOP — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 22, Code 3131 — \"Share in untaxed Income from AOP\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 30 — Sr. 22, Code 3131, \"Share in untaxed Income from AOP\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "shareTaxedIncomeAopTotal",
+      "label": "Sr. 23 — Share in Taxed Income from AOP — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 23, Code 3141 — \"Share in Taxed Income from AOP\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 31 — Sr. 23, Code 3141, \"Share in Taxed Income from AOP\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "shareTaxedIncomeAopFinalTax",
+      "label": "Sr. 23 — Share in Taxed Income from AOP — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 23, Code 3141 — \"Share in Taxed Income from AOP\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 31 — Sr. 23, Code 3141, \"Share in Taxed Income from AOP\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "shareTaxedIncomeAopNormalTax",
+      "label": "Sr. 23 — Share in Taxed Income from AOP — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 23, Code 3141 — \"Share in Taxed Income from AOP\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 31 — Sr. 23, Code 3141, \"Share in Taxed Income from AOP\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "managementAdminSellingFinancialExpensesTotal",
+      "label": "Sr. 24 — Management, Administrative, Selling & Financial Expenses [Sum of 25 to 44] — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 24, Code 3199 — \"Management, Administrative, Selling & Financial Expenses [Sum of 25 to 44]\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 32 — Sr. 24, Code 3199, \"Management, Administrative, Selling & Financial Expenses [Sum of 25 to 44]\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "managementAdminSellingFinancialExpensesFinalTax",
+      "label": "Sr. 24 — Management, Administrative, Selling & Financial Expenses [Sum of 25 to 44] — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 24, Code 3199 — \"Management, Administrative, Selling & Financial Expenses [Sum of 25 to 44]\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 32 — Sr. 24, Code 3199, \"Management, Administrative, Selling & Financial Expenses [Sum of 25 to 44]\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "managementAdminSellingFinancialExpensesNormalTax",
+      "label": "Sr. 24 — Management, Administrative, Selling & Financial Expenses [Sum of 25 to 44] — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 24, Code 3199 — \"Management, Administrative, Selling & Financial Expenses [Sum of 25 to 44]\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 32 — Sr. 24, Code 3199, \"Management, Administrative, Selling & Financial Expenses [Sum of 25 to 44]\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "rentTotal",
+      "label": "Sr. 25 — Rent — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 25, Code 3151 — \"Rent\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 33 — Sr. 25, Code 3151, \"Rent\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "rentFinalTax",
+      "label": "Sr. 25 — Rent — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 25, Code 3151 — \"Rent\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 33 — Sr. 25, Code 3151, \"Rent\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "rentNormalTax",
+      "label": "Sr. 25 — Rent — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 25, Code 3151 — \"Rent\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 33 — Sr. 25, Code 3151, \"Rent\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "ratesTaxesCessTotal",
+      "label": "Sr. 26 — Rates / Taxes / Cess — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 26, Code 3152 — \"Rates / Taxes / Cess\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 34 — Sr. 26, Code 3152, \"Rates / Taxes / Cess\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "ratesTaxesCessFinalTax",
+      "label": "Sr. 26 — Rates / Taxes / Cess — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 26, Code 3152 — \"Rates / Taxes / Cess\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 34 — Sr. 26, Code 3152, \"Rates / Taxes / Cess\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "ratesTaxesCessNormalTax",
+      "label": "Sr. 26 — Rates / Taxes / Cess — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 26, Code 3152 — \"Rates / Taxes / Cess\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 34 — Sr. 26, Code 3152, \"Rates / Taxes / Cess\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "salariesWagesPerquisitesBenefitsTotal",
+      "label": "Sr. 27 — Salaries / Wages / Perquisites / Benefits — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 27, Code 3154 — \"Salaries / Wages / Perquisites / Benefits\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 35 — Sr. 27, Code 3154, \"Salaries / Wages / Perquisites / Benefits\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "salariesWagesPerquisitesBenefitsFinalTax",
+      "label": "Sr. 27 — Salaries / Wages / Perquisites / Benefits — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 27, Code 3154 — \"Salaries / Wages / Perquisites / Benefits\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 35 — Sr. 27, Code 3154, \"Salaries / Wages / Perquisites / Benefits\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "salariesWagesPerquisitesBenefitsNormalTax",
+      "label": "Sr. 27 — Salaries / Wages / Perquisites / Benefits — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 27, Code 3154 — \"Salaries / Wages / Perquisites / Benefits\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 35 — Sr. 27, Code 3154, \"Salaries / Wages / Perquisites / Benefits\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "travelingConveyanceVehiclesTotal",
+      "label": "Sr. 28 — Traveling / Conveyance / Vehicles Running / Maintenance — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 28, Code 3155 — \"Traveling / Conveyance / Vehicles Running / Maintenance\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 36 — Sr. 28, Code 3155, \"Traveling / Conveyance / Vehicles Running / Maintenance\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "travelingConveyanceVehiclesFinalTax",
+      "label": "Sr. 28 — Traveling / Conveyance / Vehicles Running / Maintenance — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 28, Code 3155 — \"Traveling / Conveyance / Vehicles Running / Maintenance\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 36 — Sr. 28, Code 3155, \"Traveling / Conveyance / Vehicles Running / Maintenance\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "travelingConveyanceVehiclesNormalTax",
+      "label": "Sr. 28 — Traveling / Conveyance / Vehicles Running / Maintenance — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 28, Code 3155 — \"Traveling / Conveyance / Vehicles Running / Maintenance\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 36 — Sr. 28, Code 3155, \"Traveling / Conveyance / Vehicles Running / Maintenance\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "electricityWaterGasTotal",
+      "label": "Sr. 29 — Electricity / Water / Gas — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 29, Code 3158 — \"Electricity / Water / Gas\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 37 — Sr. 29, Code 3158, \"Electricity / Water / Gas\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "electricityWaterGasFinalTax",
+      "label": "Sr. 29 — Electricity / Water / Gas — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 29, Code 3158 — \"Electricity / Water / Gas\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 37 — Sr. 29, Code 3158, \"Electricity / Water / Gas\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "electricityWaterGasNormalTax",
+      "label": "Sr. 29 — Electricity / Water / Gas — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 29, Code 3158 — \"Electricity / Water / Gas\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 37 — Sr. 29, Code 3158, \"Electricity / Water / Gas\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "communicationTotal",
+      "label": "Sr. 30 — Communication — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 30, Code 3162 — \"Communication\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 38 — Sr. 30, Code 3162, \"Communication\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "communicationFinalTax",
+      "label": "Sr. 30 — Communication — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 30, Code 3162 — \"Communication\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 38 — Sr. 30, Code 3162, \"Communication\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "communicationNormalTax",
+      "label": "Sr. 30 — Communication — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 30, Code 3162 — \"Communication\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 38 — Sr. 30, Code 3162, \"Communication\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "repairMaintenanceIndirectTotal",
+      "label": "Sr. 31 — Repair / Maintenance — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 31, Code 3165 — \"Repair / Maintenance\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 39 — Sr. 31, Code 3165, \"Repair / Maintenance\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "repairMaintenanceIndirectFinalTax",
+      "label": "Sr. 31 — Repair / Maintenance — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 31, Code 3165 — \"Repair / Maintenance\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 39 — Sr. 31, Code 3165, \"Repair / Maintenance\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "repairMaintenanceIndirectNormalTax",
+      "label": "Sr. 31 — Repair / Maintenance — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 31, Code 3165 — \"Repair / Maintenance\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 39 — Sr. 31, Code 3165, \"Repair / Maintenance\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "stationeryPrintingPhotocopiesTotal",
+      "label": "Sr. 32 — Stationery / Printing / Photocopies / Office Supplies — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 32, Code 3166 — \"Stationery / Printing / Photocopies / Office Supplies\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 40 — Sr. 32, Code 3166, \"Stationery / Printing / Photocopies / Office Supplies\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "stationeryPrintingPhotocopiesFinalTax",
+      "label": "Sr. 32 — Stationery / Printing / Photocopies / Office Supplies — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 32, Code 3166 — \"Stationery / Printing / Photocopies / Office Supplies\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 40 — Sr. 32, Code 3166, \"Stationery / Printing / Photocopies / Office Supplies\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "stationeryPrintingPhotocopiesNormalTax",
+      "label": "Sr. 32 — Stationery / Printing / Photocopies / Office Supplies — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 32, Code 3166 — \"Stationery / Printing / Photocopies / Office Supplies\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 40 — Sr. 32, Code 3166, \"Stationery / Printing / Photocopies / Office Supplies\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "advertisementPublicityPromotionTotal",
+      "label": "Sr. 33 — Advertisement / Publicity / Promotion — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 33, Code 3168 — \"Advertisement / Publicity / Promotion\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 41 — Sr. 33, Code 3168, \"Advertisement / Publicity / Promotion\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "advertisementPublicityPromotionFinalTax",
+      "label": "Sr. 33 — Advertisement / Publicity / Promotion — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 33, Code 3168 — \"Advertisement / Publicity / Promotion\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 41 — Sr. 33, Code 3168, \"Advertisement / Publicity / Promotion\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "advertisementPublicityPromotionNormalTax",
+      "label": "Sr. 33 — Advertisement / Publicity / Promotion — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 33, Code 3168 — \"Advertisement / Publicity / Promotion\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 41 — Sr. 33, Code 3168, \"Advertisement / Publicity / Promotion\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "insuranceTotal",
+      "label": "Sr. 34 — Insurance — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 34, Code 3170 — \"Insurance\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 42 — Sr. 34, Code 3170, \"Insurance\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "insuranceFinalTax",
+      "label": "Sr. 34 — Insurance — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 34, Code 3170 — \"Insurance\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 42 — Sr. 34, Code 3170, \"Insurance\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "insuranceNormalTax",
+      "label": "Sr. 34 — Insurance — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 34, Code 3170 — \"Insurance\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 42 — Sr. 34, Code 3170, \"Insurance\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "professionalChargesTotal",
+      "label": "Sr. 35 — Professional Charges — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 35, Code 3171 — \"Professional Charges\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 43 — Sr. 35, Code 3171, \"Professional Charges\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "professionalChargesFinalTax",
+      "label": "Sr. 35 — Professional Charges — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 35, Code 3171 — \"Professional Charges\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 43 — Sr. 35, Code 3171, \"Professional Charges\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "professionalChargesNormalTax",
+      "label": "Sr. 35 — Professional Charges — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 35, Code 3171 — \"Professional Charges\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 43 — Sr. 35, Code 3171, \"Professional Charges\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "profitOnDebtFinancialChargesTotal",
+      "label": "Sr. 36 — Profit on Debt (Financial Charges / Markup / Interest) — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 36, Code 3172 — \"Profit on Debt (Financial Charges / Markup / Interest)\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 44 — Sr. 36, Code 3172, \"Profit on Debt (Financial Charges / Markup / Interest)\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "profitOnDebtFinancialChargesFinalTax",
+      "label": "Sr. 36 — Profit on Debt (Financial Charges / Markup / Interest) — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 36, Code 3172 — \"Profit on Debt (Financial Charges / Markup / Interest)\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 44 — Sr. 36, Code 3172, \"Profit on Debt (Financial Charges / Markup / Interest)\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "profitOnDebtFinancialChargesNormalTax",
+      "label": "Sr. 36 — Profit on Debt (Financial Charges / Markup / Interest) — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 36, Code 3172 — \"Profit on Debt (Financial Charges / Markup / Interest)\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 44 — Sr. 36, Code 3172, \"Profit on Debt (Financial Charges / Markup / Interest)\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "brokerageCommissionTotal",
+      "label": "Sr. 37 — Brokerage / Commission — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 37, Code 3178 — \"Brokerage / Commission\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 45 — Sr. 37, Code 3178, \"Brokerage / Commission\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "brokerageCommissionFinalTax",
+      "label": "Sr. 37 — Brokerage / Commission — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 37, Code 3178 — \"Brokerage / Commission\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 45 — Sr. 37, Code 3178, \"Brokerage / Commission\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "brokerageCommissionNormalTax",
+      "label": "Sr. 37 — Brokerage / Commission — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 37, Code 3178 — \"Brokerage / Commission\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 45 — Sr. 37, Code 3178, \"Brokerage / Commission\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "irrecoverableDebtsWrittenOffTotal",
+      "label": "Sr. 38 — Irrecoverable Debts written off — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 38, Code 3186 — \"Irrecoverable Debts written off\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 46 — Sr. 38, Code 3186, \"Irrecoverable Debts written off\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "irrecoverableDebtsWrittenOffFinalTax",
+      "label": "Sr. 38 — Irrecoverable Debts written off — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 38, Code 3186 — \"Irrecoverable Debts written off\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 46 — Sr. 38, Code 3186, \"Irrecoverable Debts written off\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "irrecoverableDebtsWrittenOffNormalTax",
+      "label": "Sr. 38 — Irrecoverable Debts written off — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 38, Code 3186 — \"Irrecoverable Debts written off\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 46 — Sr. 38, Code 3186, \"Irrecoverable Debts written off\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "obsoleteStocksStoresSparesWrittenOffTotal",
+      "label": "Sr. 39 — Obsolete Stocks / Stores / Spares / Fixed Assets written off — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 39, Code 3187 — \"Obsolete Stocks / Stores / Spares / Fixed Assets written off\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 47 — Sr. 39, Code 3187, \"Obsolete Stocks / Stores / Spares / Fixed Assets written off\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "obsoleteStocksStoresSparesWrittenOffFinalTax",
+      "label": "Sr. 39 — Obsolete Stocks / Stores / Spares / Fixed Assets written off — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 39, Code 3187 — \"Obsolete Stocks / Stores / Spares / Fixed Assets written off\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 47 — Sr. 39, Code 3187, \"Obsolete Stocks / Stores / Spares / Fixed Assets written off\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "obsoleteStocksStoresSparesWrittenOffNormalTax",
+      "label": "Sr. 39 — Obsolete Stocks / Stores / Spares / Fixed Assets written off — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 39, Code 3187 — \"Obsolete Stocks / Stores / Spares / Fixed Assets written off\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 47 — Sr. 39, Code 3187, \"Obsolete Stocks / Stores / Spares / Fixed Assets written off\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherIndirectExpensesTotal",
+      "label": "Sr. 40 — Other Indirect Expenses — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 40, Code 3180 — \"Other Indirect Expenses\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 48 — Sr. 40, Code 3180, \"Other Indirect Expenses\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherIndirectExpensesFinalTax",
+      "label": "Sr. 40 — Other Indirect Expenses — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 40, Code 3180 — \"Other Indirect Expenses\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 48 — Sr. 40, Code 3180, \"Other Indirect Expenses\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherIndirectExpensesNormalTax",
+      "label": "Sr. 40 — Other Indirect Expenses — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 40, Code 3180 — \"Other Indirect Expenses\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 48 — Sr. 40, Code 3180, \"Other Indirect Expenses\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingLossSaleIntangiblesTotal",
+      "label": "Sr. 41 — Accounting (Loss) on Sale of Intangibles — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 41, Code 3195 — \"Accounting (Loss) on Sale of Intangibles\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 49 — Sr. 41, Code 3195, \"Accounting (Loss) on Sale of Intangibles\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingLossSaleIntangiblesFinalTax",
+      "label": "Sr. 41 — Accounting (Loss) on Sale of Intangibles — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 41, Code 3195 — \"Accounting (Loss) on Sale of Intangibles\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 49 — Sr. 41, Code 3195, \"Accounting (Loss) on Sale of Intangibles\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingLossSaleIntangiblesNormalTax",
+      "label": "Sr. 41 — Accounting (Loss) on Sale of Intangibles — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 41, Code 3195 — \"Accounting (Loss) on Sale of Intangibles\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 49 — Sr. 41, Code 3195, \"Accounting (Loss) on Sale of Intangibles\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingLossSaleAssetsTotal",
+      "label": "Sr. 42 — Accounting (Loss) on Sale of Assets — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 42, Code 3196 — \"Accounting (Loss) on Sale of Assets\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 50 — Sr. 42, Code 3196, \"Accounting (Loss) on Sale of Assets\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingLossSaleAssetsFinalTax",
+      "label": "Sr. 42 — Accounting (Loss) on Sale of Assets — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 42, Code 3196 — \"Accounting (Loss) on Sale of Assets\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 50 — Sr. 42, Code 3196, \"Accounting (Loss) on Sale of Assets\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingLossSaleAssetsNormalTax",
+      "label": "Sr. 42 — Accounting (Loss) on Sale of Assets — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 42, Code 3196 — \"Accounting (Loss) on Sale of Assets\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 50 — Sr. 42, Code 3196, \"Accounting (Loss) on Sale of Assets\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingAmortizationIndirectTotal",
+      "label": "Sr. 43 — Accounting Amortization — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 43, Code 3197 — \"Accounting Amortization\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 51 — Sr. 43, Code 3197, \"Accounting Amortization\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingAmortizationIndirectFinalTax",
+      "label": "Sr. 43 — Accounting Amortization — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 43, Code 3197 — \"Accounting Amortization\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 51 — Sr. 43, Code 3197, \"Accounting Amortization\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingAmortizationIndirectNormalTax",
+      "label": "Sr. 43 — Accounting Amortization — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 43, Code 3197 — \"Accounting Amortization\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 51 — Sr. 43, Code 3197, \"Accounting Amortization\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingDepreciationIndirectTotal",
+      "label": "Sr. 44 — Accounting Depreciation — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 44, Code 3198 — \"Accounting Depreciation\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 52 — Sr. 44, Code 3198, \"Accounting Depreciation\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingDepreciationIndirectFinalTax",
+      "label": "Sr. 44 — Accounting Depreciation — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 44, Code 3198 — \"Accounting Depreciation\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 52 — Sr. 44, Code 3198, \"Accounting Depreciation\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingDepreciationIndirectNormalTax",
+      "label": "Sr. 44 — Accounting Depreciation — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 44, Code 3198 — \"Accounting Depreciation\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 52 — Sr. 44, Code 3198, \"Accounting Depreciation\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingProfitLossTotal",
+      "label": "Sr. 45 — Accounting Profit / (Loss) [17+18-24] — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 45, Code 3200 — \"Accounting Profit / (Loss) [17+18-24]\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 53 — Sr. 45, Code 3200, \"Accounting Profit / (Loss) [17+18-24]\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingProfitLossFinalTax",
+      "label": "Sr. 45 — Accounting Profit / (Loss) [17+18-24] — Amount Subject to Final Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 45, Code 3200 — \"Accounting Profit / (Loss) [17+18-24]\" — amount subject to Final Tax (column F).",
+      "sourceRef": "Worksheet 'Annex-B', row 53 — Sr. 45, Code 3200, \"Accounting Profit / (Loss) [17+18-24]\" (column F, \"Amount Subject to Final Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingProfitLossNormalTax",
+      "label": "Sr. 45 — Accounting Profit / (Loss) [17+18-24] — Amount Subject to Normal Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 45, Code 3200 — \"Accounting Profit / (Loss) [17+18-24]\" — amount subject to Normal Tax (column G).",
+      "sourceRef": "Worksheet 'Annex-B', row 53 — Sr. 45, Code 3200, \"Accounting Profit / (Loss) [17+18-24]\" (column G, \"Amount Subject to Normal Tax\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "incomeLossBeforeAdjustment",
+      "label": "Sr. 46 — Income / (Loss) from Business before adjustment of Admissible Depreciation / Initial Allowance / Amortization for current / previous years — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 46, Code 3270 — \"Income / (Loss) from Business before adjustment of Admissible Depreciation / Initial Allowance / Amortization for current / previous years\" — total amount (column E). This cell falls outside this worksheet's own dataValidations sqref (\"E9:G53 G5 G59 E63:E67\") — every sibling row from Sr. 47 onward is covered, but Sr. 46 itself is not, consistent with this being the current year's own business result, which (unlike the prior years' already-realized losses being carried forward) can genuinely be negative. No minimum is modelled for this field on that basis.",
+      "sourceRef": "Worksheet 'Annex-B', row 62 — Sr. 46, Code 3270, \"Income / (Loss) from Business before adjustment of Admissible Depreciation / Initial Allowance / Amortization for current / previous years\" (column E, \"Total Amount\")"
+    },
+    {
+      "name": "unadjustedLoss2016",
+      "label": "Sr. 47 — Unadjusted (Loss) from Business for 2016 — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 47, Code 327016 — \"Unadjusted (Loss) from Business for 2016\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 63 — Sr. 47, Code 327016, \"Unadjusted (Loss) from Business for 2016\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "unadjustedLoss2017",
+      "label": "Sr. 48 — Unadjusted (Loss) from Business for 2017 — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 48, Code 327017 — \"Unadjusted (Loss) from Business for 2017\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 64 — Sr. 48, Code 327017, \"Unadjusted (Loss) from Business for 2017\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "unadjustedLoss2019",
+      "label": "Sr. 50 — Unadjusted (Loss) from Business for 2019 — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 50, Code 327019 — \"Unadjusted (Loss) from Business for 2019\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 65 — Sr. 50, Code 327019, \"Unadjusted (Loss) from Business for 2019\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "unadjustedLoss2020",
+      "label": "Sr. 51 — Unadjusted (Loss) from Business for 2020 — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 51, Code 327020 — \"Unadjusted (Loss) from Business for 2020\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 66 — Sr. 51, Code 327020, \"Unadjusted (Loss) from Business for 2020\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "unadjustedLoss2021",
+      "label": "Sr. 52 — Unadjusted (Loss) from Business for 2021 — Total Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 52, Code 327021 — \"Unadjusted (Loss) from Business for 2021\" — total amount (column E).",
+      "sourceRef": "Worksheet 'Annex-B', row 67 — Sr. 52, Code 327021, \"Unadjusted (Loss) from Business for 2021\" (column E, \"Total Amount\")",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalAssets",
+      "label": "Sr. 53 — Total Assets [Sum of 54 to 59] — Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 53, Code 3349 — \"Total Assets [Sum of 54 to 59]\" — amount (column G). This worksheet's own <cols> definition gives columns E, F, and G an identical width and style, matching the three-column Total/Final-Tax/Normal-Tax layout of the P&L section above, but a raw-XML-observed <mergeCell ref=\"E69:F79\"/> collapses columns E and F into a single merged block spanning all eleven Statement of Affairs rows (69-79) — a genuine, disclosed source-document artifact, not a per-row entry field. Column G is the only column in this row range left unmerged with an individually styled cell per row, and is modelled here as this section's single per-line \"Amount\" field. No dataValidation rule covers this row range at all (this worksheet's own single dataValidation sqref, \"E9:G53 G5 G59 E63:E67\", stops at row 67); this field is therefore modelled with no minimum, unlike every P&L amount field above.",
+      "sourceRef": "Worksheet 'Annex-B', row 69 — Sr. 53, Code 3349, \"Total Assets [Sum of 54 to 59]\" (column G)"
+    },
+    {
+      "name": "land",
+      "label": "Sr. 54 — Land — Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 54, Code 3301 — \"Land\" — amount (column G). This worksheet's own <cols> definition gives columns E, F, and G an identical width and style, matching the three-column Total/Final-Tax/Normal-Tax layout of the P&L section above, but a raw-XML-observed <mergeCell ref=\"E69:F79\"/> collapses columns E and F into a single merged block spanning all eleven Statement of Affairs rows (69-79) — a genuine, disclosed source-document artifact, not a per-row entry field. Column G is the only column in this row range left unmerged with an individually styled cell per row, and is modelled here as this section's single per-line \"Amount\" field. No dataValidation rule covers this row range at all (this worksheet's own single dataValidation sqref, \"E9:G53 G5 G59 E63:E67\", stops at row 67); this field is therefore modelled with no minimum, unlike every P&L amount field above.",
+      "sourceRef": "Worksheet 'Annex-B', row 70 — Sr. 54, Code 3301, \"Land\" (column G)"
+    },
+    {
+      "name": "buildingAllTypes",
+      "label": "Sr. 55 — Building (all types) — Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 55, Code 3302 — \"Building (all types)\" — amount (column G). This worksheet's own <cols> definition gives columns E, F, and G an identical width and style, matching the three-column Total/Final-Tax/Normal-Tax layout of the P&L section above, but a raw-XML-observed <mergeCell ref=\"E69:F79\"/> collapses columns E and F into a single merged block spanning all eleven Statement of Affairs rows (69-79) — a genuine, disclosed source-document artifact, not a per-row entry field. Column G is the only column in this row range left unmerged with an individually styled cell per row, and is modelled here as this section's single per-line \"Amount\" field. No dataValidation rule covers this row range at all (this worksheet's own single dataValidation sqref, \"E9:G53 G5 G59 E63:E67\", stops at row 67); this field is therefore modelled with no minimum, unlike every P&L amount field above.",
+      "sourceRef": "Worksheet 'Annex-B', row 71 — Sr. 55, Code 3302, \"Building (all types)\" (column G)"
+    },
+    {
+      "name": "plantMachineryEquipmentFurniture",
+      "label": "Sr. 56 — Plant / Machinery / Equipment / Furniture (including fittings) — Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 56, Code 3303 — \"Plant / Machinery / Equipment / Furniture (including fittings)\" — amount (column G). This worksheet's own <cols> definition gives columns E, F, and G an identical width and style, matching the three-column Total/Final-Tax/Normal-Tax layout of the P&L section above, but a raw-XML-observed <mergeCell ref=\"E69:F79\"/> collapses columns E and F into a single merged block spanning all eleven Statement of Affairs rows (69-79) — a genuine, disclosed source-document artifact, not a per-row entry field. Column G is the only column in this row range left unmerged with an individually styled cell per row, and is modelled here as this section's single per-line \"Amount\" field. No dataValidation rule covers this row range at all (this worksheet's own single dataValidation sqref, \"E9:G53 G5 G59 E63:E67\", stops at row 67); this field is therefore modelled with no minimum, unlike every P&L amount field above.",
+      "sourceRef": "Worksheet 'Annex-B', row 72 — Sr. 56, Code 3303, \"Plant / Machinery / Equipment / Furniture (including fittings)\" (column G)"
+    },
+    {
+      "name": "advancesDepositsPrepaymentsTradeDebtors",
+      "label": "Sr. 57 — Advances / Deposits / Prepayments/ Trade Debtors / Receivables — Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 57, Code 3312 — \"Advances / Deposits / Prepayments/ Trade Debtors / Receivables\" — amount (column G). This worksheet's own <cols> definition gives columns E, F, and G an identical width and style, matching the three-column Total/Final-Tax/Normal-Tax layout of the P&L section above, but a raw-XML-observed <mergeCell ref=\"E69:F79\"/> collapses columns E and F into a single merged block spanning all eleven Statement of Affairs rows (69-79) — a genuine, disclosed source-document artifact, not a per-row entry field. Column G is the only column in this row range left unmerged with an individually styled cell per row, and is modelled here as this section's single per-line \"Amount\" field. No dataValidation rule covers this row range at all (this worksheet's own single dataValidation sqref, \"E9:G53 G5 G59 E63:E67\", stops at row 67); this field is therefore modelled with no minimum, unlike every P&L amount field above.",
+      "sourceRef": "Worksheet 'Annex-B', row 73 — Sr. 57, Code 3312, \"Advances / Deposits / Prepayments/ Trade Debtors / Receivables\" (column G)"
+    },
+    {
+      "name": "stocksStoresSparesAsset",
+      "label": "Sr. 58 — Stocks / Stores / Spares — Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 58, Code 3315 — \"Stocks / Stores / Spares\" — amount (column G). This worksheet's own <cols> definition gives columns E, F, and G an identical width and style, matching the three-column Total/Final-Tax/Normal-Tax layout of the P&L section above, but a raw-XML-observed <mergeCell ref=\"E69:F79\"/> collapses columns E and F into a single merged block spanning all eleven Statement of Affairs rows (69-79) — a genuine, disclosed source-document artifact, not a per-row entry field. Column G is the only column in this row range left unmerged with an individually styled cell per row, and is modelled here as this section's single per-line \"Amount\" field. No dataValidation rule covers this row range at all (this worksheet's own single dataValidation sqref, \"E9:G53 G5 G59 E63:E67\", stops at row 67); this field is therefore modelled with no minimum, unlike every P&L amount field above.",
+      "sourceRef": "Worksheet 'Annex-B', row 74 — Sr. 58, Code 3315, \"Stocks / Stores / Spares\" (column G)"
+    },
+    {
+      "name": "cashCashEquivalents",
+      "label": "Sr. 59 — Cash / Cash Equivalents — Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 59, Code 3319 — \"Cash / Cash Equivalents\" — amount (column G). This worksheet's own <cols> definition gives columns E, F, and G an identical width and style, matching the three-column Total/Final-Tax/Normal-Tax layout of the P&L section above, but a raw-XML-observed <mergeCell ref=\"E69:F79\"/> collapses columns E and F into a single merged block spanning all eleven Statement of Affairs rows (69-79) — a genuine, disclosed source-document artifact, not a per-row entry field. Column G is the only column in this row range left unmerged with an individually styled cell per row, and is modelled here as this section's single per-line \"Amount\" field. No dataValidation rule covers this row range at all (this worksheet's own single dataValidation sqref, \"E9:G53 G5 G59 E63:E67\", stops at row 67); this field is therefore modelled with no minimum, unlike every P&L amount field above.",
+      "sourceRef": "Worksheet 'Annex-B', row 75 — Sr. 59, Code 3319, \"Cash / Cash Equivalents\" (column G)"
+    },
+    {
+      "name": "totalEquityLiabilities",
+      "label": "Sr. 60 — Total Equity / Liabilities [Sum of 61 to 63] — Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 60, Code 3399 — \"Total Equity / Liabilities [Sum of 61 to 63]\" — amount (column G). This worksheet's own <cols> definition gives columns E, F, and G an identical width and style, matching the three-column Total/Final-Tax/Normal-Tax layout of the P&L section above, but a raw-XML-observed <mergeCell ref=\"E69:F79\"/> collapses columns E and F into a single merged block spanning all eleven Statement of Affairs rows (69-79) — a genuine, disclosed source-document artifact, not a per-row entry field. Column G is the only column in this row range left unmerged with an individually styled cell per row, and is modelled here as this section's single per-line \"Amount\" field. No dataValidation rule covers this row range at all (this worksheet's own single dataValidation sqref, \"E9:G53 G5 G59 E63:E67\", stops at row 67); this field is therefore modelled with no minimum, unlike every P&L amount field above.",
+      "sourceRef": "Worksheet 'Annex-B', row 76 — Sr. 60, Code 3399, \"Total Equity / Liabilities [Sum of 61 to 63]\" (column G)"
+    },
+    {
+      "name": "capital",
+      "label": "Sr. 61 — Capital — Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 61, Code 3352 — \"Capital\" — amount (column G). This worksheet's own <cols> definition gives columns E, F, and G an identical width and style, matching the three-column Total/Final-Tax/Normal-Tax layout of the P&L section above, but a raw-XML-observed <mergeCell ref=\"E69:F79\"/> collapses columns E and F into a single merged block spanning all eleven Statement of Affairs rows (69-79) — a genuine, disclosed source-document artifact, not a per-row entry field. Column G is the only column in this row range left unmerged with an individually styled cell per row, and is modelled here as this section's single per-line \"Amount\" field. No dataValidation rule covers this row range at all (this worksheet's own single dataValidation sqref, \"E9:G53 G5 G59 E63:E67\", stops at row 67); this field is therefore modelled with no minimum, unlike every P&L amount field above.",
+      "sourceRef": "Worksheet 'Annex-B', row 77 — Sr. 61, Code 3352, \"Capital\" (column G)"
+    },
+    {
+      "name": "borrowingsDebtLoan",
+      "label": "Sr. 62 — Borrowings / Debt / Loan — Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 62, Code 3371 — \"Borrowings / Debt / Loan\" — amount (column G). This worksheet's own <cols> definition gives columns E, F, and G an identical width and style, matching the three-column Total/Final-Tax/Normal-Tax layout of the P&L section above, but a raw-XML-observed <mergeCell ref=\"E69:F79\"/> collapses columns E and F into a single merged block spanning all eleven Statement of Affairs rows (69-79) — a genuine, disclosed source-document artifact, not a per-row entry field. Column G is the only column in this row range left unmerged with an individually styled cell per row, and is modelled here as this section's single per-line \"Amount\" field. No dataValidation rule covers this row range at all (this worksheet's own single dataValidation sqref, \"E9:G53 G5 G59 E63:E67\", stops at row 67); this field is therefore modelled with no minimum, unlike every P&L amount field above.",
+      "sourceRef": "Worksheet 'Annex-B', row 78 — Sr. 62, Code 3371, \"Borrowings / Debt / Loan\" (column G)"
+    },
+    {
+      "name": "advancesDepositsAccruedExpensesTradeCreditors",
+      "label": "Sr. 63 — Advances / Deposits / Accrued Expenses/ Trade Creditors / Payables — Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 63, Code 3384 — \"Advances / Deposits / Accrued Expenses/ Trade Creditors / Payables\" — amount (column G). This worksheet's own <cols> definition gives columns E, F, and G an identical width and style, matching the three-column Total/Final-Tax/Normal-Tax layout of the P&L section above, but a raw-XML-observed <mergeCell ref=\"E69:F79\"/> collapses columns E and F into a single merged block spanning all eleven Statement of Affairs rows (69-79) — a genuine, disclosed source-document artifact, not a per-row entry field. Column G is the only column in this row range left unmerged with an individually styled cell per row, and is modelled here as this section's single per-line \"Amount\" field. No dataValidation rule covers this row range at all (this worksheet's own single dataValidation sqref, \"E9:G53 G5 G59 E63:E67\", stops at row 67); this field is therefore modelled with no minimum, unlike every P&L amount field above.",
+      "sourceRef": "Worksheet 'Annex-B', row 79 — Sr. 63, Code 3384, \"Advances / Deposits / Accrued Expenses/ Trade Creditors / Payables\" (column G)"
+    }
+  ]
+}
