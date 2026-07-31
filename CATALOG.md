@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**102 jurisdictions** | **703 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**103 jurisdictions** | **704 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-31, GOV-5805, "GovSchema Standard Research"): Belize
+> opens as the registry's 103rd jurisdiction**, via
+> `bz/doi/passport-application@1.0.0` — the Department of Immigration's
+> "Application for Passport" (form V2, revised July 3, 2025), a single
+> unified form covering the ePassport (regular, diplomatic, or official)
+> and the temporary paper passport, for a new, renewal, or replacement
+> (lost, stolen, damaged, or name-change) application, opening Passport (1
+> of 6). A prior cycle (GOV-5791) had banked Belize as one of 16 countries
+> scouted with at least one reachable candidate document ("Belize
+> ePassport") but did not author it (Papua New Guinea's Form A-17 was
+> judged the strongest candidate that cycle, and the Democratic Republic of
+> the Congo's Visa AcroForm the strongest of the remainder the following
+> cycle, GOV-5798). This cycle re-scouted Belize specifically and confirmed
+> its Department of Immigration hosts the form directly and unauthenticated
+> on its own official domain, recently updated (August 2025). Independently
+> re-fetched `https://immigration.gov.bz/wp-content/uploads/2025/08/Belize-ePP-PP-Application-form_LETTER_v2_Jun_03-2025.pdf`
+> (HTTP 200, 510,208 bytes, sha256
+> `afb776dbf18c4a80a189d881f18be66cc2785b1653b7296406c4f57bf6d00c94`,
+> no login/CAPTCHA/WAF gate; confirmed via `pdfjs-dist` to be a genuine
+> 99-widget AcroForm across 3 pages). Models 71 `fields[]` across 8 steps,
+> 1 `documents[]` entry, and 1 `crossFieldValidation` rule; see the
+> Passport vertical update below and the document's own VERIFICATION.md for
+> the full sourcing record, disclosed scoping decisions (an "APPLICATION
+> DETAILS (for office use only)" box whose own fields are nonetheless
+> applicant-supplied; an `email` field internally misnamed `PERMANENT
+> ADDRESS`; several generic `TextN`-named and two adjacent-row-concatenated
+> internal field names, all disambiguated by rect position; Section 7's
+> own five declaration checkboxes having no backing widgets at all; no
+> checkbox exists for the form's own "Same as permanent address" note), and
+> conformance results (3 valid scenarios, 11 mutation fixtures, all passing
+> as expected). Both validators pass (704/704); registry index rebuilt.
+> Belize stands at 1 of 6 verticals; DMV, Business Formation, Visa, Taxes,
+> and National ID remain open, unscreened backlog for a future cycle.
 
 > **Update (2026-07-31, GOV-5798, "GovSchema Standard Research"): the
 > Democratic Republic of the Congo opens as the registry's 102nd
@@ -18008,7 +18042,16 @@
 
 ## By Vertical
 
-### Passport (63/98 jurisdictions — 64%)
+### Passport (64/99 jurisdictions — 65%)
+
+> **Update (2026-07-31, GOV-5805, "GovSchema Standard Research"): Belize's
+> Passport vertical opens (1 of 6)**, via
+> `bz/doi/passport-application@1.0.0` — the Department of Immigration's
+> "Application for Passport" (V2, revised July 3, 2025). See the Executive
+> Summary's GOV-5805 update above for the full sourcing record. Opens
+> Belize as the registry's 103rd jurisdiction; numerator and denominator
+> both bump 63/98 to 64/99 (a brand-new jurisdiction screened and opened in
+> the same cycle).
 
 > **Update (2026-07-25, GOV-4818, "GovSchema Standard Research"): Türkiye
 > screened and confirmed a dead end for Passport this cycle** — ordinary
@@ -25159,6 +25202,7 @@ now closed.
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BO** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **BR** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **BZ** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | **BW** | 4 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CD** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
@@ -27338,6 +27382,13 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       backlog. Angola, Mozambique, Cameroon, Sudan, Malawi, Suriname,
       Guyana, Belize, Honduras, and Cuba remain unauthored backlog from this
       same scouting pass.
+      **Update (GOV-5805, 2026-07-31): Belize's ePassport candidate is now
+      authored, opening it as the registry's 103rd jurisdiction**, via
+      `bz/doi/passport-application@1.0.0` — see the Executive Summary and
+      Passport vertical updates above. Belize's DMV, Business Formation,
+      Visa, Taxes, and National ID remain open, unscreened backlog. Angola,
+      Mozambique, Cameroon, Sudan, Malawi, Suriname, Guyana, Honduras, and
+      Cuba remain unauthored backlog from this same scouting pass.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
