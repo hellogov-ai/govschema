@@ -4,7 +4,55 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **700 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **701 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-31, GOV-5782, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains an eleventh schema, closing the FBR "Manual Return"
+> workbook's own backlog outright**, via
+> `pk/fbr/annexure-f-personal-expenses@1.0.0` — the Federal Board of
+> Revenue's "Annex-F" worksheet, the last of the nine worksheets in the same
+> workbook already modelled as `pk/fbr/annual-individual-income-tax-return-it-1b`
+> (Form IT-1B), `pk/fbr/annual-individual-income-tax-return-it-2` (Form IT-2),
+> `pk/fbr/annexure-a-adjustable-tax`,
+> `pk/fbr/annexure-b-manufacturing-trading-profit-loss-account`,
+> `pk/fbr/annexure-c-inadmissible-admissible-deductions`,
+> `pk/fbr/annexure-d-depreciation-amortization`,
+> `pk/fbr/annexure-e-minimum-final-tax-chargeable`, and `pk/fbr/wealth-statement`.
+> That Annex-E sibling's own v1.0.0 (GOV-5773) had explicitly named Annex-F as
+> this workbook's sole remaining open backlog; with the 16-jurisdiction "5 of
+> 6 verticals" list already re-screened a dead end across seven consecutive
+> prior cycles (GOV-5731, GOV-5738, GOV-5745, GOV-5752, GOV-5759, GOV-5766,
+> GOV-5773), this cycle picked up Annex-F to close the workbook rather than
+> re-screening that list an eighth time. Independently re-fetched the source
+> (HTTP 200, 104,097 bytes, sha256
+> `4e2f9874e9a910713fae9a182fc5c5a578bcfd2649d2031f8144c8b5fba96b9f` —
+> byte-identical to every prior cycle's own figures, confirming no
+> revision). Structurally Annex-F is a single-table personal/household-
+> expense line-item list (Sr. 1 headline total plus sixteen named
+> categories) whose own headline formula, "Personal Expenses [(2 + 16) -
+> 17]", adds an embedded four-slot family-member-contribution sub-table's
+> own subtotal (Sr. 17) into the running total and then nets it back out —
+> a genuine printed-formula quirk, quoted verbatim and disclosed, not
+> corrected. This sheet's own single `dataValidations` rule
+> (`sqref="F6:F22 F24:F27"`) covers every Amount cell on the sheet,
+> including both of its own headline totals (Sr. 1 and Sr. 17) alongside
+> their own components — the same total-validated-like-its-components
+> inversion already disclosed for Annex-A's and Annex-C's own headline
+> totals, and the opposite of Annex-E's own headline-total exclusion. The
+> family-contribution sub-table's own header row prints only "CNIC No."
+> and "Name*" with no repeated "Amount" label, confirmed to inherit the
+> main table's own Amount column by matching cell style and
+> `dataValidation` coverage; its own unlabelled, unvalidated column E was
+> found and disclosed as a genuine inert spacer, not modelled. One source-
+> document spelling artifact ("Maintenence" for "Maintenance") was found
+> and disclosed. 34 fields, 7 conformance checks (2 valid scenarios, 5
+> mutation-control fixtures) all passing as expected. Both validators pass
+> (701/701); registry index rebuilt. Pakistan remains at 3 of 6 verticals
+> (an eleventh schema within the already-open Taxes vertical, not a new
+> vertical); this cycle closes the FBR "Manual Return" workbook's own
+> disclosed backlog outright — no further companion schema remains open for
+> this workbook. See the Taxes vertical section update below and this
+> document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-31, GOV-5773, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical gains a tenth schema**, via
@@ -20827,6 +20875,20 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (82/96 jurisdictions — 85%)
 
+> **Update (2026-07-31, GOV-5782, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains an eleventh schema, closing the FBR "Manual Return"
+> workbook's own backlog outright**, via
+> `pk/fbr/annexure-f-personal-expenses@1.0.0` — the FBR's "Annex-F"
+> worksheet, a personal/household-expenses reconciliation with an embedded
+> four-slot family-contribution sub-table, from the same "Manual Return"
+> workbook as `pk/fbr/annexure-e-minimum-final-tax-chargeable` (whose own
+> v1.0.0 named Annex-F as this workbook's sole remaining backlog). See the
+> Executive Summary's GOV-5782 update above for the full sourcing record,
+> disclosed structural findings, and conformance results. Not a new vertical
+> (Pakistan's Taxes vertical was already open); an eleventh schema for
+> Pakistan overall. No further companion schema remains open for this
+> workbook; numerator/denominator unchanged.
+
 > **Update (2026-07-31, GOV-5773, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical gains a tenth schema**, via
 > `pk/fbr/annexure-e-minimum-final-tax-chargeable@1.0.0` — the FBR's
@@ -25039,7 +25101,7 @@ now closed.
 | **PA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PK** | 10 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **PK** | 11 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PY** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -31382,6 +31444,26 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   of the first table and the entire second table (disclosed, not
   corrected). Annex-F remains this workbook's own disclosed, open backlog
   for a future cycle.
+
+  **Update (GOV-5782, 2026-07-31): Annex-F ("Personal Expenses") is now also
+  authored, closing this workbook's own disclosed backlog outright**, via
+  `pk/fbr/annexure-f-personal-expenses@1.0.0` — see the Executive Summary's
+  GOV-5782 update above and the document's own VERIFICATION.md for the full
+  sourcing record. A single-table personal/household-expenses reconciliation
+  (Sr. 1 headline total plus sixteen named categories) with an embedded
+  four-slot family-member-contribution sub-table (Sr. 18 through Sr. 21,
+  each with CNIC/Name/Amount); Sr. 1's own printed formula adds the
+  sub-table's own subtotal (Sr. 17) into the running total and then nets it
+  back out, quoted verbatim and disclosed, not corrected. This sheet's own
+  single `dataValidation` rule covers every Amount cell including both
+  headline totals alongside their own components — the same
+  total-validated-like-its-components inversion already disclosed for
+  Annex-A/Annex-C, and the opposite of Annex-E's own headline-total
+  exclusion. One source-document spelling artifact ("Maintenence" for
+  "Maintenance") disclosed. With Annex-A through Annex-F, both annual return
+  worksheets (IT-1B, IT-2), and the Wealth Statement now all authored, this
+  nine-worksheet FBR "Manual Return" workbook's own backlog is closed
+  outright — no further companion schema remains open for this workbook.
 
 - **Georgia — screened, not viable this cycle (GOV-3078).** Visa
   (`geoconsul.gov.ge`/`evisa.gov.ge`) is fully e-Portal based; the MFA's
