@@ -4,7 +4,41 @@
 
 ## Executive Summary
 
-**103 jurisdictions** | **707 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**103 jurisdictions** | **708 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-31, GOV-5833, "GovSchema Standard Research"):
+> Papua New Guinea's National ID & Civic Documents vertical opens, taking
+> the jurisdiction to 4 of 6 verticals**, via
+> `pg/pngcir/birth-and-national-identity-registration-form-1@1.0.0` — the
+> Papua New Guinea Civil and Identity Registry's (PNGCIR) "Form 1," the
+> "Birth & National Identity Registration Form" issued under the Civil
+> Registration Act (Chapter 304) Amended 2014. GOV-5812's own screening
+> cycle had banked two live but flat (zero-AcroForm-widget) PNGCIR
+> candidates as weaker than a genuine AcroForm and left both unauthored;
+> re-fetched both independently this cycle (HTTP 200, byte-identical to
+> the banked estimates: 836,266 and 475,527 bytes) and confirmed one is a
+> pure scanned-image specimen with **no extractable text layer at all**
+> (not merely zero widgets), while the other — this document — is a
+> genuine born-digital, flat specimen with a full, legible text layer and
+> the form's own asterisk convention marking required fields. This single
+> form serves a dual purpose: registering a child's birth (Sections A/B)
+> and, once that same person turns 18, registering them for a National
+> Identity Card (Section C), gated behind a directly-supplied
+> `applicantIsAdult` boolean mirroring this registry's own
+> `applicantUnder17`/`hasSponsor` convention. Models 87 `fields[]` across 4
+> steps and 2 `documents[]` attestation entries (the Section D witness's
+> signature and the applicant's own closing certification signature/mark);
+> no genuine backing AcroForm widget exists anywhere on the specimen, so
+> neither signature is modelled as a scalar field, consistent with
+> `pg/ica/passport-application`'s own precedent. 3 valid scenarios and 15
+> mutation fixtures, all passing as expected. Both validators pass
+> (708/708); registry index rebuilt. This is a vertical-opening schema —
+> Papua New Guinea now stands at 4 of 6 verticals (Business Formation,
+> Passport, Visa, National ID). DMV and Taxes remain confirmed dead ends;
+> the sibling IPA Form A-2 (overseas company registration) remains open,
+> unauthored Business Formation backlog. See the National ID & Civic
+> Documents vertical update below and the document's own VERIFICATION.md
+> for the full sourcing record and every disclosed scoping decision.
 
 > **Update (2026-07-31, GOV-5826, "GovSchema Standard Research"):
 > Papua New Guinea's Visa vertical gains a second companion schema**, via
@@ -24406,8 +24440,16 @@ vertical (Business Formation, DMV, Visa now open; Passport, Taxes, National
 ID remain open — Taxes as a genuinely open but currently source-blocked
 candidate, the other two as confirmed dead ends).
 
-### National ID & Civic Documents (57/83 jurisdictions — 69%)
+### National ID & Civic Documents (58/83 jurisdictions — 70%)
 
+> **Update (2026-07-31, GOV-5833, "GovSchema Standard Research"): Papua New
+> Guinea opens this vertical (58/83), taking the jurisdiction to 4 of 6**,
+> via `pg/pngcir/birth-and-national-identity-registration-form-1@1.0.0` —
+> PNGCIR's Form 1, "Birth & National Identity Registration Form" (Civil
+> Registration Act, Chapter 304, Amended 2014). See the Executive Summary
+> update above for the full sourcing record and every disclosed scoping
+> decision.
+>
 > **Update (2026-07-25, GOV-4890, "GovSchema Standard Research"): Türkiye
 > gains an eleventh schema within this already-open vertical**, via
 > `tr/nvi/acquisition-of-turkish-citizenship-by-adoption-application@1.0.0`
@@ -25436,7 +25478,7 @@ now closed.
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **PG** | 4 | ✓ | ✗ | ✓ | ✗ | ✓ | ✗ |
+| **PG** | 5 | ✓ | ✗ | ✓ | ✗ | ✓ | ✓ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PK** | 11 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -27556,6 +27598,20 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       6). DMV and Taxes remain confirmed dead ends; National ID and the
       sibling Form A-2 remain open, unscreened/unauthored backlog for a
       future cycle.
+      **Update (GOV-5833, 2026-07-31): Papua New Guinea's National ID
+      candidate is now authored, opening the vertical (4 of 6 for the
+      jurisdiction)**, via
+      `pg/pngcir/birth-and-national-identity-registration-form-1@1.0.0` —
+      PNGCIR's Form 1, "Birth & National Identity Registration Form" (Civil
+      Registration Act, Chapter 304, Amended 2014). Both PNGCIR candidates
+      banked by GOV-5812 were independently re-fetched (byte-identical to
+      the banked estimates); the second (the "...Citizenship_Form.pdf")
+      confirmed a pure scanned-image specimen with no extractable text
+      layer at all, weaker than this document's genuine born-digital flat
+      text layer, and remains unauthored. See the Executive Summary and
+      National ID & Civic Documents vertical updates above. DMV and Taxes
+      remain confirmed dead ends; the sibling IPA Form A-2 remains open,
+      unauthored Business Formation backlog.
     - **Kosovo** — ARBK's Form A0 (LLC registration) was re-scouted this
       cycle (still live and unauthenticated, `arbk.rks-gov.net`) and came
       back the single richest field-wise candidate found across all 18

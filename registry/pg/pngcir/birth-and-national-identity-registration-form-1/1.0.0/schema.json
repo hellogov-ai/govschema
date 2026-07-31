@@ -1,0 +1,847 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "pg/pngcir/birth-and-national-identity-registration-form-1",
+  "version": "1.0.0",
+  "title": "Papua New Guinea Birth & National Identity Registration Form (PNGCIR Form 1)",
+  "description": "The Papua New Guinea Civil and Identity Registry's (PNGCIR) \"Form 1\": \"Birth & National Identity Registration Form\", issued under the Civil Registration Act (Chapter 304) Amended 2014. A single combined form serving two purposes: registering a child's birth (Sections A and B, completed by or for the child/applicant and their parents) and, for an applicant who is 18 years of age or older, registering that same person for a National Identity Card (Section C). Also carries an authorized-witness attestation block (Section D) and the applicant's own closing certification. Opens Papua New Guinea's National ID & Civic Documents vertical (4 of 6 verticals now open, alongside Business Formation, Passport, and Visa). DMV and Taxes remain confirmed dead ends for Papua New Guinea; the sibling IPA Form A-2 (overseas company registration) remains open, unauthored Business Formation backlog. This document does not file the application itself; the live source is always authoritative. See VERIFICATION.md for the full sourcing record and every disclosed scoping decision. GovSchema is an independent, non-profit standards body; it is not affiliated with, endorsed by, or operated by the Independent State of Papua New Guinea or its Civil and Identity Registry.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Papua New Guinea Civil and Identity Registry",
+    "abbreviation": "PNGCIR",
+    "url": "https://pngcir.gov.pg"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://pngcir.gov.pg/wp-content/uploads/2020/01/Form-1-Birth.pdf",
+    "retrievedAt": "2026-07-31",
+    "documentRef": "Form 1, \"Birth & National Identity Registration Form\", Civil Registration Act (Chapter 304) Amended 2014"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-31",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-31",
+    "notes": "GOV-5833 (\"GovSchema Standard Research\"). Re-scanned CATALOG.md fresh: the Known Gaps \"0t.\" entry (updated through GOV-5826) shows Papua New Guinea at 3 of 6 verticals (Business Formation, Passport, Visa), with National ID banked as \"two live but flat (zero-widget) candidates, weaker than a genuine AcroForm\" from the GOV-5812 screening cycle: pngcir.gov.pg/wp-content/uploads/2020/03/Births-NID-Registration-form_new_Citizenship_Form.pdf (836,266 bytes) and pngcir.gov.pg/wp-content/uploads/2020/01/Form-1-Birth.pdf (475,527 bytes). Independently re-fetched both this cycle: both HTTP 200, byte-identical to the banked estimates (836,266 and 475,527 bytes respectively), sha256 a19b4647b2918576ec8e044ece31f072e156ace2f0bb6e32ea0274f75ca45e4d and f5f104fe9883c380518e7e66b06312197be1c6f7f7e4d45391c7e157c1af3df5, both served directly from pngcir.gov.pg with no login/CAPTCHA/WAF gate. Parsed both with pdfjs-dist (legacy build): the 836,266-byte \"...Citizenship_Form.pdf\" is confirmed a pure scanned-image specimen — both pages return zero text-content items and each page's operator list is dominated by a single paintImageXObject call (6 total ops/page), i.e. it carries no extractable text layer at all, not merely zero AcroForm widgets, making it a strictly weaker candidate than its sibling; not authored. The 475,527-byte \"Form-1-Birth.pdf\" (this document) is a genuine born-digital, flat (zero-AcroForm-widget, independently re-confirmed) 2-page specimen with a full, legible text layer covering every printed field label, section header, checkbox option, and the asterisk (*) convention the form itself uses to mark required fields (its own Section A instruction reads \"PLEASE WRITE IN BLOCK LETTERS & FILL UP ALL REQUIRED INFORMATION (*)\").\n\nDisclosed scoping decisions:\n1. **Section O (\"For Office Use Only\") is entirely excluded** — its Birth Registration/National Identity Card Registration checkbox pair, Registration Date, Province/LLG/District/Ward, Registration Point, Registration Officer's Name, and NID No. all sit directly beneath a printed \"For Office Use Only\" heading, indicating registry-staff entry, not applicant entry — the same treatment this registry gives other office-internal control blocks (e.g. bd/nidw/nid-correction-application-form-1's excluded serial-number/office-officer fields; mx/sre/passport-application's \"Campos de control\").\n2. **No fillable AcroForm widget exists anywhere on this specimen** (independently re-confirmed via pdfjs-dist, 0 annotations across both pages) — consistent with this registry's own convention (pg/ica/passport-application) of never modelling a scalar signature field absent a genuine backing widget. The two printed signature lines that carry their own substantive certification/attestation text — Section D's Witness \"*Signature:\" line and the closing \"I hereby certify that the above information is correct for the purpose of registration under the Civil Registration Act (Chapter 304) Amended 2014\" statement immediately above the *Applicant's Signature/Mark* line — are instead modelled as `documents[]` attestation entries (witnessSignature, applicantCertificationSignature), mirroring this registry's own established convention for exactly this pattern (e.g. pg/ica/passport-application's certificateRegardingApplicant/applicantDeclaration entries). The adjacent **Registration Officer's Signature** (same closing line) is excluded as office-internal, per (1) above.\n3. **A directly-supplied boolean gate, applicantIsAdult**, was added to model Section C's own printed header condition (\"THIS SECTION IS TO BE COMPLETED BY APPLICANTS 18 YEARS AND ABOVE ONLY\") without a backing checkbox of its own — mirroring this registry's own applicantUnder17/hasSponsor/hasHostInMalta convention (pg/ica/passport-application; cd/maeci/visa-application; mt/identita/long-stay-visa-application). Every Section C field is requiredWhen this gate is true; none is statically required, since a birth-only registration (a newborn applicant) never reaches Section C at all.\n4. **Mother/Father fields are modelled as separate, prefixed sibling fields** (e.g. motherGivenNames/fatherGivenNames), not a single shared field, since the form's own \"MOTHER   FATHER\" column header prints each subsequent row label once above two side-by-side fill-in boxes — consistent with this registry's established two-column-parent-block pattern.\n5. **familyName's own \"(Name at Birth)\" footnote and the parents' \"(Father's Surname)\" footnote** are both disclosed in their respective fields' description rather than modelled as separate fields — they are printed clarifying captions under the Family Name row, not additional data points.\n6. **applicantPreferredSpouseFamilyName and applicantSpouseNidNumberOrName are left bare-optional, not requiredWhen-gated**, despite the form's own \"(Married Woman Only)\" caption beneath the first, since (as with pg/ica/passport-application's own otherParentFullName precedent) a parenthetical scope caption is not an imperative requirement statement, and inventing a hard `maritalStatus == MARRIED AND gender == FEMALE` gate would go beyond what the form itself states.\n7. **Type of Birth's own \"(Fill Form 4: Particulars of an Adoption)\" cross-reference** (appearing when Registered As = Adoption) points to a separate PNGCIR form (Form 4) outside this specimen's own scope — disclosed, not modelled, consistent with this registry's standing practice of not reaching into a cross-referenced sibling document not itself sourced this cycle.\n8. **Parents Marriage Information (typeOfMarriage, dateOfMarriage, marriageRegNo) is left unconditionally optional**, exactly as the form itself prints it (no asterisk on any of its three fields, captioned \"Civil & Customary Marriage Only\") — no boolean \"are the parents married\" gate exists on the form to bind a requiredWhen condition to, so none is invented.\n9. **orderOfChild is modelled as a bare-optional integer** (the form's own \"Order of Child:\" field, e.g. 1st/2nd/3rd child born to the same mother) and **disability as a bare-optional free-text field** (the form provides only a blank line, no Yes/No checkbox) — both unmarked with the form's own required-field asterisk.\n10. **Screened but not re-scoped this cycle**: PG's DMV and Taxes verticals remain confirmed dead ends per the GOV-5812 cycle; the sibling IPA Form A-2 (Business Formation companion) remains open, unauthored backlog.\n\nModels 87 fields[] across 4 steps (1 of the 87 is the directly-supplied applicantIsAdult gate without a backing widget), 2 `documents[]` attestation entries (witnessSignature, applicantCertificationSignature), and no crossFieldValidation rules (no genuine structural date/numeric relationship is printed on this specimen beyond what independent fields already capture).\n\n3 valid mock scenarios (a newborn's birth registration with married parents and no Section C fields populated; an 18-year-old applicant's own National Identity Card registration with Section C fully populated, unmarried; a married female 18+ applicant exercising the optional spouse fields) plus 15 mutation-control fixtures (11 missing-required fixtures covering Section A: applicantGivenNames, applicantFamilyName, applicantMobileNumber; Section B: motherGivenNames, fatherFamilyName, motherOriginClan, motherOriginCountry, motherResidentialProvince; the Section C gate itself: applicantIsAdult; and Section D: witnessGivenNames, witnessOccupation; 2 missing-requiredWhen fixtures with applicantIsAdult=true, one each for applicantOriginProvince and applicantEducation; an invalid-enum-value fixture, applicantGender set to an out-of-enum value; and an unknown-field-rejected fixture) committed under conformance/pg/pngcir/birth-and-national-identity-registration-form-1/1.0.0/, following this registry's established flat-object-per-fixture convention (documents[] requiredness is not exercised by conformance fixtures, consistent with every other schema in this registry). An ephemeral, from-scratch conformance checker (deriving required/requiredWhen rules directly from this schema's own fields[]/documents[], discarded after use, not committed) ran all 18 fixtures: all 3 valid scenarios at 0 errors, all 15 mutation controls each raising exactly 1 error. Validated clean with node tools/validate.mjs and node tools/validate-ajv.mjs, individually and as part of the full registry run.\n\nOpens Papua New Guinea's National ID & Civic Documents vertical (4 of 6). DMV and Taxes remain confirmed dead ends; the sibling IPA Form A-2 remains open, unauthored Business Formation backlog."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "birthCertOrNidReferenceNumber",
+      "label": "Birth Cert ID/NID No.",
+      "type": "string",
+      "description": "An existing Birth Certificate ID or National ID number, for record linkage when this form is used to register an applicant for a National Identity Card against an already-registered birth record. Left bare-optional since a first-time birth registration has no such number yet.",
+      "sourceRef": "Section A, top row — \"Birth Cert ID/NID No:\"",
+      "validation": {
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "applicantDateOfBirth",
+      "label": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Section A — \"*Date of Birth : DD-MM-YYYY\""
+    },
+    {
+      "name": "applicantGivenNames",
+      "label": "Given Name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section A — \"*Given Name(s):\""
+    },
+    {
+      "name": "applicantFamilyName",
+      "label": "Family Name (Name at Birth)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The child/applicant's own family name at birth, per the form's own \"(Name at Birth)\" caption beneath this row.",
+      "sourceRef": "Section A — \"*Family Name: (Name at Birth)\""
+    },
+    {
+      "name": "applicantBirthHospitalVillageTown",
+      "label": "Place of Birth — Hospital/Village/Town",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section A, Place of Birth — \"*Hospital/Village/Town:\""
+    },
+    {
+      "name": "applicantBirthProvince",
+      "label": "Place of Birth — Province",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section A, Place of Birth — \"*Province:\""
+    },
+    {
+      "name": "applicantBirthLlg",
+      "label": "Place of Birth — Local-Level Government (LLG)",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section A, Place of Birth — \"*LLG:\""
+    },
+    {
+      "name": "applicantBirthDistrict",
+      "label": "Place of Birth — District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section A, Place of Birth — \"*District:\""
+    },
+    {
+      "name": "applicantBirthWard",
+      "label": "Place of Birth — Ward",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section A, Place of Birth — \"*Ward:\""
+    },
+    {
+      "name": "applicantGender",
+      "label": "Gender",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["MALE", "FEMALE"]
+      },
+      "sourceRef": "Section A — \"*Gender:  □ Male  □ Female\""
+    },
+    {
+      "name": "orderOfChild",
+      "label": "Order of Child",
+      "type": "integer",
+      "description": "The child's birth order among children born to the same mother (e.g. 1st, 2nd, 3rd). Printed without the form's own required-field asterisk.",
+      "sourceRef": "Section A — \"Order of Child:\"",
+      "validation": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "registrationType",
+      "label": "Registration Type",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["LIVE_BIRTH", "STILL_BIRTH"]
+      },
+      "sourceRef": "Section A — \"*Registration Type:  □ Live Birth  □ Still Birth\""
+    },
+    {
+      "name": "registeredAs",
+      "label": "Registered As",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": ["NATURAL", "ADOPTION", "FOSTERED"]
+      },
+      "sourceRef": "Section A — \"*Registered As:  □ Natural  □ Adoption  □ Fostered\""
+    },
+    {
+      "name": "typeOfBirth",
+      "label": "Type of Birth",
+      "type": "enum",
+      "description": "Printed without the form's own required-field asterisk. When Registered As = Adoption, the form's own caption directs the registrant to also \"Fill Form 4: Particulars of an Adoption\" — a separate PNGCIR form outside this specimen's scope, not modelled here.",
+      "validation": {
+        "enum": ["SINGLE", "TWINS", "TRIPLETS", "QUADRUPLETS"]
+      },
+      "sourceRef": "Section A — \"Type of Birth:  □ Single  □ Twins  □ Triplets  □ Quadruplets\""
+    },
+    {
+      "name": "applicantDisability",
+      "label": "Disability",
+      "type": "string",
+      "description": "A free-text description of any disability; the form provides only a blank fill-in line, no Yes/No checkbox.",
+      "sourceRef": "Section A — \"Disability:\"",
+      "validation": {
+        "maxLength": 200
+      }
+    },
+    {
+      "name": "applicantMobileNumber",
+      "label": "Mobile No.",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section A — \"*Mobile No:\"",
+      "validation": {
+        "maxLength": 20
+      }
+    },
+    {
+      "name": "motherNidNumber",
+      "label": "Mother's NID No.",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Section B, MOTHER column — \"NID No:\"",
+      "validation": {
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "fatherNidNumber",
+      "label": "Father's NID No.",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Section B, FATHER column — \"NID No:\"",
+      "validation": {
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "motherGivenNames",
+      "label": "Mother's Given Name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section B, MOTHER column — \"*Given Name(s):\""
+    },
+    {
+      "name": "fatherGivenNames",
+      "label": "Father's Given Name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section B, FATHER column — \"*Given Name(s):\""
+    },
+    {
+      "name": "motherFamilyName",
+      "label": "Mother's Family Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section B, MOTHER column — \"*Family Name:\""
+    },
+    {
+      "name": "fatherFamilyName",
+      "label": "Father's Family Name (Father's Surname)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "description": "The form's own \"(Father's Surname)\" caption clarifies this column's Family Name row.",
+      "sourceRef": "Section B, FATHER column — \"*Family Name: (Father's Surname)\""
+    },
+    {
+      "name": "motherDateOfBirth",
+      "label": "Mother's Date of Birth",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column — \"*Date of Birth : DD-MM-YYYY\""
+    },
+    {
+      "name": "fatherDateOfBirth",
+      "label": "Father's Date of Birth",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Section B, FATHER column — \"*Date of Birth : DD-MM-YYYY\""
+    },
+    {
+      "name": "motherNationality",
+      "label": "Mother's Nationality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column — \"*Nationality:\""
+    },
+    {
+      "name": "fatherNationality",
+      "label": "Father's Nationality",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column — \"*Nationality:\""
+    },
+    {
+      "name": "motherOccupation",
+      "label": "Mother's Occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column — \"*Occupation\""
+    },
+    {
+      "name": "fatherOccupation",
+      "label": "Father's Occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column — \"*Occupation\""
+    },
+    {
+      "name": "motherDenomination",
+      "label": "Mother's Denomination",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column — \"*Denomination:\""
+    },
+    {
+      "name": "fatherDenomination",
+      "label": "Father's Denomination",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column — \"*Denomination:\""
+    },
+    {
+      "name": "motherOriginCountry",
+      "label": "Mother's Place of Origin — Country",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column, Place of Origin — \"*Country:\""
+    },
+    {
+      "name": "fatherOriginCountry",
+      "label": "Father's Place of Origin — Country",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column, Place of Origin — \"*Country:\""
+    },
+    {
+      "name": "motherOriginProvinceState",
+      "label": "Mother's Place of Origin — Province/State",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column, Place of Origin — \"*Province/State:\""
+    },
+    {
+      "name": "fatherOriginProvinceState",
+      "label": "Father's Place of Origin — Province/State",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column, Place of Origin — \"*Province/State:\""
+    },
+    {
+      "name": "motherOriginDistrict",
+      "label": "Mother's Place of Origin — District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column, Place of Origin — \"*District:\""
+    },
+    {
+      "name": "fatherOriginDistrict",
+      "label": "Father's Place of Origin — District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column, Place of Origin — \"*District:\""
+    },
+    {
+      "name": "motherOriginLlg",
+      "label": "Mother's Place of Origin — LLG",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column, Place of Origin — \"*LLG:\""
+    },
+    {
+      "name": "fatherOriginLlg",
+      "label": "Father's Place of Origin — LLG",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column, Place of Origin — \"*LLG:\""
+    },
+    {
+      "name": "motherOriginWard",
+      "label": "Mother's Place of Origin — Ward",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column, Place of Origin — \"*Ward:\""
+    },
+    {
+      "name": "fatherOriginWard",
+      "label": "Father's Place of Origin — Ward",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column, Place of Origin — \"*Ward:\""
+    },
+    {
+      "name": "motherOriginVillageTown",
+      "label": "Mother's Place of Origin — Village/Town",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column, Place of Origin — \"*Village/Town:\""
+    },
+    {
+      "name": "fatherOriginVillageTown",
+      "label": "Father's Place of Origin — Village/Town",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column, Place of Origin — \"*Village/Town:\""
+    },
+    {
+      "name": "motherOriginTribe",
+      "label": "Mother's Tribe",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column, Place of Origin — \"*Tribe:\""
+    },
+    {
+      "name": "fatherOriginTribe",
+      "label": "Father's Tribe",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column, Place of Origin — \"*Tribe:\""
+    },
+    {
+      "name": "motherOriginClan",
+      "label": "Mother's Clan",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column, Place of Origin — \"*Clan:\""
+    },
+    {
+      "name": "fatherOriginClan",
+      "label": "Father's Clan",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column, Place of Origin — \"*Clan:\""
+    },
+    {
+      "name": "motherResidentialProvince",
+      "label": "Mother's Current Residential Address — Province",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column, Current Residential Address — \"*Province:\""
+    },
+    {
+      "name": "fatherResidentialProvince",
+      "label": "Father's Current Residential Address — Province",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column, Current Residential Address — \"*Province:\""
+    },
+    {
+      "name": "motherResidentialDistrict",
+      "label": "Mother's Current Residential Address — District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column, Current Residential Address — \"*District:\""
+    },
+    {
+      "name": "fatherResidentialDistrict",
+      "label": "Father's Current Residential Address — District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column, Current Residential Address — \"*District:\""
+    },
+    {
+      "name": "motherResidentialLlg",
+      "label": "Mother's Current Residential Address — LLG",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column, Current Residential Address — \"*LLG:\""
+    },
+    {
+      "name": "fatherResidentialLlg",
+      "label": "Father's Current Residential Address — LLG",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column, Current Residential Address — \"*LLG:\""
+    },
+    {
+      "name": "motherResidentialWard",
+      "label": "Mother's Current Residential Address — Ward",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column, Current Residential Address — \"*Ward:\""
+    },
+    {
+      "name": "fatherResidentialWard",
+      "label": "Father's Current Residential Address — Ward",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column, Current Residential Address — \"*Ward:\""
+    },
+    {
+      "name": "motherResidentialVillageTown",
+      "label": "Mother's Current Residential Address — Village/Town",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, MOTHER column, Current Residential Address — \"*Village/Town:\""
+    },
+    {
+      "name": "fatherResidentialVillageTown",
+      "label": "Father's Current Residential Address — Village/Town",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section B, FATHER column, Current Residential Address — \"*Village/Town:\""
+    },
+    {
+      "name": "typeOfMarriage",
+      "label": "Parents' Type of Marriage",
+      "type": "enum",
+      "description": "Left unconditionally optional exactly as printed (no asterisk, captioned \"Civil & Customary Marriage Only\"); the form provides no boolean \"are the parents married\" gate to bind a requiredWhen condition to.",
+      "validation": {
+        "enum": ["CIVIL", "CUSTOMARY", "DEFACTO"]
+      },
+      "sourceRef": "Section B, Parents Marriage Information (Civil & Customary Marriage Only) — \"Type of Marriage:  □ Civil  □ Customary  □ Defacto\""
+    },
+    {
+      "name": "dateOfMarriage",
+      "label": "Parents' Date of Marriage",
+      "type": "date",
+      "sourceRef": "Section B, Parents Marriage Information — \"Date of Marriage: DD-MM-YYYY\""
+    },
+    {
+      "name": "marriageRegistrationNumber",
+      "label": "Parents' Marriage Registration Number",
+      "type": "string",
+      "sourceRef": "Section B, Parents Marriage Information — \"Marriage Reg. No:\"",
+      "validation": {
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "applicantIsAdult",
+      "label": "Applicant is 18 Years of Age or Older",
+      "type": "boolean",
+      "required": true,
+      "description": "Directly-supplied gate modelling Section C's own printed header condition (\"THIS SECTION IS TO BE COMPLETED BY APPLICANTS 18 YEARS AND ABOVE ONLY\") without a backing checkbox of its own, mirroring this registry's own applicantUnder17/hasSponsor/hasHostInMalta convention. Every Section C field is requiredWhen this gate is true.",
+      "sourceRef": "Section C header — \"THIS SECTION IS TO BE COMPLETED BY APPLICANTS 18 YEARS AND ABOVE ONLY\""
+    },
+    {
+      "name": "applicantOriginProvince",
+      "label": "Applicant's Place of Origin — Province",
+      "type": "string",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "sourceRef": "Section C, Place of Origin — \"*Province:\""
+    },
+    {
+      "name": "applicantOriginLlg",
+      "label": "Applicant's Place of Origin — LLG",
+      "type": "string",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "sourceRef": "Section C, Place of Origin — \"*LLG:\""
+    },
+    {
+      "name": "applicantOriginDistrict",
+      "label": "Applicant's Place of Origin — District",
+      "type": "string",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "sourceRef": "Section C, Place of Origin — \"*District:\""
+    },
+    {
+      "name": "applicantOriginWard",
+      "label": "Applicant's Place of Origin — Ward",
+      "type": "string",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "sourceRef": "Section C, Place of Origin — \"*Ward:\""
+    },
+    {
+      "name": "applicantOriginVillageTown",
+      "label": "Applicant's Place of Origin — Village/Town",
+      "type": "string",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "sourceRef": "Section C, Place of Origin — \"*Village/Town:\""
+    },
+    {
+      "name": "applicantOriginTribe",
+      "label": "Applicant's Tribe",
+      "type": "string",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "sourceRef": "Section C, Place of Origin — \"*Tribe:\""
+    },
+    {
+      "name": "applicantSociety",
+      "label": "Applicant's Society",
+      "type": "enum",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "validation": {
+        "enum": ["PATRILINEAL", "MATRILINEAL"]
+      },
+      "sourceRef": "Section C — \"*Society:  □ Patrilineal  □ Matrilineal\""
+    },
+    {
+      "name": "applicantOriginClan",
+      "label": "Applicant's Clan",
+      "type": "string",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "sourceRef": "Section C — \"*Clan:\""
+    },
+    {
+      "name": "applicantResidentialProvince",
+      "label": "Applicant's Current Residential Address — Province",
+      "type": "string",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "sourceRef": "Section C, Current Residential Address — \"*Province:\""
+    },
+    {
+      "name": "applicantResidentialLlg",
+      "label": "Applicant's Current Residential Address — LLG",
+      "type": "string",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "sourceRef": "Section C, Current Residential Address — \"*LLG:\""
+    },
+    {
+      "name": "applicantResidentialDistrict",
+      "label": "Applicant's Current Residential Address — District",
+      "type": "string",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "sourceRef": "Section C, Current Residential Address — \"*District:\""
+    },
+    {
+      "name": "applicantResidentialWard",
+      "label": "Applicant's Current Residential Address — Ward",
+      "type": "string",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "sourceRef": "Section C, Current Residential Address — \"*Ward:\""
+    },
+    {
+      "name": "applicantResidentialVillageTown",
+      "label": "Applicant's Current Residential Address — Village/Town",
+      "type": "string",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "sourceRef": "Section C, Current Residential Address — \"*Village/Town:\""
+    },
+    {
+      "name": "applicantMaritalStatus",
+      "label": "Applicant's Marital Status",
+      "type": "enum",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "validation": {
+        "enum": ["NEVER_MARRIED", "MARRIED", "SEPARATED", "DIVORCED", "WIDOW_WIDOWER"]
+      },
+      "sourceRef": "Section C — \"*Marital Status:  □ Never Married  □ Married  □ Separated  □ Divorced  □ Widow/Widower\""
+    },
+    {
+      "name": "applicantPreferredSpouseFamilyName",
+      "label": "Preferred Spouse Family Name (Married Woman Only)",
+      "type": "string",
+      "description": "Left bare-optional, not requiredWhen-gated: the form's own \"(Married Woman Only)\" caption is a scope note, not an imperative requirement statement, so no maritalStatus/gender-based gate is invented — mirroring pg/ica/passport-application's own otherParentFullName precedent.",
+      "sourceRef": "Section C — \"Preferred Spouse Family Name: (Married Woman Only)\""
+    },
+    {
+      "name": "applicantSpouseNidNumberOrName",
+      "label": "Spouse NID No./Name",
+      "type": "string",
+      "description": "A single combined printed line; left bare-optional for the same reason as applicantPreferredSpouseFamilyName.",
+      "sourceRef": "Section C — \"Spouse NID No/Name:\""
+    },
+    {
+      "name": "applicantEducation",
+      "label": "Applicant's Education",
+      "type": "enum",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "validation": {
+        "enum": ["NEVER_ATTENDED_SCHOOL", "ELEMENTARY", "PRIMARY", "SECONDARY", "TERTIARY", "OTHERS"]
+      },
+      "sourceRef": "Section C — \"*Education:  □ Never Attended School  □ Elementary  □ Primary  □ Secondary  □ Tertiary  □ Others\""
+    },
+    {
+      "name": "applicantOccupation",
+      "label": "Applicant's Occupation",
+      "type": "string",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "sourceRef": "Section C — \"*Occupation:\""
+    },
+    {
+      "name": "applicantDenomination",
+      "label": "Applicant's Denomination",
+      "type": "string",
+      "requiredWhen": { "field": "applicantIsAdult", "equals": true },
+      "sourceRef": "Section C — \"*Denomination:\""
+    },
+    {
+      "name": "witnessGivenNames",
+      "label": "Witness's Given Name(s)",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section D — \"*Given Name(s):\""
+    },
+    {
+      "name": "witnessNidNumber",
+      "label": "Witness's NID No.",
+      "type": "string",
+      "classification": "sensitive-pii",
+      "sourceRef": "Section D — \"NID No:\"",
+      "validation": {
+        "maxLength": 40
+      }
+    },
+    {
+      "name": "witnessFamilyName",
+      "label": "Witness's Family Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section D — \"*Family Name:\""
+    },
+    {
+      "name": "witnessResidentialProvince",
+      "label": "Witness's Current Residential Address — Province",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section D, Current Residential Address — \"*Province:\""
+    },
+    {
+      "name": "witnessResidentialLlg",
+      "label": "Witness's Current Residential Address — LLG",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section D, Current Residential Address — \"*LLG:\""
+    },
+    {
+      "name": "witnessResidentialDistrict",
+      "label": "Witness's Current Residential Address — District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section D, Current Residential Address — \"*District:\""
+    },
+    {
+      "name": "witnessResidentialWard",
+      "label": "Witness's Current Residential Address — Ward",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section D, Current Residential Address — \"*Ward:\""
+    },
+    {
+      "name": "witnessResidentialVillageTown",
+      "label": "Witness's Current Residential Address — Village/Town",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section D, Current Residential Address — \"*Village/Town:\""
+    },
+    {
+      "name": "witnessOccupation",
+      "label": "Witness's Occupation",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section D — \"*Occupation:\""
+    }
+  ],
+  "steps": [
+    {
+      "id": "applicant_and_birth_details",
+      "title": "Section A: Child or Applicant's Details",
+      "next": "parents_details",
+      "fields": [
+        "birthCertOrNidReferenceNumber",
+        "applicantDateOfBirth",
+        "applicantGivenNames",
+        "applicantFamilyName",
+        "applicantBirthHospitalVillageTown",
+        "applicantBirthProvince",
+        "applicantBirthLlg",
+        "applicantBirthDistrict",
+        "applicantBirthWard",
+        "applicantGender",
+        "orderOfChild",
+        "registrationType",
+        "registeredAs",
+        "typeOfBirth",
+        "applicantDisability",
+        "applicantMobileNumber"
+      ]
+    },
+    {
+      "id": "parents_details",
+      "title": "Section B: Parents Details",
+      "next": "national_identity_card_information",
+      "fields": [
+        "motherNidNumber",
+        "fatherNidNumber",
+        "motherGivenNames",
+        "fatherGivenNames",
+        "motherFamilyName",
+        "fatherFamilyName",
+        "motherDateOfBirth",
+        "fatherDateOfBirth",
+        "motherNationality",
+        "fatherNationality",
+        "motherOccupation",
+        "fatherOccupation",
+        "motherDenomination",
+        "fatherDenomination",
+        "motherOriginCountry",
+        "fatherOriginCountry",
+        "motherOriginProvinceState",
+        "fatherOriginProvinceState",
+        "motherOriginDistrict",
+        "fatherOriginDistrict",
+        "motherOriginLlg",
+        "fatherOriginLlg",
+        "motherOriginWard",
+        "fatherOriginWard",
+        "motherOriginVillageTown",
+        "fatherOriginVillageTown",
+        "motherOriginTribe",
+        "fatherOriginTribe",
+        "motherOriginClan",
+        "fatherOriginClan",
+        "motherResidentialProvince",
+        "fatherResidentialProvince",
+        "motherResidentialDistrict",
+        "fatherResidentialDistrict",
+        "motherResidentialLlg",
+        "fatherResidentialLlg",
+        "motherResidentialWard",
+        "fatherResidentialWard",
+        "motherResidentialVillageTown",
+        "fatherResidentialVillageTown",
+        "typeOfMarriage",
+        "dateOfMarriage",
+        "marriageRegistrationNumber"
+      ]
+    },
+    {
+      "id": "national_identity_card_information",
+      "title": "Section C: National Identity Card Information (applicants 18 and above)",
+      "next": "witness_details",
+      "fields": [
+        "applicantIsAdult",
+        "applicantOriginProvince",
+        "applicantOriginLlg",
+        "applicantOriginDistrict",
+        "applicantOriginWard",
+        "applicantOriginVillageTown",
+        "applicantOriginTribe",
+        "applicantSociety",
+        "applicantOriginClan",
+        "applicantResidentialProvince",
+        "applicantResidentialLlg",
+        "applicantResidentialDistrict",
+        "applicantResidentialWard",
+        "applicantResidentialVillageTown",
+        "applicantMaritalStatus",
+        "applicantPreferredSpouseFamilyName",
+        "applicantSpouseNidNumberOrName",
+        "applicantEducation",
+        "applicantOccupation",
+        "applicantDenomination"
+      ]
+    },
+    {
+      "id": "witness_details",
+      "title": "Section D: Witness Details",
+      "fields": [
+        "witnessGivenNames",
+        "witnessNidNumber",
+        "witnessFamilyName",
+        "witnessResidentialProvince",
+        "witnessResidentialLlg",
+        "witnessResidentialDistrict",
+        "witnessResidentialWard",
+        "witnessResidentialVillageTown",
+        "witnessOccupation"
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "witnessSignature",
+      "label": "Authorized Witness's Signature",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "other",
+      "sourceRef": "Section D — \"AUTHORIZED WITNESS ONLY - COUNCILLOR, PASTOR, CLAN LEADER, HEALTH WORKER, PROFESSIONALS\" ... \"*Signature:\""
+    },
+    {
+      "id": "applicantCertificationSignature",
+      "label": "Applicant's (or Parent's/Legal Guardian's) Certification Signature or Mark",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I hereby certify that the above information is correct for the purpose of registration under the Civil Registration Act (Chapter 304) Amended 2014",
+      "sourceRef": "Closing certification statement; \"*Applicant's Signature/Mark:\""
+    }
+  ]
+}
