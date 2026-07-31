@@ -149,10 +149,10 @@ block.
    rows short of that sheet's own last data row). Confirmed independently
    from the raw `mergeCells` block and disclosed here for completeness, not
    because it constitutes a defect.
-4. **`mergeCells` block (16 entries), independently parsed and confirmed:**
+4. **`mergeCells` block (25 entries), independently parsed and confirmed:**
    `A1:F1` (title), `A2:F2` (subtitle "Personal Expenses"), `A3:B3`/`C3:D3`
    and `A4:B4`/`C4:D4` (Name/CNIC label-and-value pairs), `C5:D5` (header
-   "Description"), `C6:D6` through `C22:D22` (each of the sixteen category
+   "Description"), `C6:D6` through `C22:D22` (each of the seventeen category
    rows' own Description cell), and `A6:A27` (the rotated section label
    discussed in finding 3). No merges exist inside the family-contribution
    sub-table (rows 23–27) — its own CNIC/Name/Amount columns are genuinely
