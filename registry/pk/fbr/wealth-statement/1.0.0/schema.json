@@ -1,0 +1,563 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "pk/fbr/wealth-statement",
+  "version": "1.0.0",
+  "title": "Pakistan FBR Wealth Statement under Section 116 of the Income Tax Ordinance, 2001",
+  "description": "The Federal Board of Revenue's (FBR) official 'Manual Return' workbook for individuals, Tax Year 2024 edition, worksheet 'Wealth Statement' — the mandatory net-worth disclosure required under section 116 of the Income Tax Ordinance, 2001, filed alongside (not instead of) the individual income tax return already modelled as `pk/fbr/annual-individual-income-tax-return-it-1b`. This document is a companion schema within Pakistan's already-open Taxes vertical, not a new vertical. It is scoped to the statement's category-level reportable figures: the taxpayer's identification block; the 14 numbered non-business asset categories (Sr. 1–14, e.g. Agricultural Property, Investment, Motor Vehicle) that sum to Total Assets inside Pakistan; assets held outside Pakistan; Total Assets; the Credit/Loan liability category and Total Liabilities; the year-over-year net-assets reconciliation (Net Assets Current/Previous Year, Increase/Decrease, Inflows and Outflows each broken into their own distinct, individually labelled sub-items, Personal Expenses, and the Unreconciled Amount); disposed assets during the year; and the verification/declaration block. Out of scope for this version: the leaf-level sub-item breakdown beneath each of the 14 asset categories and the single liability category (e.g. Investment's own thirteen sub-item rows — Account, Annuity, Bond, Certificate, Debenture, Deposit, Fund, Instrument, Insurance Policy, Security, Stock/Share, Unit, Others — each itself carrying up to five columns: Form, Account/Instrument No., Institution Name, Share %, Value at Cost). The source workbook's own `dataValidations` confirm these leaf rows, not the category-total rows, are the cells actually constrained as fillable numeric entries (`greaterThanOrEqual 0`) — mirroring the sibling `annual-individual-income-tax-return-it-1b` document's own Sr. 1 (Property) exclusion, where the same signal (no data-validation on a category-total cell) was the basis for treating a subtotal as out of scope. Modelling all fifteen categories' leaf rows individually, given this spec's repeating-value primitive (GSP-0009) remains Proposed and not yet available, would require flattening dozens of same-shaped rows per category into several hundred individually-named fields for what is fundamentally one repeating (description, value) table structure repeated fifteen times — a disproportionate expansion for a companion schema whose core purpose, the net-worth reconciliation, is fully captured at the category-total level already reportable here. This document describes the form only; it does not submit anything on the filer's behalf, and does not imply endorsement by the Islamic Republic of Pakistan or the Federal Board of Revenue. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Pakistan.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Federal Board of Revenue",
+    "abbreviation": "FBR",
+    "url": "https://www.fbr.gov.pk"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://download1.fbr.gov.pk/Docs/2024791373958696MANUALRETURN2024-NEW24-6-2024.xlsx",
+    "retrievedAt": "2026-07-31",
+    "documentRef": "FBR 'Manual Return' workbook for individuals, Tax Year 2024 edition, worksheet 'Wealth Statement' — 'Wealth Statement under Section 116 of the Income Tax Ordinance, 2001'"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-31",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-31",
+    "notes": "GOV-5731 ('GovSchema Standard Research'). `annual-individual-income-tax-return-it-1b`'s own v1.0.0 description (GOV-3104, 2026-07-15) explicitly flagged this same workbook's Wealth Statement worksheet as 'a strong companion-schema candidate for a future cycle' but left it unauthored. This cycle re-scanned CATALOG.md fresh, found every disclosed 5-of-6-vertical jurisdiction gap already a confirmed dead end or an extensively-rescreened weak/unresolved candidate (AE Passport, BA/JM/MN/TT National ID or Visa, TN DMV all previously exhausted), and picked up this pre-flagged, already-open-vertical companion instead. Independently re-fetched the source this cycle via plain `curl` (no login/CAPTCHA gate): HTTP 200, size 104,097 bytes, sha256 `4e2f9874e9a910713fae9a182fc5c5a578bcfd2649d2031f8144c8b5fba96b9f` — identical to the byte count and hash GOV-3104 recorded for the same workbook, confirming no revision since. Unzipped directly with Python's `zipfile` (no `unzip`/pip/openpyxl in this environment); parsed `xl/worksheets/sheet9.xml` (the 'Wealth Statement' sheet, confirmed via `xl/workbook.xml`'s own `<sheets>` listing and cross-checked against the sheet's own printed title row) cell-by-cell from the raw XML, alongside `xl/sharedStrings.xml` and the sheet's own `dataValidations` block.\n\n**Scope decision.** The sheet's `dataValidations` carry exactly two rules: a `type=\"whole\"` 13-digit-range rule on the CNIC cells (`C3:H3`, `G178:H178`, identical to the sibling IT-1B document's own CNIC constraint), and a `greaterThanOrEqual 0` rule whose `sqref` union (`J8:J17 J20:J29 J32:J35 J38:J41 J48:J51 J54:J76 J79:J85 J88:J95 J102:J104 J107:J110 J113:J116 J118 J121:J124 J146:J153 J156 J159:J167 J176:J177 J134:J137 J127:J130`) covers every leaf sub-item row across all fifteen asset/liability categories but excludes every category-total row (e.g. `J6`, `J18`, `J30`, `J131`, `J138`, `J154`) and every reconciliation subtotal row (`J155`, `J157`, `J158`, `J168`, `J169`, `J173`, `J174`) — confirmed by checking each of those specific cells directly for a `<f>` formula element: none carry one except `J173` (Unreconciled Amount, `=SUM(J158)-SUM(J168)-SUM(J169)`, evaluating to `0` in the template). This is the same 'no direct-entry validation on a subtotal cell' signal the sibling IT-1B document's own v1.0.0 used to exclude Sr. 1 (Property)'s sub-item breakdown — applied here at registry scale, since it recurs across all fifteen categories, not just one. Given GSP-0009 (repeating-value fields) remains Proposed and CEO-gated, this version models the category-total figures (the same level IT-1B itself models its headline income lines at) rather than fabricating a false subtotal-vs-leaf distinction or flattening every leaf row into hundreds of individually-named fields; the full leaf-level breakdown is left as disclosed, open backlog for a future companion/minor-version cycle.\n\n**Disclosed structural findings**, each confirmed directly against the raw XML: (1) the 'Cash (Non-business)' category (Sr. 12, Code 7012) prints a formula label '[Sum of 12 i to 12 x]' implying ten sub-item rows, but the sheet carries exactly one physical row beneath it ('Notes & Coins', row 118, no roman-numeral marker at all) — a mismatch between the printed bracket instruction and the actual row count, distinct from every sibling category where the bracket count and physical row count agree; (2) the 'Inflows' category (Sr. 23, Code 7049) enumerates its own sub-items with roman numerals i, ii, iii, iv, vi, vii, viii, ix, x — 'v' is skipped entirely, a genuine gap in the source's own numbering (nine sub-items printed under a bracket reading '23 (i) to 23(x)', which would imply ten) confirmed by checking every row between the iv and vi entries for a missed cell; (3) row 5's 'Business Address*' carries a printed required-field asterisk with no visible conditional ('only if applicable') qualifier anywhere on the sheet, unlike the form's own conditional patterns seen elsewhere in this registry — modelled as `required: true` per the form's literal marking, disclosed here as a plausible over-broad requiredness a future cycle might revisit if a filer-facing instruction sheet surfaces; (4) Sr. 17's own printed formula label '[15+16]' (Total Assets) and Sr. 20's '[17-19]' (Net Assets Current Year) were both independently confirmed arithmetically consistent with this document's own field set, unlike the sibling IT-1B document's own disclosed Sr. 17 bracket-label defect — no equivalent defect found on this sheet's reconciliation section.\n\n2 valid mock scenarios (a modest salaried individual reporting only a residential property, one bank deposit under Investment, and no liabilities; a self-employed individual reporting agricultural property, business capital, a motor vehicle, a small loan liability, and a full Inflows/Outflows reconciliation with a foreign-remittance inflow and a gift outflow) plus 4 mutation-control fixtures (a missing statically-required field, an invalid `declarantCapacity` enum value, an out-of-range CNIC pattern violation, a negative amount on a `minimum: 0` field) are committed under `conformance/pk/fbr/wealth-statement/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/pattern/minimum rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all 6: both valid scenarios at 0 errors, all 4 mutation controls each raising exactly 1 error. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-31"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxpayerName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "description": "Full name of the individual taxpayer filing this Wealth Statement.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 2 — \"Name*\""
+    },
+    {
+      "name": "taxpayerCnic",
+      "label": "CNIC",
+      "type": "string",
+      "required": true,
+      "description": "Taxpayer's 13-digit Computerized National Identity Card (CNIC) number, issued by NADRA. The source workbook's own data-validation rule on this cell constrains it to a whole number between 1,000,000,000,000 and 9,999,999,999,999 (i.e. exactly 13 digits) — identical to the sibling `annual-individual-income-tax-return-it-1b` document's own CNIC constraint.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 3 — \"CNIC*\" (cells C3:H3, data-validation-constrained)",
+      "validation": {
+        "pattern": "^\\d{13}$"
+      }
+    },
+    {
+      "name": "taxpayerNtn",
+      "label": "NTN",
+      "type": "string",
+      "required": false,
+      "description": "Taxpayer's National Tax Number (NTN), if different from or in addition to the CNIC.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 3 — \"NTN\""
+    },
+    {
+      "name": "residenceAddress",
+      "label": "Residence Address",
+      "type": "string",
+      "required": true,
+      "description": "Taxpayer's residential address.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 4 — \"Residence Address*\""
+    },
+    {
+      "name": "businessAddress",
+      "label": "Business Address",
+      "type": "string",
+      "required": true,
+      "description": "Taxpayer's business address. The source form marks this required (printed asterisk) with no visible conditional qualifier, even though not every individual filer has a business — see the document-level `verification.notes` disclosed finding.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 5 — \"Business Address*\""
+    },
+    {
+      "name": "taxYear",
+      "label": "Tax Year",
+      "type": "string",
+      "required": true,
+      "description": "The tax year this Wealth Statement covers, e.g. \"2024\". This source is itself the Tax Year 2024 edition of the Manual Return workbook.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 2 — \"Tax Year\", pre-filled \"2024\""
+    },
+    {
+      "name": "agriculturalPropertyValue",
+      "label": "Agricultural Property",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 1 — total value at cost of agricultural property (irrigated, unirrigated, or uncultivable) held inside Pakistan, outside any business.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 6 — Sr. 1, Code 7001, \"Agricultural Property [Sum of 1 i to 1 x]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "nonBusinessRealPropertyValue",
+      "label": "Commercial, Industrial, Residential Property (Non-Business)",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 2 — total value at cost of commercial, industrial, or residential property (house, flat, shop, plaza, factory, workshop, etc.) held outside any business.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 18 — Sr. 2, Code 7002, \"Commercial, Industrial, Residential Property (Non-Business) [Sum of 2 i to 2 x]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "businessCapitalValue",
+      "label": "Business Capital",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 3 — the taxpayer's capital amount across any Association of Persons (AOP) and any Sole Proprietorship business.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 30 — Sr. 3, Code 7003, \"Business Capital\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "nonBusinessEquipmentValue",
+      "label": "Equipment, etc. (Non-Business)",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 4 — total value at cost of equipment held outside any business.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 36 — Sr. 4, Code 7004, \"Equipment, etc. (Non-Business) [Sum of 4 i to 4 iv]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "nonBusinessAnimalValue",
+      "label": "Animal (Non-Business)",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 5 — total value at cost of livestock, pets, or other animals held outside any business.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 46 — Sr. 5, Code 7005, \"Animal (Non-Business) [Sum of 5 i to 5 iv]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "nonBusinessInvestmentValue",
+      "label": "Investment (Non-Business)",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 6 — total value at cost of investments held outside any business (bank accounts, fixed/PLS/savings deposits, annuities, bonds, certificates, debentures, term deposits, funds, instruments, insurance policies, securities, stock/shares, units, and other instruments).",
+      "sourceRef": "Worksheet 'Wealth Statement', row 52 — Sr. 6, Code 7006, \"Investment (Non-Business) [Sum of 6 i to 6 xiii]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "nonBusinessDebtReceivableValue",
+      "label": "Debt (Non-Business)",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 7 — total value of debts owed to the taxpayer outside any business (advances, deposits, prepayments, receivables, securities, and other amounts due to the taxpayer).",
+      "sourceRef": "Worksheet 'Wealth Statement', row 77 — Sr. 7, Code 7007, \"Debt (Non-Business) [Sum of 7 i to 7 vii]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "nonBusinessMotorVehicleValue",
+      "label": "Motor Vehicle (Non-Business)",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 8 — total value at cost of motor vehicles (car, jeep, motorcycle, scooter, van) held outside any business.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 86 — Sr. 8, Code 7008, \"Motor Vehicle (Non-Business) [Sum of 8 i to 8 viii]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "preciousPossessionValue",
+      "label": "Precious Possession",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 9 — total value at cost of precious possessions (antiques, artifacts, jewelry, ornaments, metal, or stone).",
+      "sourceRef": "Worksheet 'Wealth Statement', row 100 — Sr. 9, Code 7009, \"Precious Possession [Sum of 9 i to 9 iii]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "householdEffectValue",
+      "label": "Household Effect",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 10 — total value at cost of household effects.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 105 — Sr. 10, Code 7010, \"Household Effect [Sum of 10 i to 10 iv]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "personalItemValue",
+      "label": "Personal Item",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 11 — total value at cost of personal items.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 111 — Sr. 11, Code 7011, \"Personal Item [Sum of 11 i to 11 iv] *\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "cashValue",
+      "label": "Cash (Non-business)",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 12 — total cash on hand (notes and coins) outside any business. The source's own bracket label reads '[Sum of 12 i to 12 x]' (implying ten sub-item rows), but the sheet carries exactly one physical row here ('Notes & Coins', no roman-numeral sub-item marker) — see the document-level `verification.notes` disclosed finding.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 117 — Sr. 12, Code 7012, \"Cash (Non-business) [Sum of 12 i to 12 x]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherAssetValue",
+      "label": "Any Other Asset",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 13 — total value at cost of any other asset not reported in Sr. 1–12 or Sr. 14.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 119 — Sr. 13, Code 7013, \"Any Other Asset [Sum of 13 i to 13 iv]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "assetsInOthersNameValue",
+      "label": "Assets in Others' Name",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 14 — total value at cost of assets held in another person's name but beneficially owned by the taxpayer.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 125 — Sr. 14, Code 7014, \"Assets in Others' Name [Sum of 14 i to 14 iv]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalAssetsInsidePakistan",
+      "label": "Total Assets inside Pakistan",
+      "type": "number",
+      "required": true,
+      "description": "Sr. 15 — total assets held inside Pakistan, defined by the source form as the sum of Sr. 1 through Sr. 14.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 131 — Sr. 15, Code 7015, \"Total Assets inside Pakistan [Sum of 1 to 14]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "assetsOutsidePakistanValue",
+      "label": "Assets held outside Pakistan",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 16 — total value at cost of assets held outside Pakistan. The form's own footnote clarifies this line was separated from 'Any Other Asset' (Sr. 13) for clarity.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 132 — Sr. 16, Code 7016, \"Assets held outside Pakistan [Sum of 16 (i) to 16 (iv)]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalAssets",
+      "label": "Total Assets",
+      "type": "number",
+      "required": true,
+      "description": "Sr. 17 — total assets, defined by the source form as Total Assets inside Pakistan (Sr. 15) plus Assets held outside Pakistan (Sr. 16).",
+      "sourceRef": "Worksheet 'Wealth Statement', row 138 — Sr. 17, Code 7019, \"Total Assets [15+16]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "nonBusinessCreditValue",
+      "label": "Credit (Non-Business)",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 18 — total liabilities owed by the taxpayer outside any business (advances, borrowings, credit, loans, mortgages, overdrafts, payables, and other amounts owed by the taxpayer).",
+      "sourceRef": "Worksheet 'Wealth Statement', row 144 — Sr. 18, Code 7021, \"Credit (Non-Business) [Sum of 18 (i) to 18 (viii)]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalLiabilities",
+      "label": "Total Liabilities",
+      "type": "number",
+      "required": true,
+      "description": "Sr. 19 — total liabilities.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 154 — Sr. 19, Code 7029, \"Total Liabilities\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "netAssetsCurrentYear",
+      "label": "Net Assets Current Year",
+      "type": "number",
+      "required": true,
+      "description": "Sr. 20 — net assets for the current tax year, defined by the source form as Total Assets (Sr. 17) minus Total Liabilities (Sr. 19).",
+      "sourceRef": "Worksheet 'Wealth Statement', row 155 — Sr. 20, Code 703001, \"Net Assets Current Year [17-19]\""
+    },
+    {
+      "name": "netAssetsPreviousYear",
+      "label": "Net Assets Previous Year",
+      "type": "number",
+      "required": true,
+      "description": "Sr. 21 — net assets reported for the immediately preceding tax year.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 156 — Sr. 21, Code 703002, \"Net Assets Previous Year\""
+    },
+    {
+      "name": "netAssetsChange",
+      "label": "Increase / Decrease in Assets",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 22 — the change in net assets year-over-year, defined by the source form as Net Assets Current Year (Sr. 20) minus Net Assets Previous Year (Sr. 21). May be negative if net assets decreased.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 157 — Sr. 22, Code 703003, \"Increase / Decrease in Assets [20-21]\""
+    },
+    {
+      "name": "inflowIncomeDeclaredNormalTax",
+      "label": "Income declared as per Return for the year subject to normal tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 23(i) — income declared in the tax return for the year, subject to normal tax.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 159 — Sr. 23(i), Code 7031",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inflowIncomeDeclaredExempt",
+      "label": "Income declared as per Return for the year exempt from tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 23(ii) — income declared in the tax return for the year, exempt from tax.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 160 — Sr. 23(ii), Code 7032",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inflowIncomeFinalFixedTax",
+      "label": "Income Attributable to Receipts, etc. Declared as per Return for the year subject to Final / Fixed Tax",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 23(iii) — income attributable to receipts declared in the tax return for the year, subject to final/fixed tax.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 161 — Sr. 23(iii), Code 7033",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inflowIncomeAdjustments",
+      "label": "Adjustments in Income Declared as per Return for the year",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 23(iv) — adjustments to income declared in the tax return for the year.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 162 — Sr. 23(iv), Code 7034"
+    },
+    {
+      "name": "inflowForeignRemittance",
+      "label": "Foreign Remittance",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 23(vi) — foreign remittances received during the year. The source's own numbering skips '(v)' entirely between (iv) and (vi) — see the document-level `verification.notes` disclosed finding.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 163 — Sr. 23(vi), Code 7035",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inflowInheritance",
+      "label": "Inheritance",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 23(vii) — inheritance received during the year.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 164 — Sr. 23(vii), Code 7036",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inflowGift",
+      "label": "Gift",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 23(viii) — gifts received during the year.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 165 — Sr. 23(viii), Code 7037",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inflowGainOnDisposal",
+      "label": "Gain on Disposal of Assets, excluding Capital Gain on Immovable Property",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 23(ix) — gain on disposal of assets during the year, excluding capital gain on immovable property.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 166 — Sr. 23(ix), Code 7038",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inflowOther",
+      "label": "Others",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 23(x) — any other inflow not reported in Sr. 23(i)–23(ix).",
+      "sourceRef": "Worksheet 'Wealth Statement', row 167 — Sr. 23(x), Code 7048",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "inflowsTotal",
+      "label": "Inflows",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 23 — total inflows, defined by the source form as the sum of Sr. 23(i) through 23(x).",
+      "sourceRef": "Worksheet 'Wealth Statement', row 158 — Sr. 23, Code 7049, \"Inflows [Sum of 23 (i) to 23(x)]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "personalExpenses",
+      "label": "Personal Expenses",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 24 — personal expenses for the year, carried over from Annex-F, Sr. 1 of the same workbook (Annex-F is out of scope for this document).",
+      "sourceRef": "Worksheet 'Wealth Statement', row 168 — Sr. 24, Code 7089, \"Personal Expenses [Transfer from Sr.1 Annex-F]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "outflowGift",
+      "label": "Gift",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 25(i) — gifts given during the year.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 170 — Sr. 25(i), Code 7091",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "outflowLossOnDisposal",
+      "label": "Loss on Disposal of Assets",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 25(ii) — loss on disposal of assets during the year.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 171 — Sr. 25(ii), Code 7092",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "outflowOther",
+      "label": "Others",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 25(iii) — any other outflow not reported in Sr. 25(i)–25(ii).",
+      "sourceRef": "Worksheet 'Wealth Statement', row 172 — Sr. 25(iii), Code 7098",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "outflowsTotal",
+      "label": "Outflows",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 25 — total outflows, defined by the source form as the sum of Sr. 25(i) through 25(iii).",
+      "sourceRef": "Worksheet 'Wealth Statement', row 169 — Sr. 25, Code 7099, \"Outflows [Sum of 25 (i) to 25(iii)]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "unreconciledAmount",
+      "label": "Unreconciled Amount",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 26 — the unreconciled amount, defined by the source form as Inflows (Sr. 23) minus Personal Expenses (Sr. 24) minus Outflows (Sr. 25). The only line on this sheet carrying a live spreadsheet formula in the source template (evaluating to 0), expected to be zero for a fully reconciled statement.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 173 — Sr. 26, Code 703000, \"Unreconciled Amount [23-24-25]\""
+    },
+    {
+      "name": "disposedAssetsValue",
+      "label": "Assets Transferred / Sold / Gifted / Donated during the year",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 27 — total value at cost of assets transferred, sold, gifted, or donated during the year.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 174 — Sr. 27, Code 703004, \"Assets Transferred / Sold / Gifted / Donated during the year [Sum of 27 (i) to 27 (ii)]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "declarantName",
+      "label": "I,",
+      "type": "string",
+      "required": true,
+      "description": "Name of the person making the verification declaration — the taxpayer themselves, or their representative as defined in section 172 of the Income Tax Ordinance, 2001.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 178 — Verification, \"I, ___\""
+    },
+    {
+      "name": "declarantCnic",
+      "label": "CNIC No.",
+      "type": "string",
+      "required": true,
+      "description": "13-digit CNIC number of the declarant (taxpayer or representative). The source workbook's own data-validation rule on this cell constrains it to the same whole-number range as the taxpayer's own CNIC field (1,000,000,000,000 to 9,999,999,999,999).",
+      "sourceRef": "Worksheet 'Wealth Statement', row 178 — Verification, \"CNIC No. ___\" (cells G178:H178, data-validation-constrained)",
+      "validation": {
+        "pattern": "^\\d{13}$"
+      }
+    },
+    {
+      "name": "declarantCapacity",
+      "label": "in my capacity as",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the declarant is signing as the taxpayer themselves (Self) or as their representative, as defined in section 172 of the Income Tax Ordinance, 2001.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 178 — Verification, \"in my capacity as Self / Representative (as defined in section 172 of the Income Tax Ordinance, 2001)\"",
+      "validation": {
+        "enum": ["SELF", "REPRESENTATIVE"]
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "Date the declarant signs the verification declaration.",
+      "sourceRef": "Worksheet 'Wealth Statement', row 180 — \"Date:\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "wealthStatementDeclaration",
+      "label": "Verification",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "I, [declarant name], CNIC No. [declarant CNIC], in my capacity as Self / Representative (as defined in section 172 of the Income Tax Ordinance, 2001) of Taxpayer named above, do hereby solemnly declare that to the best of my knowledge & belief the information given in this statement of the assets & liabilities of myself, my spouse(s), minor children & other dependents as on 30.06.2024 & of my personal expenditure for the year ended 30.06.2024 are correct & complete in accordance with the provisions of the Income Tax Ordinance, 2001, Income Tax Rules, 2002.",
+      "sourceRef": "Worksheet 'Wealth Statement', rows 178–179 — Verification declaration"
+    }
+  ]
+}
