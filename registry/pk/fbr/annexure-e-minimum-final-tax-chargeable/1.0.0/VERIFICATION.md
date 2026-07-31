@@ -111,10 +111,10 @@ same five-column layout on one sheet.
    `dataValidation` rule — the rule is treated as an added numeric
    constraint where present, not a signal of a field's existence —
    consistent with this workbook's own Annex-A/Annex-D precedent.
-   `validation.minimum: 0` is applied only to the 250 fields sourced from
-   rows 12–55 (fifty categories × five columns); the 5 Sr.-1 fields and the
-   35 second-table fields (seven categories × five columns) carry no
-   `minimum`.
+   `validation.minimum: 0` is applied only to the 220 fields sourced from
+   rows 12–55 (forty-four categories, Sr. 8 through Sr. 51 inclusive, ×
+   five columns); the 5 Sr.-1 fields and the 35 second-table fields (seven
+   categories × five columns) carry no `minimum`.
 
 ## Structural findings disclosed, not corrected
 
