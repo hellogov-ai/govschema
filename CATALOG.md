@@ -4,7 +4,38 @@
 
 ## Executive Summary
 
-**101 jurisdictions** | **702 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**102 jurisdictions** | **703 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-31, GOV-5798, "GovSchema Standard Research"): the
+> Democratic Republic of the Congo opens as the registry's 102nd
+> jurisdiction**, via `cd/maeci/visa-application@1.0.0` — the Ministère des
+> Affaires Étrangères et Coopération Internationale's (MAECI, Ministry of
+> Foreign Affairs and International Cooperation) "Formulaire de Demande de
+> Visa / Visa Application Form," a bilingual (French/English) consular visa
+> application distributed unauthenticated by the Embassy of the Democratic
+> Republic of the Congo in Washington, DC, opening Visa (1 of 6). This
+> re-scouts a candidate a prior cycle (GOV-5791) had banked but not authored
+> — one of 16 countries scouted that cycle, each with at least one reachable
+> candidate document but none authored (Papua New Guinea's Form A-17 was
+> judged the strongest single candidate that cycle). Independently
+> re-fetched `https://www.ambardcusa.org/wp-content/uploads/2018/07/Visas_application_writable.pdf`
+> (HTTP 200, 601,971 bytes, sha256
+> `ab7c73f01a0cbfdfc32d7bfed7abda4afb672757712e1a4d922219754c9d00cb`,
+> no login/CAPTCHA/WAF gate; confirmed via `pdfjs-dist` to be a genuine
+> 83-widget AcroForm across 2 pages, not a flat specimen). Models 60
+> `fields[]` across 7 steps and 3 `documents[]` entries; see the Visa
+> vertical update below and the document's own VERIFICATION.md for the full
+> sourcing record, disclosed scoping decisions (no printed required/optional
+> signal anywhere on the source form; two internal PDF field names reused/
+> mismatched across distinct printed fields, disambiguated by rect position;
+> footnote (*3) orphaned with no inline reference point, not modelled; a
+> directly-supplied `hasSponsor` boolean gate mirroring
+> `mt/identita/long-stay-visa-application`'s own `hasHostInMalta`
+> convention), and conformance results (2 valid scenarios, 8 mutation
+> fixtures, all passing as expected). Both validators pass (703/703);
+> registry index rebuilt. The Democratic Republic of the Congo stands at 1
+> of 6 verticals; DMV, Business Formation, Passport, Taxes, and National ID
+> remain open, unscreened backlog for a future cycle.
 
 > **Update (2026-07-31, GOV-5791, "GovSchema Standard Research"): Papua New
 > Guinea opens as the registry's 101st jurisdiction**, via
@@ -23220,7 +23251,19 @@ file-layout specification and authored a bounded 67-field core against it
 - **Brazil DIRPF follow-up:** `br/rfb/individual-income-tax-return-irpf` (GOV-1407) deliberately defers rural activity (Anexo da Atividade Rural), capital gains (GCAP), variable income/day-trade, Rendimentos Recebidos Acumuladamente (RRA), and the Declaração de Bens e Direitos asset/liability schedule — each a self-contained multi-record block in RFB's own file layout — as candidates for future follow-up cycles (see its VERIFICATION.md).
 - **Mexico Declaración Anual follow-up:** `mx/sat/declaracion-anual-sueldos-salarios` (GOV-1428) deliberately bounds several repeating real-world structures (per-withholding-agent records, per-CFDI deduction records) to a single instance pending GSP-0009, and defers itemized field labels for its Indemnización/Jubilación income sub-tabs and its offset/compensation source-declaration sub-dialog — see its own VERIFICATION.md for the full list of ten disclosed judgment calls.
 
-### Visa — Entry Visas, ETAs, Work/Student Permits (75/93 jurisdictions — 81%)
+### Visa — Entry Visas, ETAs, Work/Student Permits (76/94 jurisdictions — 81%)
+
+> **Update (2026-07-31, GOV-5798, "GovSchema Standard Research"): the
+> Democratic Republic of the Congo's Visa vertical opens**, via
+> `cd/maeci/visa-application@1.0.0` — MAECI's (Ministère des Affaires
+> Étrangères et Coopération Internationale) "Formulaire de Demande de Visa /
+> Visa Application Form," a genuine 83-widget AcroForm distributed
+> unauthenticated by the Embassy of the Democratic Republic of the Congo in
+> Washington, DC — see the Executive Summary update above and the
+> document's own VERIFICATION.md for the full sourcing record. Opens the
+> Democratic Republic of the Congo as the registry's 102nd jurisdiction (1
+> of 6 verticals); DMV, Business Formation, Passport, Taxes, and National ID
+> remain open, unscreened backlog for a future cycle.
 
 > **Update (2026-07-26, GOV-5076, "GovSchema Standard Research"): Switzerland's
 > Visa vertical opens, closing Switzerland to 6 of 6 verticals**, via
@@ -25118,6 +25161,7 @@ now closed.
 | **BR** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **BW** | 4 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **CD** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **CH** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CI** | 4 | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ |
 | **CL** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
@@ -27284,6 +27328,16 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       Nicaragua, Montenegro, Bahrain, and Kuwait were confirmed dead ends
       (fully e-service/portal-only, no static form found) for the
       specific verticals screened this cycle.
+      **Update (GOV-5798, 2026-07-31): the Democratic Republic of the
+      Congo's Visa candidate is now authored, opening it as the registry's
+      102nd jurisdiction**, via `cd/maeci/visa-application@1.0.0` — see the
+      Executive Summary and Visa vertical updates above. The DGM passport
+      track this item's own scouting note had also flagged was not found as
+      a directly downloadable form this cycle; DR Congo's DMV, Business
+      Formation, Passport, Taxes, and National ID remain open, unscreened
+      backlog. Angola, Mozambique, Cameroon, Sudan, Malawi, Suriname,
+      Guyana, Belize, Honduras, and Cuba remain unauthored backlog from this
+      same scouting pass.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now
