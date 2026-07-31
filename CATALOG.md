@@ -25,7 +25,7 @@
 > (HTTP 200, 510,208 bytes, sha256
 > `afb776dbf18c4a80a189d881f18be66cc2785b1653b7296406c4f57bf6d00c94`,
 > no login/CAPTCHA/WAF gate; confirmed via `pdfjs-dist` to be a genuine
-> 99-widget AcroForm across 3 pages). Models 71 `fields[]` across 8 steps,
+> 99-widget AcroForm across 3 pages). Models 72 `fields[]` across 8 steps,
 > 1 `documents[]` entry, and 1 `crossFieldValidation` rule; see the
 > Passport vertical update below and the document's own VERIFICATION.md for
 > the full sourcing record, disclosed scoping decisions (an "APPLICATION
@@ -34,9 +34,12 @@
 > ADDRESS`; several generic `TextN`-named and two adjacent-row-concatenated
 > internal field names, all disambiguated by rect position; Section 7's
 > own five declaration checkboxes having no backing widgets at all; no
-> checkbox exists for the form's own "Same as permanent address" note), and
-> conformance results (3 valid scenarios, 11 mutation fixtures, all passing
-> as expected). Both validators pass (704/704); registry index rebuilt.
+> checkbox exists for the form's own "Same as permanent address" note; one
+> genuine signature widget in Section 6's SUBMITTER row modelled as
+> `submitterSignature`, the specimen's sole signature field with a backing
+> AcroForm widget), and conformance results (3 valid scenarios, 12 mutation
+> fixtures, all passing as expected). Both validators pass (704/704);
+> registry index rebuilt.
 > Belize stands at 1 of 6 verticals; DMV, Business Formation, Visa, Taxes,
 > and National ID remain open, unscreened backlog for a future cycle.
 
@@ -25202,8 +25205,8 @@ now closed.
 | **BG** | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **BO** | 1 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 | **BR** | 6 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| **BZ** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | **BW** | 4 | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
+| **BZ** | 1 | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | **CA** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **CD** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **CH** | 15 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

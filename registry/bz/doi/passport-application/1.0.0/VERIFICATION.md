@@ -72,7 +72,7 @@ disambiguate ambiguous internal field names (see below).
 
 ## Field modelling and disclosed findings
 
-Models 71 `fields[]` across 8 steps mirroring the form's own layout (an
+Models 72 `fields[]` across 8 steps mirroring the form's own layout (an
 unnumbered "APPLICATION DETAILS" box, followed by its own numbered Sections
 1–8), 1 `documents[]` entry, and 1 `crossFieldValidation` rule.
 
@@ -156,16 +156,31 @@ extraction rather than assumed:
    path, since the "SUBMITTER" column heading applies to whoever other than
    the applicant is submitting — a disclosed scope judgment call, not
    directly printed as a rule on the form itself.
-10. **No signature or photo fields are modelled.** The specimen's own
-    "SIGNATURE BOX," every hand-signature line (declaration, Section 5/7
-    certifications, Section 6 guardian consent), and the "PHOTO BOX (for
-    office use only)" carry no corresponding data-entry widgets beyond the
-    dates already modelled alongside them — consistent with this
-    registry's convention of not modelling physical signature/photo capture
-    as data fields (see e.g. `tt/imd/passport-application-first-adult`'s
-    own `applicantSpecimenSignature` exception, which does not apply here
-    since Belize's own signature areas carry no fillable widget at all,
-    unlike Trinidad and Tobago's).
+10. **One signature field is modelled; the rest, plus the photo box, are
+    not.** The specimen's own "SIGNATURE BOX," the general "I certify..."
+    declaration's signature line, and the Section 6 guardian-consent
+    signature line's own accompanying date, plus the "PHOTO BOX (for office
+    use only)," carry no corresponding data-entry widgets beyond the dates
+    already modelled alongside them — consistent with this registry's
+    convention of not modelling physical signature/photo capture as data
+    fields where the source provides no fillable widget for it. **Section
+    6's own SUBMITTER-row signature line is the one exception**: a
+    genuine `Tx` widget (raw id `169R`) sits directly beneath the printed
+    "Signature" label there, at the same row as the "SUBMITTER" column
+    heading over `submitterIdType`/`submitterIdNumber` — confirmed by
+    rect position (widget rect y≈91–106, immediately below the "Signature"
+    label's own y≈113 and the blank signature rule at y≈127, and gated
+    identically to `submitterIdType`/`submitterIdNumber`'s own
+    `requiredWhen submittedBy in [PARENT_LEGAL_GUARDIAN,
+    AUTHORIZED_PERSON]`). Modelled as `submitterSignature`, per this
+    registry's convention of modelling a signature only where the source
+    itself supplies a fillable widget (see e.g.
+    `tt/imd/passport-application-first-adult`'s own
+    `applicantSpecimenSignature` exception). The widget's own raw tooltip
+    (`Signature_ID No.:`) splices this column's "Signature" label onto the
+    neighboring column's "ID No.:" label — the same internal-field-naming
+    artifact already disclosed at findings 3–5 above, not a compound
+    field.
 11. **`statutoryDeclarationOfLossOrTheft`** is modelled as the schema's
     sole `documents[]` entry, `requiredWhen replacementReason in [LOST,
     STOLEN]`, per Section 7 Item E's own text ("Unavailable for
@@ -183,22 +198,23 @@ extraction rather than assumed:
 3 valid mock scenarios (a single, first-time ePassport applicant applying
 in person; a married applicant replacing a lost temporary passport, with
 a spouse and a police report on file; a divorced applicant renewing their
-ePassport through an authorized person) plus 11 mutation-control fixtures
+ePassport through an authorized person) plus 12 mutation-control fixtures
 (a missing statically-required field; a missing `ePassportType` while
 `documentType` is `EPASSPORT`; a missing `replacementReason` while
 `applicationReason` is `REPLACEMENT`; a missing `titleOther` while `title`
 is `OTHER`; a missing `spouseSurname` while `maritalStatus` is `MARRIED`;
 a missing `dateOfLoss` while `replacementReason` is `LOST`; a missing
 `relationshipToChild` while `submittedBy` is `PARENT_LEGAL_GUARDIAN`; a
-missing `submitterIdType` while `submittedBy` is `AUTHORIZED_PERSON`; an
-invalid `gender` enum value; an unknown top-level field; and a
+missing `submitterIdType` while `submittedBy` is `AUTHORIZED_PERSON`; a
+missing `submitterSignature` while `submittedBy` is `AUTHORIZED_PERSON`;
+an invalid `gender` enum value; an unknown top-level field; and a
 `crossFieldValidation` violation with `reportDate` before `dateOfLoss`),
 committed under `conformance/bz/doi/passport-application/1.0.0/`. An
 ephemeral, from-scratch conformance checker (deriving required/
 requiredWhen rules, enum validation, and the crossFieldValidation rule
 directly from this schema's own `fields[]`/`crossFieldValidation[]`,
-discarded after use, not committed) ran all 14: all 3 valid scenarios at 0
-errors, all 11 mutation controls each raising exactly 1 error, confirmed
+discarded after use, not committed) ran all 15: all 3 valid scenarios at 0
+errors, all 12 mutation controls each raising exactly 1 error, confirmed
 every `requiredWhen` field reference resolves (0 dangling references), and
 separately confirmed the sole `documents[].requiredWhen` gate
 (`statutoryDeclarationOfLossOrTheft`) evaluates `true` only for the
