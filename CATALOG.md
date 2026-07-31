@@ -4,7 +4,56 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **698 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **699 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-31, GOV-5766, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains a ninth schema**, via
+> `pk/fbr/annexure-d-depreciation-amortization@1.0.0` — the Federal Board of
+> Revenue's "Annex-D" worksheet ("Depreciation, Initial Allowance,
+> Amortization"), the schedule on which a taxpayer computes tax
+> depreciation, first-year initial allowance, and tax amortization on
+> business assets and intangibles, from the same nine-worksheet "Manual
+> Return" workbook already modelled as
+> `pk/fbr/annual-individual-income-tax-return-it-1b` (Form IT-1B),
+> `pk/fbr/annual-individual-income-tax-return-it-2` (Form IT-2),
+> `pk/fbr/annexure-a-adjustable-tax`,
+> `pk/fbr/annexure-b-manufacturing-trading-profit-loss-account`,
+> `pk/fbr/annexure-c-inadmissible-admissible-deductions`, and
+> `pk/fbr/wealth-statement`. That Annex-C sibling's own v1.0.0 (GOV-5759) had
+> explicitly named "Annexes D through F" as this workbook's remaining open
+> backlog; with the 16-jurisdiction "5 of 6 verticals" list already
+> re-screened a dead end across five consecutive prior cycles (GOV-5731,
+> GOV-5738, GOV-5745, GOV-5752, GOV-5759), this cycle picked up Annex-D, the
+> next of the three, rather than re-screening that list a sixth time.
+> Independently re-fetched the source (HTTP 200, 104,097 bytes, sha256
+> `4e2f9874e9a910713fae9a182fc5c5a578bcfd2649d2031f8144c8b5fba96b9f` —
+> byte-identical to every prior cycle's own figures, confirming no
+> revision). Unlike Annex-A/Annex-B/Annex-C's own flat, single-Amount-column
+> line-item lists, Annex-D is a genuine multi-column asset register: a
+> twelve-category Depreciation table (WDV brought forward, Deletion,
+> Addition Used-Previously-in-Pakistan with its own Extent of Use, Addition
+> New with its own Extent of Use, fixed statutory Initial-Allowance and
+> Depreciation rates printed per category, the taxpayer's own computed
+> Initial Allowance and Depreciation, and WDV carried forward) plus a
+> thirteenth summary-shaped row of the same shape, and a six-category
+> Amortization table (WDV brought forward, Remaining Useful Life, Extent of
+> Use, Amortization). Three Amortization rows share the identical printed
+> label "Intangible" and identical Code 3305 — a bounded-slot pattern
+> (three blank identical repeats for up to three distinct intangible
+> assets) modelled as three explicitly numbered fields
+> (`intangibleAsset1`/`2`/`3`) rather than an open-ended array. This
+> worksheet's own `dataValidation` coverage is uneven across its printed
+> cells (e.g. the "Extent of Use" column for a new addition is never
+> validated anywhere on the sheet, unlike its used-previously counterpart);
+> every printed, fillable cell is nonetheless modelled as a field
+> regardless of validation coverage, consistent with this workbook's own
+> Annex-A precedent. 146 fields, 8 conformance checks (2 valid scenarios, 6
+> mutation-control fixtures) all passing as expected. Both validators pass
+> (699/699); registry index rebuilt. Pakistan remains at 3 of 6 verticals
+> (a ninth schema within the already-open Taxes vertical, not a new
+> vertical); Annexes E and F remain this workbook's own disclosed, open
+> backlog. See the Taxes vertical section update below and this document's
+> own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-31, GOV-5759, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical gains an eighth schema**, via
@@ -20729,6 +20778,19 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (82/96 jurisdictions — 85%)
 
+> **Update (2026-07-31, GOV-5766, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains a ninth schema**, via
+> `pk/fbr/annexure-d-depreciation-amortization@1.0.0` — the FBR's "Annex-D"
+> worksheet, a Depreciation/Initial-Allowance/Amortization asset register,
+> from the same "Manual Return" workbook as
+> `pk/fbr/annexure-c-inadmissible-admissible-deductions` (whose own v1.0.0
+> named "Annexes D through F" as this workbook's remaining backlog). See the
+> Executive Summary's GOV-5766 update above for the full sourcing record,
+> disclosed structural findings, and conformance results. Not a new vertical
+> (Pakistan's Taxes vertical was already open); a ninth schema for Pakistan
+> overall. Annexes E and F remain this workbook's own disclosed, open
+> backlog; numerator/denominator unchanged.
+
 > **Update (2026-07-31, GOV-5759, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical gains an eighth schema**, via
 > `pk/fbr/annexure-c-inadmissible-admissible-deductions@1.0.0` — the FBR's
@@ -24915,7 +24977,7 @@ now closed.
 | **PA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PK** | 8 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **PK** | 9 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PY** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -31229,6 +31291,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   in this workbook without one; no Business Name field, reconciling at
   the whole-taxpayer level rather than per-business). Annexes D through F
   remain this workbook's own disclosed, open backlog for a future cycle.
+
+  **Update (GOV-5766, 2026-07-31): Annex-D ("Depreciation, Initial
+  Allowance, Amortization") is now also authored**, via
+  `pk/fbr/annexure-d-depreciation-amortization@1.0.0` — see the Executive
+  Summary's GOV-5766 update above and the document's own VERIFICATION.md
+  for the full sourcing record. Unlike Annex-A/Annex-B/Annex-C's own flat,
+  single-Amount-column line-item lists, this worksheet is a genuine
+  multi-column asset register (a twelve-category Depreciation table plus a
+  thirteenth summary-shaped row, and a six-category Amortization table),
+  with a bounded-slot pattern for three identically-labelled "Intangible"
+  rows and uneven `dataValidation` coverage across its own printed cells
+  (disclosed, not corrected). Annexes E and F remain this workbook's own
+  disclosed, open backlog for a future cycle.
 
 - **Georgia — screened, not viable this cycle (GOV-3078).** Visa
   (`geoconsul.gov.ge`/`evisa.gov.ge`) is fully e-Portal based; the MFA's
