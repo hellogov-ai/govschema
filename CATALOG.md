@@ -1,10 +1,52 @@
 # GovSchema Standards Catalog
 
-**As of 2026-07-26** | Comprehensive registry of published government service schemas by jurisdiction and vertical
+**As of 2026-07-31** | Comprehensive registry of published government service schemas by jurisdiction and vertical
 
 ## Executive Summary
 
-**100 jurisdictions** | **693 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **694 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-31, GOV-5731, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains a fourth schema**, via `pk/fbr/wealth-statement@1.0.0`
+> — the Federal Board of Revenue's mandatory net-worth disclosure under
+> section 116 of the Income Tax Ordinance, 2001, from the same "Manual
+> Return" workbook already modelled as
+> `pk/fbr/annual-individual-income-tax-return-it-1b` (Form IT-1B). That
+> sibling document's own v1.0.0 (GOV-3104, 2026-07-15) had explicitly
+> flagged the workbook's "Wealth Statement" worksheet as "a strong
+> companion-schema candidate for a future cycle" but left it unauthored.
+> This cycle re-scanned `CATALOG.md`'s own Known Gaps fresh first and found
+> every disclosed 5-of-6-vertical jurisdiction (AE Passport, BA Visa,
+> JM/TT National ID, MN National ID, TN DMV, SK/MK Visa, GR National ID)
+> already a confirmed dead end or an extensively re-screened weak/
+> unresolved candidate from prior cycles, with no genuinely new lead among
+> them — so it picked up this pre-flagged, already-open-vertical companion
+> instead. Independently re-fetched the source (HTTP 200, 104,097 bytes,
+> sha256 `4e2f9874e9a910713fae9a182fc5c5a578bcfd2649d2031f8144c8b5fba96b9f`
+> — identical to the figures GOV-3104 recorded a year earlier). The sheet's
+> own `dataValidations` confirm its fifteen asset/liability category-total
+> rows (not the leaf sub-item rows beneath each) are the ones lacking
+> direct-entry numeric validation — the same "computed subtotal, no
+> validation" signal the sibling IT-1B document used to exclude its own
+> Sr. 1 (Property) breakdown, recurring here across all fifteen categories
+> at once. Given GSP-0009 (repeating-value fields) remains Proposed and
+> CEO-gated, this version models the category-total level (the fifteen
+> asset/liability totals, Total Assets, Total Liabilities, and the full
+> year-over-year net-worth reconciliation) rather than flattening
+> hundreds of leaf sub-item rows, with the Inflows/Outflows sections'
+> twelve distinct, individually-labelled sub-items modelled by name as an
+> explicit exception (not a repeating table shape). Two disclosed
+> structural findings: the "Cash" category's own printed bracket label
+> implies ten sub-item rows but the sheet carries exactly one physical row
+> beneath it; the "Inflows" category's own roman-numeral sub-item
+> numbering skips "v" entirely between iv and vi. 6 conformance checks (2
+> valid scenarios, 4 mutation-control fixtures) all passing as expected.
+> Both validators pass (694/694); registry index rebuilt. Pakistan remains
+> at 3 of 6 verticals (a fourth schema within the already-open Taxes
+> vertical, not a new vertical); the sibling IT-2 ("IND (BUS PLUS)")
+> worksheet and Annexes A–F remain the jurisdiction's disclosed, open
+> backlog. See the Taxes vertical section update below and this document's
+> own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-26, GOV-5076, "GovSchema Standard Research"): Switzerland
 > closes to 6 of 6 verticals**, via
@@ -21656,6 +21698,14 @@ v1.0.0.
 > sibling "IND (BUS PLUS)" worksheet (Form IT-2, the business-income
 > variant). See the document's own VERIFICATION.md for the full sourcing
 > chain. Denominator updated from 51 to 52 jurisdictions.
+>
+> **Update (2026-07-31, GOV-5731, "GovSchema Standard Research"): the
+> disclosed Wealth Statement candidate is now authored**, via
+> `pk/fbr/wealth-statement@1.0.0` — see the Executive Summary's GOV-5731
+> update above for the full record. Not a new vertical (Pakistan's Taxes
+> vertical was already open); a fourth schema for Pakistan overall. The
+> sibling "IND (BUS PLUS)" worksheet (Form IT-2) and Annexes A–F remain
+> disclosed, open backlog for a future companion-schema cycle.
 
 > **Correction (GOV-3078):** denominator updated from 58 to 59 following
 > Nepal's addition (Business Formation only; Taxes confirmed a dead end
@@ -24564,7 +24614,7 @@ now closed.
 | **PA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PK** | 3 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **PK** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PY** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -30810,6 +30860,18 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   sourcing record, including the `dataValidations`-derived per-row
   three-column-inconsistency finding and the disclosed Sr. 17 formula-label
   artifact.
+
+  **Update (GOV-5731, 2026-07-31): the Wealth Statement is now authored**,
+  via `pk/fbr/wealth-statement@1.0.0` — see the Executive Summary's
+  GOV-5731 update above and the document's own VERIFICATION.md for the
+  full sourcing record, including the `dataValidations`-derived finding
+  that all fifteen asset/liability category totals (not just Sr. 1
+  Property, as on the sibling IT-1B document) lack direct-entry
+  validation, and the two disclosed structural findings (the Cash
+  category's 10-implied-vs-1-actual sub-item row mismatch; the Inflows
+  category's skipped "v" in its own roman-numeral numbering). The sibling
+  "IND (BUS PLUS)" worksheet (Form IT-2) and Annexes A–F remain open,
+  pre-scouted backlog for a future companion schema.
 
 - **Georgia — screened, not viable this cycle (GOV-3078).** Visa
   (`geoconsul.gov.ge`/`evisa.gov.ge`) is fully e-Portal based; the MFA's
