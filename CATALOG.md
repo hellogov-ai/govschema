@@ -4,7 +4,36 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **701 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**101 jurisdictions** | **702 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-31, GOV-5791, "GovSchema Standard Research"): Papua New
+> Guinea opens as the registry's 101st jurisdiction**, via
+> `pg/ipa/business-name-registration@1.0.0` — the Investment Promotion
+> Authority's (IPA) Form A-17, "Application for registration of business
+> name" (Section 4(1), Business Names Act 2014), opening Business Formation
+> (1 of 6). With Pakistan's FBR workbook backlog fully closed (GOV-5782)
+> and the standing 16-jurisdiction "5 of 6 verticals" re-screen list
+> already a confirmed dead end across 8 consecutive prior cycles, this
+> cycle scouted 18 new-jurisdiction candidates across three parallel
+> passes instead of a 9th re-screen. Kosovo's ARBK Form A0 came back the
+> single richest field-wise candidate found, but remains unauthored — a
+> prior cycle (GOV-4713) had already flagged it as a governance question
+> (no ISO 3166-1 alpha-2 country code) for the Founding Engineer/CEO, not
+> a build decision to make here. Independently re-fetched
+> `https://www.ipa.gov.pg/documentation/pg/form-a-17.pdf` (HTTP 200,
+> 911,150 bytes, sha256
+> `c3c3147e3bf2ab87c780caa81946b0928f2fb936716f61e1213026bf94270f00`,
+> no login/CAPTCHA/WAF gate). Models 125 `fields[]` across 8 steps and 2
+> `documents[]`; see the Business Formation vertical update below and the
+> document's own VERIFICATION.md for the full sourcing record, disclosed
+> scoping decisions (every owner-block field bare-optional across three
+> mutually-exclusive owner-type subparts; the unbounded Section 2B
+> attachment excluded; a position-re-extraction-resolved layout ambiguity
+> on the source's final page), and conformance results (3 valid scenarios,
+> 8 mutation fixtures, all passing as expected). Both validators pass
+> (702/702); registry index rebuilt. Papua New Guinea stands at 1 of 6
+> verticals; DMV, Visa, Passport, Taxes, and National ID remain open,
+> unscreened backlog for a future cycle.
 
 > **Update (2026-07-31, GOV-5782, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical gains an eleventh schema, closing the FBR "Manual Return"
@@ -19354,7 +19383,53 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (86/91 jurisdictions — 95%)
+### Business Formation — Incorporation, LLC, Company Registration (87/92 jurisdictions — 95%)
+
+> **Update (2026-07-31, GOV-5791, "GovSchema Standard Research"): Papua New
+> Guinea opens as the registry's 101st jurisdiction, via Business Formation
+> (1 of 6)**, via `pg/ipa/business-name-registration@1.0.0` — the
+> Investment Promotion Authority's (IPA) Form A-17, "Application for
+> registration of business name" (Section 4(1), Business Names Act 2014).
+> With Pakistan's FBR "Manual Return" workbook backlog fully closed
+> (GOV-5782) and the standing 16-jurisdiction "5 of 6 verticals" re-screen
+> list (AE, BA, BR, CZ, GR, ID, JM, MK, MN, MT, NO, PL, RW, SK, TN, TT)
+> already a confirmed dead end across 8 consecutive prior cycles, this
+> cycle scouted 18 countries entirely absent from the registry across three
+> parallel passes. Kosovo's ARBK Form A0 (LLC registration) came back the
+> single richest field-wise, but remains unauthored: a prior cycle
+> (GOV-4713, 2026-07-24) had already flagged it as a governance question,
+> not a build one, since Kosovo has no ISO 3166-1 alpha-2 country code and
+> this registry's own `jurisdiction.country` field requires one — left for
+> the Founding Engineer/CEO, not decided here. Papua New Guinea's Form A-17
+> was the strongest genuinely-buildable candidate: hosted directly on
+> `ipa.gov.pg` (HTTP 200, 911,150 bytes, sha256
+> `c3c3147e3bf2ab87c780caa81946b0928f2fb936716f61e1213026bf94270f00`), no
+> login/CAPTCHA/WAF gate, uncontested ISO code (`PG`). Models 125
+> `fields[]` across 8 steps: proposed business name (3 ranked options);
+> principal/postal addresses (the unbounded "additional places of
+> business" attachment excluded, disclosed); owners split across three
+> mutually-exclusive structural subparts (natural persons, bounded 3 slots;
+> a PNG-registered entity; a foreign, PNG-unregistered entity) — every
+> owner field modelled bare-optional since no printed either/or signal
+> exists to gate a `requiredWhen` on, consistent with this registry's own
+> standing lesson against inventing unprinted eligibility gates; primary
+> business activity (a 17-value ISIC-style enum) and commencement date;
+> and up to four authorised signers (bounded 4 slots, first required).
+> Plus 2 `documents[]` (the prescribed fee; the form's own verbatim
+> certification statement). A genuine layout ambiguity on the source's
+> final page — the raw text stream interleaves "8. Checklist" between the
+> "7. Lodged by" section header and its own two-column answer fields — was
+> resolved via x/y-position re-extraction, confirming Name/Address/
+> Telephone/Email belong to Section 7, not Section 8. 3 valid mock
+> scenarios (minimal sole natural-person owner; a fully-populated
+> two-owner/two-signer scenario; a registered-PNG-entity-owner scenario)
+> plus 8 mutation-control fixtures (6 missing-required, 1 invalid-enum, 1
+> unknown-field-rejected) all passing as expected. Both validators pass
+> (702/702); registry index rebuilt. Jurisdiction count for this vertical
+> updated from 86/91 to 87/92 (Papua New Guinea is new to both this
+> vertical and the registry as a whole); Business Formation is the only
+> vertical open for Papua New Guinea so far — DMV, Visa, Passport, Taxes,
+> and National ID remain open, unscreened backlog for a future cycle.
 
 > **Update (2026-07-26, GOV-5069, "GovSchema Standard Research"): Mauritius
 > gains a seventeenth Business Formation schema (still 4/6 for the
@@ -25100,6 +25175,7 @@ now closed.
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| **PG** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PK** | 11 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -27164,6 +27240,50 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
     NVI's VAT-series forms (Vat-1 through Vat-6, Vat-8 through Vat-11)
     are now authored. No VAT candidates remain banked on the same NVI
     page.
+0t. **Papua New Guinea opened as the registry's 101st jurisdiction
+    (GOV-5791, 2026-07-31), via Business Formation; Kosovo re-flagged as a
+    standing governance question, not a build one:**
+    - **Papua New Guinea** — IPA's Form A-17, "Application for registration
+      of business name" (Section 4(1), Business Names Act 2014), found live
+      and unauthenticated at `ipa.gov.pg/documentation/pg/form-a-17.pdf`
+      (HTTP 200, 911,150 bytes, sha256
+      `c3c3147e3bf2ab87c780caa81946b0928f2fb936716f61e1213026bf94270f00`).
+      **Now authored** as `pg/ipa/business-name-registration@1.0.0` — see
+      the Executive Summary and Business Formation vertical updates above.
+      Opens Papua New Guinea's Business Formation vertical (1 of 6); DMV,
+      Visa, Passport, Taxes, and National ID are open, unscreened backlog
+      for a future cycle. A sibling IPA form (A-2, overseas company
+      registration, 4 pages) was also found live and unauthenticated in
+      the same scouting pass but not authored — weaker (fewer fields,
+      narrower scope) than Form A-17, banked as a future companion-schema
+      candidate for this same jurisdiction/authority if a future cycle
+      wants to deepen Business Formation before screening the other five
+      verticals.
+    - **Kosovo** — ARBK's Form A0 (LLC registration) was re-scouted this
+      cycle (still live and unauthenticated, `arbk.rks-gov.net`) and came
+      back the single richest field-wise candidate found across all 18
+      countries scouted this cycle. Re-confirmed, not re-decided: a prior
+      cycle (GOV-4713, 2026-07-24) already found and flagged this same
+      form as a governance question, not a build one — Kosovo has no ISO
+      3166-1 alpha-2 country code, and this registry's own
+      `jurisdiction.country` field requires one. Left open pending a
+      Founding Engineer/CEO decision on how this registry handles
+      non-ISO-recognized territories generally.
+    - **Angola, Mozambique, Cameroon, Democratic Republic of the Congo,
+      Sudan, Malawi, Suriname, Guyana, Belize, Nicaragua, Honduras, Cuba,
+      Montenegro, Bahrain, Kuwait, Fiji** — each scouted this cycle in
+      parallel and found to have at least one reachable, unauthenticated
+      candidate document (DR Congo Passport and Visa AcroForms; Belize
+      ePassport; Suriname individual income tax return; Guyana passport
+      form; Honduras TIN registration; Cuba visa application, TLS-flaky;
+      Mozambique/Cameroon/Malawi tax-registration forms; Sudan visa
+      application; Fiji TIN registration) — none authored this cycle
+      (Papua New Guinea's Form A-17 was judged the strongest single
+      candidate of the full scouting pass), each left as disclosed,
+      unauthored backlog for a future new-jurisdiction cycle.
+      Nicaragua, Montenegro, Bahrain, and Kuwait were confirmed dead ends
+      (fully e-service/portal-only, no static form found) for the
+      specific verticals screened this cycle.
 1. **Sub-national/state DMV & Business Formation expansion**: CA/NZ/IE/IN
    sole-trader/partnership/LLP formation; CDL/HGV-equivalent schemas outside
    the US and GB. **Update (GOV-1947): Ontario's sole-trader half is now

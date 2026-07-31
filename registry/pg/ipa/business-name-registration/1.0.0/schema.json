@@ -1,0 +1,1257 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "pg/ipa/business-name-registration",
+  "version": "1.0.0",
+  "title": "Papua New Guinea Business Name Registration (IPA Form A-17)",
+  "description": "The Investment Promotion Authority's (IPA) Form A-17, \"Application for registration of business name\", filed under section 4(1) of the Business Names Act 2014. Used to register a business name under which an individual, partnership, or entity intends to trade in Papua New Guinea. Models the proposed business name (up to three ranked options); the principal place of business and postal address (Section 2A/2C — the unbounded \"additional places of business\" Section 2B is out of scope, disclosed below); up to three natural-person owners plus, as separate structural subparts, a PNG-registered-entity owner and a foreign, PNG-unregistered-entity owner (Section 3A/3B/3C); the primary business activity classification and commencement date (Section 4/5); up to four authorised signers (Section 6); and the lodging person's own particulars (Section 7). The prescribed fee and the form's own certification statement are modelled as documents[]. Out of scope, disclosed rather than silently omitted: Section 2B's unbounded \"additional places of business\" attachment (the source itself directs the applicant to \"attach a separate sheet\" with no printed maximum, this registry's established unbounded-attachment exclusion pattern) and Section 8's own prescribed-fee-amount figure (a variable schedule set by IPA regulation, not printed on the form itself). GovSchema is an independent, non-profit standards body; it is not affiliated with, endorsed by, or operated by the Independent State of Papua New Guinea or the Investment Promotion Authority.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PG",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Investment Promotion Authority",
+    "abbreviation": "IPA",
+    "url": "https://www.ipa.gov.pg"
+  },
+  "process": {
+    "type": "registration",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://www.ipa.gov.pg/documentation/pg/form-a-17.pdf",
+    "retrievedAt": "2026-07-31",
+    "documentRef": "Form A-17, \"Application for registration of business name\", Section 4(1) of the Business Names Act 2014"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-31",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-31",
+    "notes": "GOV-5791 (\"GovSchema Standard Research\"). Re-scanned CATALOG.md fresh: Pakistan's FBR \"Manual Return\" workbook backlog (Annexes A-F) closed outright by the immediately preceding GOV-5782 cycle, and the standing 16-jurisdiction \"5 of 6 verticals\" re-screen list (AE, BA, BR, CZ, GR, ID, JM, MK, MN, MT, NO, PL, RW, SK, TN, TT) had already been reconfirmed a dead end across 8 consecutive prior cycles (GOV-5731 through GOV-5782) — so this cycle scouted genuinely new jurisdictions instead of a 9th re-screen. Parallel scouting across 18 countries entirely absent from the 100-jurisdiction registry (Angola, Mozambique, Cameroon, DR Congo, Sudan, Malawi, Suriname, Guyana, Belize, Nicaragua, Honduras, Cuba, Montenegro, Kosovo, Bahrain, Kuwait, Papua New Guinea, Fiji) found several reachable, unauthenticated candidates. Kosovo's ARBK Form A0 was the single richest field-wise, but a prior cycle (GOV-4713, 2026-07-24) had already flagged it as a governance question, not a build one: Kosovo has no ISO 3166-1 alpha-2 country code (contested statehood, not an ISO member), and this registry's own jurisdiction.country pattern requires one — adopting a non-ISO code (e.g. the widely-used \"XK\") would set a precedent for handling non-ISO-recognized territories generally, a call for the Founding Engineer/CEO. Left unauthored again this cycle, consistent with that standing flag. Papua New Guinea's IPA Form A-17 was the strongest genuinely-buildable candidate found: hosted directly on the Investment Promotion Authority's own official domain (ipa.gov.pg), no login/CAPTCHA/WAF gate, and the richest field set of any candidate found this cycle (11 pages).\n\nIndependently re-fetched https://www.ipa.gov.pg/documentation/pg/form-a-17.pdf: HTTP 200, 911,150 bytes (byte-identical to the scouting pass), sha256 c3c3147e3bf2ab87c780caa81946b0928f2fb936716f61e1213026bf94270f00. Confirmed a genuine native (searchable-text) PDF via clean pdfjs-dist text-layer extraction across all 11 pages, no glyph-mapping or OCR workaround needed.\n\nExtracted with pdfjs-dist (vendored install at /tmp/node_modules), reading each page's flattened text content, then re-extracting pages 10-11 with each text item's own x/y transform to resolve a genuine layout ambiguity: the raw text stream interleaves \"8. Checklist\" between the \"7. Lodged by\" section header and its own two-column answer block (Name/Address on the left; a right-hand \"Other contact details\" sub-header over Telephone/Email), since Section 8 itself carries only a single checklist item (the prescribed fee) with no further data fields of its own — position-based re-extraction confirmed Name/Address/Telephone/Email belong to Section 7, not Section 8.\n\nModels 125 fields[] across 8 steps (Proposed Business Name; Addresses; Owners — Natural Persons [bounded 3 slots]; Owners — Registered PNG Entity [single block]; Owners — Foreign Unregistered Entity [single block]; Business Activity and Commencement Date; Signed by Authorised Person(s) [bounded 4 slots]; Lodged By) plus 2 documents[] (the prescribed fee, payment; and the form's own verbatim certification statement, attestation). Disclosed scoping decisions: (1) Section 2B's own unbounded \"attach a separate sheet\" additional-places-of-business instruction is excluded, this registry's established unbounded-attachment exclusion pattern; (2) every owner-block field across Sections 3A/3B/3C is modelled bare-optional, even several printed \"(required)\" on the source, since ownership of the business name may sit entirely with any one of the three mutually-exclusive owner-type subparts (natural person / PNG-registered entity / foreign unregistered entity) with no printed either/or signal this schema could safely gate a requiredWhen condition on — consistent with this registry's own standing lesson never to gate requiredness on an otherwise-optional trigger field; (3) Section 3A's own printed \"First/Second/Third owner\" 3-slot capacity is modelled directly (no invented numberOfOwners count field, mirroring this same form's own Section 1 second/third-option-business-name pattern); (4) Gender is a genuine two-option enum (Male/Female), unlike some sibling registry forms where the equivalent field prints no options at all; (5) commencementDate's own printed \"may not be more than three months after the date of registration\" business rule is disclosed in its description rather than encoded as crossFieldValidation, since this schema has no separate registration-date field to compare it against; (6) Section 6's own 4 authorised-signer slots are modelled as a bounded 4-slot block with only the first required, mirroring the Section 3A owner-slot convention; (7) Entity Type in both Section 3B and 3C is modelled as free string, not enum, since the source prints only a blank label with no enumerated options anywhere on the form.\n\n3 valid mock scenarios (a minimal sole-owner natural-person application; a fully-populated natural-person-owner scenario also exercising a second owner and a second authorised signer; a PNG-registered-entity-owner scenario using Section 3B instead of a natural-person owner) plus 8 mutation-control fixtures (6 missing-required fixtures, one per step carrying a statically required field; an invalid-enum-value fixture; and an unknown-field-rejected fixture) committed under conformance/pg/ipa/business-name-registration/1.0.0/. An ephemeral, from-scratch conformance checker (deriving required rules directly from this schema's own fields[], discarded after use, not committed) ran all 11 fixtures: all 3 valid scenarios at 0 errors, all 8 mutation controls each raising exactly 1 error. Validated clean with node tools/validate.mjs and node tools/validate-ajv.mjs, individually and as part of the full registry run.\n\nOpens Papua New Guinea as the registry's 101st jurisdiction, via Business Formation (1 of 6). DMV, Visa, Passport, Taxes, and National ID are open, unscreened backlog for a future cycle — this cycle's own scouting pass did not screen PNG's other five verticals beyond this Business Formation candidate."
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "preferredBusinessName",
+      "label": "Preferred Business Name",
+      "type": "string",
+      "required": true,
+      "description": "The applicant's first-choice proposed business name. Not printed with an explicit asterisk/\"(required)\" marker of its own, but a proposed name is the necessary starting point of the application (the form's own instructions describe the second and third options as fallbacks used only if this one is unavailable) — modelled required as a standard-practice interpretation, not a directly quoted requirement.",
+      "sourceRef": "Section 1, Proposed business name — \"Preferred business name:\""
+    },
+    {
+      "name": "secondOptionBusinessName",
+      "label": "Second-Option Business Name",
+      "type": "string",
+      "required": false,
+      "description": "Used only if the preferred name is unavailable; if also unavailable, the third option is used instead.",
+      "sourceRef": "Section 1, Proposed business name — \"Second option:\""
+    },
+    {
+      "name": "thirdOptionBusinessName",
+      "label": "Third-Option Business Name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 1, Proposed business name — \"Third option:\""
+    },
+    {
+      "name": "principalAddressLine1",
+      "label": "Principal Place of Business — Address Line 1",
+      "type": "string",
+      "required": true,
+      "description": "Street name and number, or allotment and section number. A PO Box is not accepted here, and a village address is not allowed for the principal place of business.",
+      "sourceRef": "Section 2A, Principal place of business — Address line 1 (required)"
+    },
+    {
+      "name": "principalAddressLine2",
+      "label": "Principal Place of Business — Address Line 2",
+      "type": "string",
+      "required": false,
+      "description": "Used if needed, such as for an apartment or suite number.",
+      "sourceRef": "Section 2A — Address line 2 (optional)"
+    },
+    {
+      "name": "principalCityTown",
+      "label": "Principal Place of Business — City/Town",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 2A — City/Town (optional)"
+    },
+    {
+      "name": "principalDistrict",
+      "label": "Principal Place of Business — District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2A — District (required)"
+    },
+    {
+      "name": "principalProvince",
+      "label": "Principal Place of Business — Province",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2A — Province (required)"
+    },
+    {
+      "name": "principalPostcode",
+      "label": "Principal Place of Business — Postcode",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 2A — Postcode (optional)"
+    },
+    {
+      "name": "postalAddressLine1",
+      "label": "Postal Address — PO Box or Private Mail Bag",
+      "type": "string",
+      "required": true,
+      "description": "The postal address to which communications from the Registrar may be sent.",
+      "sourceRef": "Section 2C, Postal address — \"PO Box or Private Mail Bag (required)\""
+    },
+    {
+      "name": "postOfficeLocation",
+      "label": "Postal Address — Post Office Location",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 2C — Post office location (optional)"
+    },
+    {
+      "name": "postalCityTown",
+      "label": "Postal Address — City/Town",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 2C — City/Town (optional)"
+    },
+    {
+      "name": "postalDistrict",
+      "label": "Postal Address — District",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2C — District (required)"
+    },
+    {
+      "name": "postalProvince",
+      "label": "Postal Address — Province",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 2C — Province (required)"
+    },
+    {
+      "name": "postalPostcode",
+      "label": "Postal Address — Postcode",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 2C — Postcode (optional)"
+    },
+    {
+      "name": "postalEmailAddress",
+      "label": "Postal Address — Email Address",
+      "type": "string",
+      "required": true,
+      "description": "The address to which communications from the Registrar will be sent; an email is required to use the IPA's on-line filing service.",
+      "classification": "pii",
+      "sourceRef": "Section 2C — \"Email address (required)\""
+    },
+    {
+      "name": "owner1FullLegalName",
+      "label": "First Owner — Full Legal Name",
+      "type": "string",
+      "required": false,
+      "description": "Every owner-related field in this Section 3A block is modelled bare-optional, even though several are printed \"(required)\" on the source: ownership of the business name may instead sit entirely with a registered entity (Section 3B) or an unregistered foreign entity (Section 3C), so no natural-person owner slot can be assumed universally mandatory. This mirrors this registry's own established precedent for a conditionally-applicable, unprinted-signal section (see e.g. al/dpt/individual-annual-income-declaration boxes 15/16) rather than inventing an unprinted eligibility gate.",
+      "sourceRef": "Section 3A, First Owner — \"Full legal name (required)\""
+    },
+    {
+      "name": "owner1Nationality",
+      "label": "First Owner — Nationality",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, First Owner — \"Nationality (required)\""
+    },
+    {
+      "name": "owner1OtherNationalities",
+      "label": "First Owner — Other Nationalities",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, First Owner — \"Other nationalities, if applicable\""
+    },
+    {
+      "name": "owner1Gender",
+      "label": "First Owner — Gender",
+      "type": "enum",
+      "required": false,
+      "validation": {
+        "enum": [
+          "Male",
+          "Female"
+        ]
+      },
+      "sourceRef": "Section 3A, First Owner — \"Male / Female\" checkboxes"
+    },
+    {
+      "name": "owner1MonthYearOfBirth",
+      "label": "First Owner — Month and Year of Birth",
+      "type": "string",
+      "required": false,
+      "description": "Month and year only, MM/YYYY — the source prints no day-of-birth box for this field.",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/[0-9]{4}$"
+      },
+      "sourceRef": "Section 3A, First Owner — \"Month and year of birth (required)\""
+    },
+    {
+      "name": "owner1Email",
+      "label": "First Owner — Email Address",
+      "type": "string",
+      "required": false,
+      "description": "Not mandatory on the source, but required to use IPA's online registry.",
+      "classification": "pii",
+      "sourceRef": "Section 3A, First Owner — Email address"
+    },
+    {
+      "name": "owner1ForeignCertificationNumber",
+      "label": "First Owner — Foreign Certification Number",
+      "type": "string",
+      "required": false,
+      "description": "Applicable only if this owner is not a PNG citizen: a foreign investor certification number is required to be an owner of a business name.",
+      "sourceRef": "Section 3A, First Owner — \"Foreign Certification Number\""
+    },
+    {
+      "name": "owner1ResidentialAddressLine1",
+      "label": "First Owner — Residential Address Line 1",
+      "type": "string",
+      "required": false,
+      "description": "Street name and number, or allotment and section number, or village name. A PO Box is not allowed.",
+      "sourceRef": "Section 3A, First Owner — Residential address, Address line 1 (required)"
+    },
+    {
+      "name": "owner1ResidentialAddressLine2",
+      "label": "First Owner — Residential Address Line 2",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, First Owner — Residential address, Address line 2 (optional)"
+    },
+    {
+      "name": "owner1ResidentialCityTownVillage",
+      "label": "First Owner — Residential City/Town/Village",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, First Owner — Residential address, City/Town/Village (optional)"
+    },
+    {
+      "name": "owner1ResidentialDistrict",
+      "label": "First Owner — Residential District",
+      "type": "string",
+      "required": false,
+      "description": "Required if the residential address is in PNG.",
+      "sourceRef": "Section 3A, First Owner — Residential address, District (required if PNG address)"
+    },
+    {
+      "name": "owner1ResidentialProvince",
+      "label": "First Owner — Residential Province/State/Territory",
+      "type": "string",
+      "required": false,
+      "description": "Province required if the residential address is in PNG.",
+      "sourceRef": "Section 3A, First Owner — Residential address, Province/State/Territory or equivalent"
+    },
+    {
+      "name": "owner1ResidentialCountry",
+      "label": "First Owner — Residential Country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, First Owner — Residential address, Country (required)"
+    },
+    {
+      "name": "owner1ResidentialPostcode",
+      "label": "First Owner — Residential Post Code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, First Owner — Residential address, Post Code (optional)"
+    },
+    {
+      "name": "owner1PostalAddressLine1",
+      "label": "First Owner — Postal Address — PO Box or Private Mail Bag",
+      "type": "string",
+      "required": false,
+      "description": "Required if in PNG.",
+      "sourceRef": "Section 3A, First Owner — Postal address, Address line 1"
+    },
+    {
+      "name": "owner1PostalPostOfficeLocation",
+      "label": "First Owner — Postal Address — Post Office Location",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, First Owner — Postal address, Post office location"
+    },
+    {
+      "name": "owner1PostalCityTown",
+      "label": "First Owner — Postal Address — City/Town",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, First Owner — Postal address, City/Town"
+    },
+    {
+      "name": "owner1PostalDistrict",
+      "label": "First Owner — Postal Address — District",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, First Owner — Postal address, District (required)"
+    },
+    {
+      "name": "owner1PostalProvince",
+      "label": "First Owner — Postal Address — Province",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, First Owner — Postal address, Province (required)"
+    },
+    {
+      "name": "owner1PostalCountry",
+      "label": "First Owner — Postal Address — Country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, First Owner — Postal address, Country (required)"
+    },
+    {
+      "name": "owner1PostalPostcode",
+      "label": "First Owner — Postal Address — Post Code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, First Owner — Postal address, Post Code (optional)"
+    },
+    {
+      "name": "owner2FullLegalName",
+      "label": "Second Owner — Full Legal Name",
+      "type": "string",
+      "required": false,
+      "description": "Every owner-related field in this Section 3A block is modelled bare-optional, even though several are printed \"(required)\" on the source: ownership of the business name may instead sit entirely with a registered entity (Section 3B) or an unregistered foreign entity (Section 3C), so no natural-person owner slot can be assumed universally mandatory. This mirrors this registry's own established precedent for a conditionally-applicable, unprinted-signal section (see e.g. al/dpt/individual-annual-income-declaration boxes 15/16) rather than inventing an unprinted eligibility gate.",
+      "sourceRef": "Section 3A, Second Owner — \"Full legal name (required)\""
+    },
+    {
+      "name": "owner2Nationality",
+      "label": "Second Owner — Nationality",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Second Owner — \"Nationality (required)\""
+    },
+    {
+      "name": "owner2OtherNationalities",
+      "label": "Second Owner — Other Nationalities",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Second Owner — \"Other nationalities, if applicable\""
+    },
+    {
+      "name": "owner2Gender",
+      "label": "Second Owner — Gender",
+      "type": "enum",
+      "required": false,
+      "validation": {
+        "enum": [
+          "Male",
+          "Female"
+        ]
+      },
+      "sourceRef": "Section 3A, Second Owner — \"Male / Female\" checkboxes"
+    },
+    {
+      "name": "owner2MonthYearOfBirth",
+      "label": "Second Owner — Month and Year of Birth",
+      "type": "string",
+      "required": false,
+      "description": "Month and year only, MM/YYYY — the source prints no day-of-birth box for this field.",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/[0-9]{4}$"
+      },
+      "sourceRef": "Section 3A, Second Owner — \"Month and year of birth (required)\""
+    },
+    {
+      "name": "owner2Email",
+      "label": "Second Owner — Email Address",
+      "type": "string",
+      "required": false,
+      "description": "Not mandatory on the source, but required to use IPA's online registry.",
+      "classification": "pii",
+      "sourceRef": "Section 3A, Second Owner — Email address"
+    },
+    {
+      "name": "owner2ForeignCertificationNumber",
+      "label": "Second Owner — Foreign Certification Number",
+      "type": "string",
+      "required": false,
+      "description": "Applicable only if this owner is not a PNG citizen: a foreign investor certification number is required to be an owner of a business name.",
+      "sourceRef": "Section 3A, Second Owner — \"Foreign Certification Number\""
+    },
+    {
+      "name": "owner2ResidentialAddressLine1",
+      "label": "Second Owner — Residential Address Line 1",
+      "type": "string",
+      "required": false,
+      "description": "Street name and number, or allotment and section number, or village name. A PO Box is not allowed.",
+      "sourceRef": "Section 3A, Second Owner — Residential address, Address line 1 (required)"
+    },
+    {
+      "name": "owner2ResidentialAddressLine2",
+      "label": "Second Owner — Residential Address Line 2",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Second Owner — Residential address, Address line 2 (optional)"
+    },
+    {
+      "name": "owner2ResidentialCityTownVillage",
+      "label": "Second Owner — Residential City/Town/Village",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Second Owner — Residential address, City/Town/Village (optional)"
+    },
+    {
+      "name": "owner2ResidentialDistrict",
+      "label": "Second Owner — Residential District",
+      "type": "string",
+      "required": false,
+      "description": "Required if the residential address is in PNG.",
+      "sourceRef": "Section 3A, Second Owner — Residential address, District (required if PNG address)"
+    },
+    {
+      "name": "owner2ResidentialProvince",
+      "label": "Second Owner — Residential Province/State/Territory",
+      "type": "string",
+      "required": false,
+      "description": "Province required if the residential address is in PNG.",
+      "sourceRef": "Section 3A, Second Owner — Residential address, Province/State/Territory or equivalent"
+    },
+    {
+      "name": "owner2ResidentialCountry",
+      "label": "Second Owner — Residential Country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Second Owner — Residential address, Country (required)"
+    },
+    {
+      "name": "owner2ResidentialPostcode",
+      "label": "Second Owner — Residential Post Code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Second Owner — Residential address, Post Code (optional)"
+    },
+    {
+      "name": "owner2PostalAddressLine1",
+      "label": "Second Owner — Postal Address — PO Box or Private Mail Bag",
+      "type": "string",
+      "required": false,
+      "description": "Required if in PNG.",
+      "sourceRef": "Section 3A, Second Owner — Postal address, Address line 1"
+    },
+    {
+      "name": "owner2PostalPostOfficeLocation",
+      "label": "Second Owner — Postal Address — Post Office Location",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Second Owner — Postal address, Post office location"
+    },
+    {
+      "name": "owner2PostalCityTown",
+      "label": "Second Owner — Postal Address — City/Town",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Second Owner — Postal address, City/Town"
+    },
+    {
+      "name": "owner2PostalDistrict",
+      "label": "Second Owner — Postal Address — District",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Second Owner — Postal address, District (required)"
+    },
+    {
+      "name": "owner2PostalProvince",
+      "label": "Second Owner — Postal Address — Province",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Second Owner — Postal address, Province (required)"
+    },
+    {
+      "name": "owner2PostalCountry",
+      "label": "Second Owner — Postal Address — Country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Second Owner — Postal address, Country (required)"
+    },
+    {
+      "name": "owner2PostalPostcode",
+      "label": "Second Owner — Postal Address — Post Code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Second Owner — Postal address, Post Code (optional)"
+    },
+    {
+      "name": "owner3FullLegalName",
+      "label": "Third Owner — Full Legal Name",
+      "type": "string",
+      "required": false,
+      "description": "Every owner-related field in this Section 3A block is modelled bare-optional, even though several are printed \"(required)\" on the source: ownership of the business name may instead sit entirely with a registered entity (Section 3B) or an unregistered foreign entity (Section 3C), so no natural-person owner slot can be assumed universally mandatory. This mirrors this registry's own established precedent for a conditionally-applicable, unprinted-signal section (see e.g. al/dpt/individual-annual-income-declaration boxes 15/16) rather than inventing an unprinted eligibility gate.",
+      "sourceRef": "Section 3A, Third Owner — \"Full legal name (required)\""
+    },
+    {
+      "name": "owner3Nationality",
+      "label": "Third Owner — Nationality",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Third Owner — \"Nationality (required)\""
+    },
+    {
+      "name": "owner3OtherNationalities",
+      "label": "Third Owner — Other Nationalities",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Third Owner — \"Other nationalities, if applicable\""
+    },
+    {
+      "name": "owner3Gender",
+      "label": "Third Owner — Gender",
+      "type": "enum",
+      "required": false,
+      "validation": {
+        "enum": [
+          "Male",
+          "Female"
+        ]
+      },
+      "sourceRef": "Section 3A, Third Owner — \"Male / Female\" checkboxes"
+    },
+    {
+      "name": "owner3MonthYearOfBirth",
+      "label": "Third Owner — Month and Year of Birth",
+      "type": "string",
+      "required": false,
+      "description": "Month and year only, MM/YYYY — the source prints no day-of-birth box for this field.",
+      "validation": {
+        "pattern": "^(0[1-9]|1[0-2])/[0-9]{4}$"
+      },
+      "sourceRef": "Section 3A, Third Owner — \"Month and year of birth (required)\""
+    },
+    {
+      "name": "owner3Email",
+      "label": "Third Owner — Email Address",
+      "type": "string",
+      "required": false,
+      "description": "Not mandatory on the source, but required to use IPA's online registry.",
+      "classification": "pii",
+      "sourceRef": "Section 3A, Third Owner — Email address"
+    },
+    {
+      "name": "owner3ForeignCertificationNumber",
+      "label": "Third Owner — Foreign Certification Number",
+      "type": "string",
+      "required": false,
+      "description": "Applicable only if this owner is not a PNG citizen: a foreign investor certification number is required to be an owner of a business name.",
+      "sourceRef": "Section 3A, Third Owner — \"Foreign Certification Number\""
+    },
+    {
+      "name": "owner3ResidentialAddressLine1",
+      "label": "Third Owner — Residential Address Line 1",
+      "type": "string",
+      "required": false,
+      "description": "Street name and number, or allotment and section number, or village name. A PO Box is not allowed.",
+      "sourceRef": "Section 3A, Third Owner — Residential address, Address line 1 (required)"
+    },
+    {
+      "name": "owner3ResidentialAddressLine2",
+      "label": "Third Owner — Residential Address Line 2",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Third Owner — Residential address, Address line 2 (optional)"
+    },
+    {
+      "name": "owner3ResidentialCityTownVillage",
+      "label": "Third Owner — Residential City/Town/Village",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Third Owner — Residential address, City/Town/Village (optional)"
+    },
+    {
+      "name": "owner3ResidentialDistrict",
+      "label": "Third Owner — Residential District",
+      "type": "string",
+      "required": false,
+      "description": "Required if the residential address is in PNG.",
+      "sourceRef": "Section 3A, Third Owner — Residential address, District (required if PNG address)"
+    },
+    {
+      "name": "owner3ResidentialProvince",
+      "label": "Third Owner — Residential Province/State/Territory",
+      "type": "string",
+      "required": false,
+      "description": "Province required if the residential address is in PNG.",
+      "sourceRef": "Section 3A, Third Owner — Residential address, Province/State/Territory or equivalent"
+    },
+    {
+      "name": "owner3ResidentialCountry",
+      "label": "Third Owner — Residential Country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Third Owner — Residential address, Country (required)"
+    },
+    {
+      "name": "owner3ResidentialPostcode",
+      "label": "Third Owner — Residential Post Code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Third Owner — Residential address, Post Code (optional)"
+    },
+    {
+      "name": "owner3PostalAddressLine1",
+      "label": "Third Owner — Postal Address — PO Box or Private Mail Bag",
+      "type": "string",
+      "required": false,
+      "description": "Required if in PNG.",
+      "sourceRef": "Section 3A, Third Owner — Postal address, Address line 1"
+    },
+    {
+      "name": "owner3PostalPostOfficeLocation",
+      "label": "Third Owner — Postal Address — Post Office Location",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Third Owner — Postal address, Post office location"
+    },
+    {
+      "name": "owner3PostalCityTown",
+      "label": "Third Owner — Postal Address — City/Town",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Third Owner — Postal address, City/Town"
+    },
+    {
+      "name": "owner3PostalDistrict",
+      "label": "Third Owner — Postal Address — District",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Third Owner — Postal address, District (required)"
+    },
+    {
+      "name": "owner3PostalProvince",
+      "label": "Third Owner — Postal Address — Province",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Third Owner — Postal address, Province (required)"
+    },
+    {
+      "name": "owner3PostalCountry",
+      "label": "Third Owner — Postal Address — Country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Third Owner — Postal address, Country (required)"
+    },
+    {
+      "name": "owner3PostalPostcode",
+      "label": "Third Owner — Postal Address — Post Code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3A, Third Owner — Postal address, Post Code (optional)"
+    },
+    {
+      "name": "registeredEntityOwnerRegistrationNumber",
+      "label": "Registered Entity Owner — Registration Number",
+      "type": "string",
+      "required": false,
+      "description": "Applicable only when at least one owner of the business name is an entity already registered in Papua New Guinea under another law (e.g. the Companies Act). All fields in this block are bare-optional: they apply only if this ownership category is used, which the source signals structurally (a separate lettered subpart) rather than with a printed checkbox this schema could gate on.",
+      "sourceRef": "Section 3B, Owners that are registered entities in Papua New Guinea — \"Registration number\""
+    },
+    {
+      "name": "registeredEntityOwnerName",
+      "label": "Registered Entity Owner — Entity Name",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3B — \"Entity Name\""
+    },
+    {
+      "name": "registeredEntityOwnerType",
+      "label": "Registered Entity Owner — Entity Type",
+      "type": "string",
+      "required": false,
+      "description": "Modelled as free string: the source prints only a blank \"Entity Type\" label with no enumerated options.",
+      "sourceRef": "Section 3B — \"Entity Type\""
+    },
+    {
+      "name": "registeredEntityOwnerEmail",
+      "label": "Registered Entity Owner — Email",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 3B — \"Email\""
+    },
+    {
+      "name": "registeredEntityOwnerPostalAddressLine1",
+      "label": "Registered Entity Owner — Postal Address — PO Box or Private Mail Bag",
+      "type": "string",
+      "required": false,
+      "description": "Required if in PNG.",
+      "sourceRef": "Section 3B, Postal address — Address line 1"
+    },
+    {
+      "name": "registeredEntityOwnerPostOfficeLocation",
+      "label": "Registered Entity Owner — Postal Address — Post Office Location",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3B, Postal address — Post office location"
+    },
+    {
+      "name": "registeredEntityOwnerCityTown",
+      "label": "Registered Entity Owner — Postal Address — City/Town",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3B, Postal address — City/Town"
+    },
+    {
+      "name": "registeredEntityOwnerDistrict",
+      "label": "Registered Entity Owner — Postal Address — District",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3B, Postal address — District (required)"
+    },
+    {
+      "name": "registeredEntityOwnerProvince",
+      "label": "Registered Entity Owner — Postal Address — Province",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3B, Postal address — Province (required)"
+    },
+    {
+      "name": "registeredEntityOwnerCountry",
+      "label": "Registered Entity Owner — Postal Address — Country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3B, Postal address — Country (required)"
+    },
+    {
+      "name": "registeredEntityOwnerPostcode",
+      "label": "Registered Entity Owner — Postal Address — Post Code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3B, Postal address — Post Code (optional)"
+    },
+    {
+      "name": "foreignEntityOwnerFullLegalName",
+      "label": "Foreign Entity Owner — Full Legal Name",
+      "type": "string",
+      "required": false,
+      "description": "Applicable only when at least one owner of the business name is an entity that is not registered in any Papua New Guinea government registry. Printed \"(required)\" on the source, but modelled bare-optional here for the same structural reason as the Section 3B block above — this ownership category may or may not apply to a given application.",
+      "sourceRef": "Section 3C, Owners that are entities but are not registered in a Papua New Guinea government registry — \"Full legal name (required)\""
+    },
+    {
+      "name": "foreignEntityOwnerType",
+      "label": "Foreign Entity Owner — Entity Type",
+      "type": "string",
+      "required": false,
+      "description": "Modelled as free string: the source prints only a blank \"Entity Type (optional)\" label with no enumerated options.",
+      "sourceRef": "Section 3C — \"Entity Type (optional)\""
+    },
+    {
+      "name": "foreignEntityOwnerEmail",
+      "label": "Foreign Entity Owner — Email",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 3C — \"Email\""
+    },
+    {
+      "name": "foreignEntityOwnerContactPersonName",
+      "label": "Foreign Entity Owner — Name of Contact Person",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 3C — \"Name of Contact Person\""
+    },
+    {
+      "name": "foreignEntityOwnerForeignCertificationNumber",
+      "label": "Foreign Entity Owner — Foreign Certification Number",
+      "type": "string",
+      "required": false,
+      "description": "A foreign investor certification number, required to be an owner of a business name when the owner is not a PNG citizen/entity.",
+      "sourceRef": "Section 3C — \"Foreign Certification Number\""
+    },
+    {
+      "name": "foreignEntityOwnerEntityNumber",
+      "label": "Foreign Entity Owner — Entity Number",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3C — \"Entity Number\""
+    },
+    {
+      "name": "foreignEntityOwnerPostalAddressLine1",
+      "label": "Foreign Entity Owner — Postal Address — PO Box or Private Mail Bag",
+      "type": "string",
+      "required": false,
+      "description": "Required if in PNG.",
+      "sourceRef": "Section 3C, Postal address — Address line 1"
+    },
+    {
+      "name": "foreignEntityOwnerPostOfficeLocation",
+      "label": "Foreign Entity Owner — Postal Address — Post Office Location",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3C, Postal address — Post office location"
+    },
+    {
+      "name": "foreignEntityOwnerCityTown",
+      "label": "Foreign Entity Owner — Postal Address — City/Town",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3C, Postal address — City/Town"
+    },
+    {
+      "name": "foreignEntityOwnerDistrict",
+      "label": "Foreign Entity Owner — Postal Address — District",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3C, Postal address — District (required)"
+    },
+    {
+      "name": "foreignEntityOwnerProvince",
+      "label": "Foreign Entity Owner — Postal Address — Province",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3C, Postal address — Province (required)"
+    },
+    {
+      "name": "foreignEntityOwnerCountry",
+      "label": "Foreign Entity Owner — Postal Address — Country",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3C, Postal address — Country (required)"
+    },
+    {
+      "name": "foreignEntityOwnerPostcode",
+      "label": "Foreign Entity Owner — Postal Address — Post Code",
+      "type": "string",
+      "required": false,
+      "sourceRef": "Section 3C, Postal address — Post Code (optional)"
+    },
+    {
+      "name": "primaryBusinessActivity",
+      "label": "Primary Business Activity",
+      "type": "enum",
+      "required": true,
+      "description": "The primary type of business to be conducted under this business name. The source instructs \"tick only one box\" against a printed 17-category classification (International Standard Industrial Classification-style sections).",
+      "validation": {
+        "enum": [
+          "Agriculture, hunting, forestry",
+          "Fishing",
+          "Mining and quarrying",
+          "Manufacturing",
+          "Electricity, gas and water supply",
+          "Construction",
+          "Wholesale and retail trade, sale and repair of motor vehicles, motor cycles, personal and household goods",
+          "Hotels and restaurants",
+          "Transport, storage and communications",
+          "Financial intermediation",
+          "Real estate, renting and business service activities",
+          "Public administration and defence, compulsory social security",
+          "Education",
+          "Health and social work",
+          "Other community, social and personal service activities",
+          "Private households with employed persons",
+          "Extra-territorial organization and bodies"
+        ]
+      },
+      "sourceRef": "Section 4, Business Activity"
+    },
+    {
+      "name": "commencementDate",
+      "label": "Date of Commencement of Business Activity",
+      "type": "date",
+      "required": true,
+      "description": "The commencement date may not be more than three months after the date of registration — a business rule stated on the source relative to the (not-yet-known-at-submission-time) registration date, disclosed here rather than encoded as a crossFieldValidation rule, since this schema has no separate registration-date field for it to reference.",
+      "sourceRef": "Section 5, Date of commencement of business activity"
+    },
+    {
+      "name": "signer1PrintedName",
+      "label": "First Authorised Signer — Printed Name",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 6, Owner/Authorised signer #1 — \"Printed Name:\""
+    },
+    {
+      "name": "signer1Signature",
+      "label": "First Authorised Signer — Signature",
+      "type": "string",
+      "required": true,
+      "description": "Printed as a single \"Signature: ______\" line.",
+      "classification": "pii",
+      "sourceRef": "Section 6, Owner/Authorised signer #1 — \"Signature:\""
+    },
+    {
+      "name": "signer1Designation",
+      "label": "First Authorised Signer — Designation",
+      "type": "enum",
+      "required": true,
+      "validation": {
+        "enum": [
+          "Owner",
+          "Authorised person"
+        ]
+      },
+      "sourceRef": "Section 6, Owner/Authorised signer #1 — \"Designation: Owner or Authorised person\""
+    },
+    {
+      "name": "signer1Date",
+      "label": "First Authorised Signer — Date",
+      "type": "date",
+      "required": true,
+      "sourceRef": "Section 6, Owner/Authorised signer #1 — \"Date:\""
+    },
+    {
+      "name": "signer2PrintedName",
+      "label": "Second Authorised Signer — Printed Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 6, Owner/Authorised signer #2 — \"Printed Name:\""
+    },
+    {
+      "name": "signer2Signature",
+      "label": "Second Authorised Signer — Signature",
+      "type": "string",
+      "required": false,
+      "description": "Printed as a single \"Signature: ______\" line.",
+      "classification": "pii",
+      "sourceRef": "Section 6, Owner/Authorised signer #2 — \"Signature:\""
+    },
+    {
+      "name": "signer2Designation",
+      "label": "Second Authorised Signer — Designation",
+      "type": "enum",
+      "required": false,
+      "validation": {
+        "enum": [
+          "Owner",
+          "Authorised person"
+        ]
+      },
+      "sourceRef": "Section 6, Owner/Authorised signer #2 — \"Designation: Owner or Authorised person\""
+    },
+    {
+      "name": "signer2Date",
+      "label": "Second Authorised Signer — Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Section 6, Owner/Authorised signer #2 — \"Date:\""
+    },
+    {
+      "name": "signer3PrintedName",
+      "label": "Third Authorised Signer — Printed Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 6, Owner/Authorised signer #3 — \"Printed Name:\""
+    },
+    {
+      "name": "signer3Signature",
+      "label": "Third Authorised Signer — Signature",
+      "type": "string",
+      "required": false,
+      "description": "Printed as a single \"Signature: ______\" line.",
+      "classification": "pii",
+      "sourceRef": "Section 6, Owner/Authorised signer #3 — \"Signature:\""
+    },
+    {
+      "name": "signer3Designation",
+      "label": "Third Authorised Signer — Designation",
+      "type": "enum",
+      "required": false,
+      "validation": {
+        "enum": [
+          "Owner",
+          "Authorised person"
+        ]
+      },
+      "sourceRef": "Section 6, Owner/Authorised signer #3 — \"Designation: Owner or Authorised person\""
+    },
+    {
+      "name": "signer3Date",
+      "label": "Third Authorised Signer — Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Section 6, Owner/Authorised signer #3 — \"Date:\""
+    },
+    {
+      "name": "signer4PrintedName",
+      "label": "Fourth Authorised Signer — Printed Name",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 6, Owner/Authorised signer #4 — \"Printed Name:\""
+    },
+    {
+      "name": "signer4Signature",
+      "label": "Fourth Authorised Signer — Signature",
+      "type": "string",
+      "required": false,
+      "description": "Printed as a single \"Signature: ______\" line.",
+      "classification": "pii",
+      "sourceRef": "Section 6, Owner/Authorised signer #4 — \"Signature:\""
+    },
+    {
+      "name": "signer4Designation",
+      "label": "Fourth Authorised Signer — Designation",
+      "type": "enum",
+      "required": false,
+      "validation": {
+        "enum": [
+          "Owner",
+          "Authorised person"
+        ]
+      },
+      "sourceRef": "Section 6, Owner/Authorised signer #4 — \"Designation: Owner or Authorised person\""
+    },
+    {
+      "name": "signer4Date",
+      "label": "Fourth Authorised Signer — Date",
+      "type": "date",
+      "required": false,
+      "sourceRef": "Section 6, Owner/Authorised signer #4 — \"Date:\""
+    },
+    {
+      "name": "lodgedByName",
+      "label": "Lodged By — Name",
+      "type": "string",
+      "required": true,
+      "description": "Confirmed via x/y-position re-extraction of the source's own final page: the raw text stream interleaves \"8. Checklist\" between the \"7. Lodged by\" section header and its own two-column answer fields (Name/Address on the left, \"Other contact details\" — Telephone/Email — on the right), since Section 8 itself is a checklist item with no further data fields of its own.",
+      "classification": "pii",
+      "sourceRef": "Section 7, Lodged by — \"Name:\""
+    },
+    {
+      "name": "lodgedByAddress",
+      "label": "Lodged By — Address",
+      "type": "string",
+      "required": true,
+      "sourceRef": "Section 7, Lodged by — \"Address:\""
+    },
+    {
+      "name": "lodgedByEmail",
+      "label": "Lodged By — Email",
+      "type": "string",
+      "required": false,
+      "classification": "pii",
+      "sourceRef": "Section 7, Lodged by, Other contact details — \"Email (optional):\""
+    },
+    {
+      "name": "lodgedByPhone",
+      "label": "Lodged By — Telephone",
+      "type": "string",
+      "required": true,
+      "classification": "pii",
+      "sourceRef": "Section 7, Lodged by, Other contact details — \"Telephone:\""
+    }
+  ],
+  "steps": [
+    {
+      "id": "proposed_business_name",
+      "title": "1. Proposed Business Name",
+      "fields": [
+        "preferredBusinessName",
+        "secondOptionBusinessName",
+        "thirdOptionBusinessName"
+      ],
+      "next": "addresses"
+    },
+    {
+      "id": "addresses",
+      "title": "2. Addresses",
+      "fields": [
+        "principalAddressLine1",
+        "principalAddressLine2",
+        "principalCityTown",
+        "principalDistrict",
+        "principalProvince",
+        "principalPostcode",
+        "postalAddressLine1",
+        "postOfficeLocation",
+        "postalCityTown",
+        "postalDistrict",
+        "postalProvince",
+        "postalPostcode",
+        "postalEmailAddress"
+      ],
+      "next": "owners_natural_persons"
+    },
+    {
+      "id": "owners_natural_persons",
+      "title": "3A. Owners — Natural Persons",
+      "fields": [
+        "owner1FullLegalName",
+        "owner1Nationality",
+        "owner1OtherNationalities",
+        "owner1Gender",
+        "owner1MonthYearOfBirth",
+        "owner1Email",
+        "owner1ForeignCertificationNumber",
+        "owner1ResidentialAddressLine1",
+        "owner1ResidentialAddressLine2",
+        "owner1ResidentialCityTownVillage",
+        "owner1ResidentialDistrict",
+        "owner1ResidentialProvince",
+        "owner1ResidentialCountry",
+        "owner1ResidentialPostcode",
+        "owner1PostalAddressLine1",
+        "owner1PostalPostOfficeLocation",
+        "owner1PostalCityTown",
+        "owner1PostalDistrict",
+        "owner1PostalProvince",
+        "owner1PostalCountry",
+        "owner1PostalPostcode",
+        "owner2FullLegalName",
+        "owner2Nationality",
+        "owner2OtherNationalities",
+        "owner2Gender",
+        "owner2MonthYearOfBirth",
+        "owner2Email",
+        "owner2ForeignCertificationNumber",
+        "owner2ResidentialAddressLine1",
+        "owner2ResidentialAddressLine2",
+        "owner2ResidentialCityTownVillage",
+        "owner2ResidentialDistrict",
+        "owner2ResidentialProvince",
+        "owner2ResidentialCountry",
+        "owner2ResidentialPostcode",
+        "owner2PostalAddressLine1",
+        "owner2PostalPostOfficeLocation",
+        "owner2PostalCityTown",
+        "owner2PostalDistrict",
+        "owner2PostalProvince",
+        "owner2PostalCountry",
+        "owner2PostalPostcode",
+        "owner3FullLegalName",
+        "owner3Nationality",
+        "owner3OtherNationalities",
+        "owner3Gender",
+        "owner3MonthYearOfBirth",
+        "owner3Email",
+        "owner3ForeignCertificationNumber",
+        "owner3ResidentialAddressLine1",
+        "owner3ResidentialAddressLine2",
+        "owner3ResidentialCityTownVillage",
+        "owner3ResidentialDistrict",
+        "owner3ResidentialProvince",
+        "owner3ResidentialCountry",
+        "owner3ResidentialPostcode",
+        "owner3PostalAddressLine1",
+        "owner3PostalPostOfficeLocation",
+        "owner3PostalCityTown",
+        "owner3PostalDistrict",
+        "owner3PostalProvince",
+        "owner3PostalCountry",
+        "owner3PostalPostcode"
+      ],
+      "next": "owners_registered_entity"
+    },
+    {
+      "id": "owners_registered_entity",
+      "title": "3B. Owners — Entities Registered in Papua New Guinea",
+      "fields": [
+        "registeredEntityOwnerRegistrationNumber",
+        "registeredEntityOwnerName",
+        "registeredEntityOwnerType",
+        "registeredEntityOwnerEmail",
+        "registeredEntityOwnerPostalAddressLine1",
+        "registeredEntityOwnerPostOfficeLocation",
+        "registeredEntityOwnerCityTown",
+        "registeredEntityOwnerDistrict",
+        "registeredEntityOwnerProvince",
+        "registeredEntityOwnerCountry",
+        "registeredEntityOwnerPostcode"
+      ],
+      "next": "owners_foreign_entity"
+    },
+    {
+      "id": "owners_foreign_entity",
+      "title": "3C. Owners — Entities Not Registered in a Papua New Guinea Government Registry",
+      "fields": [
+        "foreignEntityOwnerFullLegalName",
+        "foreignEntityOwnerType",
+        "foreignEntityOwnerEmail",
+        "foreignEntityOwnerContactPersonName",
+        "foreignEntityOwnerForeignCertificationNumber",
+        "foreignEntityOwnerEntityNumber",
+        "foreignEntityOwnerPostalAddressLine1",
+        "foreignEntityOwnerPostOfficeLocation",
+        "foreignEntityOwnerCityTown",
+        "foreignEntityOwnerDistrict",
+        "foreignEntityOwnerProvince",
+        "foreignEntityOwnerCountry",
+        "foreignEntityOwnerPostcode"
+      ],
+      "next": "business_activity"
+    },
+    {
+      "id": "business_activity",
+      "title": "4-5. Business Activity and Commencement Date",
+      "fields": [
+        "primaryBusinessActivity",
+        "commencementDate"
+      ],
+      "next": "authorised_signers"
+    },
+    {
+      "id": "authorised_signers",
+      "title": "6. Signed by Authorised Person(s)",
+      "fields": [
+        "signer1PrintedName",
+        "signer1Signature",
+        "signer1Designation",
+        "signer1Date",
+        "signer2PrintedName",
+        "signer2Signature",
+        "signer2Designation",
+        "signer2Date",
+        "signer3PrintedName",
+        "signer3Signature",
+        "signer3Designation",
+        "signer3Date",
+        "signer4PrintedName",
+        "signer4Signature",
+        "signer4Designation",
+        "signer4Date"
+      ],
+      "next": "lodgement"
+    },
+    {
+      "id": "lodgement",
+      "title": "7. Lodged By",
+      "fields": [
+        "lodgedByName",
+        "lodgedByAddress",
+        "lodgedByEmail",
+        "lodgedByPhone"
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "prescribedFee",
+      "label": "Prescribed Fee",
+      "category": "payment",
+      "required": true,
+      "sourceRef": "Section 8, Checklist — \"The prescribed fee must accompany this form.\""
+    },
+    {
+      "id": "certificationOfInformation",
+      "label": "Certification that the information in this form is true and correct",
+      "category": "attestation",
+      "required": true,
+      "statement": "I certify that the information in this form is true and correct.",
+      "sourceRef": "Section 6, Signed by authorised person(s)"
+    }
+  ],
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-31"
+  }
+}
