@@ -4,7 +4,55 @@
 
 ## Executive Summary
 
-**103 jurisdictions** | **704 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**103 jurisdictions** | **705 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-31, GOV-5812, "GovSchema Standard Research"): Papua New
+> Guinea's Passport vertical opens (2 of 6)**, via
+> `pg/ica/passport-application@1.0.0` — the Immigration and Citizenship
+> Authority's (ICA) Form FA 81, "Application for a Travel Document" (Passport
+> Act of 1982, form last modified March 2019), covering a Standard,
+> Official, or Diplomatic Passport, a Certificate of Identity, or an
+> Emergency Travel Document. Papua New Guinea opened as the registry's 101st
+> jurisdiction the previous cycle (GOV-5791) via Business Formation only,
+> with its Known Gaps entry explicitly banking DMV, Visa, Passport, Taxes,
+> and National ID as open, unscreened backlog. This cycle screened all five:
+> Passport (this document) and Visa (two live, unauthenticated, genuinely
+> rich AcroForm candidates — a 62-widget ICA visa-extension form and a
+> 102-widget entry-permit form mirrored by the PNG-Japan Society, both
+> banked as unauthored backlog) came back strong; National ID (two live but
+> flat, zero-AcroForm-widget PNGCIR forms) came back weak; DMV (RTA driver-
+> licence Forms 1/2, both zero-widget, plus a 26-page regulatory document
+> that is not an application form at all) and Taxes (the IRC's own
+> downloads page returned HTTP 403; only a business GST form, not an
+> individual income-tax return, was otherwise found) were confirmed dead
+> ends. Independently re-fetched
+> `https://ica.gov.pg/uploads/media/post_file_5437896-passport-application-form-fillable-savable.pdf`
+> twice (HTTP 200, 327,603 bytes, sha256
+> `a61da176b95c22f05cd554b36d635791bbf7e867bd1e41a12514e902a2c2cf28`, both
+> times; no login/CAPTCHA/WAF gate), confirmed via `pdfjs-dist` to be a
+> genuine 93-widget AcroForm across 4 pages (page 1 a pure cover/
+> instructions page), each checkbox group and combo-box dropdown also
+> visually cross-checked against a canvas-rendered PNG of its page. Models
+> 79 `fields[]` across 8 steps, 7 `documents[]` entries, and 1
+> `crossFieldValidation` rule; see the Passport vertical update below and
+> the document's own VERIFICATION.md for the full sourcing record, disclosed
+> scoping decisions (this specimen has no fillable signature widget
+> anywhere across all 4 pages — a first for this registry's passport
+> schemas, which have otherwise always found exactly one; the entire form
+> prints no required/optional signal of any kind, so requiredness follows
+> the same conservative policy `cd/maeci/visa-application` adopted under an
+> identical constraint; two directly-supplied boolean gates,
+> `applicantUnder17` and `applicantCannotReadWriteEnglish`, model conditions
+> the form states only in prose; several internal PDF field names are
+> generic auto-numbered artifacts disambiguated by rect position; two
+> page-4 fields are single combined boxes, not decomposed sub-fields; and
+> Attachment A's own two citizenship questions are quoted verbatim
+> including a printed grammatical typo), and conformance results (3 valid
+> scenarios, 13 mutation fixtures, all passing as expected). Both
+> validators pass (705/705); registry index rebuilt.
+> Papua New Guinea now stands at 2 of 6 verticals; DMV and Taxes are
+> confirmed dead ends, Visa and National ID remain open, unscreened-into-
+> authorship backlog for a future cycle.
 
 > **Update (2026-07-31, GOV-5805, "GovSchema Standard Research"): Belize
 > opens as the registry's 103rd jurisdiction**, via
@@ -18045,7 +18093,18 @@
 
 ## By Vertical
 
-### Passport (64/99 jurisdictions — 65%)
+### Passport (65/100 jurisdictions — 65%)
+
+> **Update (2026-07-31, GOV-5812, "GovSchema Standard Research"): Papua New
+> Guinea's Passport vertical opens (2 of 6)**, via
+> `pg/ica/passport-application@1.0.0` — the Immigration and Citizenship
+> Authority's (ICA) Form FA 81, "Application for a Travel Document" (Passport
+> Act of 1982). See the Executive Summary's GOV-5812 update above for the
+> full sourcing record. Papua New Guinea was already the registry's 101st
+> jurisdiction (opened via Business Formation, GOV-5791); this cycle screened
+> and opened its Passport vertical specifically, so numerator and
+> denominator both bump 64/99 to 65/100 (a jurisdiction newly screened for
+> this vertical, not a new jurisdiction).
 
 > **Update (2026-07-31, GOV-5805, "GovSchema Standard Research"): Belize's
 > Passport vertical opens (1 of 6)**, via
@@ -25266,7 +25325,7 @@ now closed.
 | **NZ** | 9 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| **PG** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| **PG** | 2 | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PK** | 11 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
@@ -27350,6 +27409,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
       candidate for this same jurisdiction/authority if a future cycle
       wants to deepen Business Formation before screening the other five
       verticals.
+      **Update (GOV-5812, 2026-07-31): Papua New Guinea's other five
+      verticals were screened this cycle.** Passport is now authored, via
+      `pg/ica/passport-application@1.0.0` — ICA's Form FA 81, "Application
+      for a Travel Document" (HTTP 200, 327,603 bytes, sha256
+      `a61da176b95c22f05cd554b36d635791bbf7e867bd1e41a12514e902a2c2cf28`) —
+      see the Executive Summary and Passport vertical updates above. Visa
+      came back with two live, unauthenticated, genuinely rich AcroForm
+      candidates (ICA's own 62-widget visa-extension form and a 102-widget
+      entry-permit form mirrored by the PNG-Japan Society) not authored
+      this cycle, banked as backlog. National ID came back with two live
+      but flat (zero-AcroForm-widget) PNGCIR forms, weaker than a genuine
+      AcroForm, also banked as backlog. DMV (RTA driver-licence Forms 1/2,
+      both zero-widget) and Taxes (IRC's downloads page returned HTTP 403;
+      no individual-income-tax-return form found, only a business GST form)
+      are confirmed dead ends this cycle. Papua New Guinea now stands at 2
+      of 6 verticals; the sibling Form A-2 remains unauthored, unre-scouted
+      backlog.
     - **Kosovo** — ARBK's Form A0 (LLC registration) was re-scouted this
       cycle (still live and unauthenticated, `arbk.rks-gov.net`) and came
       back the single richest field-wise candidate found across all 18
