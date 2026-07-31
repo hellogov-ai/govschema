@@ -4,7 +4,51 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **695 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **696 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-31, GOV-5745, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains a sixth schema**, via
+> `pk/fbr/annexure-a-adjustable-tax@1.0.0` — the Federal Board of Revenue's
+> "Annex-A" worksheet ("Adjustable Tax Collected / Deducted") from the same
+> nine-worksheet "Manual Return" workbook already modelled as
+> `pk/fbr/annual-individual-income-tax-return-it-1b` (Form IT-1B),
+> `pk/fbr/annual-individual-income-tax-return-it-2` (Form IT-2), and
+> `pk/fbr/wealth-statement`. Both sibling IT-1B and IT-2 documents' own
+> v1.0.0 versions had explicitly named "Annexes A–F" as this workbook's
+> open backlog. This cycle re-scanned `CATALOG.md`'s own Known Gaps fresh
+> first and re-confirmed the same 16 jurisdictions at 5 of 6 verticals the
+> immediately preceding GOV-5738 cycle had already found a re-screened dead
+> end (AE, BA, BR, CZ, GR, ID, JM, MK, MN, MT, NO, PL, RW, SK, TN, TT) — so
+> it picked up this pre-flagged, already-open-vertical companion instead.
+> Independently re-fetched the source (HTTP 200, 104,097 bytes, sha256
+> `4e2f9874e9a910713fae9a182fc5c5a578bcfd2649d2031f8144c8b5fba96b9f` —
+> byte-identical to every prior cycle's own figures, confirming no
+> revision). Annex-A is a self-contained schedule of forty named
+> withholding/advance-tax categories under specific sections of the Income
+> Tax Ordinance, 2001, each reported as a receipts/value amount and a
+> tax-collected/deducted amount. Two genuine structural differences from
+> its sibling worksheets: this sheet's own header block has no Address
+> field at all (unlike IT-1B/IT-2/Wealth Statement), and its single
+> `dataValidations` rule validates **all forty rows uniformly, including
+> the headline "Adjustable Tax" total itself** — unlike every sibling
+> worksheet, where the equivalent total row's own *lack* of validation is
+> what confirmed it as an excluded computed subtotal. Because this
+> worksheet's total carries the identical constraint as its components,
+> this version models all forty rows (the total plus every named
+> category) as individually reportable fields, following the same
+> "named sub-item breakdown" convention already used for IT-2's Other
+> Sources/Foreign Income categories. Also disclosed: Sr. numbering skips
+> Sr. 7 entirely and two rows carry no Sr. number at all (a recurring
+> "later insertion, not renumbered" signal already seen in the Wealth
+> Statement's own roman-numeral skip), and one row's own printed label
+> carries a source typo ("zforiegn" for "foreign"), both quoted verbatim
+> and disclosed, not corrected. 87 fields, 7 conformance checks (2 valid
+> scenarios, 5 mutation-control fixtures) all passing as expected. Both
+> validators pass (696/696); registry index rebuilt. Pakistan remains at 3
+> of 6 verticals (a sixth schema within the already-open Taxes vertical,
+> not a new vertical); Annexes B through F remain this workbook's own
+> disclosed, open backlog. See the Taxes vertical section update below and
+> this document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-31, GOV-5738, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical gains a fifth schema**, via
@@ -20586,6 +20630,48 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (82/96 jurisdictions — 85%)
 
+> **Update (2026-07-31, GOV-5745, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains a sixth schema**, via
+> `pk/fbr/annexure-a-adjustable-tax@1.0.0` — the Federal Board of Revenue's
+> "Annex-A" worksheet ("Adjustable Tax Collected / Deducted") from the same
+> nine-worksheet "Manual Return" workbook already modelled as
+> `pk/fbr/annual-individual-income-tax-return-it-1b` (Form IT-1B),
+> `pk/fbr/annual-individual-income-tax-return-it-2` (Form IT-2), and
+> `pk/fbr/wealth-statement`. Both sibling IT-1B and IT-2 documents' own
+> v1.0.0 versions had explicitly named "Annexes A–F" as this workbook's
+> open backlog. This cycle re-scanned `CATALOG.md`'s own Known Gaps fresh
+> first and re-confirmed the same 16 jurisdictions at 5 of 6 verticals the
+> immediately preceding GOV-5738 cycle had already found a re-screened dead
+> end (AE, BA, BR, CZ, GR, ID, JM, MK, MN, MT, NO, PL, RW, SK, TN, TT) — so
+> it picked up this pre-flagged, already-open-vertical companion instead.
+> Independently re-fetched the source (HTTP 200, 104,097 bytes, sha256
+> `4e2f9874e9a910713fae9a182fc5c5a578bcfd2649d2031f8144c8b5fba96b9f` —
+> byte-identical to every prior cycle's own figures, confirming no
+> revision). Annex-A is a self-contained schedule of forty named
+> withholding/advance-tax categories under specific sections of the Income
+> Tax Ordinance, 2001, each reported as a receipts/value amount and a
+> tax-collected/deducted amount. Two genuine structural differences from
+> its sibling worksheets: this sheet's own header block has no Address
+> field at all, and its single `dataValidations` rule validates all forty
+> rows uniformly, **including the headline "Adjustable Tax" total itself**
+> — unlike every sibling worksheet, where the equivalent total row's own
+> lack of validation is what confirmed it as an excluded computed subtotal.
+> Because this worksheet's total carries the identical constraint as its
+> components, this version models all forty rows (the total plus every
+> named category) as individually reportable fields, following the same
+> "named sub-item breakdown" convention already used for IT-2's Other
+> Sources/Foreign Income categories. Also disclosed: Sr. numbering skips
+> Sr. 7 entirely and two rows carry no Sr. number at all, and one row's
+> own printed label carries a source typo ("zforiegn" for "foreign"), both
+> quoted verbatim and disclosed, not corrected. 87 fields, 7 conformance
+> checks (2 valid scenarios, 5 mutation-control fixtures) all passing as
+> expected. Both validators pass (696/696); registry index rebuilt.
+> Pakistan remains at 3 of 6 verticals (a sixth schema within the
+> already-open Taxes vertical, not a new vertical); Annexes B through F
+> remain this workbook's own disclosed, open backlog. See the Known Gaps
+> section update below and this document's own VERIFICATION.md for the
+> full sourcing record.
+
 > **Update (2026-07-31, GOV-5738, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical gains a fifth schema**, via
 > `pk/fbr/annual-individual-income-tax-return-it-2@1.0.0` — the Federal
@@ -30974,6 +31060,23 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   pre-filled `2023` on this sheet's own first page against `2024`
   elsewhere in the same workbook). Annexes A–F remain this workbook's own
   disclosed, open backlog for a future cycle.
+
+  **Update (GOV-5745, 2026-07-31): Annex-A ("Adjustable Tax Collected /
+  Deducted") is now also authored**, via
+  `pk/fbr/annexure-a-adjustable-tax@1.0.0` — see the Executive Summary's
+  GOV-5745 update above and the document's own VERIFICATION.md for the
+  full sourcing record, including the genuine structural differences from
+  its sibling worksheets this sheet's own `dataValidations` surfaced (no
+  Address field in its own header block; all forty rows — the headline
+  total included — uniformly validated, unlike every sibling worksheet
+  where the total row's own lack of validation confirmed it as an
+  excluded computed subtotal, so this version models the total and all
+  thirty-nine named withholding-tax categories as individually reportable
+  fields), and the two disclosed structural findings (Sr. numbering skips
+  Sr. 7 entirely and two rows carry no Sr. number at all; one row's own
+  printed label carries a source typo, "zforiegn" for "foreign"). Annexes
+  B through F remain this workbook's own disclosed, open backlog for a
+  future cycle.
 
 - **Georgia — screened, not viable this cycle (GOV-3078).** Visa
   (`geoconsul.gov.ge`/`evisa.gov.ge`) is fully e-Portal based; the MFA's
