@@ -4,7 +4,56 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **699 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **700 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-31, GOV-5773, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains a tenth schema**, via
+> `pk/fbr/annexure-e-minimum-final-tax-chargeable@1.0.0` — the Federal
+> Board of Revenue's "Annex-E" worksheet, from the same nine-worksheet
+> "Manual Return" workbook already modelled as
+> `pk/fbr/annual-individual-income-tax-return-it-1b` (Form IT-1B),
+> `pk/fbr/annual-individual-income-tax-return-it-2` (Form IT-2),
+> `pk/fbr/annexure-a-adjustable-tax`,
+> `pk/fbr/annexure-b-manufacturing-trading-profit-loss-account`,
+> `pk/fbr/annexure-c-inadmissible-admissible-deductions`,
+> `pk/fbr/annexure-d-depreciation-amortization`, and `pk/fbr/wealth-statement`.
+> That Annex-D sibling's own v1.0.0 (GOV-5766) had explicitly named
+> "Annexes E and F" as this workbook's remaining open backlog; with the
+> 16-jurisdiction "5 of 6 verticals" list already re-screened a dead end
+> across six consecutive prior cycles (GOV-5731, GOV-5738, GOV-5745,
+> GOV-5752, GOV-5759, GOV-5766), this cycle picked up Annex-E, the next of
+> the two remaining Annexes, rather than re-screening that list a seventh
+> time. Independently re-fetched the source (HTTP 200, 104,097 bytes,
+> sha256 `4e2f9874e9a910713fae9a182fc5c5a578bcfd2649d2031f8144c8b5fba96b9f`
+> — byte-identical to every prior cycle's own figures, confirming no
+> revision). Structurally Annex-E is, like Annex-A, a flat, single-row-
+> per-category line-item list, but with five amount columns per category
+> (Receipts/Value, Tax Collectible/Deductible, Attributable Taxable
+> Income, Tax on Attributable Taxable Income, Minimum Tax Chargeable) and
+> two separate tables sharing that layout on one sheet: a "Minimum Tax
+> Chargeable" table (Sr. 1 headline total plus fifty withholding
+> categories under sections 148/152/153/233) and a "Final Tax Chargeable"
+> table (seven categories under sections 154/156A, whose own printed
+> column labels differ in two of the five columns, and whose own Sr.
+> numbering independently restarts from 51). Unlike Annex-B/Annex-C/
+> Annex-D's own formula-linked Name/CNIC header cells, this worksheet
+> reverts to Annex-A's own plain-blank-cell convention. This worksheet's
+> own single `dataValidations` rule covers the NTN cell and only the first
+> table's Sr. 8 through Sr. 51 rows — excluding that table's own headline
+> total, its own six lowest-numbered categories, and the entire second
+> table — yet every printed, fillable cell is nonetheless modelled as a
+> field, consistent with this workbook's own established convention. One
+> genuine duplicate FBR classification code (64060059, printed at both
+> Sr. 25 and Sr. 35 under differently-capitalized/punctuated section
+> citations) was independently found and disclosed, not merged; six
+> further source-document spelling/typography artifacts were also found
+> and disclosed. 295 fields, 8 conformance checks (2 valid scenarios, 6
+> mutation-control fixtures) all passing as expected. Both validators pass
+> (700/700); registry index rebuilt. Pakistan remains at 3 of 6 verticals
+> (a tenth schema within the already-open Taxes vertical, not a new
+> vertical); Annex-F remains this workbook's own disclosed, open backlog.
+> See the Taxes vertical section update below and this document's own
+> VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-31, GOV-5766, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical gains a ninth schema**, via
@@ -20778,6 +20827,19 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (82/96 jurisdictions — 85%)
 
+> **Update (2026-07-31, GOV-5773, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains a tenth schema**, via
+> `pk/fbr/annexure-e-minimum-final-tax-chargeable@1.0.0` — the FBR's
+> "Annex-E" worksheet, a Minimum-Tax/Final-Tax withholding-tax schedule
+> spanning two tables on one sheet, from the same "Manual Return" workbook
+> as `pk/fbr/annexure-d-depreciation-amortization` (whose own v1.0.0 named
+> "Annexes E and F" as this workbook's remaining backlog). See the
+> Executive Summary's GOV-5773 update above for the full sourcing record,
+> disclosed structural findings, and conformance results. Not a new
+> vertical (Pakistan's Taxes vertical was already open); a tenth schema for
+> Pakistan overall. Annex-F remains this workbook's own disclosed, open
+> backlog; numerator/denominator unchanged.
+
 > **Update (2026-07-31, GOV-5766, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical gains a ninth schema**, via
 > `pk/fbr/annexure-d-depreciation-amortization@1.0.0` — the FBR's "Annex-D"
@@ -24977,7 +25039,7 @@ now closed.
 | **PA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PK** | 9 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **PK** | 10 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PY** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
@@ -31304,6 +31366,22 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   rows and uneven `dataValidation` coverage across its own printed cells
   (disclosed, not corrected). Annexes E and F remain this workbook's own
   disclosed, open backlog for a future cycle.
+
+  **Update (GOV-5773, 2026-07-31): Annex-E ("Minimum Tax Chargeable /
+  Final Tax Chargeable") is now also authored**, via
+  `pk/fbr/annexure-e-minimum-final-tax-chargeable@1.0.0` — see the
+  Executive Summary's GOV-5773 update above and the document's own
+  VERIFICATION.md for the full sourcing record. Reverts to Annex-A's own
+  plain (not formula-linked) Name/CNIC header convention, unlike
+  Annex-B/Annex-C/Annex-D; two withholding-tax tables on one sheet sharing
+  a five-amount-column layout (Minimum Tax regime, fifty-one categories;
+  Final Tax regime, seven categories, its own Sr. numbering independently
+  restarting from 51); one genuine duplicate FBR classification code
+  (64060059, printed at both Sr. 25 and Sr. 35); uneven `dataValidation`
+  coverage excluding the headline total and six lowest-numbered categories
+  of the first table and the entire second table (disclosed, not
+  corrected). Annex-F remains this workbook's own disclosed, open backlog
+  for a future cycle.
 
 - **Georgia — screened, not viable this cycle (GOV-3078).** Visa
   (`geoconsul.gov.ge`/`evisa.gov.ge`) is fully e-Portal based; the MFA's
