@@ -1,0 +1,452 @@
+{
+  "$schema": "https://govschema.org/spec/v0.3/govschema.schema.json",
+  "govschemaVersion": "0.3.0",
+  "id": "pk/fbr/annual-individual-income-tax-return-it-2",
+  "version": "1.0.0",
+  "title": "Pakistan FBR Form IT-2 — Individual Income Tax Return (Business & Any Other Head Except Salary)",
+  "description": "The Federal Board of Revenue's (FBR) official 'Manual Return' workbook for individuals, Tax Year 2024 edition, worksheet 'IND (BUS PLUS)' — Form IT-2, 'Return of Total Income / Statement of Final Taxation under the Income Tax Ordinance, 2001', filed by individuals deriving income under the head Business and any other head except Salary. This is the third schema authored from this workbook, a direct companion to the already-modelled sibling worksheets 'IND (PROP-CG-OS)' (Form IT-1B, `pk/fbr/annual-individual-income-tax-return-it-1b`) and 'Wealth Statement' (`pk/fbr/wealth-statement`) — both of that sibling's own v1.0.0 descriptions explicitly named this worksheet as remaining open backlog. Scoped to the return's identification block, the return's headline income/allowance line items (Sr. 11 through Sr. 38 in the worksheet's own numbering: Business Income, Capital Gains, a twelve-line Other Sources breakdown, a four-line Foreign Income breakdown, both AOP income-share lines, Total Income, and the Deductible Allowances total with its three named components), and the verification/declaration block. Unlike the sibling IT-1B worksheet, this worksheet's own printed 'NTN' label carries an asterisk (required), and its Other Sources and Foreign Income categories are each broken into individually named, non-repeating sub-lines rather than a single headline figure — both modelled here as distinct fields, consistent with this registry's practice of modelling a fixed, individually labelled set of line items by name rather than collapsing them, and distinct from a repeating/unbounded table (which would require GSP-0009, still Proposed and CEO-gated). Out of scope for this version, mirroring the sibling IT-1B document's own scope boundary: the Property income sub-item breakdown (Sr. 1–10), which the worksheet's own data-validation rules confirm is a computed subtotal with no direct-entry validation of its own (identical to IT-1B's Sr. 1 treatment); the workbook's own per-line three-column split (a 'Total Amount' / 'Amount Exempt from Tax or Subject to Fixed/Final Tax' / 'Amount Subject to Normal Tax' triple), not modelled reliably since the underlying data-validation ranges cover the three columns inconsistently row-by-row (e.g. the Foreign Income lines validate only two of the three columns); the Computations/tax-liability section (Sr. 39–62: tax chargeable, tax credits, turnover tax at various statutory rates, advance tax, agriculture income, and similar arithmetic derived from the return rather than primary taxpayer-supplied data); the Final/Fixed/Minimum/Average/Relevant/Reduced Tax withholding schedule (a second printed page, roughly 150 individually named withholding-tax-rate categories under sections 148 through 156, 233, 234A, 235, 236A–236Z); and Annexes A through F, which remain this workbook's own disclosed, cross-schema backlog. This document describes the form only; it does not submit anything on the filer's behalf, and does not imply endorsement by the Islamic Republic of Pakistan or the Federal Board of Revenue. GovSchema is independent and is not affiliated with, endorsed by, or operated by the Government of Pakistan.",
+  "status": "draft",
+  "jurisdiction": {
+    "country": "PK",
+    "level": "national"
+  },
+  "authority": {
+    "name": "Federal Board of Revenue",
+    "abbreviation": "FBR",
+    "url": "https://www.fbr.gov.pk"
+  },
+  "process": {
+    "type": "filing",
+    "language": "en"
+  },
+  "source": {
+    "url": "https://download1.fbr.gov.pk/Docs/2024791373958696MANUALRETURN2024-NEW24-6-2024.xlsx",
+    "retrievedAt": "2026-07-31",
+    "documentRef": "FBR 'Manual Return' workbook for individuals, Tax Year 2024 edition, worksheet 'IND (BUS PLUS)' — Form IT-2, 'Return of Total Income / Statement of Final Taxation under the Income Tax Ordinance, 2001 (For Individual Deriving Income under the Head Business & Any Other Head Except Salary)'"
+  },
+  "verification": {
+    "method": "manual-source-review-v1",
+    "lastVerifiedAt": "2026-07-31",
+    "verifiedBy": "GovSchema Engineering (Standards Engineer)",
+    "nextReviewBy": "2027-01-31",
+    "notes": "GOV-5738 ('GovSchema Standard Research'). Re-scanned CATALOG.md fresh: every jurisdiction disclosed at 5 of 6 verticals (16 found this cycle: AE, BA, BR, CZ, GR, ID, JM, MK, MN, MT, NO, PL, RW, SK, TN, TT) was independently cross-checked against the document's own vertical-history entries and confirmed a re-screened dead end or structurally-blocked candidate from a prior cycle, with no genuinely new lead — matching the immediately preceding GOV-5731 cycle's own finding. The strongest actually-open, pre-sourced candidate was this worksheet: the sibling `pk/fbr/annual-individual-income-tax-return-it-1b` document's own v1.0.0 description (GOV-3104) and the `pk/fbr/wealth-statement` document's own v1.0.0 description (GOV-5731) both explicitly named the 'IND (BUS PLUS)' worksheet (Form IT-2) as open backlog. Independently re-fetched the same workbook this cycle via plain `curl`: HTTP 200, size 104,097 bytes, sha256 `4e2f9874e9a910713fae9a182fc5c5a578bcfd2649d2031f8144c8b5fba96b9f` — byte-identical to the figures both prior cycles recorded, confirming no revision. Unzipped directly via Python's `zipfile` (no `unzip`/pip/openpyxl in this environment) and parsed `xl/worksheets/sheet2.xml` (the 'IND (BUS PLUS)' worksheet, confirmed via `xl/workbook.xml`'s own `<sheets>` element mapping `r:id=\"rId2\"` to `sheet2.xml` via `xl/_rels/workbook.xml.rels`), `xl/sharedStrings.xml`, and the sheet's own `dataValidations` block (4 rules) cell-by-cell from the raw XML.\n\nThe scope decisions were derived from the sheet's own `dataValidations` block, not guessed. Cell `C5` (taxpayer CNIC) and `F71:G71` (declarant CNIC) share one `type=\"whole\"` rule bounded `[1000000000000, 9999999999999]` — the same 13-digit CNIC constraint the sibling IT-1B document already established. Cell `H5` (NTN) carries a separate `type=\"whole\"` rule bounded `[1, 99999999]`, identical in shape to IT-1B's own NTN rule — but this worksheet's own printed label reads 'NTN*' (with an asterisk), unlike IT-1B's unstarred 'NTN', so `taxpayerNtn` is modelled as `required: true` here, a genuine and disclosed difference from the sibling document. A `type=\"whole\", greaterThanOrEqual 0` rule's `sqref` union (`G67:G68 F69:F70 F54:F59 G40:H40 F49 G63:G64 F18:H18 F21:F40 H19:H39 F42:G46 H42:H68 F148:G169 F80:G146 H80:H169`) plus a second, separately-declared `greaterThanOrEqual 0` rule (`G21:G32`) were decoded row-by-row to determine which of the sheet's three amount columns (F/G/H) actually carry a fillable-numeric constraint per line: row 8 (Sr. 1, Property, the `[Sum of 2 to 10]` subtotal) has none at all — the same computed-subtotal signal IT-1B's own Sr. 1 already carried — confirming Property remains out of scope here too. By contrast, rows 21–40 (Sr. 14 through Sr. 33 — the Other Sources sub-items, the Foreign Income total and its four named sub-categories, both AOP shares, and Total Income) and rows 42–46 (Sr. 34 through Sr. 38 — Deductible Allowances and its three components, and Taxable Income) are validated fillable across at least the F column, and mostly F+H or F+G+H — a materially different shape from IT-1B's own sheet, which has no Other Sources sub-item breakdown at all and no Foreign Income sub-categories (IT-1B models a single `foreignIncome` total only). This document models both the Sr. 13 Other Sources headline total and its twelve individually named, non-repeating sub-lines (Sr. 14–25), and both the Sr. 26 Foreign Income headline total and its four individually named sub-categories (Sr. 27–30, business/property/capital-gain/other-sources foreign income or loss) — the same registry convention already used for Deductible Allowances (a headline total plus its three named components, in both this document and IT-1B), rather than collapsing a fixed, small, individually labelled set of line items into a single figure. The Foreign Income total's own row (33) and its four sub-category rows (34–37) are validated on the F and H columns but not G — a real, disclosed per-row data-validation gap, the same class of column-validation inconsistency IT-1B's own verification record already documented for its sheet, not fabricated or corrected here.\n\nA second genuine, disclosed source-document finding: this worksheet's own header row (row 4) carries a literal pre-filled Tax Year value of `2023` (cell H4), while the workbook's own title row (`Individual Paper Return for Tax Year 2024`) and this same worksheet's own second-page repeated header (row 76, cell H76) both read `2024` — an internal inconsistency in the source spreadsheet, disclosed here and not corrected by this schema; `taxYear` is modelled as a free-form string field rather than defaulting to either printed value.\n\nThe verification/declaration block (rows 71–73) is structured identically in substance to IT-1B's own (rows 76–77) but spans three printed text fragments rather than one paragraph — 'Verification [name], CNIC No. [F71:G71], in my capacity [Self/Representative] ... as Self / Representative (as defined in section 172 of the Income Tax Ordinance, 2001) of the Taxpayer named above, do solemnly declare...' followed by a separate 'Signature: ___ Date: ___' line (row 73) — extracted and reassembled verbatim into `documents[].statement`.\n\n2 valid mock scenarios (a self-filing business individual reporting only Business Income and Total/Taxable Income, no Other Sources/Foreign/AOP detail; a return with a full Other Sources sub-line breakdown, a Foreign Income sub-category, both AOP share types, and all three deductible-allowance components, filed via a representative) plus 5 mutation-control fixtures (a missing statically-required field, an invalid `declarantCapacity` enum value, an out-of-range CNIC pattern violation, a negative amount on a `minimum: 0` field, and a missing `taxpayerNtn` — statically required here, unlike the sibling IT-1B document) are committed under `conformance/pk/fbr/annual-individual-income-tax-return-it-2/1.0.0/`. An ephemeral, from-scratch conformance checker (deriving required/pattern/minimum rules directly from this schema's own `fields[]`, discarded after use, not committed) ran all 7: both valid scenarios at 0 errors, all 5 mutation controls each raising exactly 1 error. Validated clean with `node tools/validate.mjs` and `node tools/validate-ajv.mjs`, individually and as part of the full registry run. Pakistan remains at 3 of 6 verticals (a fifth schema within the already-open Taxes vertical); Annexes A–F remain this workbook's own disclosed, open backlog for a future cycle."
+  },
+  "maturity": {
+    "level": "structural-reference",
+    "criteria": {
+      "structuralReference": true,
+      "verifiedSchema": false,
+      "agentReadySchema": false,
+      "executionTestedSchema": false
+    },
+    "method": "maturity-self-assessment-v1",
+    "assertedBy": "GovSchema Engineering (Standards Engineer)",
+    "assertedAt": "2026-07-31"
+  },
+  "license": "CC-BY-4.0",
+  "fields": [
+    {
+      "name": "taxpayerName",
+      "label": "Name",
+      "type": "string",
+      "required": true,
+      "description": "Full name of the individual taxpayer filing this return.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 4 — \"Name*\""
+    },
+    {
+      "name": "taxpayerCnic",
+      "label": "CNIC",
+      "type": "string",
+      "required": true,
+      "description": "Taxpayer's 13-digit Computerized National Identity Card (CNIC) number, issued by NADRA. The source workbook's own data-validation rule on this cell constrains it to a whole number between 1,000,000,000,000 and 9,999,999,999,999 (i.e. exactly 13 digits).",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 5 — \"CNIC*\" (cell C5, data-validation-constrained)",
+      "validation": {
+        "pattern": "^\\d{13}$"
+      }
+    },
+    {
+      "name": "taxpayerNtn",
+      "label": "NTN",
+      "type": "string",
+      "required": true,
+      "description": "Taxpayer's National Tax Number (NTN). The source workbook's own data-validation rule on this cell constrains it to a whole number between 1 and 99,999,999 (up to 8 digits). Unlike the sibling IT-1B worksheet (where this label is unstarred and the field is optional), this worksheet's own printed label reads \"NTN*\", so this field is required here.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 5 — \"NTN*\" (cell H5, data-validation-constrained)",
+      "validation": {
+        "pattern": "^\\d{1,8}$"
+      }
+    },
+    {
+      "name": "taxpayerAddress",
+      "label": "Address",
+      "type": "string",
+      "required": true,
+      "description": "Taxpayer's address.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 6 — \"Address*\""
+    },
+    {
+      "name": "taxYear",
+      "label": "Tax Year",
+      "type": "string",
+      "required": true,
+      "description": "The tax year this return covers. The source workbook's title reads \"Individual Paper Return for Tax Year 2024\" and this worksheet's own second-page repeated header (row 76) is pre-filled \"2024\", but this worksheet's own first-page header (row 4) is itself pre-filled \"2023\" — a disclosed internal inconsistency in the source spreadsheet, not corrected by this schema.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 4 — \"Tax Year\", pre-filled \"2023\" (row 76's own repeated header is pre-filled \"2024\")"
+    },
+    {
+      "name": "businessIncome",
+      "label": "Income from Business",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 11 — income from business for the tax year.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 18 — Sr. 11, Code 3000, \"Income from Business\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "capitalGainsIncome",
+      "label": "Gains / (Loss) from Capital Assets",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 12 — gains or losses from capital assets (including securities) for the tax year.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 19 — Sr. 12, Code 4000, \"Gains / (Loss) from Capital Assets (including securities)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherSourcesIncome",
+      "label": "Income / (Loss) from Other Sources",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 13 — total income or loss from other sources, defined by the source form as the sum of Sr. 14 to 22 minus the sum of Sr. 23 to 25.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 20 — Sr. 13, Code 5000, \"Income / (Loss) from Other Sources [Sum of 14 to 22] - [Sum of 23 to 25]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherSourcesReceipts",
+      "label": "Receipts from Other Sources",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 14 — receipts from other sources, a component of the Sr. 13 Other Sources total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 21 — Sr. 14, Code 5029, \"Receipts from Other Sources\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "royaltyIncome",
+      "label": "Royalty",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 15 — royalty income, a component of the Sr. 13 Other Sources total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 22 — Sr. 15, Code 5002, \"Royalty\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "profitOnDebt",
+      "label": "Profit on Debt (Interest, Yield, etc)",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 16 — profit on debt (interest, yield, etc.), a component of the Sr. 13 Other Sources total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 23 — Sr. 16, Code 5003, \"Profit on Debt (Interest, Yield, etc)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "profitOnDebtExceeding36Million",
+      "label": "Profit on Debt (if amount u/s 7B exceeds Rs. 36 million)",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 17 — profit on debt where the amount under section 7B exceeds Rs. 36 million, a component of the Sr. 13 Other Sources total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 24 — Sr. 17, Code 500312, \"Profit on Debt (if amount u/s 7B exceeds Rs. 36 million)\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "groundRent",
+      "label": "Ground Rent",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 18 — ground rent, a component of the Sr. 13 Other Sources total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 25 — Sr. 18, Code 5004, \"Ground Rent\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "subLeaseRent",
+      "label": "Rent from sub lease of Land or Building",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 19 — rent from sub-lease of land or a building, a component of the Sr. 13 Other Sources total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 26 — Sr. 19, Code 5005, \"Rent from sub lease of Land or Building\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "leaseRentWithPlantAndMachinery",
+      "label": "Rent from lease of Building with Plant and Machinery",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 20 — rent from lease of a building together with plant and machinery, a component of the Sr. 13 Other Sources total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 27 — Sr. 20, Code 5006, \"Rent from lease of Building with Plant and Machinery\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "annuityPension",
+      "label": "Annuity/pension",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 21 — annuity or pension income, a component of the Sr. 13 Other Sources total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 28 — Sr. 21, Code 5007, \"Annuity/pension\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherReceipts",
+      "label": "Other Receipts",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 22 — other receipts not itemised elsewhere, a component of the Sr. 13 Other Sources total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 29 — Sr. 22, Code 5028, \"Other Receipts\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherSourcesDeductions",
+      "label": "Deductions from Other Sources",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 23 — deductions from other sources, subtracted in the Sr. 13 Other Sources total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 30 — Sr. 23, Code 5089, \"Deductions from Other Sources\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "accountingDepreciation",
+      "label": "Accounting Depreciation",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 24 — accounting depreciation, subtracted in the Sr. 13 Other Sources total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 31 — Sr. 24, Code 5064, \"Accounting Depreciation\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "otherDeductions",
+      "label": "Other Deductions",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 25 — other deductions not itemised elsewhere, subtracted in the Sr. 13 Other Sources total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 32 — Sr. 25, Code 5088, \"Other Deductions\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "foreignIncome",
+      "label": "Foreign Income",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 26 — total foreign-source income for the tax year.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 33 — Sr. 26, Code 6000, \"Foreign Income\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "foreignBusinessIncomeLoss",
+      "label": "Foreign Business Income/Loss",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 27 — foreign-source business income or loss, a named sub-category of the Sr. 26 Foreign Income total. Unlike the sibling IT-1B worksheet, which models only a single Foreign Income total with no sub-categories, this worksheet breaks Foreign Income into four individually named sub-categories (Sr. 27–30).",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 34 — Sr. 27, Code 6039, \"Foreign Bussiness Income/Loss\" [sic]",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "foreignPropertyIncomeLoss",
+      "label": "Foreign Property Income/Loss",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 28 — foreign-source property income or loss, a named sub-category of the Sr. 26 Foreign Income total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 35 — Sr. 28, Code 6029, \"Foreign Property Income/Loss\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "foreignCapitalGainIncomeLoss",
+      "label": "Foreign Capital Gain Income/Loss",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 29 — foreign-source capital gain income or loss, a named sub-category of the Sr. 26 Foreign Income total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 36 — Sr. 29, Code 6049, \"Foreign Capital Gain Income/Loss\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "foreignOtherSourcesIncomeLoss",
+      "label": "Foreign Other Sources Income/Loss",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 30 — foreign-source other-sources income or loss, a named sub-category of the Sr. 26 Foreign Income total.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 37 — Sr. 30, Code 6059, \"Foreign Other Sources Income/Loss\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "aopUntaxedIncomeShare",
+      "label": "Share in untaxed Income from AOP",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 31 — the taxpayer's share in an Association of Persons' (AOP) income that has not yet been taxed at the AOP level.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 38 — Sr. 31, Code 3131, \"Share in untaxed Income from AOP\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "aopTaxedIncomeShare",
+      "label": "Share in Taxed Income from AOP",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 32 — the taxpayer's share in an Association of Persons' (AOP) income that has already been taxed at the AOP level.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 39 — Sr. 32, Code 3141, \"Share in Taxed Income from AOP\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "totalIncome",
+      "label": "Total Income",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 33 — total income for the tax year.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 40 — Sr. 33, Code 9000, \"Total Income\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "deductibleAllowancesTotal",
+      "label": "Deductible Allowances",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 34 — total deductible allowances, defined by the source form as the sum of Sr. 35 to 38.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 42 — Sr. 34, Code 9009, \"Deductible Allowances [Sum of 35 to 38]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "zakatDeduction",
+      "label": "Zakat u/s 60",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 35 — Zakat paid, deductible under section 60 of the Income Tax Ordinance, 2001.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 43 — Sr. 35, Code 9001, \"Zakat u/s 60\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "workersWelfareFundDeduction",
+      "label": "Workers Welfare Fund u/s 60A",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 36 — Workers Welfare Fund contribution, deductible under section 60A of the Income Tax Ordinance, 2001. This deduction has no counterpart field in the sibling IT-1B worksheet, which lists only Zakat and Educational Expenses as deductible-allowance components.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 44 — Sr. 36, Code 9002, \"Workers Welfare Fund u/s 60A\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "educationExpensesDeduction",
+      "label": "Educational expenses u/s 60D",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 37 — educational expenses, deductible under section 60D of the Income Tax Ordinance, 2001.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 45 — Sr. 37, Code 9008, \"Educational expenses u/s 60D\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "taxableIncome",
+      "label": "Taxable Income",
+      "type": "number",
+      "required": false,
+      "description": "Sr. 38 — taxable income, defined by the source form as Total Income (Sr. 33) minus Deductible Allowances (Sr. 34).",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 46 — Sr. 38, Code 9100, \"Taxable Income [33-34]\"",
+      "validation": {
+        "minimum": 0
+      }
+    },
+    {
+      "name": "declarantName",
+      "label": "Verification",
+      "type": "string",
+      "required": true,
+      "description": "Name of the person making the verification declaration — the taxpayer themselves, or their representative as defined in section 172 of the Income Tax Ordinance, 2001.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 71 — \"Verification ___, CNIC No. ___, in my capacity ___\""
+    },
+    {
+      "name": "declarantCnic",
+      "label": "CNIC No.",
+      "type": "string",
+      "required": true,
+      "description": "13-digit CNIC number of the declarant (taxpayer or representative). The source workbook's own data-validation rule on this cell constrains it to the same whole-number range as the taxpayer's own CNIC field (1,000,000,000,000 to 9,999,999,999,999).",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 71 — \"CNIC No. ___\" (cells F71:G71, data-validation-constrained)",
+      "validation": {
+        "pattern": "^\\d{13}$"
+      }
+    },
+    {
+      "name": "declarantCapacity",
+      "label": "in my capacity",
+      "type": "enum",
+      "required": true,
+      "description": "Whether the declarant is signing as the taxpayer themselves (Self) or as their representative, as defined in section 172 of the Income Tax Ordinance, 2001.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 72 — \"...as Self / Representative (as defined in section 172 of the Income Tax Ordinance, 2001) of the Taxpayer named above, do solemnly declare...\"",
+      "validation": {
+        "enum": ["SELF", "REPRESENTATIVE"]
+      }
+    },
+    {
+      "name": "declarationDate",
+      "label": "Date",
+      "type": "date",
+      "required": true,
+      "description": "Date the declarant signs the verification declaration.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', row 73 — \"Signature: ___ Date: ___\""
+    }
+  ],
+  "documents": [
+    {
+      "id": "returnDeclaration",
+      "label": "Verification",
+      "category": "attestation",
+      "required": true,
+      "belongsTo": "applicant",
+      "statement": "Verification. I, [declarant name], CNIC No. [declarant CNIC], in my capacity as Self / Representative (as defined in section 172 of the Income Tax Ordinance, 2001) of the Taxpayer named above, do solemnly declare that to the best of my knowledge & belief the information given in this Return is correct & complete in accordance with the provisions of the Income Tax Ordinance, 2001 & Income Tax Rules, 2002.",
+      "sourceRef": "Worksheet 'IND (BUS PLUS)', rows 71–73 — Verification declaration"
+    }
+  ]
+}

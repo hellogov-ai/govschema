@@ -4,7 +4,55 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **694 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **695 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-31, GOV-5738, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains a fifth schema**, via
+> `pk/fbr/annual-individual-income-tax-return-it-2@1.0.0` — the Federal
+> Board of Revenue's "IND (BUS PLUS)" worksheet (Form IT-2), for
+> individuals deriving income under the head Business and any other head
+> except Salary, from the same "Manual Return" workbook already modelled
+> as `pk/fbr/annual-individual-income-tax-return-it-1b` (Form IT-1B) and
+> `pk/fbr/wealth-statement`. Both sibling documents' own v1.0.0 versions
+> had explicitly named this worksheet as open backlog. This cycle
+> re-scanned `CATALOG.md`'s own Known Gaps fresh first and independently
+> re-confirmed every disclosed 5-of-6-vertical jurisdiction (16 found this
+> cycle: AE, BA, BR, CZ, GR, ID, JM, MK, MN, MT, NO, PL, RW, SK, TN, TT) a
+> re-screened dead end from prior cycles, matching the immediately
+> preceding GOV-5731 cycle's own finding — so it picked up this
+> pre-flagged, already-open-vertical companion instead. Independently
+> re-fetched the source (HTTP 200, 104,097 bytes, sha256
+> `4e2f9874e9a910713fae9a182fc5c5a578bcfd2649d2031f8144c8b5fba96b9f` —
+> byte-identical to both prior cycles' own figures, confirming no
+> revision). Scoped to the identification block, the headline income
+> lines (Sr. 11–38 in the sheet's own numbering), and the
+> verification/declaration block — mirroring IT-1B's own scope boundary,
+> but with two genuine structural differences this sheet's own
+> `dataValidations` surfaced that IT-1B's own sheet does not have at all: a
+> twelve-line Other Sources sub-item breakdown (Sr. 14–25) and a four-line
+> Foreign Income sub-category breakdown (Sr. 27–30), both modelled as
+> individually named fields rather than collapsed into their respective
+> headline totals, following the same convention already used for
+> Deductible Allowances and for the Wealth Statement document's own
+> Inflows/Outflows exception. Also disclosed: this sheet's own "NTN" label
+> carries a required-field asterisk (`required: true`), unlike IT-1B's
+> unstarred, optional NTN; and this sheet's own first-page header is
+> pre-filled Tax Year `2023` while the workbook's title and this same
+> sheet's own second-page header both read `2024`, an internal
+> source-document inconsistency disclosed but not corrected. 37 fields, 7
+> conformance checks (2 valid scenarios, 5 mutation-control fixtures) all
+> passing as expected. Both validators pass (695/695); registry index
+> rebuilt. Pakistan remains at 3 of 6 verticals (a fifth schema within the
+> already-open Taxes vertical, not a new vertical); Annexes A–F remain
+> this workbook's own disclosed, open backlog. This cycle also
+> independently spot-checked a separate, non-schema research-status
+> document merged into the repo root this same day (`GovSchema_Research_
+> Status_2026-07-31.md`, PR #758) and confirmed its own "Brazil missing
+> from all 6 verticals" claim is stale/incorrect against both `CATALOG.md`
+> and the registry on disk — no correction needed, since that PR's own
+> description already flags the document as a non-authoritative historical
+> snapshot. See the Taxes vertical section update below and this
+> document's own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-31, GOV-5731, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical gains a fourth schema**, via `pk/fbr/wealth-statement@1.0.0`
@@ -20538,6 +20586,47 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (82/96 jurisdictions — 85%)
 
+> **Update (2026-07-31, GOV-5738, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains a fifth schema**, via
+> `pk/fbr/annual-individual-income-tax-return-it-2@1.0.0` — the Federal
+> Board of Revenue's "IND (BUS PLUS)" worksheet (Form IT-2), for
+> individuals deriving income under the head Business and any other head
+> except Salary, from the same "Manual Return" workbook already modelled
+> as `pk/fbr/annual-individual-income-tax-return-it-1b` (Form IT-1B) and
+> `pk/fbr/wealth-statement`. Both sibling documents' own v1.0.0 versions
+> had explicitly named this worksheet as open backlog. This cycle
+> re-scanned `CATALOG.md`'s own Known Gaps fresh first and independently
+> re-confirmed every disclosed 5-of-6-vertical jurisdiction (16 found this
+> cycle: AE, BA, BR, CZ, GR, ID, JM, MK, MN, MT, NO, PL, RW, SK, TN, TT) a
+> re-screened dead end from prior cycles, matching the immediately
+> preceding GOV-5731 cycle's own finding — so it picked up this
+> pre-flagged, already-open-vertical companion instead. Independently
+> re-fetched the source (HTTP 200, 104,097 bytes, sha256
+> `4e2f9874e9a910713fae9a182fc5c5a578bcfd2649d2031f8144c8b5fba96b9f` —
+> byte-identical to both prior cycles' own figures). Scoped to the
+> identification block, the headline income lines (Sr. 11–38 in the
+> sheet's own numbering), and the verification/declaration block —
+> mirroring IT-1B's own scope boundary, but with two genuine structural
+> differences this sheet's own `dataValidations` surfaced and IT-1B's own
+> sheet does not have at all: a twelve-line Other Sources sub-item
+> breakdown (Sr. 14–25) and a four-line Foreign Income sub-category
+> breakdown (Sr. 27–30), both modelled as individually named fields rather
+> than collapsed into their respective headline totals, following the same
+> convention already used for Deductible Allowances and for the Wealth
+> Statement document's own Inflows/Outflows exception. Also disclosed: this
+> sheet's own "NTN" label carries a required-field asterisk (`required:
+> true`), unlike IT-1B's unstarred, optional NTN; and this sheet's own
+> first-page header is pre-filled Tax Year `2023` while the workbook's
+> title and this same sheet's own second-page header both read `2024`, an
+> internal source-document inconsistency disclosed but not corrected. 37
+> fields, 7 conformance checks (2 valid scenarios, 5 mutation-control
+> fixtures) all passing as expected. Both validators pass (695/695);
+> registry index rebuilt. Pakistan remains at 3 of 6 verticals (a fifth
+> schema within the already-open Taxes vertical, not a new vertical);
+> Annexes A–F remain this workbook's own disclosed, open backlog. See the
+> Known Gaps section update below and this document's own VERIFICATION.md
+> for the full sourcing record.
+
 > **Update (2026-07-25, GOV-4818, "GovSchema Standard Research"): Türkiye
 > screened and confirmed a dead end for Taxes this cycle** — GİB's own
 > "Hazır Formlar" (Ready Forms) library returned zero records live for
@@ -30872,6 +30961,19 @@ incomplete). ✗ = no schema published, with the specific reason noted above.
   category's skipped "v" in its own roman-numeral numbering). The sibling
   "IND (BUS PLUS)" worksheet (Form IT-2) and Annexes A–F remain open,
   pre-scouted backlog for a future companion schema.
+
+  **Update (GOV-5738, 2026-07-31): the sibling "IND (BUS PLUS)" worksheet
+  (Form IT-2) is now also authored**, via
+  `pk/fbr/annual-individual-income-tax-return-it-2@1.0.0` — see the
+  Executive Summary's GOV-5738 update above and the document's own
+  VERIFICATION.md for the full sourcing record, including the genuine
+  structural differences from IT-1B this sheet's own `dataValidations`
+  surfaced (a required, asterisked NTN field; a twelve-line Other Sources
+  sub-item breakdown and a four-line Foreign Income sub-category
+  breakdown, both absent from IT-1B's own sheet; a Tax Year field
+  pre-filled `2023` on this sheet's own first page against `2024`
+  elsewhere in the same workbook). Annexes A–F remain this workbook's own
+  disclosed, open backlog for a future cycle.
 
 - **Georgia — screened, not viable this cycle (GOV-3078).** Visa
   (`geoconsul.gov.ge`/`evisa.gov.ge`) is fully e-Portal based; the MFA's
