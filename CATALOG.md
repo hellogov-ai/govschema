@@ -4,7 +4,55 @@
 
 ## Executive Summary
 
-**100 jurisdictions** | **696 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**100 jurisdictions** | **697 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-07-31, GOV-5752, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains a seventh schema**, via
+> `pk/fbr/annexure-b-manufacturing-trading-profit-loss-account@1.0.0` — the
+> Federal Board of Revenue's "Annex-B" worksheet ("Manufacturing / Trading /
+> Profit & Loss Account (including Revenues subject to Final / Fixed Tax)"),
+> a business income-statement schedule (filed one instance per business, per
+> the source form's own instruction) from the same nine-worksheet "Manual
+> Return" workbook already modelled as
+> `pk/fbr/annual-individual-income-tax-return-it-1b` (Form IT-1B),
+> `pk/fbr/annual-individual-income-tax-return-it-2` (Form IT-2),
+> `pk/fbr/annexure-a-adjustable-tax`, and `pk/fbr/wealth-statement`. That
+> Annex-A sibling's own v1.0.0 (GOV-5745) had explicitly named "Annexes B
+> through F" as this workbook's remaining open backlog; with the
+> 16-jurisdiction "5 of 6 verticals" list already re-screened a dead end
+> across three consecutive prior cycles (GOV-5731, GOV-5738, GOV-5745), this
+> cycle picked up Annex-B, the next of the five, rather than re-screening
+> that list a fourth time. Independently re-fetched the source (HTTP 200,
+> 104,097 bytes, sha256
+> `4e2f9874e9a910713fae9a182fc5c5a578bcfd2649d2031f8144c8b5fba96b9f` —
+> byte-identical to every prior cycle's own figures, confirming no
+> revision). Annex-B has three sections: a 45-line Manufacturing/Trading
+> Profit & Loss Account (each split into Total/Final-Tax/Normal-Tax
+> amounts), a 6-line prior-year unadjusted-business-loss carry-forward
+> schedule, and an 11-line business Statement of Affairs / Balance Sheet
+> (distinct from the personal net-worth disclosure already modelled in
+> `pk/fbr/wealth-statement`). Like Annex-A, this sheet's own single
+> `dataValidations` rule validates the entire P&L section uniformly,
+> **including every computed subtotal row itself** (Cost of Sales/Services,
+> Gross Profit/(Loss), Other Revenues, Management/Admin/Selling/Financial
+> Expenses, Accounting Profit/(Loss)) — so this version models all 45 P&L
+> lines as individually reportable fields (135 fields), following the same
+> convention as Annex-A. Also disclosed: Sr. 49 ("Unadjusted Loss for 2018")
+> is skipped entirely in the loss-carry-forward schedule, the current
+> year's own business result (Sr. 46) is deliberately excluded from the
+> ≥0 validation (unlike the prior years' losses, it can be negative), a
+> raw-XML `<mergeCell ref="E69:F79"/>` collapses two of the Statement of
+> Affairs section's own three amount columns into one merged block spanning
+> all eleven rows (column G is the only genuine per-row entry cell, and is
+> what this version models), and Sr. 18's own printed label ("Other Revenues
+> [Sum of 19 to 22]") undercounts its own five sub-items (Sr. 19–23) by
+> one. 157 fields, 7 conformance checks (2 valid scenarios, 5
+> mutation-control fixtures) all passing as expected. Both validators pass
+> (697/697); registry index rebuilt. Pakistan remains at 3 of 6 verticals (a
+> seventh schema within the already-open Taxes vertical, not a new
+> vertical); Annexes C through F remain this workbook's own disclosed, open
+> backlog. See the Taxes vertical section update below and this document's
+> own VERIFICATION.md for the full sourcing record.
 
 > **Update (2026-07-31, GOV-5745, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical gains a sixth schema**, via
@@ -20630,6 +20678,20 @@ v1.0.0.
 
 ### Taxes — Income Tax Return, Tax Filing (82/96 jurisdictions — 85%)
 
+> **Update (2026-07-31, GOV-5752, "GovSchema Standard Research"): Pakistan's
+> Taxes vertical gains a seventh schema**, via
+> `pk/fbr/annexure-b-manufacturing-trading-profit-loss-account@1.0.0` — the
+> FBR's "Annex-B" worksheet, a business Manufacturing/Trading Profit & Loss
+> Account, prior-year unadjusted-loss carry-forward schedule, and business
+> Statement of Affairs / Balance Sheet, from the same "Manual Return"
+> workbook as `pk/fbr/annexure-a-adjustable-tax` (whose own v1.0.0 named
+> "Annexes B through F" as this workbook's remaining backlog). See the
+> Executive Summary's GOV-5752 update above for the full sourcing record,
+> disclosed structural findings, and conformance results. Not a new
+> vertical (Pakistan's Taxes vertical was already open); a seventh schema
+> for Pakistan overall. Annexes C through F remain this workbook's own
+> disclosed, open backlog; numerator/denominator unchanged.
+
 > **Update (2026-07-31, GOV-5745, "GovSchema Standard Research"): Pakistan's
 > Taxes vertical gains a sixth schema**, via
 > `pk/fbr/annexure-a-adjustable-tax@1.0.0` — the Federal Board of Revenue's
@@ -24789,7 +24851,7 @@ now closed.
 | **PA** | 1 | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **PE** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **PH** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **PK** | 4 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| **PK** | 7 | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ |
 | **PL** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | **PT** | 6 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **PY** | 4 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
