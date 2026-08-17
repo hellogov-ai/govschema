@@ -4,7 +4,32 @@
 
 ## Executive Summary
 
-**103 jurisdictions** | **708 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+**104 jurisdictions** | **709 published schema documents** (per `tools/govschema-client/registry-index.json`) covering 6 verticals across government services globally.
+
+> **Update (2026-08-17, GOV-8326, "GovSchema Standard Research"): Myanmar
+> opens as the registry's 104th jurisdiction, via Business Formation
+> (1 of 6)**, via `mm/ird/business-taxpayer-registration@1.0.0` — the
+> Internal Revenue Department's "Application For Business Taxpayer
+> Registration Form" (form 01-01), a live bilingual Burmese/English PDF
+> hosted directly on `ird.gov.mm`
+> (`https://www.ird.gov.mm/storage/forms/6a59bf1d67dd0-01-01.pdf`, SHA-256
+> `dabeae5294851e1e71e5a372069ad589a67144956883e42fd56d99440f5d8b74`,
+> 929,046 bytes). Myanmar's `mip.gov.mm` domain no longer resolves and its
+> live successor `moip.gov.mm`/`evisa.moip.gov.mm` is a client-rendered SPA
+> exposing no static field list, so the Internal Revenue Department's own
+> forms page (`ird.gov.mm/forms/income-tax/registration`) was used instead.
+> `pdfjs-dist` found a clean text layer (0 AcroForm fields, 0 annotations,
+> full extractable text), independently cross-checked page-by-page via the
+> `Read` tool's native PDF rendering after splitting the source into
+> single-page PDFs with `pdf-lib`. 77 `fields[]` across 8 steps, each with
+> a `sourceRef` citation; `status: verified`. `node tools/validate.mjs` and
+> `node tools/validate-ajv.mjs`: both pass. `node
+> tools/verify-sources.mjs registry/mm/ird/business-taxpayer-registration`:
+> 0 FAIL across 8 cited URLs. Both `MOCK_INSTANCE.md` example instances
+> ajv-validated against an ad hoc JSON Schema derived from the document's
+> own `fields[]`: valid, zero errors. `ird.gov.mm` carries roughly five
+> further forms and a dozen more form categories, a strong backlog
+> candidate for Myanmar's Taxes vertical (2 of 6) in a future cycle.
 
 > **Update (2026-07-31, GOV-5833, "GovSchema Standard Research"):
 > Papua New Guinea's National ID & Civic Documents vertical opens, taking
@@ -19634,7 +19659,11 @@ within an already-covered vertical:
 - **Indonesia:** only the International Driving Permit (SIM Internasional) registration pathway is modelled (`id/korlantas/international-driving-permit-registration`, GOV-1553); first-time national SIM (driving licence) issuance and vehicle registration (STNK/BPKB) remain open sub-process candidates for a future cycle, contingent on a genuine field-level, unauthenticated source becoming available (see the document's own VERIFICATION.md for what was screened and rejected this cycle).
 - **Peru:** only nine of Formulario 012/17.03's ~20 procedure codes are modelled (`pe/mtc/solicitud-licencia-conducir-012-17`, GOV-2434) — first issuance, renewal, category upgrade, and duplicate for an individual's own Clase A licence; the military/police, diplomatic, refugee/asylum, foreign-licence-exchange, MATPEL hazardous-materials-endorsement, and information-correction procedure codes remain open sub-process candidates for a future cycle. Vehicle registration/transfer through SUNARP was not screened this cycle (the DCV licence pathway won on first-source strength) and remains an open candidate too.
 
-### Business Formation — Incorporation, LLC, Company Registration (87/92 jurisdictions — 95%)
+### Business Formation — Incorporation, LLC, Company Registration (88/93 jurisdictions — 95%)
+
+> **Update (2026-08-17, GOV-8326): Myanmar opens the vertical (1 of 6)**
+> via `mm/ird/business-taxpayer-registration@1.0.0` — see the Executive
+> Summary above for the full source/verification writeup.
 
 > **Update (2026-07-31, GOV-5791, "GovSchema Standard Research"): Papua New
 > Guinea opens as the registry's 101st jurisdiction, via Business Formation
@@ -25465,6 +25494,7 @@ now closed.
 | **MA** | 2 | ✓ | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **MD** | 5 | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MK** | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| **MM** | 1 | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
 | **MN** | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 | **MT** | 3 | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **MU** | 20 | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
